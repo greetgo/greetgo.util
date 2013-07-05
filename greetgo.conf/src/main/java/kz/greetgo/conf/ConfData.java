@@ -28,7 +28,7 @@ public class ConfData {
     readFromStream(new FileInputStream(file));
   }
   
-  private void readFromStream(InputStream inputStream) throws Exception {
+  public void readFromStream(InputStream inputStream) throws Exception {
     final LinkedList<Map<String, List<Object>>> stack = new LinkedList<>();
     stack.add(data);
     
@@ -208,10 +208,24 @@ public class ConfData {
       }
     }
     
-    {
+    if (prevPath != null) {
       if (prevPath.length() > 0) prevPath.append("/");
       prevPath.append(name.bigName());
       throw new IndexOutOfBoundsException("No such map index for " + prevPath);
     }
+    return null;
+  }
+  
+  public List<String> list(String path) {
+    List<String> ret = new ArrayList<>();
+    Map<String, List<Object>> cur = data;
+    if (path != null && path.length() > 0) {
+      for (String name : path.split("/")) {
+        cur = getMap(cur, new Name(name), null);
+        if (cur == null) return ret;
+      }
+    }
+    ret.addAll(cur.keySet());
+    return ret;
   }
 }

@@ -4,6 +4,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.util.List;
 import java.util.Random;
 
 import org.testng.annotations.Test;
@@ -274,5 +275,53 @@ public class ConfDataTest {
     assertThat(cd.inte("asd/dsa/status", 111)).isEqualTo(828);
     assertThat(cd.inte("asd/dsa.1/status", 111)).isEqualTo(999);
     assertThat(cd.inte("asd/dsa.2/status", 111)).isEqualTo(111);
+  }
+  
+  @Test
+  public void list_1() throws Exception {
+    Random rnd = new Random();
+    File file = new File("target/confData" + rnd.nextInt(1000000000));
+    file.getParentFile().mkdirs();
+    {
+      PrintStream out = new PrintStream(file, "UTF-8");
+      out.println("asd = {              ");
+      out.println("  dsa {              ");
+      out.println("    status = 828     ");
+      out.println("    amil   = 828     ");
+      out.println("    sinus  = 828     ");
+      out.println("  }                  ");
+      out.println("}                    ");
+      out.close();
+    }
+    
+    ConfData cd = new ConfData();
+    cd.readFromFile(file);
+    
+    List<String> list = cd.list("asd/dsa");
+    
+    assertThat(list).hasSize(3);
+    assertThat(list).contains("status", "amil", "sinus");
+  }
+  
+  @Test
+  public void list_2() throws Exception {
+    Random rnd = new Random();
+    File file = new File("target/confData" + rnd.nextInt(1000000000));
+    file.getParentFile().mkdirs();
+    {
+      PrintStream out = new PrintStream(file, "UTF-8");
+      out.println("    status = 828     ");
+      out.println("    amil   = 828     ");
+      out.println("    sinus  = 828     ");
+      out.close();
+    }
+    
+    ConfData cd = new ConfData();
+    cd.readFromFile(file);
+    
+    List<String> list = cd.list(null);
+    
+    assertThat(list).hasSize(3);
+    assertThat(list).contains("status", "amil", "sinus");
   }
 }
