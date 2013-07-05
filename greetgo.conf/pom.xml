@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>kz.greetgo</groupId>
   <artifactId>greetgo.conf</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.4</version>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -32,7 +32,20 @@
           </suiteXmlFiles>
         </configuration>
       </plugin>
-
+      
+      <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-source-plugin</artifactId>
+      <version>2.2.1</version>
+      <executions>
+        <execution>
+          <id>attach-sources</id>
+          <!-- <phase>verify</phase> -->
+          <goals><goal>jar-no-fork</goal></goals> 
+        </execution>
+      </executions>
+    </plugin>
+    	
     </plugins>
   </build>
 
