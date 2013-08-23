@@ -1,0 +1,92 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+
+group = 'kz.greetgo'
+
+sourceCompatibility = 1.7
+version = '0.0.7'
+jar {
+  manifest {
+    attributes 'Implementation-Title': 'Configurations from greetgo!', 'Implementation-Version': version
+  }
+}
+
+eclipse {
+  jdt {
+    //
+    // if you want to alter the java versions (by default they are configured with
+    // gradle java plugin settings):
+    //
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+  }
+}
+
+repositories {
+  mavenRepo (
+      name: 'Our repository',
+      url: 'http://192.168.0.1:8080/repository/internal/'
+      )
+  mavenCentral()
+}
+
+configurations { repoUpload }
+
+dependencies {
+  testCompile 'org.testng:testng:6.1.1'
+  testCompile 'org.easytesting:fest-assert-core:2.0M10'
+  
+  // needed for DAV protocol on maven uploads
+  repoUpload "org.apache.maven.wagon:wagon-webdav-jackrabbit:1.0-beta-6"
+}
+
+test { useTestNG() }
+
+task javadocJar(type: Jar, dependsOn: 'javadoc') {
+  from javadoc.destinationDir
+  classifier = 'javadoc'
+}
+
+task sourcesJar(type: Jar) {
+  from sourceSets.main.allSource
+  classifier = 'sources'
+}
+
+artifacts {
+  archives javadocJar
+  archives sourcesJar
+}
+
+
+uploadArchives {
+  repositories.mavenDeployer {
+    configuration = configurations.archives
+    repository(
+      url: 'http://192.168.0.1:8080/repository/internal/'
+    )
+    
+    pom.project {
+      name 'Configuration from greetgo!'
+      packaging 'jar'
+    }
+  }
+}
+
+/*
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+    }
+  }
+  repositories {
+    maven {
+      name  'Our release repository'
+      url 'http://192.168.0.1:8080/repository/internal/'
+    }
+  }
+}
+
+*/
