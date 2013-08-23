@@ -5,10 +5,16 @@ apply plugin: 'maven'
 group = 'kz.greetgo'
 
 sourceCompatibility = 1.7
-version = '0.0.7'
+version = '0.0.9'
+
+def nowDate = new Date()
+def nowFormattedDate = nowDate.format("yyyy-MM-dd/HH:mm:ss")
+
 jar {
   manifest {
-    attributes 'Implementation-Title': 'Configurations from greetgo!', 'Implementation-Version': version
+    attributes 'Implementation-Title': 'Configurations from greetgo!', 
+      'Implementation-Version': version, 'Implementation-Vendor': 'greetgo!',
+      'Built-By': System.getProperty("user.name"), 'Built-At': nowFormattedDate
   }
 }
 
