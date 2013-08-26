@@ -5,14 +5,14 @@ apply plugin: 'maven'
 group = 'kz.greetgo'
 
 sourceCompatibility = 1.7
-version = '0.0.9'
+version = '0.0.10'
 
 def nowDate = new Date()
 def nowFormattedDate = nowDate.format("yyyy-MM-dd/HH:mm:ss")
 
 jar {
   manifest {
-    attributes 'Implementation-Title': 'Configurations from greetgo!', 
+    attributes 'Implementation-Title': project.name, 
       'Implementation-Version': version, 'Implementation-Vendor': 'greetgo!',
       'Built-By': System.getProperty("user.name"), 'Built-At': nowFormattedDate
   }
@@ -73,7 +73,7 @@ uploadArchives {
     )
     
     pom.project {
-      name 'Configuration from greetgo!'
+      name project.name
       packaging 'jar'
     }
   }
