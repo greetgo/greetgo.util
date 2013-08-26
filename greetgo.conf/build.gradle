@@ -78,21 +78,3 @@ uploadArchives {
     }
   }
 }
-
-/*
-
-publishing {
-  publications {
-    mavenJava(MavenPublication) {
-      from components.java
-    }
-  }
-  repositories {
-    maven {
-      name  'Our release repository'
-      url 'http://192.168.0.1:8080/repository/internal/'
-    }
-  }
-}
-
-*/
