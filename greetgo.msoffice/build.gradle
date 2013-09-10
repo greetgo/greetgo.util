@@ -41,11 +41,17 @@ project.eclipse.classpath.file.whenMerged { cp ->
   }
 }
 
+import org.gradle.plugins.ide.eclipse.model.SourceFolder as SF
+
+eclipse.classpath.file.whenMerged { cp ->
+  cp.entries.findAll { it instanceof SF }*.output = "build/eclipse_bin"
+}
+
 repositories {
   mavenRepo (
-      name: 'Our repository',
-      url: 'http://192.168.0.1:8080/repository/internal/'
-      )
+    name: 'Our repository',
+    url: 'http://192.168.0.1:8080/repository/internal/'
+  )
   mavenCentral()
 }
 
