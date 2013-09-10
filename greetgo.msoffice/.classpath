@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry exported="true" kind="con" path="org.springsource.ide.eclipse.gradle.classpathcontainer"/>
 	<classpathentry exported="true" kind="var" path="GRADLE_USER_HOME/caches/artifacts-23/filestore/com.beust/jcommander/1.12/jar/7409692b48022f9eca7445861defbcdb9ee3c2a8/jcommander-1.12.jar" sourcepath="GRADLE_USER_HOME/caches/artifacts-23/filestore/com.beust/jcommander/1.12/source/b48b3ece6fb6272e00bd76c377fedb1bfa83fe59/jcommander-1.12-sources.jar"/>
