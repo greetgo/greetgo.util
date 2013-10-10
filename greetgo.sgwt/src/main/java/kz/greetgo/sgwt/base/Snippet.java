@@ -5,6 +5,7 @@ import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.SectionStack;
@@ -76,6 +77,10 @@ public class Snippet {
   
   public static final TextItem text(NamedTitle namedTitle) {
     return new TextItem(namedTitle.name, namedTitle.title);
+  }
+  
+  public static final ListGridField field(NamedTitle namedTitle) {
+    return new ListGridField(namedTitle.name, namedTitle.title);
   }
   
   public static final SectionStack headed(String header, Canvas... items) {
