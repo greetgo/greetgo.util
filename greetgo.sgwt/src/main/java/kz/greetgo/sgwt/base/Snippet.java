@@ -7,7 +7,6 @@ import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.layout.HLayout;
-import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.SectionStack;
 import com.smartgwt.client.widgets.layout.SectionStackSection;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -32,19 +31,16 @@ public class Snippet {
   
   protected Snippet() {}
   
-  public static final <T extends Layout> T members(T layout, Canvas... members) {
-    for (Canvas member : members) {
-      layout.addMember(member);
-    }
-    return layout;
-  }
-  
   public static final HLayout hl(Canvas... members) {
-    return members(new HLayout(), members);
+    HLayout hl = new HLayout();
+    hl.setMembers(members);
+    return hl;
   }
   
   public static final VLayout vl(Canvas... members) {
-    return members(new VLayout(), members);
+    VLayout vl = new VLayout();
+    vl.setMembers(members);
+    return vl;
   }
   
   public static final HLayout toolbar(HLayout layout) {
