@@ -9,11 +9,6 @@ import com.smartgwt.client.util.DateUtil;
 import com.smartgwt.client.widgets.Canvas;
 
 public abstract class AbstractEntryPoint implements EntryPoint {
-  public final Canvas root;
-  
-  public AbstractEntryPoint(Canvas root) {
-    this.root = root;
-  }
   
   public static final boolean debug() {
     return Window.Location.getParameter("debug") != null;
@@ -32,7 +27,7 @@ public abstract class AbstractEntryPoint implements EntryPoint {
     DateUtil.setShortDateDisplayFormat(DateDisplayFormat.TOEUROPEANSHORTDATE);
     DateUtil.setShortDatetimeDisplayFormat(DateDisplayFormat.TOEUROPEANSHORTDATETIME);
     
-    prepare();
+    Canvas root = prepare();
     
     try {
       RootPanel.get("loading").setVisible(false);
@@ -43,5 +38,5 @@ public abstract class AbstractEntryPoint implements EntryPoint {
     root.draw();
   }
   
-  protected abstract void prepare();
+  protected abstract Canvas prepare();
 }
