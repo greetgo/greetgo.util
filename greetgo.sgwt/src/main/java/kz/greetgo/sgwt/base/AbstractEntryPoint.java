@@ -6,7 +6,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.smartgwt.client.types.DateDisplayFormat;
 import com.smartgwt.client.util.DateUtil;
-import com.smartgwt.client.widgets.Canvas;
 
 public abstract class AbstractEntryPoint implements EntryPoint {
   
@@ -27,16 +26,12 @@ public abstract class AbstractEntryPoint implements EntryPoint {
     DateUtil.setShortDateDisplayFormat(DateDisplayFormat.TOEUROPEANSHORTDATE);
     DateUtil.setShortDatetimeDisplayFormat(DateDisplayFormat.TOEUROPEANSHORTDATETIME);
     
-    Canvas root = prepare();
+    start();
     
     try {
       RootPanel.get("loading").setVisible(false);
     } catch (Exception e) {}
-    
-    root.setWidth100();
-    root.setHeight100();
-    root.draw();
   }
   
-  protected abstract Canvas prepare();
+  protected abstract void start();
 }
