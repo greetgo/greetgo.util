@@ -6,10 +6,12 @@ import kz.greetgo.gwtshare.base.Sync;
 import kz.greetgo.sgwt.base.BaseCallback;
 import kz.greetgo.sgwt.base.Snippet;
 
+import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public abstract class Saving<T> extends Snippet implements Async<T, T> {
@@ -47,7 +49,9 @@ public abstract class Saving<T> extends Snippet implements Async<T, T> {
     content.setWidth100();
     content.setHeight100();
     
-    items(window, content, toolbar(hl(saveButton, cancelButton)));
+    HLayout toolbar = toolbar(hl(saveButton, cancelButton));
+    toolbar.setAlign(Alignment.CENTER);
+    items(window, content, toolbar);
   }
   
   @Override
