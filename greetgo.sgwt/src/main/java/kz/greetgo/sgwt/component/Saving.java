@@ -29,9 +29,9 @@ public abstract class Saving<T> extends Snippet implements Async<T, T> {
           public void onSuccess(T t) {
             value = null;
             sync.invoke(t);
+            window.hide();
           }
         });
-        window.hide();
       }
     });
     

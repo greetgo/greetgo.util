@@ -82,8 +82,8 @@ public class Snippet {
 		return new ComboBoxItem(namedTitle.name, namedTitle.title);
 	}
 
-	public static StaticTextItem staticText(NamedTitle namedTitle2) {
-		return new StaticTextItem(namedTitle2.name, namedTitle2.title);
+	public static StaticTextItem staticText(NamedTitle namedTitle) {
+		return new StaticTextItem(namedTitle.name, namedTitle.title);
 	}
 
 	public static final ListGridField field(NamedTitle namedTitle) {
