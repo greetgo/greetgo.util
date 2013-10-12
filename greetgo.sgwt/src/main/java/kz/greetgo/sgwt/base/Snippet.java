@@ -78,12 +78,12 @@ public class Snippet {
 		return new TextItem(namedTitle.name, namedTitle.title);
 	}
 
-	public static StaticTextItem staticText(NamedTitle namedTitle2) {
-		return new StaticTextItem(namedTitle2.name, namedTitle2.title);
-	}
-
 	public static ComboBoxItem combo(NamedTitle namedTitle) {
 		return new ComboBoxItem(namedTitle.name, namedTitle.title);
+	}
+
+	public static StaticTextItem staticText(NamedTitle namedTitle2) {
+		return new StaticTextItem(namedTitle2.name, namedTitle2.title);
 	}
 
 	public static final ListGridField field(NamedTitle namedTitle) {
