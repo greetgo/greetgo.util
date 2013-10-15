@@ -1,5 +1,7 @@
 package kz.greetgo.sgwt.base;
 
+import kz.greetgo.gwtshare.base.ClientException;
+
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.util.SC;
