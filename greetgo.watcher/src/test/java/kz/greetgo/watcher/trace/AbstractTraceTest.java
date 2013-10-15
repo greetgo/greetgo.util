@@ -5,7 +5,7 @@ public class AbstractTraceTest {
     final MyTrace trace = new MyTrace();
     
     final int Nthreads = 1000;
-    final int Nlines = 100;
+    final int Nlines = 1000;
     
     for (int t = 1; t <= Nthreads; t++) {
       final String T = "T" + t;

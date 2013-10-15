@@ -5,7 +5,7 @@ import kz.greetgo.watcher.trace.LinkedMessageOuter;
 public class MessageOuterTest {
   public static void main(String[] args) throws Exception {
     LinkedMessageOuter outer = new LinkedMessageOuter();
-    outer.outDir = "out/traces";
+    outer.outDir = "build/out/traces";
     
     for (int i = 0; i < 10000; i++) {
       outer.outMessage("Message " + i);

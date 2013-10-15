@@ -14,6 +14,11 @@ public class ByteCounter {
         counter++;
         return in.read();
       }
+      
+      @Override
+      public void close() throws IOException {
+        in.close();
+      }
     };
   }
   
@@ -35,6 +40,16 @@ public class ByteCounter {
       public void write(byte[] b, int off, int len) throws IOException {
         counter += len;
         out.write(b, off, len);
+      }
+      
+      @Override
+      public void close() throws IOException {
+        out.close();
+      }
+      
+      @Override
+      public void flush() throws IOException {
+        out.flush();
       }
     };
   }

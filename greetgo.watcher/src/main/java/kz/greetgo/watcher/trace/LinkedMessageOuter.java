@@ -44,6 +44,11 @@ public class LinkedMessageOuter implements MessageOuter {
     public MessageDot(String message) {
       this.message = message;
     }
+    
+    public String message(int N) {
+      if (message == null) return String.valueOf(N);
+      return message.replaceFirst("###", String.valueOf(N));
+    }
   }
   
   @Override
@@ -65,7 +70,7 @@ public class LinkedMessageOuter implements MessageOuter {
   }
   
   private void checkOutingInner() {
-    if (outingThread != null) return;
+    if (outingThread != null && outingThread.isAlive()) return;
     outingThread = new Thread(new Runnable() {
       @Override
       public void run() {
@@ -108,12 +113,14 @@ public class LinkedMessageOuter implements MessageOuter {
     
     new File(outDir).mkdirs();
     
+    int N = 1;
     MessageDot last = md;
     last.prev = null;
     while ((md = md.next) != null) {
       md.prev = last;
       md.prev.next = null;
       last = md;
+      N++;
     }
     
     File firstLog = getFile(outDir, 1);
@@ -142,7 +149,7 @@ public class LinkedMessageOuter implements MessageOuter {
         out = createPrinter(firstLog, counter);
       }
       
-      out.print(last.message);
+      out.print(last.message(N));
       out.print("\n");
       
       last = last.prev;

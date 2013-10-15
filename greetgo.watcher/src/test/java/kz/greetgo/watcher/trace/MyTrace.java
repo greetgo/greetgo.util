@@ -5,11 +5,11 @@ public class MyTrace extends TopTrace {
   public MyTrace() {
     super(new LinkedMessageOuter());
     LinkedMessageOuter asd = (LinkedMessageOuter)outer;
-    asd.outDir = "out/trace";
+    asd.outDir = "build/out/mytrace";
     asd.extention = ".mylog";
     asd.indexLength = 4;
-    asd.maxFilesCount = 30;
-    asd.maxFileSize = 10000;
+    asd.maxFilesCount = 3000;
+    asd.maxFileSize = 10000000;
     asd.prefix = "wow";
   }
   
@@ -20,7 +20,7 @@ public class MyTrace extends TopTrace {
     appendThreadID(sb);
     appendTraceID(sb);
     appendHost(sb);
-    append(sb, "INFO", message);
+    append(sb, "INFO ###", message);
     out(sb);
   }
 }
