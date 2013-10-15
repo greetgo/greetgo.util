@@ -45,9 +45,9 @@ public class LinkedMessageOuter implements MessageOuter {
       this.message = message;
     }
     
-    public String message(int N) {
-      if (message == null) return String.valueOf(N);
-      return message.replaceFirst("###", String.valueOf(N));
+    public String message(int accumulatedSize) {
+      if (message == null) return String.valueOf(accumulatedSize);
+      return message.replaceFirst("###", String.valueOf(accumulatedSize));
     }
   }
   
@@ -113,14 +113,14 @@ public class LinkedMessageOuter implements MessageOuter {
     
     new File(outDir).mkdirs();
     
-    int N = 1;
+    int accumulatedSize = 1;
     MessageDot last = md;
     last.prev = null;
     while ((md = md.next) != null) {
       md.prev = last;
       md.prev.next = null;
       last = md;
-      N++;
+      accumulatedSize++;
     }
     
     File firstLog = getFile(outDir, 1);
@@ -149,7 +149,7 @@ public class LinkedMessageOuter implements MessageOuter {
         out = createPrinter(firstLog, counter);
       }
       
-      out.print(last.message(N));
+      out.print(last.message(accumulatedSize));
       out.print("\n");
       
       last = last.prev;

@@ -98,7 +98,7 @@ public class TopTrace {
   
   public void appendMessage(StringBuilder sb, String message) {
     if (sb.length() > 0) sb.append(' ');
-    sb.append("MESSAGE ").append(message);
+    sb.append("MESS ### ").append(message);
   }
   
   public void appendDelay(StringBuilder sb, long timeFrom, long timeTo) {
