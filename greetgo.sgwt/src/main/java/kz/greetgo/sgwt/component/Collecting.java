@@ -76,7 +76,7 @@ public abstract class Collecting<T, F> extends Snippet {
     listing.grid.setData((ListGridRecord[])null);
     listService.invoke(filter, new BaseCallback<List<T>>() {
       public void onSuccess(List<T> result) {
-        listing.render(result);
+        listing.set(result);
       }
     });
   }
