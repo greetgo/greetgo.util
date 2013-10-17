@@ -85,7 +85,7 @@ public class TopTrace {
     StringBuilder s = new StringBuilder(traceIdLength);
     s.append(traceID());
     tolen(traceIdLength, s);
-    sb.append("TRACE ").append(s);
+    sb.append("TRACE").append(s);
   }
   
   public void appendThreadID(StringBuilder sb) {
@@ -93,7 +93,7 @@ public class TopTrace {
     StringBuilder s = new StringBuilder(threadIdLength);
     s.append(ThreadId.get());
     tolen(threadIdLength, s);
-    sb.append("THREAD ").append(s);
+    sb.append("THREAD").append(s);
   }
   
   public void appendMessage(StringBuilder sb, String message) {
@@ -113,12 +113,12 @@ public class TopTrace {
   
   public void appendProcessId(StringBuilder sb) {
     if (sb.length() > 0) sb.append(' ');
-    sb.append("PROCESS ").append(processId);
+    sb.append("PROCESS").append(processId);
   }
   
   public void appendHost(StringBuilder sb) {
     if (sb.length() > 0) sb.append(' ');
-    sb.append("HOST ").append(host);
+    sb.append("HOST").append(host);
   }
   
   public void append(StringBuilder sb, String key, String value) {
