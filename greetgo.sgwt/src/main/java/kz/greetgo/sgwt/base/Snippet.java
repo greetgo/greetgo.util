@@ -20,8 +20,10 @@ public class Snippet {
   public static final String PLUS = "+";
   public static final String MINUS = "-";
   public static final String ELLIPSIS = "...";
-  public static final String UP = "&#9650";
-  public static final String DOWN = "&#9660";
+  public static final String UP = "&#9650;";
+  public static final String DOWN = "&#9660;";
+  public static final String LEFT = "&#9668;";
+  public static final String RIGHT = "&#9658;";
   public static final String SEARCH = "Искать";
   public static final String REPORT = "Сформировать отчёт";
   
