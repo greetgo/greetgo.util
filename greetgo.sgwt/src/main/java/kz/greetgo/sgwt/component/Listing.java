@@ -10,7 +10,9 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 public abstract class Listing<T> extends Snippet {
   public final ListGrid grid = new ListGrid();
   
-  protected void render(List<T> result) {
+  private static final String ASSOCIATED = "ASSOCIATED";
+  
+  protected final void render(List<T> result) {
     ListGridRecord[] records = new ListGridRecord[result.size()];
     int i = 0;
     for (T t : result) {
@@ -22,14 +24,12 @@ public abstract class Listing<T> extends Snippet {
     grid.setData(records);
   }
   
-  private static final String ASSOCIATED = "ASSOCIATED";
-  
   @SuppressWarnings("unchecked")
-  protected final T associated(ListGridRecord record) {
+  public final T associated(ListGridRecord record) {
     return (T)record.getAttributeAsObject(ASSOCIATED);
   }
   
-  protected final T selection() {
+  public final T selection() {
     ListGridRecord selectedRecord = grid.getSelectedRecord();
     return selectedRecord == null ? null : associated(selectedRecord);
   }
