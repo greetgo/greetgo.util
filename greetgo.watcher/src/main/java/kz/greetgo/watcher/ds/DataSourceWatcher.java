@@ -3,8 +3,6 @@ package kz.greetgo.watcher.ds;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 
@@ -31,11 +29,6 @@ public abstract class DataSourceWatcher implements DataSource, LogMessageAccepto
   @Override
   public void setLogWriter(PrintWriter out) throws SQLException {
     watchingDataSource.setLogWriter(out);
-  }
-  
-  @Override
-  public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-    return watchingDataSource.getParentLogger();
   }
   
   @Override
