@@ -18,7 +18,7 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 public abstract class Collecting<T, F> extends Snippet {
   private final ServiceAsync<F, List<T>> listService;
-  private final Listing<T> listing;
+  protected final Listing<T> listing;
   public final VLayout root;
   public F filter;
   
