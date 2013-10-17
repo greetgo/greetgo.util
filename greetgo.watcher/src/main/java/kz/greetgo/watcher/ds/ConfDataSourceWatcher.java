@@ -7,7 +7,7 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 
-public class ConfDataSourceWatcher extends DataSourceWatcher {
+public abstract class ConfDataSourceWatcher extends DataSourceWatcher {
   private final String filePrefix;
   
   private boolean activeInfo = false;
