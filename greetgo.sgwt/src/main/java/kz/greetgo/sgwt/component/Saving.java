@@ -28,7 +28,9 @@ public abstract class Saving<T> extends Snippet implements Async<T, T> {
         saveService.invoke(value, new BaseCallback<T>() {
           public void onSuccess(T t) {
             value = null;
-            sync.invoke(t);
+            if (sync != null) {
+              sync.invoke(t);
+            }
             window.hide();
           }
         });
