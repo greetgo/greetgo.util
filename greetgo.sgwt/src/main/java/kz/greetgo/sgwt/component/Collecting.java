@@ -5,6 +5,7 @@ import java.util.List;
 import kz.greetgo.gwtshare.base.ServiceAsync;
 import kz.greetgo.gwtshare.base.Sync;
 import kz.greetgo.sgwt.base.BaseCallback;
+import kz.greetgo.sgwt.base.Snippet;
 
 import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.widgets.IButton;
@@ -15,19 +16,21 @@ import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-public abstract class Collecting<T, F> extends Listing<T> {
+public abstract class Collecting<T, F> extends Snippet {
   private final ServiceAsync<F, List<T>> listService;
+  private final Listing<T> listing;
   public final VLayout root;
   public F filter;
   
   public Collecting(final Saving<T> saving, ServiceAsync<F, List<T>> listService,
-      final ServiceAsync<T, Void> removeService) {
+      final ServiceAsync<T, Void> removeService, Listing<T> listing) {
     this.listService = listService;
+    this.listing = listing;
     
     ClickHandler toSave = new ClickHandler() {
       public void onClick(ClickEvent event) {
         boolean isNew = ((IButton)event.getSource()).getTitle().equals(PLUS);
-        saving.invoke(isNew ? null : selection(), new Sync<T>() {
+        saving.invoke(isNew ? null : Collecting.this.listing.selection(), new Sync<T>() {
           public void invoke(T t) {
             update();
           }
@@ -40,7 +43,7 @@ public abstract class Collecting<T, F> extends Listing<T> {
     
     final IButton minus = new IButton(MINUS, new ClickHandler() {
       public void onClick(ClickEvent event) {
-        removeService.invoke(selection(), new BaseCallback<Void>() {
+        removeService.invoke(Collecting.this.listing.selection(), new BaseCallback<Void>() {
           public void onSuccess(Void result) {
             update();
           }
@@ -48,10 +51,10 @@ public abstract class Collecting<T, F> extends Listing<T> {
       }
     });
     
-    grid.setSelectionType(SelectionStyle.SINGLE);
-    grid.addSelectionChangedHandler(new SelectionChangedHandler() {
+    listing.grid.setSelectionType(SelectionStyle.SINGLE);
+    listing.grid.addSelectionChangedHandler(new SelectionChangedHandler() {
       public void onSelectionChanged(SelectionEvent event) {
-        boolean disabled = grid.getSelectedRecord() == null;
+        boolean disabled = Collecting.this.listing.grid.getSelectedRecord() == null;
         minus.setDisabled(disabled);
         ellipsis.setDisabled(disabled);
       }
@@ -64,16 +67,16 @@ public abstract class Collecting<T, F> extends Listing<T> {
     minus.setWidth(TOOL);
     ellipsis.setWidth(TOOL);
     
-    root = vl(hl(grid, toolbar(vl(plus, minus, ellipsis))));
+    root = vl(hl(listing.grid, toolbar(vl(plus, minus, ellipsis))));
     root.setMembersMargin(GRAIN);
     root.setWidth100();
   }
   
   public void update() {
-    grid.setData((ListGridRecord[])null);
+    listing.grid.setData((ListGridRecord[])null);
     listService.invoke(filter, new BaseCallback<List<T>>() {
       public void onSuccess(List<T> result) {
-        render(result);
+        listing.render(result);
       }
     });
   }
