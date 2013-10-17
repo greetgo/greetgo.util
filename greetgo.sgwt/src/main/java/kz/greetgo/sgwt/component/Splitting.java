@@ -10,9 +10,9 @@ import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.HLayout;
 
-public abstract class Splitting<T> extends Snippet {
-  private final Listing<T> left;
-  private final Listing<T> right;
+public final class Splitting<T> extends Snippet {
+  public final Listing<T> left;
+  public final Listing<T> right;
   public HLayout root;
   
   private static final <T> ClickHandler clickHandler(final Listing<T> from, final Listing<T> to) {
