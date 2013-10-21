@@ -30,7 +30,7 @@ public final class Splitting<T> extends Snippet {
       final IButton button) {
     return new SelectionChangedHandler() {
       public void onSelectionChanged(SelectionEvent event) {
-        button.setDisabled(listing.grid.anySelected());
+        button.setDisabled(!listing.grid.anySelected());
       }
     };
   }
