@@ -22,6 +22,8 @@ public final class Splitting<T> extends Snippet {
           to.add(from.associated(record));
         }
         from.grid.removeSelectedData();
+        to.grid.redraw();
+        from.grid.redraw();
       }
     };
   }
