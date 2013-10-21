@@ -11,19 +11,21 @@ import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.HLayout;
 
 public final class Splitting<T> extends Snippet {
+  private final IButton rightToLeft;
+  private final IButton leftToRight;
   public final Listing<T> left;
   public final Listing<T> right;
   public HLayout root;
   
-  private static final <T> ClickHandler clickHandler(final Listing<T> from, final Listing<T> to) {
+  private final <T> ClickHandler clickHandler(final Listing<T> from, final Listing<T> to) {
     return new ClickHandler() {
       public void onClick(ClickEvent event) {
         for (ListGridRecord record : from.grid.getSelectedRecords()) {
           to.add(from.associated(record));
+          from.grid.removeData(record);
+          rightToLeft.disable();
+          leftToRight.disable();
         }
-        from.grid.removeSelectedData();
-        to.grid.redraw();
-        from.grid.redraw();
       }
     };
   }
@@ -41,8 +43,8 @@ public final class Splitting<T> extends Snippet {
     this.left = leftListing;
     this.right = rightListing;
     
-    IButton rightToLeft = new IButton(LEFT, clickHandler(right, left));
-    IButton leftToRight = new IButton(RIGHT, clickHandler(left, right));
+    rightToLeft = new IButton(LEFT, clickHandler(right, left));
+    leftToRight = new IButton(RIGHT, clickHandler(left, right));
     rightToLeft.setWidth(TOOL);
     leftToRight.setWidth(TOOL);
     
