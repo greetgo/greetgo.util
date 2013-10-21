@@ -19,9 +19,7 @@ public abstract class Listing<T> extends Snippet implements Forcible<List<T>, Li
   
   @Override
   public final void force() {
-    if (sync == null) {
-      return;
-    }
+    // WARN sync != null
     List<T> list = new ArrayList<T>();
     for (ListGridRecord record : grid.getRecords()) {
       list.add(associated(record));
