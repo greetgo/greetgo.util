@@ -47,6 +47,8 @@ public final class Splitting<T> extends Snippet {
     leftToRight = new IButton(RIGHT, clickHandler(left, right));
     rightToLeft.setWidth(TOOL);
     leftToRight.setWidth(TOOL);
+    rightToLeft.disable();
+    leftToRight.disable();
     
     left.grid.addSelectionChangedHandler(selectionHandler(left, leftToRight));
     right.grid.addSelectionChangedHandler(selectionHandler(right, rightToLeft));
