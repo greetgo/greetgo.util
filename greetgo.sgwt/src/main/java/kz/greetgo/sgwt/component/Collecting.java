@@ -2,6 +2,7 @@ package kz.greetgo.sgwt.component;
 
 import java.util.List;
 
+import kz.greetgo.gwtshare.base.Async;
 import kz.greetgo.gwtshare.base.ServiceAsync;
 import kz.greetgo.gwtshare.base.Sync;
 import kz.greetgo.sgwt.base.BaseCallback;
@@ -16,11 +17,12 @@ import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-public abstract class Collecting<T, F> extends Snippet {
+public class Collecting<F, T> extends Snippet implements Async<F, List<T>> {
   private final ServiceAsync<F, List<T>> listService;
-  protected final Listing<T> listing;
+  private F filter;
+  private Sync<List<T>> sync;
+  public final Listing<T> listing;
   public final VLayout root;
-  public F filter;
   
   public Collecting(final Saving<T> saving, ServiceAsync<F, List<T>> listService,
       final ServiceAsync<T, Void> removeService, Listing<T> listing) {
@@ -77,7 +79,16 @@ public abstract class Collecting<T, F> extends Snippet {
     listService.invoke(filter, new BaseCallback<List<T>>() {
       public void onSuccess(List<T> result) {
         listing.invoke(result, null);
+        if (sync != null) {
+          sync.invoke(result);
+        }
       }
     });
+  }
+  
+  @Override
+  public void invoke(F filter, Sync<List<T>> sync) {
+    this.filter = filter;
+    this.sync = sync;
   }
 }
