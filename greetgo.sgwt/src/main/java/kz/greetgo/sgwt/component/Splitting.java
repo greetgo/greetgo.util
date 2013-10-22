@@ -17,7 +17,7 @@ public final class Splitting<T> extends Snippet {
   public final Listing<T> right;
   public HLayout root;
   
-  private final <T> ClickHandler clickHandler(final Listing<T> from, final Listing<T> to) {
+  private final ClickHandler clickHandler(final Listing<T> from, final Listing<T> to) {
     return new ClickHandler() {
       public void onClick(ClickEvent event) {
         for (ListGridRecord record : from.grid.getSelectedRecords()) {
