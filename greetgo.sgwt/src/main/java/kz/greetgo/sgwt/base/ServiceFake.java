@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import kz.greetgo.gwtshare.base.ServiceAsync;
 
+import com.google.gwt.http.client.Request;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.regexp.shared.SplitResult;
 import com.google.gwt.user.client.Timer;
@@ -39,13 +40,13 @@ public abstract class ServiceFake<A, R> implements ServiceAsync<A, R> {
   }
   
   @Override
-  public final void invoke(final A action, final AsyncCallback<R> callback) {
+  public final Request invoke(final A action, final AsyncCallback<R> callback) {
     String qualified = this.getClass().toString();
     final String className = qualified.substring(qualified.lastIndexOf('.') + 1);
     final int seq = SEQ++;
     final int currentDelay = DELAYS[seq % DELAYS.length];
     final boolean trace = !"PingServiceFake".equals(className);
-    new Timer() {
+    final Timer timer = new Timer() {
       {
         trace("<<", action);
       }
@@ -70,7 +71,18 @@ public abstract class ServiceFake<A, R> implements ServiceAsync<A, R> {
               + obj);
         }
       }
-    }.schedule(currentDelay);
+    };
+    timer.schedule(currentDelay);
+    
+    return new Request() {
+      public void cancel() {
+        timer.cancel();
+      }
+      
+      public boolean isPending() {
+        return true;
+      }
+    };
   }
   
   protected abstract R fakeInvoke(A action);
