@@ -1,5 +1,6 @@
 package kz.greetgo.gwtshare.base;
 
+import com.google.gwt.http.client.Request;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -13,5 +14,5 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  *          Result type.
  */
 public interface ServiceAsync<A, R> {
-  void invoke(A arg, AsyncCallback<R> callback);
+  Request invoke(A arg, AsyncCallback<R> callback);
 }
