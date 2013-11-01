@@ -18,6 +18,10 @@ import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class Collecting<F, T> extends Snippet implements Async<F, List<T>> {
+  public static final int VISIBLE_PLUS = 1;
+  public static final int VISIBLE_MINUS = 2;
+  public static final int VISIBLE_ELLIPSIS = 4;
+  
   private final ServiceAsync<F, List<T>> listService;
   private F filter;
   private Sync<List<T>> sync;
@@ -26,6 +30,12 @@ public class Collecting<F, T> extends Snippet implements Async<F, List<T>> {
   
   public Collecting(final Saving<T> saving, ServiceAsync<F, List<T>> listService,
       final ServiceAsync<T, Void> removeService, Listing<T> listing) {
+    this(saving, listService, removeService, listing, VISIBLE_PLUS | VISIBLE_MINUS
+        | VISIBLE_ELLIPSIS);
+  }
+  
+  public Collecting(final Saving<T> saving, ServiceAsync<F, List<T>> listService,
+      final ServiceAsync<T, Void> removeService, Listing<T> listing, int visibility) {
     this.listService = listService;
     this.listing = listing;
     
@@ -72,6 +82,10 @@ public class Collecting<F, T> extends Snippet implements Async<F, List<T>> {
     root = vl(hl(listing.grid, toolbar(vl(plus, minus, ellipsis))));
     root.setMembersMargin(GRAIN);
     root.setWidth100();
+    
+    plus.setVisible((visibility & VISIBLE_PLUS) != 0);
+    minus.setVisible((visibility & VISIBLE_MINUS) != 0);
+    ellipsis.setVisible((visibility & VISIBLE_ELLIPSIS) != 0);
   }
   
   public void update() {
