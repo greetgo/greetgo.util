@@ -104,5 +104,6 @@ public class Collecting<F, T> extends Snippet implements Async<F, List<T>> {
   public void invoke(F filter, Sync<List<T>> sync) {
     this.filter = filter;
     this.sync = sync;
+    update();
   }
 }
