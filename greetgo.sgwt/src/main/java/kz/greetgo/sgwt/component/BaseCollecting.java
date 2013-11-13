@@ -17,7 +17,7 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 
-public class BaseCollecting<F, T> extends Snippet implements Async<F, List<T>> {
+public abstract class BaseCollecting<F, T> extends Snippet implements Async<F, List<T>> {
   private final ServiceAsync<F, List<T>> listService;
   public final Listing<T> listing;
   private F filter;
