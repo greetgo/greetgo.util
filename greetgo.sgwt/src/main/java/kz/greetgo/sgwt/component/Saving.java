@@ -12,12 +12,13 @@ import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public abstract class Saving<T> extends Snippet implements Async<T, T> {
   private Sync<T> sync;
   protected T value; // gather should use "Copy on Write" strategy.
-  protected final VLayout content = vl();
+  protected final Layout content;
   private final IButton saveButton;
   public final Window window = new Window();
   
@@ -47,13 +48,19 @@ public abstract class Saving<T> extends Snippet implements Async<T, T> {
     window.setAutoCenter(true);
     window.setIsModal(true);
     
-    content.setMargin(GRAIN);
-    content.setWidth100();
-    content.setHeight100();
+    content = layout(saveButton, cancelButton);
+  }
+  
+  protected Layout layout(IButton saveButton, IButton cancelButton) {
+    VLayout layout = vl();
+    layout.setMargin(GRAIN);
+    layout.setWidth100();
+    layout.setHeight100();
     
     HLayout toolbar = toolbar(hl(saveButton, cancelButton));
     toolbar.setAlign(Alignment.CENTER);
-    items(window, content, toolbar);
+    items(window, layout, toolbar);
+    return layout;
   }
   
   @Override

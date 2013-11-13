@@ -15,27 +15,18 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
+import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class Collecting<F, T> extends Snippet implements Async<F, List<T>> {
-  public static final int VISIBLE_PLUS = 1;
-  public static final int VISIBLE_MINUS = 2;
-  public static final int VISIBLE_ELLIPSIS = 4;
-  
   private final ServiceAsync<F, List<T>> listService;
   private F filter;
   private Sync<List<T>> sync;
   public final Listing<T> listing;
-  public final VLayout root;
+  public final Layout root;
   
-  public Collecting(final Saving<T> saving, ServiceAsync<F, List<T>> listService,
+  public Collecting(final Async<T, T> saving, ServiceAsync<F, List<T>> listService,
       final ServiceAsync<T, Void> removeService, Listing<T> listing) {
-    this(saving, listService, removeService, listing, VISIBLE_PLUS | VISIBLE_MINUS
-        | VISIBLE_ELLIPSIS);
-  }
-  
-  public Collecting(final Saving<T> saving, ServiceAsync<F, List<T>> listService,
-      final ServiceAsync<T, Void> removeService, Listing<T> listing, int visibility) {
     this.listService = listService;
     this.listing = listing;
     
@@ -72,20 +63,21 @@ public class Collecting<F, T> extends Snippet implements Async<F, List<T>> {
       }
     });
     
-    minus.setDisabled(true);
-    ellipsis.setDisabled(true);
+    minus.disable();
+    ellipsis.disable();
     
+    root = layout(plus, minus, ellipsis);
+  }
+  
+  protected Layout layout(IButton plus, IButton minus, IButton ellipsis) {
     plus.setWidth(TOOL);
     minus.setWidth(TOOL);
     ellipsis.setWidth(TOOL);
     
-    root = vl(hl(listing.grid, toolbar(vl(plus, minus, ellipsis))));
-    root.setMembersMargin(GRAIN);
-    root.setWidth100();
-    
-    plus.setVisible((visibility & VISIBLE_PLUS) != 0);
-    minus.setVisible((visibility & VISIBLE_MINUS) != 0);
-    ellipsis.setVisible((visibility & VISIBLE_ELLIPSIS) != 0);
+    VLayout layout = vl(hl(listing.grid, toolbar(vl(plus, minus, ellipsis))));
+    layout.setMembersMargin(GRAIN);
+    layout.setWidth100();
+    return layout;
   }
   
   public void update() {
