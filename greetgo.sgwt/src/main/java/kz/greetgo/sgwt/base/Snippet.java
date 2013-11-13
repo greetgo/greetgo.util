@@ -92,4 +92,10 @@ public class Snippet {
     stack.setSections(section);
     return stack;
   }
+  
+  public static final void setDisabled(boolean disabled, Canvas... canvases) {
+    for (Canvas canvas : canvases) {
+      canvas.setDisabled(disabled);
+    }
+  }
 }
