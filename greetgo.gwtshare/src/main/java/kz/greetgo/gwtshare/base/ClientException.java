@@ -1,8 +1,6 @@
 package kz.greetgo.gwtshare.base;
 
-public class ClientException extends Exception {
-  private static final long serialVersionUID = 198781797530029855L;
-  
+public class ClientException extends SgwtException {
   public ClientException() {}
   
   public ClientException(String message, Throwable cause) {

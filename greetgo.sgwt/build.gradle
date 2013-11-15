@@ -5,7 +5,7 @@ apply plugin: 'maven'
 group = 'kz.greetgo'
 
 sourceCompatibility = 1.6
-version = '1.11.7'
+version = '1.11.8'
 
 def nowDate = new Date()
 def nowFormattedDate = nowDate.format("yyyy-MM-dd/HH:mm:ss")
@@ -61,7 +61,7 @@ configurations { repoUpload }
 dependencies {
   compile "com.google.gwt:gwt-user:2.4.0"
   compile "com.smartgwt:smartgwt:3.0"
-  compile "kz.greetgo:greetgo.gwtshare:1.2.1"
+  compile "kz.greetgo:greetgo.gwtshare:1.2.2"
   
   testCompile 'org.testng:testng:6.1.1'
   testCompile 'org.easytesting:fest-assert-core:2.0M10'
