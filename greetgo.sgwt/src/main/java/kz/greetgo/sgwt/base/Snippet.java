@@ -1,5 +1,7 @@
 package kz.greetgo.sgwt.base;
 
+import java.util.LinkedHashMap;
+
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.form.DynamicForm;
@@ -97,5 +99,13 @@ public class Snippet {
     for (Canvas canvas : canvases) {
       canvas.setDisabled(disabled);
     }
+  }
+  
+  public static final LinkedHashMap<String, String> valueMap(NamedTitle... namedTitles) {
+    LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
+    for (NamedTitle namedTitle : namedTitles) {
+      valueMap.put(namedTitle.name, namedTitle.title);
+    }
+    return valueMap;
   }
 }
