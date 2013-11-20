@@ -29,6 +29,7 @@ public class Snippet {
   public static final String SEARCH = "Искать";
   public static final String REPORT = "Сформировать отчёт";
   public static final String NODATA = "Нет данных";
+  public static final String SELECT = "Выбрать";
   
   public static final int GRAIN = 8;
   public static final int TOOL = 3 * GRAIN;
