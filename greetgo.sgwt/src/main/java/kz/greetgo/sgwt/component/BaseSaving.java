@@ -13,7 +13,6 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 
 public abstract class BaseSaving<T> extends Snippet implements Async<T, T> {
   private Sync<T> sync;
-  protected T value; // gather should use "Copy on Write" strategy.
   protected final IButton saveButton;
   protected final IButton cancelButton;
   protected final Window window = new Window();
@@ -21,10 +20,8 @@ public abstract class BaseSaving<T> extends Snippet implements Async<T, T> {
   public BaseSaving(final ServiceAsync<T, T> saveService) {
     saveButton = new IButton(SAVE, new ClickHandler() {
       public void onClick(ClickEvent event) {
-        gather();
-        saveService.invoke(value, new BaseCallback<T>() {
+        saveService.invoke(gather(), new BaseCallback<T>() {
           public void onSuccess(T t) {
-            value = null;
             if (sync != null) {
               sync.invoke(t);
             }
@@ -47,9 +44,8 @@ public abstract class BaseSaving<T> extends Snippet implements Async<T, T> {
   
   @Override
   public final void invoke(T value, final Sync<T> sync) {
-    this.value = value;
     this.sync = sync;
-    scatter();
+    scatter(value);
     updateCanSave();
     window.show();
   }
@@ -60,7 +56,7 @@ public abstract class BaseSaving<T> extends Snippet implements Async<T, T> {
   
   protected abstract boolean canSave();
   
-  protected abstract void gather();
+  protected abstract T gather();
   
-  protected abstract void scatter();
+  protected abstract void scatter(T value);
 }
