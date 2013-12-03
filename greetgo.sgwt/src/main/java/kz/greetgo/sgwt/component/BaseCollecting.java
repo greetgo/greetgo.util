@@ -63,7 +63,7 @@ public abstract class BaseCollecting<F, T> extends Snippet implements Async<F, L
     listing.grid.setSelectionType(SelectionStyle.SINGLE);
   }
   
-  public final void update() {
+  public void update() {
     listing.grid.setData((ListGridRecord[])null);
     listService.invoke(filter, new BaseCallback<List<T>>() {
       public void onSuccess(List<T> result) {
