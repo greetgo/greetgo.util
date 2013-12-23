@@ -64,7 +64,7 @@ public abstract class BaseCollecting<F, T> extends Snippet implements Async<F, L
   }
   
   public void update() {
-    listing.grid.setData((ListGridRecord[])null);
+    listing.grid.setData(new ListGridRecord[0]);
     listService.invoke(filter, new BaseCallback<List<T>>() {
       public void onSuccess(List<T> result) {
         listing.invoke(result, null);
