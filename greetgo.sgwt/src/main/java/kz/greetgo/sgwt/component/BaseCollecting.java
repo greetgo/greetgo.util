@@ -18,10 +18,10 @@ import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 
 public abstract class BaseCollecting<F, T> extends Snippet implements Async<F, List<T>> {
-  private final ServiceAsync<F, List<T>> listService;
+  protected final ServiceAsync<F, List<T>> listService;
   public final Listing<T> listing;
-  private F filter;
-  private Sync<List<T>> sync;
+  protected F filter;
+  protected Sync<List<T>> sync;
   
   protected final ClickHandler toSave(final Async<T, T> saving) {
     return new ClickHandler() {
