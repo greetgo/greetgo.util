@@ -11,6 +11,7 @@ contract long
    productType
    client person
    lastPkbRequest pkbRequest
+   asd time
 
 person long from 2344
    type enum NATURAL LEGAL
@@ -70,6 +71,7 @@ pkbResultParamAnnotation
    valueInt int
    type AnnotationType
    hello HelloEnum
+   goodby time
    
    +SelectAll selectAll orderBy( valueStr, valueInt )
 

@@ -840,82 +840,162 @@ public abstract class Nf6Generator {
     all.addAll(keyInfo);
     all.addAll(fieldInfo);
     {
-      comm.print("  @" + comm._(INSERT) + "(\"insert into " + tabPrefix + field.table.name + "_"
-          + field.name);
-      comm.print(" (");
-      {
-        boolean first = true;
-        for (FieldInfo fi : all) {
-          comm.print(first ? "" :", ");
-          first = false;
-          comm.print(fi.name);
-        }
+      insField(comm, field, java, all);
+      if (SimpleType.ttime.equals(field.type)) {
+        insFieldWithNow(comm, field, java, keyInfo, all);
       }
-      comm.print(") values (");
-      {
-        boolean first = true;
-        for (FieldInfo fi : all) {
-          comm.print(first ? "" :", ");
-          first = false;
-          if (SimpleType.tbool.equals(fi.javaType)) {
-            comm.print("#{" + fi.name + "Int}");
-          } else {
-            comm.print("#{" + fi.name + "}");
-          }
-        }
-      }
-      comm.println(")\")");
-      comm.println("  void ins" + firstUpper(field.name) + "(" + comm._(java.name()) + " "
-          + field.table.name + ");");
     }
     {
-      comm.print("  @" + comm._(INSERT) + "(\"insert into " + tabPrefix + field.table.name + "_"
-          + field.name);
-      comm.print(" (");
-      {
-        boolean first = true;
-        for (FieldInfo fi : all) {
-          comm.print(first ? "" :", ");
-          first = false;
-          comm.print(fi.name);
-        }
+      setField(comm, field, keyInfo, fieldInfo, all);
+      if (SimpleType.ttime.equals(field.type)) {
+        setFieldWithNow(comm, field, keyInfo, all);
       }
-      comm.print(") values (");
-      {
-        boolean first = true;
-        for (FieldInfo fi : all) {
-          comm.print(first ? "" :", ");
-          first = false;
-          if (SimpleType.tbool.equals(fi.javaType)) {
-            comm.print("#{" + fi.name + "Int}");
-          } else {
-            comm.print("#{" + fi.name + "}");
-          }
-        }
-      }
-      comm.println(")\")");
-      comm.print("  void set" + firstUpper(field.name) + "(");
-      {
-        boolean first = true;
-        for (FieldInfo fi : keyInfo) {
-          comm.print(first ? "" :", ");
-          first = false;
-          comm.print("@" + comm._(PARAM) + "(\"" + fi.name + "\")" + comm._(fi.javaType.javaType())
-              + " " + fi.name);
-        }
-      }
-      {
-        for (FieldInfo fi : fieldInfo) {
-          if (SimpleType.tbool.equals(fi.javaType)) {
-            comm.print(", @" + comm._(PARAM) + "(\"" + fi.name + "Int\") int " + fi.name + "Int");
-          } else {
-            comm.print(", @" + comm._(PARAM) + "(\"" + fi.name + "\")"
-                + comm._(fi.javaType.objectType()) + " " + fi.name);
-          }
-        }
-      }
-      comm.println(");");
     }
+  }
+  
+  private void setFieldWithNow(ClassOuter comm, Field field, List<FieldInfo> keyInfo,
+      List<FieldInfo> all) {
+    comm.print("  @" + comm._(INSERT) + "(\"insert into " + tabPrefix + field.table.name + "_"
+        + field.name);
+    comm.print(" (");
+    {
+      boolean first = true;
+      for (FieldInfo fi : all) {
+        comm.print(first ? "" :", ");
+        first = false;
+        comm.print(fi.name);
+      }
+    }
+    comm.print(") values (");
+    {
+      for (FieldInfo fi : keyInfo) {
+        if (SimpleType.tbool.equals(fi.javaType)) {
+          comm.print("#{" + fi.name + "Int}, ");
+        } else {
+          comm.print("#{" + fi.name + "}, ");
+        }
+      }
+    }
+    comm.println("current_timestamp)\")");
+    comm.print("  void set" + firstUpper(field.name) + "WithNow(");
+    {
+      boolean first = true;
+      for (FieldInfo fi : keyInfo) {
+        comm.print(first ? "" :", ");
+        first = false;
+        comm.print("@" + comm._(PARAM) + "(\"" + fi.name + "\")" + comm._(fi.javaType.javaType())
+            + " " + fi.name);
+      }
+    }
+    comm.println(");");
+  }
+  
+  private void setField(ClassOuter comm, Field field, List<FieldInfo> keyInfo,
+      List<FieldInfo> fieldInfo, List<FieldInfo> all) {
+    comm.print("  @" + comm._(INSERT) + "(\"insert into " + tabPrefix + field.table.name + "_"
+        + field.name);
+    comm.print(" (");
+    {
+      boolean first = true;
+      for (FieldInfo fi : all) {
+        comm.print(first ? "" :", ");
+        first = false;
+        comm.print(fi.name);
+      }
+    }
+    comm.print(") values (");
+    {
+      boolean first = true;
+      for (FieldInfo fi : all) {
+        comm.print(first ? "" :", ");
+        first = false;
+        if (SimpleType.tbool.equals(fi.javaType)) {
+          comm.print("#{" + fi.name + "Int}");
+        } else {
+          comm.print("#{" + fi.name + "}");
+        }
+      }
+    }
+    comm.println(")\")");
+    comm.print("  void set" + firstUpper(field.name) + "(");
+    {
+      boolean first = true;
+      for (FieldInfo fi : keyInfo) {
+        comm.print(first ? "" :", ");
+        first = false;
+        comm.print("@" + comm._(PARAM) + "(\"" + fi.name + "\")" + comm._(fi.javaType.javaType())
+            + " " + fi.name);
+      }
+    }
+    {
+      for (FieldInfo fi : fieldInfo) {
+        if (SimpleType.tbool.equals(fi.javaType)) {
+          comm.print(", @" + comm._(PARAM) + "(\"" + fi.name + "Int\") int " + fi.name + "Int");
+        } else {
+          comm.print(", @" + comm._(PARAM) + "(\"" + fi.name + "\")"
+              + comm._(fi.javaType.objectType()) + " " + fi.name);
+        }
+      }
+    }
+    comm.println(");");
+  }
+  
+  private void insFieldWithNow(ClassOuter comm, Field field, ClassOuter java,
+      List<FieldInfo> keyInfo, List<FieldInfo> all) {
+    comm.print("  @" + comm._(INSERT) + "(\"insert into " + tabPrefix + field.table.name + "_"
+        + field.name);
+    comm.print(" (");
+    {
+      boolean first = true;
+      for (FieldInfo fi : all) {
+        comm.print(first ? "" :", ");
+        first = false;
+        comm.print(fi.name);
+      }
+    }
+    comm.print(") values (");
+    {
+      for (FieldInfo fi : keyInfo) {
+        if (SimpleType.tbool.equals(fi.javaType)) {
+          comm.print("#{" + fi.name + "Int}, ");
+        } else {
+          comm.print("#{" + fi.name + "}, ");
+        }
+      }
+    }
+    comm.println("current_timestamp)\")");
+    comm.println("  void ins" + firstUpper(field.name) + "WithNow(" + comm._(java.name()) + " "
+        + field.table.name + ");");
+  }
+  
+  private void insField(ClassOuter comm, Field field, ClassOuter java, List<FieldInfo> all) {
+    comm.print("  @" + comm._(INSERT) + "(\"insert into " + tabPrefix + field.table.name + "_"
+        + field.name);
+    comm.print(" (");
+    {
+      boolean first = true;
+      for (FieldInfo fi : all) {
+        comm.print(first ? "" :", ");
+        first = false;
+        comm.print(fi.name);
+      }
+    }
+    comm.print(") values (");
+    {
+      boolean first = true;
+      for (FieldInfo fi : all) {
+        comm.print(first ? "" :", ");
+        first = false;
+        if (SimpleType.tbool.equals(fi.javaType)) {
+          comm.print("#{" + fi.name + "Int}");
+        } else {
+          comm.print("#{" + fi.name + "}");
+        }
+      }
+    }
+    comm.println(")\")");
+    comm.println("  void ins" + firstUpper(field.name) + "(" + comm._(java.name()) + " "
+        + field.table.name + ");");
   }
   
   private void generateDaoTableLoadAt(ClassOuter comm, Table table, ClassOuter java,
