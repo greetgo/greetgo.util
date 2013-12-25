@@ -12,6 +12,7 @@ contract long
    client person
    lastPkbRequest pkbRequest
    asd time
+   +ToDictionary kz.greetgo.sqlmanager.gen.Dict client,asd
 
 person long from 2344
    type enum NATURAL LEGAL
@@ -74,6 +75,7 @@ pkbResultParamAnnotation
    goodby time
    
    +SelectAll selectAll orderBy( valueStr, valueInt )
+   +ToDictionary kz.greetgo.sqlmanager.gen.Dict type,hello,goodby
 
 enum HelloEnum as kz.greetgo.sqlmanager.gen.HelloEnum
 

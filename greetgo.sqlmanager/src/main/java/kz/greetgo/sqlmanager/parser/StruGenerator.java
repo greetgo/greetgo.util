@@ -23,11 +23,13 @@ import kz.greetgo.sqlmanager.model.Table;
 import kz.greetgo.sqlmanager.model.Type;
 import kz.greetgo.sqlmanager.model.command.Command;
 import kz.greetgo.sqlmanager.model.command.SelectAll;
+import kz.greetgo.sqlmanager.model.command.ToDictionary;
 
 public class StruGenerator {
   public final Stru stru = new Stru();
   
   private static final Pattern ORDER_BY = Pattern.compile(".*orderBy\\s*\\(([^\\)]+)\\).*");
+  private static final Pattern TO_DICT = Pattern.compile("\\s*(\\S+)\\s+(.*)");
   
   private class PCommand {
     final PTable owner;
@@ -57,6 +59,14 @@ public class StruGenerator {
         
         return new SelectAll(methodName.trim(), orderBy.trim());
       }
+      
+      if ("ToDictionary".equals(name)) {
+        Matcher m = TO_DICT.matcher(descr);
+        if (!m.matches()) throw new StruParseException("Cannot parse ToDictionary in table "
+            + owner.name);
+        return new ToDictionary(m.group(1), m.group(2).trim());
+      }
+      
       throw new StruParseException("Cannot parse command [" + name + "] [" + descr + "]: table "
           + owner.name);
     }

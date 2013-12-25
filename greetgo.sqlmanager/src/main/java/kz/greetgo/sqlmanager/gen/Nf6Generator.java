@@ -18,6 +18,7 @@ import kz.greetgo.sqlmanager.model.Table;
 import kz.greetgo.sqlmanager.model.Type;
 import kz.greetgo.sqlmanager.model.command.Command;
 import kz.greetgo.sqlmanager.model.command.SelectAll;
+import kz.greetgo.sqlmanager.model.command.ToDictionary;
 import kz.greetgo.sqlmanager.parser.StruGenerator;
 import kz.greetgo.sqlmanager.parser.StruParseException;
 
@@ -36,6 +37,7 @@ public abstract class Nf6Generator {
   public String bigQuote = "big_quote";
   public String _ins_ = "ins_";
   public String _value_ = "__value__";
+  public String daoSuffix = "Dao";
   
   public String javaGenDir;
   public String modelPackage;
@@ -539,8 +541,8 @@ public abstract class Nf6Generator {
   }
   
   private ClassOuter generateJava(Table table, ClassOuter fieldsClass) {
-    ClassOuter ret = new ClassOuter(modelPackage + table.subpackage(), "", table.name);
-    ret.println("public class " + ret.className + " extends " + ret._(fieldsClass.name()) + " {");
+    ClassOuter java = new ClassOuter(modelPackage + table.subpackage(), "", table.name);
+    java.println("public class " + java.className + " extends " + java._(fieldsClass.name()) + " {");
     
     class F {
       final SimpleType stype;
@@ -565,57 +567,63 @@ public abstract class Nf6Generator {
     }
     
     for (F f : ff) {
-      ret.println("public " + f.stype.javaType + " " + f.name + ";");
+      java.println("public " + f.stype.javaType + " " + f.name + ";");
     }
     
     {
-      ret.println("@Override public int hashCode() {");
-      ret.print("return " + ret._(ARRAYS) + ".hashCode(new Object[] {");
+      java.println("@Override public int hashCode() {");
+      java.print("return " + java._(ARRAYS) + ".hashCode(new Object[] {");
       for (F f : ff) {
-        ret.print(f.name + ",");
+        java.print(f.name + ",");
       }
-      ret.println(" });");
-      ret.println("}");
+      java.println(" });");
+      java.println("}");
     }
     {
-      ret.println("@Override public boolean equals(Object obj) {");
-      ret.println("if (this == obj) return true;");
-      ret.println("if (obj == null) return false;");
-      ret.println("if (getClass() != obj.getClass()) return false;");
-      ret.println(ret.className + " other = (" + ret.className + ")obj;");
+      java.println("@Override public boolean equals(Object obj) {");
+      java.println("if (this == obj) return true;");
+      java.println("if (obj == null) return false;");
+      java.println("if (getClass() != obj.getClass()) return false;");
+      java.println(java.className + " other = (" + java.className + ")obj;");
       boolean first = true;
       for (F f : ff) {
-        ret.print(first ? "return " :"&& ");
+        java.print(first ? "return " :"&& ");
         first = false;
-        ret.print(ret._(OBJECTS) + ".equals(" + f.name + ", other." + f.name + ")");
+        java.print(java._(OBJECTS) + ".equals(" + f.name + ", other." + f.name + ")");
       }
-      ret.println(";");
-      ret.println("}");
+      java.println(";");
+      java.println("}");
     }
     
-    ret.println();
-    ret.println("public " + ret.className + "() {}");
-    ret.println();
+    java.println();
+    java.println("public " + java.className + "() {}");
+    java.println();
     
     {
-      ret.print("public " + ret.className + "(");
+      java.print("public " + java.className + "(");
       boolean first = true;
       for (F f : ff) {
-        ret.print(first ? "" :", ");
+        java.print(first ? "" :", ");
         first = false;
-        ret.print(f.stype.javaType + " " + f.name);
+        java.print(f.stype.javaType + " " + f.name);
       }
-      ret.println(") {");
+      java.println(") {");
       
       for (F f : ff) {
-        ret.println("this." + f.name + " = " + f.name + ";");
+        java.println("this." + f.name + " = " + f.name + ";");
       }
       
-      ret.println("}");
+      java.println("}");
     }
     
-    ret.generateTo(javaGenDir);
-    return ret;
+    for (Command command : table.commands) {
+      if (command instanceof ToDictionary) {
+        generateJavaToDictionary(java, table, (ToDictionary)command);
+      }
+    }
+    
+    java.generateTo(javaGenDir);
+    return java;
   }
   
   public static final String SELECT = "org.apache.ibatis.annotations.Select";
@@ -663,11 +671,12 @@ public abstract class Nf6Generator {
   }
   
   private DaoClasses generateDao(Table table, ClassOuter java, ClassOuter fieldsClass) {
-    ClassOuter comm = new ClassOuter(daoPackage + table.subpackage(), "", table.name + "Dao");
+    
+    ClassOuter comm = new ClassOuter(daoPackage + table.subpackage(), "", table.name + daoSuffix);
     ClassOuter postgres = new ClassOuter(daoPackage + ".postgres" + table.subpackage(), "",
-        table.name + "PostgresDao");
+        table.name + "Postgres" + daoSuffix);
     ClassOuter oracle = new ClassOuter(daoPackage + ".oracle" + table.subpackage(), "", table.name
-        + "OracleDao");
+        + "Oracle" + daoSuffix);
     
     comm.println("public interface " + comm.className + " {");
     postgres.println("public interface " + postgres.className //
@@ -1111,6 +1120,7 @@ public abstract class Nf6Generator {
         generateDaoTableSelectAll(comm, table, java, (SelectAll)command);
         continue;
       }
+      if (command instanceof ToDictionary) return;//Ignore here
       throw new StruParseException("Unknown command class " + command.getClass());
     }
   }
@@ -1120,5 +1130,25 @@ public abstract class Nf6Generator {
     comm.println("@" + comm._(SELECT) + "(\"select * from " + vPrefix + table.name + " "
         + command.orderBy() + "\")");
     comm.println(comm._(LIST) + "<" + java.className + "> " + command.methodName + "();");
+  }
+  
+  private void generateJavaToDictionary(ClassOuter java, Table table, ToDictionary todict) {
+    java.println("public " + java._(todict.toClass) + " toDictionary() {");
+    
+    {
+      java.print("  return new " + java._(todict.toClass) + "(");
+      boolean first = true;
+      for (FieldInfo fi : table.keyInfo()) {
+        java.print(first ? "" :", ");
+        first = false;
+        java.print(fi.name);
+      }
+      if (todict.more != null && todict.more.trim().length() > 0) {
+        java.print(", " + todict.more);
+      }
+      java.println(");");
+    }
+    
+    java.println("}");
   }
 }
