@@ -5,7 +5,7 @@ apply plugin: 'maven'
 group = 'kz.greetgo'
 
 sourceCompatibility = 1.7
-version = '2.0.0'
+version = '2.0.1'
 
 def nowDate = new Date()
 def nowFormattedDate = nowDate.format("yyyy-MM-dd/HH:mm:ss")
@@ -64,6 +64,31 @@ dependencies {
   
   // needed for DAV protocol on maven uploads
   repoUpload "org.apache.maven.wagon:wagon-webdav-jackrabbit:1.0-beta-6"
+}
+
+test { useTestNG() }
+
+task packageSources(type: Jar) {
+  from sourceSets.main.allJava
+  classifier = 'sources'
+}
+
+jar {
+   from sourceSets.main.allSource
+}
+
+uploadArchives {
+  repositories.mavenDeployer {
+    configuration = configurations.archives
+    repository(
+        url: 'http://192.168.0.1:8080/repository/internal/'
+        )
+    
+    pom.project {
+      name project.name
+      packaging 'jar'
+    }
+  }
 }
 
 test { useTestNG() }
