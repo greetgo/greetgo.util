@@ -3,8 +3,11 @@ package kz.greetgo.interpreter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import kz.greetgo.simpleInterpretator.DateConverterStd;
+import kz.greetgo.simpleInterpretator.HelperDate;
 import kz.greetgo.simpleInterpretator.Interpreter;
 
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class InterpreterTest {
@@ -83,6 +86,11 @@ public class InterpreterTest {
     System.out.println(u);
     System.out.println(u.evaluate());
     
+  }
+  
+  @BeforeClass
+  public void setup() {
+    HelperDate.defineDateConverter(new DateConverterStd());
   }
   
   @Test
