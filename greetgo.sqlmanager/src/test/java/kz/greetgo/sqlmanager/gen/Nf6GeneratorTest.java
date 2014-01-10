@@ -1,5 +1,6 @@
 package kz.greetgo.sqlmanager.gen;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.net.URL;
 
@@ -13,7 +14,9 @@ public class Nf6GeneratorTest {
     URL url = getClass().getResource("example.nf3");
     StruGenerator sg = new StruGenerator();
     sg.printPStru = false;
-    sg.generate(url);
+    sg.parse(url);
+    
+    new File("build").mkdir();
     
     Nf6Generator nf6generator = new Nf6GeneratorPostgres(sg);
     PrintStream out = new PrintStream("build/ddl-postgres-nf6.sql", "UTF-8");

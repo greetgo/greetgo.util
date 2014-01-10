@@ -217,10 +217,15 @@ public class StruGenerator {
   private static final Pattern ENUM_AS = Pattern.compile("\\s*(\\S+)\\s+as\\s+(\\S+)\\s*",
       Pattern.CASE_INSENSITIVE);
   
-  private void appendLine(String line) {
+  private void appendLine(String line, URL currentUrl) throws Exception {
     if (line == null) return;
     Pair p = new Pair(line);
     if (p.left == null) return;
+    
+    if ("import".equals(p.left)) {
+      parseURL(new URL(currentUrl, p.right));
+      return;
+    }
     
     if ("subpackage".equals(p.left)) {
       currentSubpackage = p.right;
@@ -277,21 +282,31 @@ public class StruGenerator {
   private static final Pattern FROM = Pattern.compile(".*from\\s+([+-]?\\d+).*",
       Pattern.CASE_INSENSITIVE);
   
-  public void generate(URL url) throws Exception {
-    for (SimpleType stype : SimpleTypes.values()) {
-      PTable t = new PTable(stype.name, null, currentSubpackage);
-      tables.put(t.name, t);
-      t.type = stype;
-    }
+  private final Set<URL> parsedUrls = new HashSet<>();
+  
+  public void parseURL(URL url) throws Exception {
+    if (parsedUrls.contains(url)) return;
+    parsedUrls.add(url);
     
     InputStream in = url.openStream();
     BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
     while (true) {
       String line = br.readLine();
       if (line == null) break;
-      appendLine(line);
+      appendLine(line, url);
     }
     br.close();
+  }
+  
+  public void parse(URL url) throws Exception {
+    
+    parseURL(url);
+    
+    for (SimpleType stype : SimpleTypes.values()) {
+      PTable t = new PTable(stype.name, null, currentSubpackage);
+      tables.put(t.name, t);
+      t.type = stype;
+    }
     
     for (PTable ptable : tables.values()) {
       if (ptable.isSimpleType()) continue;

@@ -63,26 +63,4 @@ pkbResultParam
    
    +SelectAll selectAll orderBy( value, name, )
 
-subpackage dsa.dsa.dsa
-
-pkbResultParamAnnotation
-  *pkbResultParam
-  *name word
-   valueStr line
-   valueInt int
-   type AnnotationType
-   hello HelloEnum
-   goodby time
-   
-   +SelectAll selectAll orderBy( valueStr, valueInt )
-   +ToDictionary kz.greetgo.sqlmanager.gen.Dict type,hello,goodby
-
-enum HelloEnum as kz.greetgo.sqlmanager.gen.HelloEnum
-
-asd word
-   name line
-   wow pkbResultParamAnnotation
-
-enum AnnotationType
-   ONE TWO THREE
-   FOUR FIVE SIX
+import oops/dsa.nf3

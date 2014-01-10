@@ -15,7 +15,7 @@ public class StruGeneratorTest {
     URL url = getClass().getResource("example.nf3");
     StruGenerator sg = new StruGenerator();
     sg.printPStru = false;
-    sg.generate(url);
+    sg.parse(url);
     
     for (Table t : sg.stru.tables.values()) {
       System.out.println(t.name);
