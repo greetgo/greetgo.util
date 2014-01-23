@@ -12,7 +12,6 @@ import java.util.Set;
 import kz.greetgo.sqlmanager.model.EnumType;
 import kz.greetgo.sqlmanager.model.Field;
 import kz.greetgo.sqlmanager.model.FieldInfo;
-import kz.greetgo.sqlmanager.model.JavaType;
 import kz.greetgo.sqlmanager.model.SimpleType;
 import kz.greetgo.sqlmanager.model.Table;
 import kz.greetgo.sqlmanager.model.Type;
@@ -506,17 +505,12 @@ public abstract class Nf6Generator {
     ou.println("public abstract class " + ou.className + _parent_ + " {");
     
     for (Field field : table.fields) {
-      List<JavaType> types = new ArrayList<>();
-      field.type.assignJavaTypes(types);
-      if (types.size() == 1) {
-        FieldOuter f = ou.addField(types.get(0), field.name);
+      for (FieldInfo fi : field.fieldInfo()) {
+        FieldOuter f = ou.addField(fi.javaType, fi.name);
         ou.println("public " + ou._(f.type.objectType()) + " " + f.name + ";");
-      } else
-        for (int i = 1, C = types.size(); i <= C; i++) {
-          FieldOuter f = ou.addField(types.get(0), field.name + i);
-          ou.println("public " + ou._(f.type.objectType()) + " " + f.name + ";");
-        }
+      }
     }
+    
     {
       ou.println("public " + ou.className + " assign(" + ou.className + " from) {");
       ou.println("if (from == null) return this;");
@@ -544,37 +538,19 @@ public abstract class Nf6Generator {
     ClassOuter java = new ClassOuter(modelPackage + table.subpackage(), "", table.name);
     java.println("public class " + java.className + " extends " + java._(fieldsClass.name()) + " {");
     
-    class F {
-      final SimpleType stype;
-      final String name;
-      
-      public F(SimpleType stype, String name) {
-        this.stype = stype;
-        this.name = name;
-      }
-    }
-    
-    final List<F> ff = new ArrayList<>();
-    
     for (Field f : table.keys) {
-      List<SimpleType> types = new ArrayList<>();
-      f.type.assignSimpleTypes(types);
-      for (int i = 1, C = types.size(); i <= C; i++) {
-        String name = f.name + (C == 1 ? "" :"" + i);
-        SimpleType stype = types.get(i - 1);
-        ff.add(new F(stype, name));
+      for (FieldInfo fi : f.fieldInfo()) {
+        java.println("public " + java._(fi.javaType.javaType()) + " " + fi.name + ";");
       }
-    }
-    
-    for (F f : ff) {
-      java.println("public " + f.stype.javaType + " " + f.name + ";");
     }
     
     {
       java.println("@Override public int hashCode() {");
       java.print("return " + java._(ARRAYS) + ".hashCode(new Object[] {");
-      for (F f : ff) {
-        java.print(f.name + ",");
+      for (Field f : table.keys) {
+        for (FieldInfo fi : f.fieldInfo()) {
+          java.print(fi.name + ",");
+        }
       }
       java.println(" });");
       java.println("}");
@@ -586,10 +562,12 @@ public abstract class Nf6Generator {
       java.println("if (getClass() != obj.getClass()) return false;");
       java.println(java.className + " other = (" + java.className + ")obj;");
       boolean first = true;
-      for (F f : ff) {
-        java.print(first ? "return " :"&& ");
-        first = false;
-        java.print(java._(OBJECTS) + ".equals(" + f.name + ", other." + f.name + ")");
+      for (Field field : table.keys) {
+        for (FieldInfo fi : field.fieldInfo()) {
+          java.print(first ? "return " :"&& ");
+          first = false;
+          java.print(java._(OBJECTS) + ".equals(" + fi.name + ", other." + fi.name + ")");
+        }
       }
       java.println(";");
       java.println("}");
@@ -602,15 +580,19 @@ public abstract class Nf6Generator {
     {
       java.print("public " + java.className + "(");
       boolean first = true;
-      for (F f : ff) {
-        java.print(first ? "" :", ");
-        first = false;
-        java.print(f.stype.javaType + " " + f.name);
+      for (Field field : table.keys) {
+        for (FieldInfo fi : field.fieldInfo()) {
+          java.print(first ? "" :", ");
+          first = false;
+          java.print(java._(fi.javaType.javaType()) + " " + fi.name);
+        }
       }
       java.println(") {");
       
-      for (F f : ff) {
-        java.println("this." + f.name + " = " + f.name + ";");
+      for (Field field : table.keys) {
+        for (FieldInfo fi : field.fieldInfo()) {
+          java.println("this." + fi.name + " = " + fi.name + ";");
+        }
       }
       
       java.println("}");

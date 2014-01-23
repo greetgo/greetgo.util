@@ -35,12 +35,14 @@ address long
 
 phone
   *person
+  *annType AnnotationType
    type phoneType
-  *value word
+   value word
    smsTemplate
 
 smsTemplate long
    templateContent text
+   phone
 
 subpackage
 
