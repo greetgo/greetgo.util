@@ -6,4 +6,6 @@ public interface SqlDialect {
   
   String sqlType(SimpleType simpleType);
   
+  String procType(SimpleType simpleType);
+  
 }

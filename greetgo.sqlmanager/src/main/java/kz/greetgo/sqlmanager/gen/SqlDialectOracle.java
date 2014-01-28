@@ -19,6 +19,18 @@ public class SqlDialectOracle implements SqlDialect {
     simpleTypeMap.put(SimpleType.ttime, "timestamp");
     simpleTypeMap.put(SimpleType.tword, "varchar2(100)");
   }
+  private final Map<SimpleType, String> simpleTypeProcMap = new HashMap<>();
+  {
+    simpleTypeProcMap.put(SimpleType.tbool, "int");
+    simpleTypeProcMap.put(SimpleType.tfloat, "double precision");
+    simpleTypeProcMap.put(SimpleType.tint, "int");
+    simpleTypeProcMap.put(SimpleType.tline, "varchar2");
+    simpleTypeProcMap.put(SimpleType.tlong, "number");
+    simpleTypeProcMap.put(SimpleType.tlongline, "varchar2");
+    simpleTypeProcMap.put(SimpleType.ttext, "clob");
+    simpleTypeProcMap.put(SimpleType.ttime, "timestamp");
+    simpleTypeProcMap.put(SimpleType.tword, "varchar2");
+  }
   
   @Override
   public String sqlType(SimpleType simpleType) {
@@ -27,4 +39,10 @@ public class SqlDialectOracle implements SqlDialect {
     return ret;
   }
   
+  @Override
+  public String procType(SimpleType simpleType) {
+    String ret = simpleTypeProcMap.get(simpleType);
+    if (ret == null) throw new RuntimeException("No proc SQL type for " + simpleType);
+    return ret;
+  }
 }

@@ -9,6 +9,7 @@ public class Conf {
   public String cre = "createdAt";
   public String bigQuote = "big_quote";
   public String _ins_ = "ins_";
+  public String _p_ = "p_";
   public String _value_ = "__value__";
   public String daoSuffix = "Dao";
   

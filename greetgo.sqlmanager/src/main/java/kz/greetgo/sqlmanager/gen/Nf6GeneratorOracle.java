@@ -1,11 +1,9 @@
 package kz.greetgo.sqlmanager.gen;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import kz.greetgo.sqlmanager.model.Field;
-import kz.greetgo.sqlmanager.model.SimpleType;
+import kz.greetgo.sqlmanager.model.FieldInfo;
 import kz.greetgo.sqlmanager.model.Table;
 import kz.greetgo.sqlmanager.parser.StruGenerator;
 
@@ -25,122 +23,173 @@ public class Nf6GeneratorOracle extends Nf6Generator {
   
   @Override
   protected void printTableInsertFunction(PrintStream out, Table table) {
-    String fname = conf._ins_ + table.name;
-    out.println("create or replace function " + fname + "()");
-    out.println("returns trigger as $" + conf.bigQuote + "$");
-    out.println("begin");
-    
-    out.println("  if exists (");
-    
-    out.println("      select 1 from " + conf.tabPrefix + table.name);
+    String fname = conf._p_ + table.name;
+    out.print("create or replace procedure " + fname + "(");
     
     {
       boolean first = true;
       for (Field key : table.keys) {
-        String k = first ? "where" :"and";
-        first = false;
-        out.println("      " + k + " " + key.name + " = new." + key.name);
+        for (FieldInfo fi : key.fieldInfo()) {
+          out.print(first ? "" :", ");
+          first = false;
+          out.print(fi.name + "__ " + sqld().procType(fi.stype));
+        }
       }
     }
     
-    out.println("    )");
-    out.println("    then return old ;");
-    out.println("    else return new ;");
-    out.println("  end if ;");
+    out.println(") is begin");
     
-    out.println("end");
-    out.println("$" + conf.bigQuote + "$ language plpgsql");
+    {
+      out.print("  insert into " + conf.tabPrefix + table.name + " (");
+      {
+        boolean first = true;
+        for (Field key : table.keys) {
+          for (FieldInfo fi : key.fieldInfo()) {
+            out.print(first ? "" :", ");
+            first = false;
+            out.print(fi.name);
+          }
+        }
+      }
+      out.print(") values (");
+      {
+        boolean first = true;
+        for (Field key : table.keys) {
+          for (FieldInfo fi : key.fieldInfo()) {
+            out.print(first ? "" :", ");
+            first = false;
+            out.print(fi.name + "__");
+          }
+        }
+      }
+      out.println(") ; ");
+    }
+    
+    out.println("exception when others then null ; ");
+    out.println("end ; ");
     
     out.println(conf.separator);
-    
-    out.println("drop trigger if exists " + fname + "_trigger on " + conf.tabPrefix + table.name
-        + conf.separator);
-    out.println("create trigger " + fname + "_trigger");
-    out.println("  before insert on " + conf.tabPrefix + table.name);
-    out.println("  for each row");
-    out.println("  execute procedure " + fname + "()" + conf.separator);
   }
   
   @Override
   protected void printFieldInsertFunction(PrintStream out, Field field) {
-    String fname = conf._ins_ + field.table.name + '_' + field.name;
-    out.println("create or replace function " + fname + "()");
-    out.println("returns trigger as $" + conf.bigQuote + "$");
-    out.println("declare r record ;");
     
-    List<String> keys = new ArrayList<>();
+    String fname = conf._p_ + field.table.name + '_' + field.name;
+    out.print("create or replace procedure " + fname + "(");
     
-    for (Field fld : field.table.keys) {
-      List<SimpleType> ftypes = new ArrayList<>();
-      fld.type.assignSimpleTypes(ftypes);
-      if (ftypes.size() == 1) {
-        keys.add(fld.name);
-      } else
-        for (int i = 1, C = ftypes.size(); i <= C; i++) {
-          keys.add(fld.name + 1);
+    {
+      boolean first = true;
+      for (Field key : field.table.keys) {
+        for (FieldInfo fi : key.fieldInfo()) {
+          out.print(first ? "" :", ");
+          first = false;
+          out.print(fi.name + "__ " + sqld().procType(fi.stype));
         }
+      }
+      for (FieldInfo fi : field.fieldInfo()) {
+        out.print(", " + fi.name + "__ " + sqld().procType(fi.stype));
+      }
     }
     
-    List<SimpleType> types = new ArrayList<>();
-    field.type.assignSimpleTypes(types);
+    out.println(") is");
     
-    List<String> refs = new ArrayList<>();
-    if (types.size() == 1) {
-      refs.add(field.name);
-    } else
-      for (int i = 1, C = types.size(); i <= C; i++) {
-        refs.add(field.name + i);
-      }
+    String tname = conf.tabPrefix + field.table.name + "_" + field.name;
     
+    out.println("  r " + tname + "%rowtype ; ");
+    out.println("  doit int ; ");
     out.println("begin");
     
-    String t = conf.tabPrefix + field.table.name + "_" + field.name;
+    out.println("  select case when exists (select 1 from " + tname);
+    {
+      boolean first = true;
+      for (Field key : field.table.keys) {
+        for (FieldInfo fi : key.fieldInfo()) {
+          out.print(first ? "    where " :"    and ");
+          out.println(fi.name + " = " + fi.name + "__");
+          first = false;
+        }
+      }
+    }
+    out.println("    ) then 0 else 1 end into doit from dual ; ");
+    
+    out.println();
+    out.println("  if doit = 0 then ");
+    out.println();
     
     out.println("  select * into r");
-    out.println("    from " + t);
+    out.println("    from " + tname);
     {
       boolean first = true;
-      for (String key : keys) {
-        String s = first ? "where " :"and ";
-        first = false;
-        out.println("    " + s + key + " = new." + key);
+      for (Field key : field.table.keys) {
+        for (FieldInfo fi : key.fieldInfo()) {
+          out.print(first ? "    where " :"    and ");
+          out.println(fi.name + " = " + fi.name + "__");
+          first = false;
+        }
       }
     }
-    out.println("    and " + conf.ts + " = (select max(" + conf.ts + ")");
-    out.println("      from " + t);
+    out.println("    and " + conf.ts + " = (select max(" + conf.ts + ") ");
+    out.println("      from " + tname);
     {
       boolean first = true;
-      for (String key : keys) {
-        String s = first ? "where " :"and ";
-        first = false;
-        out.println("      " + s + key + " = new." + key);
+      for (Field key : field.table.keys) {
+        for (FieldInfo fi : key.fieldInfo()) {
+          out.print(first ? "      where " :"      and ");
+          out.println(fi.name + " = " + fi.name + "__");
+          first = false;
+        }
       }
     }
-    out.println("      );");
-    out.println("  ");
+    out.println("      ) ; ");
+    out.println();
     
-    for (String ref : refs) {
-      out.println("  if new." + ref + " is null and r." + ref
-          + " is not null then return new ; end if ;");
-      out.println("  if new." + ref + " is not null and r." + ref
-          + " is null then return new ; end if ;");
-      out.println("  if new." + ref + " is not null and r." + ref + " is not null and new." + ref
-          + " != r." + ref + " then return new ; end if ;");
-      out.println("  ");
+    for (FieldInfo fi : field.fieldInfo()) {
+      out.println("  if doit = 0 and " + fi.name + "__ is null and r." + fi.name
+          + " is not null then doit := 1 ; end if ; ");
+      out.println("  if doit = 0 and " + fi.name + "__ is not null and r." + fi.name
+          + " is null then doit := 1 ; end if ; ");
+      out.println("  if doit = 0 and " + fi.name + "__ is not null and r." + fi.name
+          + " is not null and " + fi.name + "__ != r." + fi.name + " then doit := 1 ; end if ; ");
+      out.println();
     }
     
-    out.println("  return old ;");
-    out.println("  ");
+    out.println("  end if ; ");
+    out.println();
     
-    out.println("end");
-    out.println("$" + conf.bigQuote + "$ language plpgsql");
+    out.println("  if doit = 1 then ");
+    out.print("    insert into " + tname + " (");
+    {
+      boolean first = true;
+      for (Field key : field.table.keys) {
+        for (FieldInfo fi : key.fieldInfo()) {
+          out.print(first ? "" :", ");
+          first = false;
+          out.print(fi.name);
+        }
+      }
+      for (FieldInfo fi : field.fieldInfo()) {
+        out.print(", " + fi.name);
+      }
+    }
+    out.print(") values (");
+    {
+      boolean first = true;
+      for (Field key : field.table.keys) {
+        for (FieldInfo fi : key.fieldInfo()) {
+          out.print(first ? "" :", ");
+          first = false;
+          out.print(fi.name + "__");
+        }
+      }
+      for (FieldInfo fi : field.fieldInfo()) {
+        out.print(", " + fi.name + "__");
+      }
+    }
+    out.println(") ; ");
+    out.println("  end if ; ");
+    
+    out.println("end ; ");
     out.println(conf.separator);
-    
-    out.println("drop trigger if exists " + fname + "_trigger on " + t + conf.separator);
-    out.println("create trigger " + fname + "_trigger");
-    out.println("  before insert on " + t);
-    out.println("  for each row");
-    out.println("  execute procedure " + fname + "()" + conf.separator);
   }
   
   @Override
