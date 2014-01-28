@@ -440,6 +440,8 @@ public abstract class Nf6Generator {
     return java;
   }
   
+  public static final String StatementType = "org.apache.ibatis.mapping.StatementType";
+  public static final String OPTIONS = "org.apache.ibatis.annotations.Options";
   public static final String SELECT = "org.apache.ibatis.annotations.Select";
   public static final String UPDATE = "org.apache.ibatis.annotations.Update";
   public static final String DELETE = "org.apache.ibatis.annotations.Delete";
@@ -596,17 +598,10 @@ public abstract class Nf6Generator {
       ClassOuter fieldsClass) {
     List<FieldInfo> keyInfo = table.keyInfo();
     {
-      comm.print("  @" + comm._(INSERT) + "(\"insert into " + conf.tabPrefix + table.name);
+      comm.println("  @" + comm._(OPTIONS) + "(statementType = " + comm._(StatementType)
+          + ".CALLABLE)");
+      comm.print("  @" + comm._(UPDATE) + "(\"{call " + conf._p_ + table.name);
       comm.print(" (");
-      {
-        boolean first = true;
-        for (FieldInfo fi : keyInfo) {
-          comm.print(first ? "" :", ");
-          first = false;
-          comm.print(fi.name);
-        }
-      }
-      comm.print(") values (");
       {
         boolean first = true;
         for (FieldInfo fi : keyInfo) {
@@ -615,23 +610,16 @@ public abstract class Nf6Generator {
           comm.print("#{" + fi.name + "}");
         }
       }
-      comm.println(")\")");
+      comm.println(")}\")");
       comm.print("  void ins(");
       comm.print(comm._(java.name()) + " " + table.name);
       comm.println(");");
     }
     {
-      comm.print("  @" + comm._(INSERT) + "(\"insert into " + conf.tabPrefix + table.name);
+      comm.println("  @" + comm._(OPTIONS) + "(statementType = " + comm._(StatementType)
+          + ".CALLABLE)");
+      comm.print("  @" + comm._(UPDATE) + "(\"{call " + conf._p_ + table.name);
       comm.print(" (");
-      {
-        boolean first = true;
-        for (FieldInfo fi : keyInfo) {
-          comm.print(first ? "" :", ");
-          first = false;
-          comm.print(fi.name);
-        }
-      }
-      comm.print(") values (");
       {
         boolean first = true;
         for (FieldInfo fi : keyInfo) {
@@ -640,7 +628,7 @@ public abstract class Nf6Generator {
           comm.print("#{" + fi.name + "}");
         }
       }
-      comm.println(")\")");
+      comm.println(")}\")");
       comm.print("  void add(");
       {
         boolean first = true;
@@ -679,18 +667,13 @@ public abstract class Nf6Generator {
   
   private void setFieldWithNow(ClassOuter comm, Field field, List<FieldInfo> keyInfo,
       List<FieldInfo> all) {
-    comm.print("  @" + comm._(INSERT) + "(\"insert into " + conf.tabPrefix + field.table.name + "_"
+    comm.println("  @" + comm._(OPTIONS) + "(statementType = " + comm._(StatementType)
+        + ".CALLABLE)");
+    
+    comm.print("  @" + comm._(UPDATE) + "(\"{call " + conf._p_ + field.table.name + "_"
         + field.name);
+    
     comm.print(" (");
-    {
-      boolean first = true;
-      for (FieldInfo fi : all) {
-        comm.print(first ? "" :", ");
-        first = false;
-        comm.print(fi.name);
-      }
-    }
-    comm.print(") values (");
     {
       for (FieldInfo fi : keyInfo) {
         if (SimpleType.tbool.equals(fi.javaType)) {
@@ -700,7 +683,7 @@ public abstract class Nf6Generator {
         }
       }
     }
-    comm.println("current_timestamp)\")");
+    comm.println("current_timestamp)}\")");
     comm.print("  void set" + firstUpper(field.name) + "WithNow(");
     {
       boolean first = true;
@@ -716,18 +699,13 @@ public abstract class Nf6Generator {
   
   private void setField(ClassOuter comm, Field field, List<FieldInfo> keyInfo,
       List<FieldInfo> fieldInfo, List<FieldInfo> all) {
-    comm.print("  @" + comm._(INSERT) + "(\"insert into " + conf.tabPrefix + field.table.name + "_"
+    comm.println("  @" + comm._(OPTIONS) + "(statementType = " + comm._(StatementType)
+        + ".CALLABLE)");
+    
+    comm.print("  @" + comm._(UPDATE) + "(\"{call " + conf._p_ + field.table.name + "_"
         + field.name);
+    
     comm.print(" (");
-    {
-      boolean first = true;
-      for (FieldInfo fi : all) {
-        comm.print(first ? "" :", ");
-        first = false;
-        comm.print(fi.name);
-      }
-    }
-    comm.print(") values (");
     {
       boolean first = true;
       for (FieldInfo fi : all) {
@@ -740,7 +718,7 @@ public abstract class Nf6Generator {
         }
       }
     }
-    comm.println(")\")");
+    comm.println(")}\")");
     comm.print("  void set" + firstUpper(field.name) + "(");
     {
       boolean first = true;
@@ -766,18 +744,11 @@ public abstract class Nf6Generator {
   
   private void insFieldWithNow(ClassOuter comm, Field field, ClassOuter java,
       List<FieldInfo> keyInfo, List<FieldInfo> all) {
-    comm.print("  @" + comm._(INSERT) + "(\"insert into " + conf.tabPrefix + field.table.name + "_"
+    comm.println("  @" + comm._(OPTIONS) + "(statementType = " + comm._(StatementType)
+        + ".CALLABLE)");
+    comm.print("  @" + comm._(UPDATE) + "(\"{call " + conf._p_ + field.table.name + "_"
         + field.name);
     comm.print(" (");
-    {
-      boolean first = true;
-      for (FieldInfo fi : all) {
-        comm.print(first ? "" :", ");
-        first = false;
-        comm.print(fi.name);
-      }
-    }
-    comm.print(") values (");
     {
       for (FieldInfo fi : keyInfo) {
         if (SimpleType.tbool.equals(fi.javaType)) {
@@ -787,24 +758,19 @@ public abstract class Nf6Generator {
         }
       }
     }
-    comm.println("current_timestamp)\")");
+    comm.println("current_timestamp)}\")");
     comm.println("  void ins" + firstUpper(field.name) + "WithNow(" + comm._(java.name()) + " "
         + field.table.name + ");");
   }
   
   private void insField(ClassOuter comm, Field field, ClassOuter java, List<FieldInfo> all) {
-    comm.print("  @" + comm._(INSERT) + "(\"insert into " + conf.tabPrefix + field.table.name + "_"
+    comm.println("  @" + comm._(OPTIONS) + "(statementType = " + comm._(StatementType)
+        + ".CALLABLE)");
+    
+    comm.print("  @" + comm._(UPDATE) + "(\"{call " + conf._p_ + field.table.name + "_"
         + field.name);
+    
     comm.print(" (");
-    {
-      boolean first = true;
-      for (FieldInfo fi : all) {
-        comm.print(first ? "" :", ");
-        first = false;
-        comm.print(fi.name);
-      }
-    }
-    comm.print(") values (");
     {
       boolean first = true;
       for (FieldInfo fi : all) {
@@ -817,7 +783,7 @@ public abstract class Nf6Generator {
         }
       }
     }
-    comm.println(")\")");
+    comm.println(")}\")");
     comm.println("  void ins" + firstUpper(field.name) + "(" + comm._(java.name()) + " "
         + field.table.name + ");");
   }

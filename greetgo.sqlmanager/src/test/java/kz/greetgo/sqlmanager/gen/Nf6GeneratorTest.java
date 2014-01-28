@@ -35,7 +35,7 @@ public class Nf6GeneratorTest {
     nf6generator.conf.modelStruExtends = "kz.greetgo.sqlmanager.gen.ModelParent";
     //nf6generator.conf.modelStruImplements = "kz.greetgo.sqlmanager.gen.ModelParent";
     
-    nf6generator.generateJava();
+    //nf6generator.generateJava();
   }
   
   @Test
