@@ -27,13 +27,6 @@ public interface V {
   String naturalPerson_birthdate = "v_naturalPerson_birthdate";
   String naturalPerson_iin = "v_naturalPerson_iin";
   
-  String pkbResultParamAnnotation = "v_pkbResultParamAnnotation";
-  String pkbResultParamAnnotation_valueStr = "v_pkbResultParamAnnotation_valueStr";
-  String pkbResultParamAnnotation_valueInt = "v_pkbResultParamAnnotation_valueInt";
-  String pkbResultParamAnnotation_type = "v_pkbResultParamAnnotation_type";
-  String pkbResultParamAnnotation_hello = "v_pkbResultParamAnnotation_hello";
-  String pkbResultParamAnnotation_goodby = "v_pkbResultParamAnnotation_goodby";
-  
   String legalPerson = "v_legalPerson";
   String legalPerson_name = "v_legalPerson_name";
   String legalPerson_fullname = "v_legalPerson_fullname";
@@ -42,6 +35,13 @@ public interface V {
   String productType = "v_productType";
   String productType_pkbId = "v_productType_pkbId";
   String productType_name = "v_productType_name";
+  
+  String pkbResultParamAnn = "v_pkbResultParamAnn";
+  String pkbResultParamAnn_valueStr = "v_pkbResultParamAnn_valueStr";
+  String pkbResultParamAnn_valueInt = "v_pkbResultParamAnn_valueInt";
+  String pkbResultParamAnn_type = "v_pkbResultParamAnn_type";
+  String pkbResultParamAnn_hello = "v_pkbResultParamAnn_hello";
+  String pkbResultParamAnn_goodby = "v_pkbResultParamAnn_goodby";
   
   String pkbResult = "v_pkbResult";
   String pkbResult_isOK = "v_pkbResult_isOK";

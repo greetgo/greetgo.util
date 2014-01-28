@@ -5,14 +5,14 @@ import java.util.Date;
 import kz.greetgo.sqlmanager.gen.HelloEnum;
 import kz.greetgo.sqlmanager.gen.ModelParent;
 
-public abstract class FieldsPkbResultParamAnnotation extends ModelParent {
+public abstract class FieldsPkbResultParamAnn extends ModelParent {
   public String valueStr;
   public Integer valueInt;
   public AnnotationType type;
   public HelloEnum hello;
   public Date goodby;
   
-  public FieldsPkbResultParamAnnotation assign(FieldsPkbResultParamAnnotation from) {
+  public FieldsPkbResultParamAnn assign(FieldsPkbResultParamAnn from) {
     if (from == null) return this;
     this.valueStr = from.valueStr;
     this.valueInt = from.valueInt;

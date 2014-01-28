@@ -3,7 +3,7 @@ enum HelloEnum as kz.greetgo.sqlmanager.gen.HelloEnum
 
 asd word
    name line
-   wow pkbResultParamAnnotation
+   wow pkbResultParamAnn
 
 enum AnnotationType
    ONE TWO THREE

@@ -27,37 +27,18 @@ public abstract class Nf6Generator {
   
   protected abstract SqlDialect sqld();
   
-  public String separator = ";;";
-  public String tabPrefix = "m_";
-  public String seqPrefix = "s_";
-  public String vPrefix = "v_";
-  public String ts = "ts";
-  public String cre = "createdAt";
-  public String bigQuote = "big_quote";
-  public String _ins_ = "ins_";
-  public String _value_ = "__value__";
-  public String daoSuffix = "Dao";
-  
-  public String javaGenDir;
-  public String modelPackage;
-  public String javaGenStruDir;
-  public String modelStruPackage;
-  public String daoPackage;
-  public String modelStruExtends;
-  public String modelStruImplements;
+  public final Conf conf = new Conf();
   
   public Nf6Generator(StruGenerator sg) {
     this.sg = sg;
   }
   
-  public void convertTo(PrintStream out, PrintStream outPrograms) {
+  public void printSqls(PrintStream out) {
     
-    out.println("create view dual as select 'X'::varchar as dummy" + separator);
-    out.println();
+    printPrepareSqls(out);
     
-    List<String> tnames = new ArrayList<>();
-    tnames.addAll(sg.stru.tables.keySet());
-    Collections.sort(tnames);
+    List<String> tnames = getTnames();
+    
     for (String name : tnames) {
       Table table = sg.stru.tables.get(name);
       printKeySql(table, out);
@@ -76,7 +57,7 @@ public abstract class Nf6Generator {
           if (table.sequenceFrom > 0) {
             from = " start with " + table.sequenceFrom;
           }
-          out.println("create sequence " + seqPrefix + table.name + from + separator);
+          out.println("create sequence " + conf.seqPrefix + table.name + from + conf.separator);
         }
       }
     }
@@ -96,23 +77,35 @@ public abstract class Nf6Generator {
             for (int i = 1, C = types.size(); i <= C; i++) {
               fieldNames.add(field.name + i);
             }
-          out.println("alter table " + tabPrefix + tname + "_" + field.name + " add "
-              + formForeignKey(fieldNames, (Table)field.type) + separator);
+          out.println("alter table " + conf.tabPrefix + tname + "_" + field.name + " add "
+              + formForeignKey(fieldNames, (Table)field.type) + conf.separator);
         }
       }
     }
     out.println();
     
     printViews(tnames, out);
-    
-    printInsertFunctions(tnames, outPrograms);
   }
+  
+  public void printPrograms(PrintStream out) {
+    List<String> tnames = getTnames();
+    printInsertFunctions(tnames, out);
+  }
+  
+  private List<String> getTnames() {
+    List<String> tnames = new ArrayList<>();
+    tnames.addAll(sg.stru.tables.keySet());
+    Collections.sort(tnames);
+    return tnames;
+  }
+  
+  protected abstract void printPrepareSqls(PrintStream out);
   
   private void printPrimaryForeignKey(Table table, PrintStream out) {
     for (Field field : table.keys) {
       if (field.type instanceof Table) {
         List<Field> keys = ((Table)field.type).keys;
-        out.print("alter table " + tabPrefix + table.name + " add foreign key (");
+        out.print("alter table " + conf.tabPrefix + table.name + " add foreign key (");
         if (keys.size() == 1) {
           out.print(field.name);
         } else
@@ -120,20 +113,20 @@ public abstract class Nf6Generator {
             out.print(i == 0 ? "" :", ");
             out.print(field.name + (i + 1));
           }
-        out.print(") references " + tabPrefix + field.type.name + " (");
+        out.print(") references " + conf.tabPrefix + field.type.name + " (");
         boolean first = true;
         for (Field key : keys) {
           out.print(first ? "" :", ");
           first = false;
           out.print(key.name);
         }
-        out.println(')' + separator);
+        out.println(')' + conf.separator);
       }
     }
   }
   
   private void printKeySql(Table table, PrintStream out) {
-    out.println("create table " + tabPrefix + table.name + " (");
+    out.println("create table " + conf.tabPrefix + table.name + " (");
     List<String> keyNames = new ArrayList<>();
     
     for (Field field : table.keys) {
@@ -152,21 +145,21 @@ public abstract class Nf6Generator {
         }
       }
     }
-    out.println("  " + cre + " timestamp default current_timestamp not null,");
+    out.println("  " + conf.cre + " timestamp default current_timestamp not null,");
     StringBuilder sb = new StringBuilder();
     for (String name : keyNames) {
       if (sb.length() > 0) sb.append(", ");
       sb.append(name);
     }
     out.println("  primary key(" + sb + ")");
-    out.println(')' + separator);
+    out.println(')' + conf.separator);
   }
   
   private void printFieldsSql(Field field, PrintStream out) {
     
     List<String> keyFields = new ArrayList<>();
     
-    out.println("create table " + tabPrefix + field.table.name + "_" + field.name + " (");
+    out.println("create table " + conf.tabPrefix + field.table.name + "_" + field.name + " (");
     
     for (Field key : field.table.keys) {
       List<SimpleType> types = new ArrayList<>();
@@ -189,7 +182,7 @@ public abstract class Nf6Generator {
       }
     }
     
-    out.println("  " + ts + " timestamp default current_timestamp not null,");
+    out.println("  " + conf.ts + " timestamp default current_timestamp not null,");
     
     {
       List<SimpleType> types = new ArrayList<>();
@@ -216,13 +209,13 @@ public abstract class Nf6Generator {
       for (String f : keyFields) {
         out.print(f + ", ");
       }
-      out.println(ts + "),");
+      out.println(conf.ts + "),");
     }
     {
       out.println("  " + formForeignKey(keyFields, field.table));
     }
     
-    out.println(")" + separator);
+    out.println(")" + conf.separator);
   }
   
   private String formForeignKey(List<String> fieldNames, Table table) {
@@ -232,7 +225,7 @@ public abstract class Nf6Generator {
       sb.append(key).append(", ");
     }
     sb.setLength(sb.length() - 2);
-    sb.append(") references ").append(tabPrefix).append(table.name).append(" (");
+    sb.append(") references ").append(conf.tabPrefix).append(table.name).append(" (");
     for (Field field : table.keys) {
       List<SimpleType> types = new ArrayList<>();
       field.type.assignSimpleTypes(types);
@@ -271,9 +264,9 @@ public abstract class Nf6Generator {
   
   private void printFieldView(PrintStream out, Field field) {
     StringBuilder sb = new StringBuilder();
-    sb.append("create view " + vPrefix + field.table.name + "_" + field.name + " as\n");
+    sb.append("create view " + conf.vPrefix + field.table.name + "_" + field.name + " as\n");
     formFieldSelect(sb, field, null, 2, 0);
-    out.println(sb + separator);
+    out.println(sb + conf.separator);
   }
   
   private void formFieldSelect(StringBuilder sb, Field field, String time, int tabSize, int orig) {
@@ -289,7 +282,7 @@ public abstract class Nf6Generator {
     
     final String fieldTableTS;
     if (time == null || time.trim().length() == 0) {
-      fieldTableTS = tabPrefix + field.table.name + "_" + field.name;
+      fieldTableTS = conf.tabPrefix + field.table.name + "_" + field.name;
     } else {
       int idx = time.indexOf('.');
       if (idx < 0) {
@@ -299,8 +292,8 @@ public abstract class Nf6Generator {
         T = time.substring(0, idx);
         TF = time;
       }
-      fieldTableTS = "(select x.* from " + tabPrefix + field.table.name + "_" + field.name + " x, "
-          + T + " where x." + ts + " <= " + TF + ')';
+      fieldTableTS = "(select x.* from " + conf.tabPrefix + field.table.name + "_" + field.name
+          + " x, " + T + " where x." + conf.ts + " <= " + TF + ')';
     }
     
     List<String> keyNames = field.table.keyNames();
@@ -333,36 +326,37 @@ public abstract class Nf6Generator {
     for (String tname : keyNames) {
       sb.append(s2 + "a." + tname + "," + nl);
     }
-    sb.append(s2 + "max(b." + ts + ") ts" + nl);
-    sb.append(s1 + "from " + tabPrefix + field.table.name + " a" + nl);
+    sb.append(s2 + "max(b." + conf.ts + ") ts" + nl);
+    sb.append(s1 + "from " + conf.tabPrefix + field.table.name + " a" + nl);
     sb.append(s1 + "left join " + fieldTableTS + " b" + nl);
     for (int i = 0, C = keyNames.size(); i < C; i++) {
       sb.append(s1).append(i == 0 ? "on" :"and");
       sb.append(" a." + keyNames.get(i) + " = b." + keyNames.get(i) + nl);
     }
     if (time != null && time.trim().length() > 0) {
-      sb.append(s1 + "," + T + " where b." + ts + " <= " + time + nl);
+      sb.append(s1 + "," + T + " where b." + conf.ts + " <= " + time + nl);
     }
     sb.append(s1 + "group by" + nl);
     for (int i = 0, C = keyNames.size(); i < C; i++) {
       String k = i == 0 ? " " :",";
       sb.append(s2 + k + "a." + keyNames.get(i) + nl);
     }
-    sb.append(s0 + ") aa left join " + tabPrefix + field.table.name + "_" + field.name + " bb" + nl);
+    sb.append(s0 + ") aa left join " + conf.tabPrefix + field.table.name + "_" + field.name + " bb"
+        + nl);
     for (int i = 0, C = keyNames.size(); i < C; i++) {
       String tname = keyNames.get(i);
       String fname = keyNames.get(i);
       String and = i == 0 ? "on" :"and";
       sb.append(s0 + and + " aa." + tname + " = bb." + fname + nl);
     }
-    sb.append(s0 + "and aa." + ts + " = bb." + ts);
+    sb.append(s0 + "and aa." + conf.ts + " = bb." + conf.ts);
   }
   
   private void printTableView(PrintStream out, Table table) {
     StringBuilder sb = new StringBuilder();
-    sb.append("create view " + vPrefix + table.name + " as\n");
+    sb.append("create view " + conf.vPrefix + table.name + " as\n");
     formTableSelect(sb, table, null, 2, 0);
-    out.println(sb + separator);
+    out.println(sb + conf.separator);
   }
   
   private void formTableSelect(StringBuilder sb, Table table, String time, int tabSize, int orig) {
@@ -391,7 +385,7 @@ public abstract class Nf6Generator {
     for (String fname : keyNames) {
       sb.append(s1 + " x." + fname + ',' + nl);
     }
-    sb.append(s1 + " x." + cre + nl);
+    sb.append(s1 + " x." + conf.cre + nl);
     {
       int i = 1;
       for (Field field : table.fields) {
@@ -408,11 +402,11 @@ public abstract class Nf6Generator {
     }
     {
       sb.append(s0 + "from ");
-      String t = tabPrefix + table.name;
+      String t = conf.tabPrefix + table.name;
       if (T == null) {
         sb.append(t);
       } else {
-        sb.append("(select u.* from " + t + " u, " + T + " where u." + cre + " <= " + TF + ")");
+        sb.append("(select u.* from " + t + " u, " + T + " where u." + conf.cre + " <= " + TF + ")");
       }
       sb.append(" x" + nl);
     }
@@ -421,7 +415,7 @@ public abstract class Nf6Generator {
       for (Field field : table.fields) {
         sb.append(s0 + "left join" + nl);
         if (T == null) {
-          sb.append(s2 + vPrefix + table.name + "_" + field.name + nl);
+          sb.append(s2 + conf.vPrefix + table.name + "_" + field.name + nl);
         } else {
           sb.append('(');
           formFieldSelect(sb, field, time, tabSize, orig + 2);
@@ -467,7 +461,7 @@ public abstract class Nf6Generator {
       for (Field field : fields) {
         if (field.type instanceof EnumType) {
           EnumType et = (EnumType)field.type;
-          if (et.pack == null) et.pack = modelStruPackage;
+          if (et.pack == null) et.pack = conf.modelStruPackage;
           if (!set.contains(et.objectType())) {
             set.add(et.objectType());
             generateEnum(et);
@@ -486,20 +480,20 @@ public abstract class Nf6Generator {
   }
   
   private ClassOuter generateFieldsJava(Table table) {
-    ClassOuter ou = new ClassOuter(modelStruPackage + table.subpackage(), "Fields", table.name);
+    ClassOuter ou = new ClassOuter(conf.modelStruPackage + table.subpackage(), "Fields", table.name);
     
-    if (modelStruExtends != null && modelStruImplements != null) {
+    if (conf.modelStruExtends != null && conf.modelStruImplements != null) {
       throw new IllegalArgumentException("I do not know what to do: implements "
-          + modelStruImplements + " or extends " + modelStruExtends);
+          + conf.modelStruImplements + " or extends " + conf.modelStruExtends);
     }
     
     String _parent_ = "";
     
-    if (modelStruExtends != null) {
-      _parent_ = " extends " + ou._(modelStruExtends);
+    if (conf.modelStruExtends != null) {
+      _parent_ = " extends " + ou._(conf.modelStruExtends);
     }
-    if (modelStruImplements != null) {
-      _parent_ = " implements " + ou._(modelStruImplements);
+    if (conf.modelStruImplements != null) {
+      _parent_ = " implements " + ou._(conf.modelStruImplements);
     }
     
     ou.println("public abstract class " + ou.className + _parent_ + " {");
@@ -529,13 +523,13 @@ public abstract class Nf6Generator {
       }
     }
     
-    ou.generateTo(javaGenStruDir);
+    ou.generateTo(conf.javaGenStruDir);
     
     return ou;
   }
   
   private ClassOuter generateJava(Table table, ClassOuter fieldsClass) {
-    ClassOuter java = new ClassOuter(modelPackage + table.subpackage(), "", table.name);
+    ClassOuter java = new ClassOuter(conf.modelPackage + table.subpackage(), "", table.name);
     java.println("public class " + java.className + " extends " + java._(fieldsClass.name()) + " {");
     
     for (Field f : table.keys) {
@@ -604,7 +598,7 @@ public abstract class Nf6Generator {
       }
     }
     
-    java.generateTo(javaGenDir);
+    java.generateTo(conf.javaGenDir);
     return java;
   }
   
@@ -637,7 +631,7 @@ public abstract class Nf6Generator {
     ret.println("  }");
     ret.println("}");
     
-    ret.generateTo(javaGenStruDir);
+    ret.generateTo(conf.javaGenStruDir);
   }
   
   class DaoClasses {
@@ -654,11 +648,12 @@ public abstract class Nf6Generator {
   
   private DaoClasses generateDao(Table table, ClassOuter java, ClassOuter fieldsClass) {
     
-    ClassOuter comm = new ClassOuter(daoPackage + table.subpackage(), "", table.name + daoSuffix);
-    ClassOuter postgres = new ClassOuter(daoPackage + ".postgres" + table.subpackage(), "",
-        table.name + "Postgres" + daoSuffix);
-    ClassOuter oracle = new ClassOuter(daoPackage + ".oracle" + table.subpackage(), "", table.name
-        + "Oracle" + daoSuffix);
+    ClassOuter comm = new ClassOuter(conf.daoPackage + table.subpackage(), "", table.name
+        + conf.daoSuffix);
+    ClassOuter postgres = new ClassOuter(conf.daoPackage + ".postgres" + table.subpackage(), "",
+        table.name + "Postgres" + conf.daoSuffix);
+    ClassOuter oracle = new ClassOuter(conf.daoPackage + ".oracle" + table.subpackage(), "",
+        table.name + "Oracle" + conf.daoSuffix);
     
     comm.println("public interface " + comm.className + " {");
     postgres.println("public interface " + postgres.className //
@@ -669,7 +664,7 @@ public abstract class Nf6Generator {
     if (table.hasSequence()) {
       SimpleType type = (SimpleType)table.keys.get(0).type;
       comm.println("  " + type.javaType + " next();");
-      String seq = seqPrefix + table.name;
+      String seq = conf.seqPrefix + table.name;
       
       postgres.println("  @Override");
       postgres.println("  @" + postgres._(SELECT) + "(\"select nextval('" + seq + "')\")");
@@ -691,9 +686,9 @@ public abstract class Nf6Generator {
     
     generateDaoTableCommands(comm, table, java, fieldsClass);
     
-    comm.generateTo(javaGenDir);
-    postgres.generateTo(javaGenDir);
-    oracle.generateTo(javaGenDir);
+    comm.generateTo(conf.javaGenDir);
+    postgres.generateTo(conf.javaGenDir);
+    oracle.generateTo(conf.javaGenDir);
     
     return new DaoClasses(comm, postgres, oracle);
   }
@@ -702,7 +697,7 @@ public abstract class Nf6Generator {
       ClassOuter fieldsClass) {
     List<FieldInfo> keyInfo = table.keyInfo();
     {
-      comm.print("  @" + comm._(SELECT) + "(\"select * from " + vPrefix + table.name);
+      comm.print("  @" + comm._(SELECT) + "(\"select * from " + conf.vPrefix + table.name);
       {
         boolean first = true;
         for (FieldInfo fi : keyInfo) {
@@ -734,7 +729,7 @@ public abstract class Nf6Generator {
         }
       }
       
-      comm.print("  @" + comm._(SELECT) + "(\"select * from " + vPrefix + table.name);
+      comm.print("  @" + comm._(SELECT) + "(\"select * from " + conf.vPrefix + table.name);
       {
         boolean first = true;
         for (FieldInfo fi : keyInfo) {
@@ -763,7 +758,7 @@ public abstract class Nf6Generator {
       ClassOuter fieldsClass) {
     List<FieldInfo> keyInfo = table.keyInfo();
     {
-      comm.print("  @" + comm._(INSERT) + "(\"insert into " + tabPrefix + table.name);
+      comm.print("  @" + comm._(INSERT) + "(\"insert into " + conf.tabPrefix + table.name);
       comm.print(" (");
       {
         boolean first = true;
@@ -788,7 +783,7 @@ public abstract class Nf6Generator {
       comm.println(");");
     }
     {
-      comm.print("  @" + comm._(INSERT) + "(\"insert into " + tabPrefix + table.name);
+      comm.print("  @" + comm._(INSERT) + "(\"insert into " + conf.tabPrefix + table.name);
       comm.print(" (");
       {
         boolean first = true;
@@ -846,7 +841,7 @@ public abstract class Nf6Generator {
   
   private void setFieldWithNow(ClassOuter comm, Field field, List<FieldInfo> keyInfo,
       List<FieldInfo> all) {
-    comm.print("  @" + comm._(INSERT) + "(\"insert into " + tabPrefix + field.table.name + "_"
+    comm.print("  @" + comm._(INSERT) + "(\"insert into " + conf.tabPrefix + field.table.name + "_"
         + field.name);
     comm.print(" (");
     {
@@ -883,7 +878,7 @@ public abstract class Nf6Generator {
   
   private void setField(ClassOuter comm, Field field, List<FieldInfo> keyInfo,
       List<FieldInfo> fieldInfo, List<FieldInfo> all) {
-    comm.print("  @" + comm._(INSERT) + "(\"insert into " + tabPrefix + field.table.name + "_"
+    comm.print("  @" + comm._(INSERT) + "(\"insert into " + conf.tabPrefix + field.table.name + "_"
         + field.name);
     comm.print(" (");
     {
@@ -933,7 +928,7 @@ public abstract class Nf6Generator {
   
   private void insFieldWithNow(ClassOuter comm, Field field, ClassOuter java,
       List<FieldInfo> keyInfo, List<FieldInfo> all) {
-    comm.print("  @" + comm._(INSERT) + "(\"insert into " + tabPrefix + field.table.name + "_"
+    comm.print("  @" + comm._(INSERT) + "(\"insert into " + conf.tabPrefix + field.table.name + "_"
         + field.name);
     comm.print(" (");
     {
@@ -960,7 +955,7 @@ public abstract class Nf6Generator {
   }
   
   private void insField(ClassOuter comm, Field field, ClassOuter java, List<FieldInfo> all) {
-    comm.print("  @" + comm._(INSERT) + "(\"insert into " + tabPrefix + field.table.name + "_"
+    comm.print("  @" + comm._(INSERT) + "(\"insert into " + conf.tabPrefix + field.table.name + "_"
         + field.name);
     comm.print(" (");
     {
@@ -1009,8 +1004,8 @@ public abstract class Nf6Generator {
       }
       comm.println("\")");
       
-      comm.print("  " + comm._(java.name()) + " loadAt(@" + comm._(PARAM) + "(\"" + ts + "\")"
-          + comm._(DATE) + " " + ts);
+      comm.print("  " + comm._(java.name()) + " loadAt(@" + comm._(PARAM) + "(\"" + conf.ts + "\")"
+          + comm._(DATE) + " " + conf.ts);
       for (FieldInfo fi : keyInfo) {
         comm.print(", @" + comm._(PARAM) + "(\"" + fi.name + "\")");
         comm.print(comm._(fi.javaType.javaType()) + " " + fi.name);
@@ -1039,7 +1034,7 @@ public abstract class Nf6Generator {
       comm.println("\")");
       
       comm.print("  " + comm._(LIST) + "<" + comm._(java.name()) + "> loadListAt(@" + comm._(PARAM)
-          + "(\"" + ts + "\")" + comm._(DATE) + " " + ts);
+          + "(\"" + conf.ts + "\")" + comm._(DATE) + " " + conf.ts);
       for (FieldInfo fi : keyInfo) {
         comm.print(", @" + comm._(PARAM) + "(\"" + fi.name + "\")");
         comm.print(comm._(fi.javaType.javaType()) + " " + fi.name);
@@ -1054,30 +1049,30 @@ public abstract class Nf6Generator {
   }
   
   private void generateTandV() {
-    ClassOuter t = new ClassOuter(daoPackage + ".i", "", "T");
-    ClassOuter v = new ClassOuter(daoPackage + ".i", "", "V");
+    ClassOuter t = new ClassOuter(conf.daoPackage + ".i", "", "T");
+    ClassOuter v = new ClassOuter(conf.daoPackage + ".i", "", "V");
     t.println("public interface " + t.className + " {");
     v.println("public interface " + v.className + " {");
     
     for (Table table : sg.stru.tables.values()) {
-      t.println("  String " + table.name + " = \"" + tabPrefix + table.name + "\";");
-      v.println("  String " + table.name + " = \"" + vPrefix + table.name + "\";");
+      t.println("  String " + table.name + " = \"" + conf.tabPrefix + table.name + "\";");
+      v.println("  String " + table.name + " = \"" + conf.vPrefix + table.name + "\";");
       for (Field field : table.fields) {
-        t.println("  String " + table.name + "_" + field.name + " = \"" + tabPrefix + table.name
-            + "_" + field.name + "\";");
-        v.println("  String " + table.name + "_" + field.name + " = \"" + vPrefix + table.name
+        t.println("  String " + table.name + "_" + field.name + " = \"" + conf.tabPrefix
+            + table.name + "_" + field.name + "\";");
+        v.println("  String " + table.name + "_" + field.name + " = \"" + conf.vPrefix + table.name
             + "_" + field.name + "\";");
       }
       t.println();
       v.println();
     }
     
-    t.generateTo(javaGenDir);
-    v.generateTo(javaGenDir);
+    t.generateTo(conf.javaGenDir);
+    v.generateTo(conf.javaGenDir);
   }
   
   private void generateVT() {
-    ClassOuter vt = new ClassOuter(daoPackage + ".i", "", "VT");
+    ClassOuter vt = new ClassOuter(conf.daoPackage + ".i", "", "VT");
     vt.println("public interface " + vt.className + " {");
     
     for (Table table : sg.stru.tables.values()) {
@@ -1092,7 +1087,7 @@ public abstract class Nf6Generator {
       vt.println();
     }
     
-    vt.generateTo(javaGenDir);
+    vt.generateTo(conf.javaGenDir);
   }
   
   private void generateDaoTableCommands(ClassOuter comm, Table table, ClassOuter java,
@@ -1109,7 +1104,7 @@ public abstract class Nf6Generator {
   
   private void generateDaoTableSelectAll(ClassOuter comm, Table table, ClassOuter java,
       SelectAll command) {
-    comm.println("@" + comm._(SELECT) + "(\"select * from " + vPrefix + table.name + " "
+    comm.println("@" + comm._(SELECT) + "(\"select * from " + conf.vPrefix + table.name + " "
         + command.orderBy() + "\")");
     comm.println(comm._(LIST) + "<" + java.className + "> " + command.methodName + "();");
   }

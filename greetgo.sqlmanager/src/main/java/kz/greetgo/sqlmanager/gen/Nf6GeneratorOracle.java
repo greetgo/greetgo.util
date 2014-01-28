@@ -9,17 +9,17 @@ import kz.greetgo.sqlmanager.model.SimpleType;
 import kz.greetgo.sqlmanager.model.Table;
 import kz.greetgo.sqlmanager.parser.StruGenerator;
 
-public class Nf6GeneratorPostgres extends Nf6Generator {
+public class Nf6GeneratorOracle extends Nf6Generator {
   
   private SqlDialect sqlDialect = null;
   
   @Override
   protected SqlDialect sqld() {
-    if (sqlDialect == null) sqlDialect = new SqlDialectPostgres();
+    if (sqlDialect == null) sqlDialect = new SqlDialectOracle();
     return sqlDialect;
   }
   
-  public Nf6GeneratorPostgres(StruGenerator sg) {
+  public Nf6GeneratorOracle(StruGenerator sg) {
     super(sg);
   }
   
@@ -144,8 +144,5 @@ public class Nf6GeneratorPostgres extends Nf6Generator {
   }
   
   @Override
-  protected void printPrepareSqls(PrintStream out) {
-    out.println("create view dual as select 'X'::varchar as dummy" + conf.separator);
-    out.println();
-  }
+  protected void printPrepareSqls(PrintStream out) {}
 }
