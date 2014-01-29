@@ -193,5 +193,10 @@ public class Nf6GeneratorOracle extends Nf6Generator {
   }
   
   @Override
-  protected void printPrepareSqls(PrintStream out) {}
+  protected void printPrepareSqls(PrintStream out) {
+    out.println("create or replace function moment return timestamp");
+    out.println("is begin return current_timestamp ; end ; ");
+    out.println(conf.separator);
+    out.println();
+  }
 }

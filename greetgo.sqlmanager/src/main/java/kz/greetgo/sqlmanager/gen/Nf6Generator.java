@@ -681,7 +681,7 @@ public abstract class Nf6Generator {
         }
       }
     }
-    comm.println("current_timestamp)}\")");
+    comm.println("moment())}\")");
     comm.print("  void set" + firstUpper(field.name) + "WithNow(");
     {
       boolean first = true;
@@ -756,7 +756,7 @@ public abstract class Nf6Generator {
         }
       }
     }
-    comm.println("current_timestamp)}\")");
+    comm.println("moment())}\")");
     comm.println("  void ins" + firstUpper(field.name) + "WithNow(" + comm._(java.name()) + " "
         + field.table.name + ");");
   }
