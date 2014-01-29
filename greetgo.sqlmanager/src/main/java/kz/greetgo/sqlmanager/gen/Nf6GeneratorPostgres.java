@@ -171,7 +171,7 @@ public class Nf6GeneratorPostgres extends Nf6Generator {
     out.println("create view dual as select 'X'::varchar as dummy" + conf.separator);
     
     out.println("create or replace function moment() returns timestamp");
-    out.println("language plpgsql as 'begin return current_timestamp; end '");
+    out.println("language plpgsql as 'begin return current_timestamp; end '" + conf.separator);
     
     out.println();
     
