@@ -276,9 +276,7 @@ public abstract class Nf6Generator {
       printTableInsertFunction(out, table);
       for (Field field : table.fields) {
         printFieldInsertFunction(out, field);
-        out.println();
       }
-      out.println();
     }
   }
   
