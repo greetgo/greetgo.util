@@ -2,38 +2,49 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:contentDescription="@string/bandDescription"
-    tools:context=".KaruselActivity" >
+    tools:context=".MainActivity" >
 
     <ImageView
-        android:id="@+id/act03_imageView1"
+        android:id="@+id/topForm002"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="false"
+        android:layout_marginBottom="0dp"
         android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
         android:layout_marginTop="0dp"
+        android:adjustViewBounds="true"
+        android:baselineAlignBottom="false"
+        android:clickable="false"
         android:contentDescription="@string/bandDescription"
-        android:src="@drawable/band" />
+        android:scaleType="center"
+        android:src="@drawable/top" />
 
     <RelativeLayout
-        android:id="@+id/wall02"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/act03_imageView1" >
+        android:layout_below="@+id/topForm002"
+        android:background="#FF0000"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin" >
 
-        <ImageView
-            android:id="@+id/image"
+        <TextView
+            android:id="@+id/textForm002"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:contentDescription="@string/bandDescription"
-            android:src="@drawable/karu001" />
+            android:text="@string/textForm002"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF" />
 
     </RelativeLayout>
 

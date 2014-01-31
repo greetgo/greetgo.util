@@ -3,11 +3,13 @@ package kz.greetgo.homecreditdemo;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class MainActivity extends Activity {
   
@@ -24,6 +26,8 @@ public class MainActivity extends Activity {
       }
     });
     
+    setFontTo(R.id.loginTitle, R.id.login, R.id.password, R.id.passwordTitle);
+    
     login = (EditText)findViewById(R.id.login);
     password = (EditText)findViewById(R.id.password);
     
@@ -33,6 +37,14 @@ public class MainActivity extends Activity {
         next();
       }
     });
+  }
+  
+  private void setFontTo(int... ids) {
+    Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/MyriadPro-Regular-K_0.ttf");
+    for (int id : ids) {
+      TextView txt = (TextView)findViewById(id);
+      txt.setTypeface(tf);
+    }
   }
   
   private EditText login, password;
