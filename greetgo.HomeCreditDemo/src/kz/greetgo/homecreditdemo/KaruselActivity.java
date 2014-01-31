@@ -18,9 +18,9 @@ public class KaruselActivity extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_karusel);
     
-    image1 = (ImageView)findViewById(R.id.image1);
-    image2 = (ImageView)findViewById(R.id.image2);
-    image3 = (ImageView)findViewById(R.id.image3);
+    image1 = (ImageView)findViewById(R.id.karusel_image1);
+    image2 = (ImageView)findViewById(R.id.karusel_image2);
+    image3 = (ImageView)findViewById(R.id.karusel_image3);
     
     image2.setVisibility(View.INVISIBLE);
     image3.setVisibility(View.INVISIBLE);

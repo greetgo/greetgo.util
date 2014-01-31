@@ -18,9 +18,9 @@ public class Anim01Activity extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.anim01_activity);
     
-    image1 = (ImageView)findViewById(R.id.image1);
-    image2 = (ImageView)findViewById(R.id.image2);
-    image3 = (ImageView)findViewById(R.id.image3);
+    image1 = (ImageView)findViewById(R.id.act01_image1);
+    image2 = (ImageView)findViewById(R.id.act01_image2);
+    image3 = (ImageView)findViewById(R.id.act01_image3);
     
     image2.setVisibility(View.INVISIBLE);
     image3.setVisibility(View.INVISIBLE);

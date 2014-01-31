@@ -6,7 +6,7 @@
     tools:context=".KaruselActivity" >
 
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/act01_top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -18,27 +18,30 @@
         android:src="@drawable/band" />
 
     <ImageView
-        android:id="@+id/image1"
+        android:id="@+id/act01_image3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/imageView1"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/bandDescription"
+        android:src="@drawable/karu003" />
+
+    <ImageView
+        android:id="@+id/act01_image1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/act01_top"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/bandDescription"
         android:src="@drawable/karu001" />
 
     <ImageView
-        android:id="@+id/image2"
+        android:id="@+id/act01_image2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/image1"
+        android:layout_alignLeft="@+id/act01_image3"
+        android:layout_below="@+id/act01_image1"
+        android:contentDescription="@string/bandDescription"
         android:src="@drawable/karu002" />
-
-    <ImageView
-        android:id="@+id/image3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/image2"
-        android:layout_toRightOf="@+id/image1"
-        android:src="@drawable/karu003" />
 
 </RelativeLayout>

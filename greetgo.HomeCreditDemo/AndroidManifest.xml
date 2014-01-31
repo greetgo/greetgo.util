@@ -34,6 +34,10 @@
             android:name="kz.greetgo.homecreditdemo.Anim02Activity"
             android:label="@string/title_activity_karusel" >
         </activity>
+        <activity
+            android:name="kz.greetgo.homecreditdemo.Anim03Activity"
+            android:label="@string/title_activity_karusel" >
+        </activity>
         </application>
 
 </manifest>

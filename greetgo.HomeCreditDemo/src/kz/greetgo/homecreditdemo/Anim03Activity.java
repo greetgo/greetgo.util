@@ -6,14 +6,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
-public class Anim02Activity extends Activity {
+public class Anim03Activity extends Activity {
   
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.anim02_activity);
+    setContentView(R.layout.anim03_activity);
     
-    View view = findViewById(R.id.wall02);
+    View view = findViewById(R.id.wall03);
     
     view.setOnTouchListener(new View.OnTouchListener() {
       @Override
@@ -22,11 +22,19 @@ public class Anim02Activity extends Activity {
       }
     });
     
-    image = (ImageView)findViewById(R.id.image);
-    
+    viewCenter = (ImageView)findViewById(R.id.act03_image1);
+    viewLeft = (ImageView)findViewById(R.id.act03_image2);
+    viewRight = (ImageView)findViewById(R.id.act03_image3);
+    viewBack = (ImageView)findViewById(R.id.act03_image4);
   }
   
-  private ImageView image;
+  private View viewCenter;
+  @SuppressWarnings("unused")
+  private View viewLeft;
+  @SuppressWarnings("unused")
+  private View viewRight;
+  @SuppressWarnings("unused")
+  private View viewBack;
   
   private boolean touch(MotionEvent event) {
     if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -57,12 +65,14 @@ public class Anim02Activity extends Activity {
     if (!down) return;
     float dx = event.getX() - x;
     float dy = event.getY() - y;
-    image.setTranslationX(dx);
-    image.setTranslationY(dy);
+    
+    viewCenter.setTranslationX(dx);
+    viewCenter.setTranslationY(dy);
   }
   
   private void up(MotionEvent event) {
     down = false;
-    image.animate().translationX(0).translationY(0).withLayer();
+    
+    viewCenter.animate().translationX(0).translationY(0).withLayer();
   }
 }

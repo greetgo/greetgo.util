@@ -18,7 +18,7 @@
         android:src="@drawable/band" />
 
     <RelativeLayout
-        android:id="@+id/wall"
+        android:id="@+id/wall02"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

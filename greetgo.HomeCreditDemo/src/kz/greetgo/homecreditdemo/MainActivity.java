@@ -61,7 +61,7 @@ public class MainActivity extends Activity {
   }
   
   private void next() {
-    Intent intent = new Intent(this, Anim02Activity.class);
+    Intent intent = new Intent(this, Anim03Activity.class);
     startActivity(intent);
   }
 }
