@@ -66,6 +66,16 @@
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:text="@string/enter_caption" />
 
+        <Button
+            android:id="@+id/toKarusel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/enter"
+            android:layout_alignRight="@+id/enter"
+            android:layout_below="@+id/enter"
+            android:layout_marginTop="34dp"
+            android:text="Go to karusel" />
+
     </RelativeLayout>
 
 </RelativeLayout>

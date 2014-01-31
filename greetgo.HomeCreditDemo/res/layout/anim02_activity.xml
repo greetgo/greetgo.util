@@ -17,31 +17,24 @@
         android:contentDescription="@string/bandDescription"
         android:src="@drawable/band" />
 
-    <ImageView
-        android:id="@+id/image1"
+    <RelativeLayout
+        android:id="@+id/wall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/imageView1"
-        android:contentDescription="@string/bandDescription"
-        android:src="@drawable/karu001" />
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/imageView1" >
 
-    <ImageView
-        android:id="@+id/image2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/image1"
-        android:contentDescription="@string/bandDescription"
-        android:src="@drawable/karu002" />
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/bandDescription"
+            android:src="@drawable/karu001" />
 
-    <ImageView
-        android:id="@+id/image3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/image2"
-        android:layout_toRightOf="@+id/image1"
-        android:contentDescription="@string/bandDescription"
-        android:src="@drawable/karu003" />
+    </RelativeLayout>
 
 </RelativeLayout>

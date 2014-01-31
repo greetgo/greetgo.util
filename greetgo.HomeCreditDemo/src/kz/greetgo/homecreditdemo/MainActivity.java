@@ -26,6 +26,13 @@ public class MainActivity extends Activity {
     
     login = (EditText)findViewById(R.id.login);
     password = (EditText)findViewById(R.id.password);
+    
+    ((Button)findViewById(R.id.toKarusel)).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        next();
+      }
+    });
   }
   
   private EditText login, password;
@@ -38,7 +45,10 @@ public class MainActivity extends Activity {
   }
   
   private void enter() {
-    if ("asd".equals(login.getText().toString()) && "111".equals(password.getText().toString())) {
+    String pass = password.getText().toString();
+    password.setText(null);
+    
+    if ("asd".equals(login.getText().toString()) && "111".equals(pass)) {
       next();
       return;
     }
@@ -47,12 +57,11 @@ public class MainActivity extends Activity {
     b.setMessage(R.string.wronge_login_password);
     b.setTitle("Ошибка при входе");
     b.setCancelable(true);
-    AlertDialog ad = b.create();
-    ad.show();
+    b.create().show();
   }
   
   private void next() {
-    Intent intent = new Intent(this, KaruselActivity.class);
+    Intent intent = new Intent(this, Anim02Activity.class);
     startActivity(intent);
   }
 }

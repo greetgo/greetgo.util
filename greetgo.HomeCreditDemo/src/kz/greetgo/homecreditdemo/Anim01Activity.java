@@ -8,7 +8,7 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
-public class KaruselActivity extends Activity {
+public class Anim01Activity extends Activity {
   ImageView image1, image2, image3;
   Animation animationSlideInLeft, animationSlideOutRight;
   ImageView curSlidingImage;
@@ -16,7 +16,7 @@ public class KaruselActivity extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_karusel);
+    setContentView(R.layout.anim01_activity);
     
     image1 = (ImageView)findViewById(R.id.image1);
     image2 = (ImageView)findViewById(R.id.image2);
