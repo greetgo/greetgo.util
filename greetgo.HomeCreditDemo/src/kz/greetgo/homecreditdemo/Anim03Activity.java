@@ -17,8 +17,8 @@ import android.widget.TextView;
 public class Anim03Activity extends Activity {
   
   final static float SCALE = 0.8f;
-  final static float ALFA = 0.8f;
-  final static float DIST = 0;
+  final static float ALFA = 0.65f;
+  final static float DIST = -10f;
   
   private final List<View> views = new ArrayList<View>();
   
@@ -65,8 +65,9 @@ public class Anim03Activity extends Activity {
     addView(R.id.act03_lay4);
     addView(R.id.act03_lay5);
     
-    setFontTo(R.id.buttonChangePassword, R.id.buttonFinish, R.id.wallText, R.id.act03_text1,
-        R.id.act03_text2, R.id.act03_text3, R.id.act03_text4, R.id.act03_text5);
+    setFontTo(R.id.button_change_password, R.id.buttonFinish, R.id.wallText);
+    setBoldFontTo(R.id.act03_text1, R.id.act03_text2, R.id.act03_text3, R.id.act03_text4,
+        R.id.act03_text5);
     
     findViewById(R.id.buttonFinish).setOnClickListener(new View.OnClickListener() {
       @Override
@@ -78,7 +79,7 @@ public class Anim03Activity extends Activity {
       }
     });
     
-    findViewById(R.id.buttonChangePassword).setOnClickListener(new View.OnClickListener() {
+    findViewById(R.id.button_change_password).setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
         changePassword();
@@ -92,8 +93,22 @@ public class Anim03Activity extends Activity {
   private void setFontTo(int... ids) {
     Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/MyriadPro-Regular-K_0.ttf");
     for (int id : ids) {
-      TextView txt = (TextView)findViewById(id);
-      txt.setTypeface(tf);
+      View view = findViewById(id);
+      if (view instanceof TextView) {
+        TextView txt = (TextView)view;
+        txt.setTypeface(tf);
+      }
+    }
+  }
+  
+  private void setBoldFontTo(int... ids) {
+    Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/MyriadPro-Bold.otf");
+    for (int id : ids) {
+      View view = findViewById(id);
+      if (view instanceof TextView) {
+        TextView txt = (TextView)view;
+        txt.setTypeface(tf);
+      }
     }
   }
   
@@ -175,14 +190,20 @@ public class Anim03Activity extends Activity {
     
     for (int i = -2; i <= +2; i++) {
       
-      final float scale;
+      float scale;
+      float alfa;
       if (i == 0) {
-        scale = 1f;
+        scale = alfa = 1f;
       } else if (i == 1 || i == -1) {
         scale = SCALE + Math.abs(dx) / w * (1f - SCALE);
+        alfa = ALFA + Math.abs(dx) / w * (1f - ALFA);
       } else {
         scale = SCALE;
+        alfa = ALFA;
       }
+      
+      if (scale > 1f) scale = 1f;
+      if (alfa > 1f) alfa = 1f;
       
       if (anim) {
         float oldTR = view(i).getTranslationX();
@@ -193,12 +214,13 @@ public class Anim03Activity extends Activity {
         {
           ViewPropertyAnimator animator = view(i).animate();
           animator.setInterpolator(new DecelerateInterpolator());
-          animator.translationX(newTR).scaleX(scale).scaleY(scale).withLayer();
+          animator.translationX(newTR).scaleX(scale).scaleY(scale).alpha(alfa).withLayer();
         }
       } else {
         view(i).setTranslationX(xc[i + 2] + dx);
         view(i).setScaleX(scale);
         view(i).setScaleY(scale);
+        view(i).setAlpha(alfa);
       }
     }
     

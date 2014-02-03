@@ -42,8 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/password"
             android:layout_marginTop="34dp"
-            android:text="Go to karusel"
-            android:visibility="invisible" />
+            android:text="Go to karusel" />
 
         <TextView
             android:id="@+id/loginTitle"

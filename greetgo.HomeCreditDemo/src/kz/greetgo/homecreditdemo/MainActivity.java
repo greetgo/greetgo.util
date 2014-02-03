@@ -57,6 +57,7 @@ public class MainActivity extends Activity {
   }
   
   private void enter() {
+    System.out.println("HELLO WORLD!!!");
     String pass = password.getText().toString();
     password.setText(null);
     
