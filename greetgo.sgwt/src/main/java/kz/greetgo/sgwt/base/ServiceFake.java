@@ -21,7 +21,7 @@ public abstract class ServiceFake<A, R> implements ServiceAsync<A, R> {
     for (int i = 0; i < initDelays.length; i++) {
       initDelays[i] = Math.max(0, initDelays[i]);
     }
-    DELAYS = initDelays.length == 0 ? DEFAULT_DELAYS : initDelays;
+    DELAYS = initDelays.length == 0 ? DEFAULT_DELAYS :initDelays;
   }
   
   public static final void setDelays(String delaysStr) {
@@ -39,6 +39,10 @@ public abstract class ServiceFake<A, R> implements ServiceAsync<A, R> {
     setDelays(array);
   }
   
+  protected boolean needTrace() {
+    return true;
+  }
+  
   @Override
   public final Request invoke(final A action, final AsyncCallback<R> callback) {
     String qualified = this.getClass().toString();
@@ -48,7 +52,7 @@ public abstract class ServiceFake<A, R> implements ServiceAsync<A, R> {
     final boolean trace = !"PingServiceFake".equals(className);
     final Timer timer = new Timer() {
       {
-        trace("<<", action);
+        if (needTrace()) trace("<<", action);
       }
       
       @Override
@@ -61,7 +65,7 @@ public abstract class ServiceFake<A, R> implements ServiceAsync<A, R> {
           callback.onFailure(caught);
           return;
         }
-        trace(">>", result);
+        if (needTrace()) trace(">>", result);
         callback.onSuccess(result);
       }
       
