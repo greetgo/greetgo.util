@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FF0000"
     android:contentDescription="@string/bandDescription"
     tools:context=".KaruselActivity" >
 
@@ -10,15 +9,10 @@
         android:id="@+id/act03_top"
         style="@style/TopBanner"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="0dp"
-        android:layout_marginTop="0dp"
+        android:layout_height="45dp"
         android:contentDescription="@string/bandDescription"
         android:scaleType="center"
-        android:src="@drawable/top" />
+        android:src="@drawable/top_1280" />
 
     <RelativeLayout
         android:id="@+id/wall03"
@@ -28,7 +22,8 @@
         android:layout_above="@+id/imageView1"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/act03_top" >
+        android:layout_below="@+id/act03_top"
+        android:background="#FF0000" >
 
         <RelativeLayout
             android:id="@+id/act03_lay1"
@@ -215,7 +210,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="31dp"
+            android:layout_marginTop="5dp"
             android:text="Назимова Елена"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -225,7 +220,7 @@
         android:id="@+id/imageView1"
         style="@style/BottomBanner"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"

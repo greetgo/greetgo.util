@@ -41,7 +41,7 @@
     </style>
     <style name="NakedButton" parent="AppBaseTheme">
         <item name="android:textColor">#FFFFFF</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">15sp</item>
         <item name="android:background">@drawable/naked_bg</item>
     </style>
     <style name="TopBanner" parent="AppBaseTheme">

@@ -21,13 +21,10 @@
     </style>
     <style name="KaruselText" parent="AppBaseTheme">
         <item name="android:paddingTop">5sp</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">9sp</item>
         </style>
     <style name="Wall" parent="AppBaseTheme">
         <item name="android:background">#FF0000</item>
-    </style>
-    <style name="WallText" parent="AppBaseTheme">
-        <item name="android:textColor">#FFFFFF</item>
     </style>
     
     <style name="EntryText" parent="AppBaseTheme">
@@ -40,11 +37,9 @@
         <item name="android:background">@drawable/enter_button_border</item>
     </style>
     <style name="NakedButton" parent="AppBaseTheme">
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:background">@drawable/naked_bg</item>
-    </style>
-    <style name="TopBanner" parent="AppBaseTheme">
     </style>
     <style name="BottomBanner" parent="AppBaseTheme">
         

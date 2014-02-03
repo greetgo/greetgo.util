@@ -10,7 +10,7 @@
     <string name="password_caption">Введите пароль</string>
     <string name="wronge_login_password">Не верен логин и/или пароль</string>
     <string name="title_activity_karusel">Мобильный банкинг</string>
-    <string name="title_finish"><u>ВЫЙТИ</u></string>
+    <string name="title_finish"><u>ЗАВЕРШИТЬ РАБОТУ</u></string>
     <string name="title_change_password"><u>СМЕНИТЬ ПАРОЛЬ</u></string>
     <string name="title_new_password">Поменяйте ваш личный пароль</string>
     <string name="title_again_password">Повторите пероль</string>

@@ -238,7 +238,7 @@ public class Anim03Activity extends Activity {
     float dx2 = dx;
     dx = 0;
     
-    if (Math.abs(dx2) < 5) {
+    if (Math.abs(dx2) < 15) {
       int i = current;
       while (i < 0) {
         i += views.size();
