@@ -1,8 +1,10 @@
-package kz.greetgo.gbatis;
+package kz.greetgo.gbatis.classscanner;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
 import java.util.Set;
+
+import kz.greetgo.gbatis.classscanner.ClassScannerDef;
 
 import org.testng.annotations.Test;
 

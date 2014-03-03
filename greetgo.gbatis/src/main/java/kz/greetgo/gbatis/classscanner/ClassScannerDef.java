@@ -1,4 +1,4 @@
-package kz.greetgo.gbatis;
+package kz.greetgo.gbatis.classscanner;
 
 import java.util.Set;
 
