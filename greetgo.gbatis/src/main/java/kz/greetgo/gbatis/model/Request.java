@@ -11,4 +11,7 @@ public class Request {
   
   public ResultType resultType;
   public Class<?> resultDataClass;
+  public boolean callNow;
+  public String mapKeyField;
+  public Class<?> mapKeyClass;
 }

@@ -39,4 +39,5 @@ public @interface T1 {
    *         префикс встраиваемой вьюшки
    */
   String name() default "";
+  
 }
