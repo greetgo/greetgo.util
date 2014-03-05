@@ -1,0 +1,9 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Test Suite" parallel="false">
+  <test name="Test">
+    <classes>
+      <class name="kz.greetgo.gbatis.futurecall.FutureCallDefTest" />
+      <class name="kz.greetgo.gbatis.modelreader.ModelReaderTest" />
+    </classes>
+  </test>
+</suite>

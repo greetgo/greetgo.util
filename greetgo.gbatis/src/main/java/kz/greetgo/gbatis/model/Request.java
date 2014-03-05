@@ -14,4 +14,8 @@ public class Request {
   public boolean callNow;
   public String mapKeyField;
   public Class<?> mapKeyClass;
+  
+  public Object newResultRowInstance() throws InstantiationException, IllegalAccessException {
+    return resultDataClass.newInstance();
+  }
 }
