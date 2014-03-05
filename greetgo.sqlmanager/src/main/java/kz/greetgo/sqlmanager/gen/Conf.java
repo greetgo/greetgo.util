@@ -7,6 +7,7 @@ public class Conf {
   public String vPrefix = "v_";
   public String withPrefix = "x_";
   public String ts = "ts";
+  public String tsTab = "ts";
   public String cre = "createdAt";
   public String bigQuote = "big_quote";
   public String _ins_ = "ins_";
