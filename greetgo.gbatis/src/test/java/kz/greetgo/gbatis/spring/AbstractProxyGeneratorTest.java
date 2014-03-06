@@ -3,6 +3,7 @@ package kz.greetgo.gbatis.spring;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 import java.net.URL;
+import java.util.List;
 
 import kz.greetgo.gbatis.spring.beans.TestProxyGenerator;
 import kz.greetgo.gbatis.spring.beans.UsingDao;
@@ -45,14 +46,17 @@ public class AbstractProxyGeneratorTest extends AbstractWithDbTest {
       ClientDao6 clientDao6 = ctx.getBean(ClientDao6.class);
       
       System.out.println("##################################");
-      for (Client client : clientDao6.youngClients(14)) {
+      List<Client> youngClients = clientDao6.youngClients(14);
+      
+      for (Client client : youngClients) {
         System.out.println(client);
       }
+      assertThat(youngClients).hasSize(5);
       System.out.println("##################################");
     }
     
     ctx.close();
-    assertThat(1);
+    
   }
   
 }
