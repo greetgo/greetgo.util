@@ -82,7 +82,9 @@ class PreparedSql {
     for (FieldInfo fieldInfo : table.keyInfo()) {
       select.append(", x.").append(fieldInfo.name);
     }
-    from.append(" from " + withView.table + " x");
+    from.append(" from ");
+    if (at != null) from.append(conf.tsTab + ", ");
+    from.append(withView.table + " x");
     
     int index = 1;
     for (String fieldName : withView.fields) {
@@ -119,7 +121,7 @@ class PreparedSql {
       
       sb.append("(select * from ( ");
       
-      sb.append("select y.*, row_number() over (partition ");
+      sb.append("select y.*, row_number() over (partition by ");
       
       {
         boolean first = true;
@@ -133,7 +135,8 @@ class PreparedSql {
         }
       }
       
-      sb.append(" order by y." + conf.ts + " desc) as rn__ where y." + conf.ts + " <= "
+      sb.append(" order by y." + conf.ts + " desc) as rn__ from " + conf.tsTab + ", "
+          + conf.tabPrefix + field.table.name + "_" + field.name + " y where y." + conf.ts + " <= "
           + conf.tsTab + '.' + conf.ts);
       
       sb.append(" ) yy where yy.rn__ = 1)");
@@ -166,7 +169,8 @@ class PreparedSql {
     sb.append("with ");
     boolean needComma = false;
     if (at != null) {
-      sb.append(conf.tsTab + " as (select ? as " + conf.ts
+      String placeHolder = "?" + (dbType == DbType.PostgreSQL ? "::timestamp" :"");
+      sb.append(conf.tsTab + " as (select " + placeHolder + " as " + conf.ts
           + (dbType == DbType.Oracle ? " from dual" :"") + ")");
       needComma = true;
       params.add(new java.sql.Timestamp(at.getTime()));

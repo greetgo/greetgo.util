@@ -1,7 +1,9 @@
 package kz.greetgo.gbatis.spring.daos;
 
+import java.util.Date;
 import java.util.List;
 
+import kz.greetgo.gbatis.model.FutureCall;
 import kz.greetgo.gbatis.t.Autoimpl;
 import kz.greetgo.gbatis.t.Call;
 import kz.greetgo.gbatis.t.Prm;
@@ -12,7 +14,14 @@ import kz.greetgo.gbatis.t.T1;
 public interface ClientDao6 {
   @T1("m_client")
   @Sele("select client as id,surname,name,patronymic,age from x_client where age <= #{age}")
-  List<Client> youngClients(@Prm("age") int age);
+  FutureCall<List<Client>> youngClients(@Prm("age") int age);
+  
+  @T1("m_client")
+  @Sele("select client as id,surname,name,patronymic,age from x_client")
+  FutureCall<List<Client>> allClients();
+  
+  @Sele("select moment()")
+  Date now();
   
   @Sele("select nextval('s_client')")
   long nextClient();

@@ -11,7 +11,7 @@ public class UsingDao {
   @Autowired
   private ClientDao6 clientDao6;
   
-  public void prepareDbData() {
+  public void prepareClients() {
     for (int age = 10; age <= 20; age++) {
       long id = 3000 + age;
       clientDao6.insClient(id);
@@ -19,6 +19,14 @@ public class UsingDao {
       clientDao6.insClientName(id, "Name" + age);
       
       clientDao6.insClientAge(id, age);
+    }
+  }
+  
+  public void makeOlds() {
+    for (int age = 11; age <= 20; age++) {
+      long id = 3000 + age;
+      
+      clientDao6.insClientAge(id, 30);
     }
   }
 }

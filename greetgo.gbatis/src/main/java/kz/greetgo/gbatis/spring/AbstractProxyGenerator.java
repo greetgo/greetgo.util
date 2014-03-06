@@ -10,6 +10,7 @@ import java.util.Map;
 import kz.greetgo.gbatis.classscanner.ClassScanner;
 import kz.greetgo.gbatis.classscanner.ClassScannerDef;
 import kz.greetgo.gbatis.futurecall.FutureCallDef;
+import kz.greetgo.gbatis.futurecall.SqlViewer;
 import kz.greetgo.gbatis.model.Request;
 import kz.greetgo.gbatis.modelreader.ModelReader;
 import kz.greetgo.gbatis.t.Autoimpl;
@@ -40,6 +41,10 @@ public abstract class AbstractProxyGenerator implements BeanDefinitionRegistryPo
   protected abstract JdbcTemplate getJdbcTemplate();
   
   protected abstract List<String> getBasePackageList();
+  
+  protected SqlViewer getSqlViewer() {
+    return null;
+  }
   
   protected ClassScanner getClassScanner() {
     return new ClassScannerDef();
@@ -110,6 +115,8 @@ public abstract class AbstractProxyGenerator implements BeanDefinitionRegistryPo
     
     FutureCallDef<Object> futureCall = new FutureCallDef<Object>(getConf(), getStru(),
         getJdbcTemplate(), request, args);
+    
+    futureCall.sqlViewer = getSqlViewer();
     
     if (request.callNow) return futureCall.last();
     

@@ -31,6 +31,8 @@ public class FutureCallDef<T> implements FutureCall<T> {
   private Request request;
   private Object[] args;
   
+  public SqlViewer sqlViewer = null;
+  
   public FutureCallDef(Conf conf, Stru stru, JdbcTemplate jdbc, Request request, Object[] args) {
     this.conf = conf;
     this.stru = stru;
@@ -92,6 +94,9 @@ public class FutureCallDef<T> implements FutureCall<T> {
   
   private T callSelect(Connection con, PreparedSql preparedSql) throws Exception {
     PreparedStatement ps = con.prepareStatement(preparedSql.sql);
+    if (sqlViewer != null && sqlViewer.needView()) {
+      sqlViewer.view(preparedSql.sql, preparedSql.params);
+    }
     try {
       
       {
