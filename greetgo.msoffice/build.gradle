@@ -5,7 +5,7 @@ apply plugin: 'maven'
 group = 'kz.greetgo'
 
 sourceCompatibility = 1.7
-version = '0.2.1'
+version = '0.2.2'
 
 def nowDate = new Date()
 def nowFormattedDate = nowDate.format("yyyy-MM-dd/HH:mm:ss")
@@ -82,6 +82,11 @@ artifacts {
   archives sourcesJar
 }
 
+sourceSets {
+  main {
+    resources.srcDirs = ["src/main/java", "src/main/resources"]
+  }
+}
 
 uploadArchives {
   repositories.mavenDeployer {
