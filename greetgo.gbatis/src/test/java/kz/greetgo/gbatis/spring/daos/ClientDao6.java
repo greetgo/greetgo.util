@@ -1,0 +1,34 @@
+package kz.greetgo.gbatis.spring.daos;
+
+import java.util.List;
+
+import kz.greetgo.gbatis.t.Autoimpl;
+import kz.greetgo.gbatis.t.Call;
+import kz.greetgo.gbatis.t.Prm;
+import kz.greetgo.gbatis.t.Sele;
+import kz.greetgo.gbatis.t.T1;
+
+@Autoimpl
+public interface ClientDao6 {
+  @T1("m_client")
+  @Sele("select client as id,surname,name,patronymic,age from x_client where age <= #{age}")
+  List<Client> youngClients(@Prm("age") int age);
+  
+  @Sele("select nextval('s_client')")
+  long nextClient();
+  
+  @Call("{call p_client (#{id})}")
+  void insClient(@Prm("id") long id);
+  
+  @Call("{call p_client_surname (#{id}, #{surname})}")
+  void insClientSurname(@Prm("id") long id, @Prm("surname") String surname);
+  
+  @Call("{call p_client_name (#{id}, #{name})}")
+  void insClientName(@Prm("id") long id, @Prm("name") String name);
+  
+  @Call("{call p_client_name (#{id}, #{patronymic})}")
+  void insClientPatronymic(@Prm("id") long id, @Prm("patronymic") String patronymic);
+  
+  @Call("{call p_client_age (#{id}, #{age})}")
+  void insClientAge(@Prm("id") long id, @Prm("age") int age);
+}

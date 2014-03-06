@@ -152,28 +152,33 @@ class PreparedSql {
   private void init() throws Exception {
     prepareWithSqls();
     
+    StringBuilder sb = new StringBuilder();
+    
     if (withSqls.size() > 0) {
-      StringBuilder sb = new StringBuilder();
-      sb.append("with ");
-      boolean needComma = false;
-      if (at != null) {
-        sb.append(conf.tsTab + " as (select ? as " + conf.ts
-            + (dbType == DbType.Oracle ? " from dual" :"") + ")");
-        needComma = true;
-        params.add(new java.sql.Timestamp(at.getTime()));
-      }
-      for (WithSql withSql : withSqls) {
-        if (needComma) {
-          sb.append(", ");
-        } else {
-          needComma = true;
-        }
-        sb.append(withSql.withView.view + " as (" + withSql.sql + ")");
-      }
-      
-      sql = sb + " " + preparePagedSql(dbType, prepareQuestionSql(), offset, pageSize, params);
+      appendWithSqls(sb);
+      sb.append(' ');
     }
     
+    sql = sb + preparePagedSql(dbType, prepareQuestionSql(), offset, pageSize, params);
+  }
+  
+  private void appendWithSqls(StringBuilder sb) {
+    sb.append("with ");
+    boolean needComma = false;
+    if (at != null) {
+      sb.append(conf.tsTab + " as (select ? as " + conf.ts
+          + (dbType == DbType.Oracle ? " from dual" :"") + ")");
+      needComma = true;
+      params.add(new java.sql.Timestamp(at.getTime()));
+    }
+    for (WithSql withSql : withSqls) {
+      if (needComma) {
+        sb.append(", ");
+      } else {
+        needComma = true;
+      }
+      sb.append(withSql.withView.view + " as (" + withSql.sql + ")");
+    }
   }
   
   private String prepareQuestionSql() throws Exception {

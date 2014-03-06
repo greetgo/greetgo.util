@@ -4,6 +4,7 @@
     <classes>
       <class name="kz.greetgo.gbatis.futurecall.FutureCallDefTest" />
       <class name="kz.greetgo.gbatis.modelreader.ModelReaderTest" />
+      <class name="kz.greetgo.gbatis.spring.AbstractProxyGeneratorTest" />
     </classes>
   </test>
 </suite>

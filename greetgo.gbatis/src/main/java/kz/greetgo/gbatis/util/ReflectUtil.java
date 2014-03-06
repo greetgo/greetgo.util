@@ -8,6 +8,22 @@ import java.util.Map;
 
 public class ReflectUtil {
   
+  public static <T> Getter<T> cachedFirst(final Getter<T> getter) {
+    return new Getter<T>() {
+      T returning = null;
+      boolean first = true;
+      
+      @Override
+      public T get() {
+        if (first) {
+          returning = getter.get();
+          first = false;
+        }
+        return returning;
+      }
+    };
+  }
+  
   public static String firstToLowcase(String str) {
     if (str == null) return null;
     if (str.length() < 2) return str.toLowerCase();
