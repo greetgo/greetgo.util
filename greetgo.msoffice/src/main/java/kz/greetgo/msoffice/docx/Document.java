@@ -3,6 +3,24 @@ package kz.greetgo.msoffice.docx;
 import java.io.PrintStream;
 
 public class Document extends DocumentFlow {
+  private Integer top = 1134;
+  private Integer bottom = 1134;
+  
+  public Integer getTop() {
+    return top;
+  }
+  
+  public void setTop(Integer top) {
+    this.top = top;
+  }
+  
+  public Integer getBottom() {
+    return bottom;
+  }
+  
+  public void setBottom(Integer bottom) {
+    this.bottom = bottom;
+  }
   
   Document(String partName, MSHelper msHelper) {
     super(partName, msHelper);
@@ -23,6 +41,7 @@ public class Document extends DocumentFlow {
         + " xmlns:v=\"urn:schemas-microsoft-com:vml\""
         + " xmlns:wp=\"http://schemas.openxmlformats.org/"
         + "drawingml/2006/wordprocessingDrawing\""
+        + " xmlns:wp14=\"http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing\""
         + " xmlns:w10=\"urn:schemas-microsoft-com:office:word\""
         + " xmlns:w=\"http://schemas.openxmlformats.org/" + "wordprocessingml/2006/main\""
         + " xmlns:wne=\"http://schemas.microsoft.com/office/word/2006/" + "wordml\">");
@@ -34,7 +53,7 @@ public class Document extends DocumentFlow {
     out.print("<w:sectPr>");
     writeReferences(out);
     out.print("<w:pgSz w:w=\"11906\" w:h=\"16838\" />");
-    out.print("<w:pgMar w:top=\"1134\" w:bottom=\"1134\""
+    out.print("<w:pgMar w:top=\"" + getTop() + "\" w:bottom=\"" + getBottom() + "\""
         + " w:left=\"1701\" w:header=\"708\" w:footer=\"708\"" + " w:gutter=\"0\" />");
     out.print("<w:cols w:space=\"708\" />");
     out.print("<w:docGrid w:linePitch=\"360\" />");
