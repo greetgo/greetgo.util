@@ -18,7 +18,7 @@ public class Nf6GeneratorTest {
     
     new File("build").mkdir();
     
-    Nf6Generator nf6generator = new Nf6GeneratorPostgres(sg);
+    Nf6Generator nf6generator = new Nf6GeneratorPostgres(new Conf(), sg);
     nf6generator.libType = LibType.GBATIS;
     PrintStream out = new PrintStream("build/ddl-postgres-nf6.sql", "UTF-8");
     PrintStream outP = new PrintStream("build/ddl-postgres-nf6-programs.sql", "UTF-8");
@@ -48,7 +48,7 @@ public class Nf6GeneratorTest {
     
     new File("build").mkdir();
     
-    Nf6Generator nf6generator = new Nf6GeneratorOracle(sg);
+    Nf6Generator nf6generator = new Nf6GeneratorOracle(new Conf(), sg);
     PrintStream out = new PrintStream("build/ddl-oracle-nf6.sql", "UTF-8");
     PrintStream outP = new PrintStream("build/ddl-oracle-nf6-programs.sql", "UTF-8");
     nf6generator.printSqls(out);

@@ -17,8 +17,8 @@ public class Nf6GeneratorOracle extends Nf6Generator {
     return sqlDialect;
   }
   
-  public Nf6GeneratorOracle(StruGenerator sg) {
-    super(sg);
+  public Nf6GeneratorOracle(Conf conf, StruGenerator sg) {
+    super(conf, sg);
   }
   
   @Override

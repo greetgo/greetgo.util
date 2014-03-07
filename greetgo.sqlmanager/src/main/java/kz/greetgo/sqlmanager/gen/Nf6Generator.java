@@ -47,10 +47,11 @@ public abstract class Nf6Generator {
   
   protected abstract SqlDialect sqld();
   
-  public final Conf conf = new Conf();
+  public final Conf conf;
   protected final ViewFormer viewFormer;
   
-  public Nf6Generator(StruGenerator sg) {
+  public Nf6Generator(Conf conf, StruGenerator sg) {
+    this.conf = conf;
     this.sg = sg;
     this.viewFormer = new ViewFormerRowNumber(conf);
   }

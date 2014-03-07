@@ -17,8 +17,8 @@ public class Nf6GeneratorPostgres extends Nf6Generator {
     return sqlDialect;
   }
   
-  public Nf6GeneratorPostgres(StruGenerator sg) {
-    super(sg);
+  public Nf6GeneratorPostgres(Conf conf, StruGenerator sg) {
+    super(conf, sg);
   }
   
   @Override
