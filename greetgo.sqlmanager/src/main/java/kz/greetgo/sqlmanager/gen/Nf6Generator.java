@@ -23,6 +23,26 @@ import kz.greetgo.sqlmanager.parser.StruParseException;
 
 public abstract class Nf6Generator {
   
+  public LibType libType = LibType.MYBATIS;
+  
+  public static final String MYBATIS_StatementType = "org.apache.ibatis.mapping.StatementType";
+  public static final String MYBATIS_OPTIONS = "org.apache.ibatis.annotations.Options";
+  public static final String MYBATIS_SELECT = "org.apache.ibatis.annotations.Select";
+  public static final String MYBATIS_UPDATE = "org.apache.ibatis.annotations.Update";
+  public static final String MYBATIS_DELETE = "org.apache.ibatis.annotations.Delete";
+  public static final String MYBATIS_INSERT = "org.apache.ibatis.annotations.Insert";
+  public static final String MYBATIS_PARAM = "org.apache.ibatis.annotations.Param";
+  
+  public static final String GBATIS_PRM = "kz.greetgo.gbatis.t.Prm";
+  public static final String GBATIS_SELE = "kz.greetgo.gbatis.t.Sele";
+  public static final String GBATIS_CALL = "kz.greetgo.gbatis.t.Call";
+  public static final String GBATIS_AUTOIMPL = "kz.greetgo.gbatis.t.Autoimpl";
+  
+  public static final String LIST = "java.util.List";
+  public static final String DATE = "java.util.Date";
+  public static final String OBJECTS = "java.util.Objects";
+  public static final String ARRAYS = "java.util.Arrays";
+  
   private final StruGenerator sg;
   
   protected abstract SqlDialect sqld();
@@ -438,18 +458,6 @@ public abstract class Nf6Generator {
     return java;
   }
   
-  public static final String StatementType = "org.apache.ibatis.mapping.StatementType";
-  public static final String OPTIONS = "org.apache.ibatis.annotations.Options";
-  public static final String SELECT = "org.apache.ibatis.annotations.Select";
-  public static final String UPDATE = "org.apache.ibatis.annotations.Update";
-  public static final String DELETE = "org.apache.ibatis.annotations.Delete";
-  public static final String INSERT = "org.apache.ibatis.annotations.Insert";
-  public static final String PARAM = "org.apache.ibatis.annotations.Param";
-  public static final String LIST = "java.util.List";
-  public static final String DATE = "java.util.Date";
-  public static final String OBJECTS = "java.util.Objects";
-  public static final String ARRAYS = "java.util.Arrays";
-  
   private void generateEnum(EnumType et) {
     if (et.as != null) return;
     ClassOuter ret = new ClassOuter(et.pack(), "", et.name);
@@ -493,9 +501,18 @@ public abstract class Nf6Generator {
     ClassOuter oracle = new ClassOuter(conf.daoPackage + ".oracle" + table.subpackage(), "",
         table.name + "Oracle" + conf.daoSuffix);
     
+    String seleAnnPg = libType == LibType.MYBATIS ? postgres._(MYBATIS_SELECT) :postgres
+        ._(GBATIS_SELE);
+    String seleAnnOra = libType == LibType.MYBATIS ? oracle._(MYBATIS_SELECT) :oracle
+        ._(GBATIS_SELE);
+    
     comm.println("public interface " + comm.className + " {");
+    
+    if (libType == LibType.GBATIS) postgres.println("@" + postgres._(GBATIS_AUTOIMPL));
     postgres.println("public interface " + postgres.className //
         + " extends " + postgres._(comm.name()) + "{");
+    
+    if (libType == LibType.GBATIS) oracle.println("@" + oracle._(GBATIS_AUTOIMPL));
     oracle.println("public interface " + oracle.className //
         + " extends " + oracle._(comm.name()) + "{");
     
@@ -505,11 +522,11 @@ public abstract class Nf6Generator {
       String seq = conf.seqPrefix + table.name;
       
       postgres.println("  @Override");
-      postgres.println("  @" + postgres._(SELECT) + "(\"select nextval('" + seq + "')\")");
+      postgres.println("  @" + seleAnnPg + "(\"select nextval('" + seq + "')\")");
       postgres.println("  " + type.javaType + " next();");
       
       oracle.println("  @Override");
-      oracle.println("  @" + oracle._(SELECT) + "(\"select " + seq + ".nextval from dual\")");
+      oracle.println("  @" + seleAnnOra + "(\"select " + seq + ".nextval from dual\")");
       oracle.println("  " + type.javaType + " next();");
       
     }
@@ -533,9 +550,13 @@ public abstract class Nf6Generator {
   
   private void generateDaoTableLoad(ClassOuter comm, Table table, ClassOuter java,
       ClassOuter fieldsClass) {
+    
+    String seleAnn = libType == LibType.MYBATIS ? comm._(MYBATIS_SELECT) :comm._(GBATIS_SELE);
+    String prmAnn = libType == LibType.MYBATIS ? comm._(MYBATIS_PARAM) :comm._(GBATIS_PRM);
+    
     List<FieldInfo> keyInfo = table.keyInfo();
     {
-      comm.print("  @" + comm._(SELECT) + "(\"select * from " + conf.vPrefix + table.name);
+      comm.print("  @" + seleAnn + "(\"select * from " + conf.vPrefix + table.name);
       {
         boolean first = true;
         for (FieldInfo fi : keyInfo) {
@@ -552,7 +573,7 @@ public abstract class Nf6Generator {
         for (FieldInfo fi : keyInfo) {
           comm.print(first ? "" :", ");
           first = false;
-          comm.print("@" + comm._(PARAM) + "(\"" + fi.name + "\")");
+          comm.print("@" + prmAnn + "(\"" + fi.name + "\")");
           comm.print(comm._(fi.javaType.javaType()) + " " + fi.name);
         }
       }
@@ -567,7 +588,7 @@ public abstract class Nf6Generator {
         }
       }
       
-      comm.print("  @" + comm._(SELECT) + "(\"select * from " + conf.vPrefix + table.name);
+      comm.print("  @" + seleAnn + "(\"select * from " + conf.vPrefix + table.name);
       {
         boolean first = true;
         for (FieldInfo fi : keyInfo) {
@@ -584,7 +605,7 @@ public abstract class Nf6Generator {
         for (FieldInfo fi : keyInfo) {
           comm.print(first ? "" :", ");
           first = false;
-          comm.print("@" + comm._(PARAM) + "(\"" + fi.name + "\")");
+          comm.print("@" + prmAnn + "(\"" + fi.name + "\")");
           comm.print(comm._(fi.javaType.javaType()) + " " + fi.name);
         }
       }
@@ -594,11 +615,18 @@ public abstract class Nf6Generator {
   
   private void generateDaoTableInserts(ClassOuter comm, Table table, ClassOuter java,
       ClassOuter fieldsClass) {
+    
+    String callAnn = libType == LibType.MYBATIS ? comm._(MYBATIS_UPDATE) :comm._(GBATIS_CALL);
+    String prmAnn = libType == LibType.MYBATIS ? comm._(MYBATIS_PARAM) :comm._(GBATIS_PRM);
+    
     List<FieldInfo> keyInfo = table.keyInfo();
     {
-      comm.println("  @" + comm._(OPTIONS) + "(statementType = " + comm._(StatementType)
-          + ".CALLABLE)");
-      comm.print("  @" + comm._(UPDATE) + "(\"{call " + conf._p_ + table.name);
+      if (libType == LibType.MYBATIS) {
+        comm.println("  @" + comm._(MYBATIS_OPTIONS) + "(statementType = "
+            + comm._(MYBATIS_StatementType) + ".CALLABLE)");
+      }
+      
+      comm.print("  @" + callAnn + "(\"{call " + conf._p_ + table.name);
       comm.print(" (");
       {
         boolean first = true;
@@ -614,9 +642,11 @@ public abstract class Nf6Generator {
       comm.println(");");
     }
     {
-      comm.println("  @" + comm._(OPTIONS) + "(statementType = " + comm._(StatementType)
-          + ".CALLABLE)");
-      comm.print("  @" + comm._(UPDATE) + "(\"{call " + conf._p_ + table.name);
+      if (libType == LibType.MYBATIS) {
+        comm.println("  @" + comm._(MYBATIS_OPTIONS) + "(statementType = "
+            + comm._(MYBATIS_StatementType) + ".CALLABLE)");
+      }
+      comm.print("  @" + callAnn + "(\"{call " + conf._p_ + table.name);
       comm.print(" (");
       {
         boolean first = true;
@@ -628,12 +658,14 @@ public abstract class Nf6Generator {
       }
       comm.println(")}\")");
       comm.print("  void add(");
+      
       {
         boolean first = true;
         for (FieldInfo fi : keyInfo) {
           comm.print(first ? "" :", ");
           first = false;
-          comm.print("@" + comm._(PARAM) + "(\"" + fi.name + "\")");
+          
+          comm.print("@" + prmAnn + "(\"" + fi.name + "\")");
           comm.print(comm._(fi.javaType.javaType()) + " " + fi.name);
         }
       }
@@ -665,11 +697,16 @@ public abstract class Nf6Generator {
   
   private void setFieldWithNow(ClassOuter comm, Field field, List<FieldInfo> keyInfo,
       List<FieldInfo> all) {
-    comm.println("  @" + comm._(OPTIONS) + "(statementType = " + comm._(StatementType)
-        + ".CALLABLE)");
     
-    comm.print("  @" + comm._(UPDATE) + "(\"{call " + conf._p_ + field.table.name + "_"
-        + field.name);
+    String callAnn = libType == LibType.MYBATIS ? comm._(MYBATIS_UPDATE) :comm._(GBATIS_CALL);
+    String prmAnn = libType == LibType.MYBATIS ? comm._(MYBATIS_PARAM) :comm._(GBATIS_PRM);
+    
+    if (libType == LibType.MYBATIS) {
+      comm.println("  @" + comm._(MYBATIS_OPTIONS) + "(statementType = "
+          + comm._(MYBATIS_StatementType) + ".CALLABLE)");
+    }
+    
+    comm.print("  @" + callAnn + "(\"{call " + conf._p_ + field.table.name + "_" + field.name);
     
     comm.print(" (");
     {
@@ -688,8 +725,8 @@ public abstract class Nf6Generator {
       for (FieldInfo fi : keyInfo) {
         comm.print(first ? "" :", ");
         first = false;
-        comm.print("@" + comm._(PARAM) + "(\"" + fi.name + "\")" + comm._(fi.javaType.javaType())
-            + " " + fi.name);
+        comm.print("@" + prmAnn + "(\"" + fi.name + "\")" + comm._(fi.javaType.javaType()) + " "
+            + fi.name);
       }
     }
     comm.println(");");
@@ -697,11 +734,16 @@ public abstract class Nf6Generator {
   
   private void setField(ClassOuter comm, Field field, List<FieldInfo> keyInfo,
       List<FieldInfo> fieldInfo, List<FieldInfo> all) {
-    comm.println("  @" + comm._(OPTIONS) + "(statementType = " + comm._(StatementType)
-        + ".CALLABLE)");
     
-    comm.print("  @" + comm._(UPDATE) + "(\"{call " + conf._p_ + field.table.name + "_"
-        + field.name);
+    String callAnn = libType == LibType.MYBATIS ? comm._(MYBATIS_UPDATE) :comm._(GBATIS_CALL);
+    String prmAnn = libType == LibType.MYBATIS ? comm._(MYBATIS_PARAM) :comm._(GBATIS_PRM);
+    
+    if (libType == LibType.MYBATIS) {
+      comm.println("  @" + comm._(MYBATIS_OPTIONS) + "(statementType = "
+          + comm._(MYBATIS_StatementType) + ".CALLABLE)");
+    }
+    
+    comm.print("  @" + callAnn + "(\"{call " + conf._p_ + field.table.name + "_" + field.name);
     
     comm.print(" (");
     {
@@ -723,17 +765,17 @@ public abstract class Nf6Generator {
       for (FieldInfo fi : keyInfo) {
         comm.print(first ? "" :", ");
         first = false;
-        comm.print("@" + comm._(PARAM) + "(\"" + fi.name + "\")" + comm._(fi.javaType.javaType())
-            + " " + fi.name);
+        comm.print("@" + prmAnn + "(\"" + fi.name + "\")" + comm._(fi.javaType.javaType()) + " "
+            + fi.name);
       }
     }
     {
       for (FieldInfo fi : fieldInfo) {
         if (SimpleType.tbool.equals(fi.javaType)) {
-          comm.print(", @" + comm._(PARAM) + "(\"" + fi.name + "Int\") int " + fi.name + "Int");
+          comm.print(", @" + prmAnn + "(\"" + fi.name + "Int\") int " + fi.name + "Int");
         } else {
-          comm.print(", @" + comm._(PARAM) + "(\"" + fi.name + "\")"
-              + comm._(fi.javaType.objectType()) + " " + fi.name);
+          comm.print(", @" + prmAnn + "(\"" + fi.name + "\")" + comm._(fi.javaType.objectType())
+              + " " + fi.name);
         }
       }
     }
@@ -742,10 +784,15 @@ public abstract class Nf6Generator {
   
   private void insFieldWithNow(ClassOuter comm, Field field, ClassOuter java,
       List<FieldInfo> keyInfo, List<FieldInfo> all) {
-    comm.println("  @" + comm._(OPTIONS) + "(statementType = " + comm._(StatementType)
-        + ".CALLABLE)");
-    comm.print("  @" + comm._(UPDATE) + "(\"{call " + conf._p_ + field.table.name + "_"
-        + field.name);
+    
+    String callAnn = libType == LibType.MYBATIS ? comm._(MYBATIS_UPDATE) :comm._(GBATIS_CALL);
+    
+    if (libType == LibType.MYBATIS) {
+      comm.println("  @" + comm._(MYBATIS_OPTIONS) + "(statementType = "
+          + comm._(MYBATIS_StatementType) + ".CALLABLE)");
+    }
+    
+    comm.print("  @" + callAnn + "(\"{call " + conf._p_ + field.table.name + "_" + field.name);
     comm.print(" (");
     {
       for (FieldInfo fi : keyInfo) {
@@ -762,11 +809,14 @@ public abstract class Nf6Generator {
   }
   
   private void insField(ClassOuter comm, Field field, ClassOuter java, List<FieldInfo> all) {
-    comm.println("  @" + comm._(OPTIONS) + "(statementType = " + comm._(StatementType)
-        + ".CALLABLE)");
+    String callAnn = libType == LibType.MYBATIS ? comm._(MYBATIS_UPDATE) :comm._(GBATIS_CALL);
     
-    comm.print("  @" + comm._(UPDATE) + "(\"{call " + conf._p_ + field.table.name + "_"
-        + field.name);
+    if (libType == LibType.MYBATIS) {
+      comm.println("  @" + comm._(MYBATIS_OPTIONS) + "(statementType = "
+          + comm._(MYBATIS_StatementType) + ".CALLABLE)");
+    }
+    
+    comm.print("  @" + callAnn + "(\"{call " + conf._p_ + field.table.name + "_" + field.name);
     
     comm.print(" (");
     {
@@ -788,14 +838,16 @@ public abstract class Nf6Generator {
   
   private void generateDaoTableLoadAt(ClassOuter comm, Table table, ClassOuter java,
       ClassOuter fieldsClass) {
+    String prmAnn = libType == LibType.MYBATIS ? comm._(MYBATIS_PARAM) :comm._(GBATIS_PRM);
+    String seleAnn = libType == LibType.MYBATIS ? comm._(MYBATIS_SELECT) :comm._(GBATIS_SELE);
     
     StringBuilder sb = new StringBuilder();
     viewFormer.formTableSelect(sb, table, "tts.ts", 0, 0);
     
     List<FieldInfo> keyInfo = table.keyInfo();
     {
-      comm.print("  @" + comm._(SELECT) + "(\"with tts as (select #{ts} ts from dual), xx as ("
-          + sb + ") select * from xx");
+      comm.print("  @" + seleAnn + "(\"with tts as (select #{ts} ts from dual), xx as (" + sb
+          + ") select * from xx");
       {
         boolean first = true;
         for (FieldInfo fi : keyInfo) {
@@ -806,10 +858,10 @@ public abstract class Nf6Generator {
       }
       comm.println("\")");
       
-      comm.print("  " + comm._(java.name()) + " loadAt(@" + comm._(PARAM) + "(\"" + conf.ts + "\")"
+      comm.print("  " + comm._(java.name()) + " loadAt(@" + prmAnn + "(\"" + conf.ts + "\")"
           + comm._(DATE) + " " + conf.ts);
       for (FieldInfo fi : keyInfo) {
-        comm.print(", @" + comm._(PARAM) + "(\"" + fi.name + "\")");
+        comm.print(", @" + prmAnn + "(\"" + fi.name + "\")");
         comm.print(comm._(fi.javaType.javaType()) + " " + fi.name);
       }
       comm.println(");");
@@ -823,8 +875,8 @@ public abstract class Nf6Generator {
         }
       }
       
-      comm.print("  @" + comm._(SELECT) + "(\"with tts as (select #{ts} ts from dual), xx as ("
-          + sb + ") select * from xx");
+      comm.print("  @" + seleAnn + "(\"with tts as (select #{ts} ts from dual), xx as (" + sb
+          + ") select * from xx");
       {
         boolean first = true;
         for (FieldInfo fi : keyInfo) {
@@ -835,10 +887,10 @@ public abstract class Nf6Generator {
       }
       comm.println("\")");
       
-      comm.print("  " + comm._(LIST) + "<" + comm._(java.name()) + "> loadListAt(@" + comm._(PARAM)
+      comm.print("  " + comm._(LIST) + "<" + comm._(java.name()) + "> loadListAt(@" + prmAnn
           + "(\"" + conf.ts + "\")" + comm._(DATE) + " " + conf.ts);
       for (FieldInfo fi : keyInfo) {
-        comm.print(", @" + comm._(PARAM) + "(\"" + fi.name + "\")");
+        comm.print(", @" + prmAnn + "(\"" + fi.name + "\")");
         comm.print(comm._(fi.javaType.javaType()) + " " + fi.name);
       }
       comm.println(");");
@@ -906,7 +958,9 @@ public abstract class Nf6Generator {
   
   private void generateDaoTableSelectAll(ClassOuter comm, Table table, ClassOuter java,
       SelectAll command) {
-    comm.println("@" + comm._(SELECT) + "(\"select * from " + conf.vPrefix + table.name + " "
+    String seleAnn = libType == LibType.MYBATIS ? comm._(MYBATIS_SELECT) :comm._(GBATIS_SELE);
+    
+    comm.println("@" + seleAnn + "(\"select * from " + conf.vPrefix + table.name + " "
         + command.orderBy() + "\")");
     comm.println(comm._(LIST) + "<" + java.className + "> " + command.methodName + "();");
   }

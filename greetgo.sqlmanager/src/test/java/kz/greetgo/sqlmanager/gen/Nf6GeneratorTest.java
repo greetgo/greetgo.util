@@ -19,6 +19,7 @@ public class Nf6GeneratorTest {
     new File("build").mkdir();
     
     Nf6Generator nf6generator = new Nf6GeneratorPostgres(sg);
+    nf6generator.libType = LibType.GBATIS;
     PrintStream out = new PrintStream("build/ddl-postgres-nf6.sql", "UTF-8");
     PrintStream outP = new PrintStream("build/ddl-postgres-nf6-programs.sql", "UTF-8");
     nf6generator.printSqls(out);
@@ -35,7 +36,7 @@ public class Nf6GeneratorTest {
     nf6generator.conf.modelStruExtends = "kz.greetgo.sqlmanager.gen.ModelParent";
     //nf6generator.conf.modelStruImplements = "kz.greetgo.sqlmanager.gen.ModelParent";
     
-    //nf6generator.generateJava();
+    nf6generator.generateJava();
   }
   
   @Test
