@@ -13,7 +13,8 @@ import kz.greetgo.gbatis.t.T1;
 @Autoimpl
 public interface ClientDao6 {
   @T1("m_client")
-  @Sele("select client as id,surname,name,patronymic,age from x_client where age <= #{age}")
+  @Sele("select client as id, surname, name, patronymic, age"
+      + " from x_client where age <= #{age} order by client")
   FutureCall<List<Client>> youngClients(@Prm("age") int age);
   
   @T1("m_client")

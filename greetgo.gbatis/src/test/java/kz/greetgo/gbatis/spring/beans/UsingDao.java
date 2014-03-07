@@ -23,7 +23,7 @@ public class UsingDao {
   }
   
   public void makeOlds() {
-    for (int age = 11; age <= 20; age++) {
+    for (int age = 13; age <= 20; age++) {
       long id = 3000 + age;
       
       clientDao6.insClientAge(id, 30);

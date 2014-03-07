@@ -43,21 +43,21 @@ public class FutureCallDef<T> implements FutureCall<T> {
   
   @Override
   public T last() {
-    return onPaged(null, 0, 0);
+    return at(null, 0, 0);
   }
   
   @Override
-  public T on(Date at) {
-    return onPaged(at, 0, 0);
+  public T at(Date at) {
+    return at(at, 0, 0);
   }
   
   @Override
-  public T lastPaged(final int offset, final int pageSize) {
-    return onPaged(null, offset, pageSize);
+  public T last(final int offset, final int pageSize) {
+    return at(null, offset, pageSize);
   }
   
   @Override
-  public T onPaged(final Date at, final int offset, final int pageSize) {
+  public T at(final Date at, final int offset, final int pageSize) {
     return jdbc.execute(new ConnectionCallback<T>() {
       @Override
       public T doInConnection(Connection con) throws SQLException, DataAccessException {

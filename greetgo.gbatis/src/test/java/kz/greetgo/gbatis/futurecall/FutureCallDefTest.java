@@ -8,6 +8,7 @@ import java.util.List;
 
 import kz.greetgo.gbatis.model.Param;
 import kz.greetgo.gbatis.model.Request;
+import kz.greetgo.gbatis.model.RequestType;
 import kz.greetgo.gbatis.model.ResultType;
 import kz.greetgo.gbatis.util.AbstractWithDbTest;
 
@@ -35,9 +36,9 @@ public class FutureCallDefTest extends AbstractWithDbTest {
     jdbc = null;
   }
   
-  static class Client {
-    long id;
-    String surname, name, patronymic;
+  public static class Client {
+    public long id;
+    public String surname, name, patronymic;
     
     @Override
     public String toString() {
@@ -51,23 +52,23 @@ public class FutureCallDefTest extends AbstractWithDbTest {
     {
       List<String> sqls = new ArrayList<>();
       
-      sqls.add("insert into m_client (client) values (1)");
-      sqls.add("insert into m_client_surname (client, surname) values (1, 'Колпаков')");
-      sqls.add("insert into m_client_name (client, name) values (1, 'Евгений')");
-      sqls.add("insert into m_client_patronymic (client, patronymic) values (1, 'Анатольевич')");
-      sqls.add("insert into m_client_age (client, age) values (1, 30)");
+      sqls.add("insert into m_client (client) values (11)");
+      sqls.add("insert into m_client_surname (client, surname) values (11, 'Колпаков')");
+      sqls.add("insert into m_client_name (client, name) values (11, 'Евгений')");
+      sqls.add("insert into m_client_patronymic (client, patronymic) values (11, 'Анатольевич')");
+      sqls.add("insert into m_client_age (client, age) values (11, 30)");
       
-      sqls.add("insert into m_client (client) values (2)");
-      sqls.add("insert into m_client_surname (client, surname) values (2, 'Берсенев')");
-      sqls.add("insert into m_client_name (client, name) values (2, 'Олег')");
-      sqls.add("insert into m_client_patronymic (client, patronymic) values (2, 'Алексеевич')");
-      sqls.add("insert into m_client_age (client, age) values (2, 30)");
+      sqls.add("insert into m_client (client) values (21)");
+      sqls.add("insert into m_client_surname (client, surname) values (21, 'Берсенев')");
+      sqls.add("insert into m_client_name (client, name) values (21, 'Олег')");
+      sqls.add("insert into m_client_patronymic (client, patronymic) values (21, 'Алексеевич')");
+      sqls.add("insert into m_client_age (client, age) values (21, 30)");
       
-      sqls.add("insert into m_client (client) values (3)");
-      sqls.add("insert into m_client_surname (client, surname) values (3, 'Иванов')");
-      sqls.add("insert into m_client_name (client, name) values (3, 'Иван')");
-      sqls.add("insert into m_client_patronymic (client, patronymic) values (3, 'Иванович')");
-      sqls.add("insert into m_client_age (client, age) values (3, 13)");
+      sqls.add("insert into m_client (client) values (13)");
+      sqls.add("insert into m_client_surname (client, surname) values (13, 'Иванов')");
+      sqls.add("insert into m_client_name (client, name) values (13, 'Иван')");
+      sqls.add("insert into m_client_patronymic (client, patronymic) values (13, 'Иванович')");
+      sqls.add("insert into m_client_age (client, age) values (13, 14)");
       
       executeSqls(sqls);
     }
@@ -77,7 +78,9 @@ public class FutureCallDefTest extends AbstractWithDbTest {
     req.paramList.add(new Param(Integer.TYPE, "age"));
     req.resultDataClass = Client.class;
     req.resultType = ResultType.LIST;
-    req.sql = "select * from v_client where age = #{age} order by client";
+    req.type = RequestType.Sele;
+    req.sql = "select client as id, surname, name, patronymic"
+        + " from v_client where age = #{age} order by client";
     
     FutureCallDef<List<Client>> fc = new FutureCallDef<>(conf, sg.stru, jdbc, req,
         new Object[] { 30 });
@@ -88,6 +91,16 @@ public class FutureCallDefTest extends AbstractWithDbTest {
       System.out.println(cl);
     }
     
-    assertThat(1);
+    assertThat(list).hasSize(2);
+    assertThat(list.get(0).id).isEqualTo(11);
+    assertThat(list.get(0).surname).isEqualTo("Колпаков");
+    assertThat(list.get(0).name).isEqualTo("Евгений");
+    assertThat(list.get(0).patronymic).isEqualTo("Анатольевич");
+    
+    assertThat(list.get(1).id).isEqualTo(21);
+    assertThat(list.get(1).surname).isEqualTo("Берсенев");
+    assertThat(list.get(1).name).isEqualTo("Олег");
+    assertThat(list.get(1).patronymic).isEqualTo("Алексеевич");
+    
   }
 }

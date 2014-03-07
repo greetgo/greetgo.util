@@ -16,7 +16,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 @Component
 public class DataSourceFab {
   
-  @Bean
+  @Bean(destroyMethod = "close")
   public DataSource getDataSource() throws Exception {
     if (dataSource == null) createDataSource();
     return dataSource;

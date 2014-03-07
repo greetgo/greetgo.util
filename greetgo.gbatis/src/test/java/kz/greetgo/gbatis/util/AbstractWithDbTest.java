@@ -88,26 +88,40 @@ public abstract class AbstractWithDbTest {
           SysParams.pgAdminUserid(), SysParams.pgAdminPassword());
       try {
         
-        try {
-          PreparedStatement ps = con.prepareStatement("drop database " + userid);
-          ps.executeUpdate();
-          ps.close();
-        } catch (PSQLException e) {
-          System.err.println(e.getMessage());
-        }
-        try {
-          PreparedStatement ps = con.prepareStatement("drop user " + userid);
-          ps.executeUpdate();
-          ps.close();
-        } catch (PSQLException e) {
-          System.err.println(e.getMessage());
-        }
+        Exception error = null;
         
-        {
-          PreparedStatement ps = con.prepareStatement("create database " + userid);
-          ps.executeUpdate();
-          ps.close();
-        }
+        TRIES: for (int i = 0; i < 5; i++) {
+          
+          try {
+            PreparedStatement ps = con.prepareStatement("drop database " + userid);
+            ps.executeUpdate();
+            ps.close();
+          } catch (PSQLException e) {
+            System.err.println(e.getMessage());
+          }
+          try {
+            PreparedStatement ps = con.prepareStatement("drop user " + userid);
+            ps.executeUpdate();
+            ps.close();
+          } catch (PSQLException e) {
+            System.err.println(e.getMessage());
+          }
+          
+          try {
+            PreparedStatement ps = con.prepareStatement("create database " + userid);
+            ps.executeUpdate();
+            ps.close();
+            
+            error = null;
+            break TRIES;
+          } catch (Exception e) {
+            e.printStackTrace();
+            error = e;
+          }
+          
+        }//TRIES: for 
+        
+        if (error != null) throw error;
         
         {
           PreparedStatement ps = con.prepareStatement("create user " + userid

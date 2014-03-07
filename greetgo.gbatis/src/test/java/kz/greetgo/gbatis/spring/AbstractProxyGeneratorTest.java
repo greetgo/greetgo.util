@@ -80,20 +80,27 @@ public class AbstractProxyGeneratorTest extends AbstractWithDbTest {
     Date beforeOlding = clientDao6.now();
     System.out.println("beforeOlding = " + beforeOlding);
     
+    Thread.sleep(100);
+    
     usingDao.makeOlds();
     
-    List<Client> allClients1 = clientDao6.allClients().last();
-    System.out.println(allClients1);
+    List<Client> youngClientsLast = clientDao6.youngClients(17).last();
     
-    List<Client> allClients2 = clientDao6.allClients().on(beforeOlding);
-    System.out.println(allClients2);
-    
-    List<Client> youngClientsLast = clientDao6.youngClients(13).last();
-    
-    List<Client> youngClientsAt = clientDao6.youngClients(13).on(beforeOlding);
+    List<Client> youngClientsAt = clientDao6.youngClients(17).at(beforeOlding);
     
     System.out.println("youngClientsLast.size = " + youngClientsLast.size());
     System.out.println("youngClientsAt.size = " + youngClientsAt.size());
+    
+    assertThat(youngClientsLast).hasSize(3);
+    assertThat(youngClientsAt).hasSize(8);
+    
+    for (Client client : youngClientsAt) {
+      System.out.println("!!!!!!!! " + client);
+    }
+    System.out.println("**************");
+    for (Client client : clientDao6.youngClients(17).at(beforeOlding, 4, 3)) {
+      System.out.println("!!!!!!!! " + client);
+    }
     
     ctx.close();
   }

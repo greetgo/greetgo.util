@@ -5,9 +5,9 @@ import java.util.Date;
 public interface FutureCall<T> {
   T last();
   
-  T on(Date at);
+  T last(int offset, int pageSize);
   
-  T lastPaged(int offset, int pageSize);
+  T at(Date at);
   
-  T onPaged(Date at, int offset, int pageSize);
+  T at(Date at, int offset, int pageSize);
 }
