@@ -1,11 +1,15 @@
 package kz.greetgo.gbatis.modelreader;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +22,8 @@ import kz.greetgo.gbatis.model.RequestType;
 import kz.greetgo.gbatis.model.ResultType;
 import kz.greetgo.gbatis.model.WithView;
 import kz.greetgo.gbatis.t.Call;
+import kz.greetgo.gbatis.t.DefaultXml;
+import kz.greetgo.gbatis.t.FromXml;
 import kz.greetgo.gbatis.t.MapKey;
 import kz.greetgo.gbatis.t.Prm;
 import kz.greetgo.gbatis.t.Sele;
@@ -34,6 +40,11 @@ import kz.greetgo.sqlmanager.gen.Conf;
 import kz.greetgo.sqlmanager.model.Field;
 import kz.greetgo.sqlmanager.model.Stru;
 import kz.greetgo.sqlmanager.model.Table;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 public class ModelReader {
   
@@ -55,16 +66,25 @@ public class ModelReader {
   public static Request methodToRequest(Method method, Stru stru, Conf conf) throws Exception {
     Request ret = new Request();
     
-    fillSqlAndWiths(ret, method, stru, conf);
+    readAnnotations(ret, method, stru, conf);
+    
+    readXmls(ret, method, stru, conf);
     
     fillParams(ret, method);
     
     fillResult(ret, method);
     
+    if (ret.sql == null) {
+      throw new ModelReaderException("No sql for " + method);
+    }
+    if (ret.type == null) {
+      throw new ModelReaderException("No type for " + method);
+    }
+    
     return ret;
   }
   
-  private static void fillSqlAndWiths(Request ret, Method method, Stru stru, Conf conf)
+  private static void readAnnotations(Request ret, Method method, Stru stru, Conf conf)
       throws Exception {
     final List<T_dot> tdotList = new ArrayList<>();
     
@@ -83,7 +103,7 @@ public class ModelReader {
         if (ret.type != null) {
           throw new ModelReaderException("request.type = " + ret.type + " but found " + ann);
         }
-        ret.type = RequestType.SELECT;
+        ret.type = RequestType.Sele;
         ret.sql = ((Sele)ann).value();
         continue FOR;
       }
@@ -92,7 +112,7 @@ public class ModelReader {
         if (ret.type != null) {
           throw new ModelReaderException("request.type = " + ret.type + " but found " + ann);
         }
-        ret.type = RequestType.CALL_FUNCTION;
+        ret.type = RequestType.Call;
         ret.sql = ((Call)ann).value();
         continue FOR;
       }
@@ -108,12 +128,6 @@ public class ModelReader {
       ret.withList.add(x.withView);
     }
     
-    if (ret.sql == null) {
-      throw new ModelReaderException("No sql for " + method);
-    }
-    if (ret.type == null) {
-      throw new ModelReaderException("No type for " + method);
-    }
   }
   
   private static void fillParams(Request ret, Method method) {
@@ -153,11 +167,18 @@ public class ModelReader {
     String[] fields = callMethod(ann, "fields");
     String name = callMethod(ann, "name");
     
+    WithView withView = assembleWithView(tableName, fields, name, stru, conf);
+    
+    return new T_dot(index, withView);
+  }
+  
+  private static WithView assembleWithView(String tableName, String[] fields, String name,
+      Stru stru, Conf conf) {
     List<String> fieldList = new ArrayList<>();
     for (String field : fields) {
-      String[] split = field.split("\\s*,\\s*");
+      String[] split = field.split(",");
       for (String fld : split) {
-        fieldList.add(fld);
+        fieldList.add(fld.trim());
       }
     }
     
@@ -194,13 +215,11 @@ public class ModelReader {
       }
     }
     
-    {
-      WithView withView = new WithView();
-      withView.fields.addAll(fieldList);
-      withView.table = tableName;
-      withView.view = name;
-      return new T_dot(index, withView);
-    }
+    WithView withView = new WithView();
+    withView.fields.addAll(fieldList);
+    withView.table = tableName;
+    withView.view = name;
+    return withView;
   }
   
   private static Integer getTIndex(Annotation ann) {
@@ -336,5 +355,95 @@ public class ModelReader {
     
     ret.resultType = ResultType.SIMPLE;
     ret.resultDataClass = futureCallArgClass;
+  }
+  
+  private static void readXmls(Request ret, Method method, Stru stru, Conf conf) throws Exception {
+    FromXml fromXml = method.getAnnotation(FromXml.class);
+    if (fromXml == null) return;
+    if (ret.sql != null) throw new ExcessXmlException(
+        "Избыточный SQL при определении из xml: SQL = " + ret.sql);
+    
+    URL xmlURL = getXmlUrl(method);
+    Map<String, XmlRequest> xmlRequestMap = urlToXmlRequestMap(xmlURL);
+    
+    XmlRequest xmlRequest = xmlRequestMap.get(fromXml.value());
+    if (xmlRequest == null) throw new NoXmlRequestIdException("No xml request id = "
+        + fromXml.value() + " for method " + method);
+    
+    applyXmlRequest(ret, xmlRequest, stru, conf);
+  }
+  
+  private static URL getXmlUrl(Method method) {
+    FromXml fromXml = method.getAnnotation(FromXml.class);
+    {
+      String relPath = fromXml.xml().trim();
+      if (relPath.length() > 0) {
+        return method.getDeclaringClass().getResource(relPath);
+      }
+    }
+    
+    {
+      DefaultXml defaultXml = method.getDeclaringClass().getAnnotation(DefaultXml.class);
+      return method.getDeclaringClass().getResource(defaultXml.value());
+    }
+  }
+  
+  private static final Map<URL, Map<String, XmlRequest>> xmlRequestMapCache = new HashMap<>();
+  
+  private static Map<String, XmlRequest> urlToXmlRequestMap(URL xmlURL) throws Exception {
+    {
+      Map<String, XmlRequest> ret = xmlRequestMapCache.get(xmlURL);
+      if (ret != null) return ret;
+    }
+    
+    synchronized (xmlRequestMapCache) {
+      {
+        Map<String, XmlRequest> ret = xmlRequestMapCache.get(xmlURL);
+        if (ret != null) return ret;
+      }
+      
+      {
+        Map<String, XmlRequest> ret = createXmlRequestMap(xmlURL);
+        xmlRequestMapCache.put(xmlURL, ret);
+        return ret;
+      }
+    }
+  }
+  
+  private static Map<String, XmlRequest> createXmlRequestMap(URL xmlURL) throws Exception {
+    final Map<String, XmlRequest> ret = new HashMap<>();
+    
+    XmlRequestAcceptor acceptor = new XmlRequestAcceptor() {
+      @Override
+      public void accept(XmlRequest xmlRequest) {
+        ret.put(xmlRequest.id, xmlRequest);
+      }
+    };
+    
+    runParser(xmlURL, acceptor);
+    
+    return ret;
+  }
+  
+  private static void runParser(URL xmlURL, XmlRequestAcceptor acceptor) throws SAXException,
+      IOException {
+    XMLReader reader = XMLReaderFactory.createXMLReader();
+    reader.setContentHandler(new XmlRequestSaxHandler(acceptor));
+    InputStream inputStream = xmlURL.openStream();
+    try {
+      reader.parse(new InputSource(inputStream));
+    } finally {
+      inputStream.close();
+    }
+  }
+  
+  private static void applyXmlRequest(Request ret, XmlRequest xmlRequest, Stru stru, Conf conf) {
+    ret.sql = xmlRequest.sql;
+    ret.type = xmlRequest.type;
+    
+    for (WithView x : xmlRequest.withViewList) {
+      WithView correctedWithView = assembleWithView(x.table, x.fieldsAsArray(), x.view, stru, conf);
+      ret.withList.add(correctedWithView);
+    }
   }
 }

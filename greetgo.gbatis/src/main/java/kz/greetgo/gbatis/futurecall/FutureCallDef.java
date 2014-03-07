@@ -81,10 +81,10 @@ public class FutureCallDef<T> implements FutureCall<T> {
   
   private T callPrepared(Connection con, PreparedSql preparedSql) throws Exception {
     switch (request.type) {
-    case CALL_FUNCTION:
+    case Call:
       return callFunction(con, preparedSql);
       
-    case SELECT:
+    case Sele:
       return callSelect(con, preparedSql);
       
     default:

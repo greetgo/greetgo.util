@@ -8,20 +8,25 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Определяет идентификатор метода. Если он не указан, то идентификатор равен
- * имени метода
+ * Показывает, что SQL берёться из xml-а
  * 
  * @author pompei
  */
 @Documented
 @Target(METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface XmlId {
+public @interface FromXml {
   /**
-   * Определяет идентификатор метода. Если он не указан, то идентификатор равен
-   * имени метода
+   * Определяет идентификатор метода
    * 
    * @return идентификатор метода
    */
   String value();
+  
+  /**
+   * Определяет положение xml-файла, от куда берёться SQL
+   * 
+   * @return положение xml-файла
+   */
+  String xml() default "";
 }

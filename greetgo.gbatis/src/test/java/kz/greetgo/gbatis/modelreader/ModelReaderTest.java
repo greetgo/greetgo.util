@@ -44,10 +44,12 @@ public class ModelReaderTest {
     sg.parse(url);
   }
   
+  private static final Class<?> testIface = RequestTestIface.class;
+  
   @Test
   public void readWithList() throws Exception {
     
-    Method method = RequestTestIface.class.getMethod("methodReadWithList", Long.TYPE);
+    Method method = testIface.getMethod("methodReadWithList", Long.TYPE);
     
     //
     //
@@ -69,7 +71,7 @@ public class ModelReaderTest {
       expectedExceptionsMessageRegExp = "No sql for .*RequestTestIface\\.left\\(\\)")
   public void noSql() throws Exception {
     
-    Method method = RequestTestIface.class.getMethod("left");
+    Method method = testIface.getMethod("left");
     
     //
     //
@@ -81,7 +83,7 @@ public class ModelReaderTest {
   @Test
   public void ReadSql1() throws Exception {
     
-    Method method = RequestTestIface.class.getMethod("methodReadSql1");
+    Method method = testIface.getMethod("methodReadSql1");
     
     //
     //
@@ -92,13 +94,13 @@ public class ModelReaderTest {
     assertThat(request).isNotNull();
     
     assertThat(request.sql).isEqualTo("select name, value from x_asd where asd = #{asd}");
-    assertThat(request.type).isEqualTo(RequestType.SELECT);
+    assertThat(request.type).isEqualTo(RequestType.Sele);
   }
   
   @Test
   public void ReadSql2() throws Exception {
     
-    Method method = RequestTestIface.class.getMethod("methodReadSql2");
+    Method method = testIface.getMethod("methodReadSql2");
     
     //
     //
@@ -109,13 +111,13 @@ public class ModelReaderTest {
     assertThat(request).isNotNull();
     
     assertThat(request.sql).isEqualTo("insert asd dsfsadfsaf");
-    assertThat(request.type).isEqualTo(RequestType.CALL_FUNCTION);
+    assertThat(request.type).isEqualTo(RequestType.Call);
   }
   
   @Test
   public void params() throws Exception {
     
-    Method method = findMethodWithName(RequestTestIface.class.getMethods(), "methodParams");
+    Method method = findMethodWithName(testIface.getMethods(), "methodParams");
     
     //
     //
@@ -151,7 +153,7 @@ public class ModelReaderTest {
   @Test
   public void resultType_list() throws Exception {
     
-    Method method = findMethodWithName(RequestTestIface.class.getMethods(), "resultType_list");
+    Method method = findMethodWithName(testIface.getMethods(), "resultType_list");
     
     //
     //
@@ -171,7 +173,7 @@ public class ModelReaderTest {
   @Test
   public void resultType_simple() throws Exception {
     
-    Method method = findMethodWithName(RequestTestIface.class.getMethods(), "resultType_simple");
+    Method method = findMethodWithName(testIface.getMethods(), "resultType_simple");
     
     //
     //
@@ -192,7 +194,7 @@ public class ModelReaderTest {
       expectedExceptionsMessageRegExp = "Result List without type arguments in .+")
   public void resultType_emptyList() throws Exception {
     
-    Method method = findMethodWithName(RequestTestIface.class.getMethods(), "resultType_emptyList");
+    Method method = findMethodWithName(testIface.getMethods(), "resultType_emptyList");
     
     //
     //
@@ -203,7 +205,7 @@ public class ModelReaderTest {
       expectedExceptionsMessageRegExp = "Result Map without type arguments in .+")
   public void resultType_emptyMap() throws Exception {
     
-    Method method = findMethodWithName(RequestTestIface.class.getMethods(), "resultType_emptyMap");
+    Method method = findMethodWithName(testIface.getMethods(), "resultType_emptyMap");
     
     //
     //
@@ -214,7 +216,7 @@ public class ModelReaderTest {
       expectedExceptionsMessageRegExp = "No MapKey in .+")
   public void resultType_noMapKey() throws Exception {
     
-    Method method = findMethodWithName(RequestTestIface.class.getMethods(), "resultType_noMapKey");
+    Method method = findMethodWithName(testIface.getMethods(), "resultType_noMapKey");
     
     //
     //
@@ -224,7 +226,7 @@ public class ModelReaderTest {
   @Test
   public void resultType_map() throws Exception {
     
-    Method method = findMethodWithName(RequestTestIface.class.getMethods(), "resultType_map");
+    Method method = findMethodWithName(testIface.getMethods(), "resultType_map");
     
     //
     //
@@ -245,8 +247,7 @@ public class ModelReaderTest {
       expectedExceptionsMessageRegExp = "Result FutureCall without type argument in .+")
   public void resultType_emptyFutureCall() throws Exception {
     
-    Method method = findMethodWithName(RequestTestIface.class.getMethods(),
-        "resultType_emptyFutureCall");
+    Method method = findMethodWithName(testIface.getMethods(), "resultType_emptyFutureCall");
     
     //
     //
@@ -256,8 +257,7 @@ public class ModelReaderTest {
   @Test
   public void resultType_futureCall_simple() throws Exception {
     
-    Method method = findMethodWithName(RequestTestIface.class.getMethods(),
-        "resultType_futureCall_simple");
+    Method method = findMethodWithName(testIface.getMethods(), "resultType_futureCall_simple");
     
     //
     //
@@ -278,8 +278,7 @@ public class ModelReaderTest {
       expectedExceptionsMessageRegExp = "Result List in FutureCall without type arguments in .+")
   public void resultType_futureCall_emptyList() throws Exception {
     
-    Method method = findMethodWithName(RequestTestIface.class.getMethods(),
-        "resultType_futureCall_emptyList");
+    Method method = findMethodWithName(testIface.getMethods(), "resultType_futureCall_emptyList");
     
     //
     //
@@ -289,8 +288,7 @@ public class ModelReaderTest {
   @Test
   public void resultType_futureCall_list() throws Exception {
     
-    Method method = findMethodWithName(RequestTestIface.class.getMethods(),
-        "resultType_futureCall_list");
+    Method method = findMethodWithName(testIface.getMethods(), "resultType_futureCall_list");
     
     //
     //
@@ -311,8 +309,7 @@ public class ModelReaderTest {
       expectedExceptionsMessageRegExp = "Result FutureCall Map without type arguments in .+")
   public void resultType_futureCall_emptyMap() throws Exception {
     
-    Method method = findMethodWithName(RequestTestIface.class.getMethods(),
-        "resultType_futureCall_emptyMap");
+    Method method = findMethodWithName(testIface.getMethods(), "resultType_futureCall_emptyMap");
     
     //
     //
@@ -323,8 +320,7 @@ public class ModelReaderTest {
       expectedExceptionsMessageRegExp = "No MapKey in .+")
   public void resultType_futureCall_noMapKey() throws Exception {
     
-    Method method = findMethodWithName(RequestTestIface.class.getMethods(),
-        "resultType_futureCall_noMapKey");
+    Method method = findMethodWithName(testIface.getMethods(), "resultType_futureCall_noMapKey");
     
     //
     //
@@ -334,8 +330,7 @@ public class ModelReaderTest {
   @Test
   public void resultType_futureCall_map() throws Exception {
     
-    Method method = findMethodWithName(RequestTestIface.class.getMethods(),
-        "resultType_futureCall_map");
+    Method method = findMethodWithName(testIface.getMethods(), "resultType_futureCall_map");
     
     //
     //

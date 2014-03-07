@@ -21,4 +21,12 @@ public class WithView {
   public String toString() {
     return "WithView " + view + " as " + table + " " + fields;
   }
+  
+  public String[] fieldsAsArray() {
+    String[] ret = new String[fields.size()];
+    for (int i = 0, C = ret.length; i < C; i++) {
+      ret[i] = fields.get(i);
+    }
+    return ret;
+  }
 }
