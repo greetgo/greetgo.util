@@ -145,7 +145,7 @@ public abstract class AbstractWithDbTest {
     {
       Connection con = DriverManager.getConnection(getUrl(), userid, userid);
       try {
-        Nf6Generator nf6generator = new Nf6GeneratorPostgres(sg);
+        Nf6Generator nf6generator = new Nf6GeneratorPostgres(new Conf(), sg);
         {
           ByteArrayOutputStream bout = new ByteArrayOutputStream();
           PrintStream out = new PrintStream(bout, false, "UTF-8");
