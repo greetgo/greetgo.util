@@ -4,7 +4,9 @@ import static kz.greetgo.sqlmanager.gen.AllUtil.firstUpper;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -605,11 +607,11 @@ public abstract class Nf6Generator {
       comm.println(");");
     }
   }
-
+  
   private String annSele(ClassOuter comm) {
     return libType == LibType.MYBATIS ? comm._(MYBATIS_SELECT) :comm._(GBATIS_SELE);
   }
-
+  
   private String annPrm(ClassOuter comm) {
     return libType == LibType.MYBATIS ? comm._(MYBATIS_PARAM) :comm._(GBATIS_PRM);
   }
@@ -670,7 +672,7 @@ public abstract class Nf6Generator {
       comm.println(");");
     }
   }
-
+  
   private String annCall(ClassOuter comm) {
     return libType == LibType.MYBATIS ? comm._(MYBATIS_UPDATE) :comm._(GBATIS_CALL);
   }
@@ -724,8 +726,8 @@ public abstract class Nf6Generator {
       for (FieldInfo fi : keyInfo) {
         comm.print(first ? "" :", ");
         first = false;
-        comm.print("@" + annPrm(comm) + "(\"" + fi.name + "\")" + comm._(fi.javaType.javaType()) + " "
-            + fi.name);
+        comm.print("@" + annPrm(comm) + "(\"" + fi.name + "\")" + comm._(fi.javaType.javaType())
+            + " " + fi.name);
       }
     }
     comm.println(");");
@@ -761,8 +763,8 @@ public abstract class Nf6Generator {
       for (FieldInfo fi : keyInfo) {
         comm.print(first ? "" :", ");
         first = false;
-        comm.print("@" + annPrm(comm) + "(\"" + fi.name + "\")" + comm._(fi.javaType.javaType()) + " "
-            + fi.name);
+        comm.print("@" + annPrm(comm) + "(\"" + fi.name + "\")" + comm._(fi.javaType.javaType())
+            + " " + fi.name);
       }
     }
     {
@@ -770,8 +772,8 @@ public abstract class Nf6Generator {
         if (SimpleType.tbool.equals(fi.javaType)) {
           comm.print(", @" + annPrm(comm) + "(\"" + fi.name + "Int\") int " + fi.name + "Int");
         } else {
-          comm.print(", @" + annPrm(comm) + "(\"" + fi.name + "\")" + comm._(fi.javaType.objectType())
-              + " " + fi.name);
+          comm.print(", @" + annPrm(comm) + "(\"" + fi.name + "\")"
+              + comm._(fi.javaType.objectType()) + " " + fi.name);
         }
       }
     }
@@ -897,10 +899,10 @@ public abstract class Nf6Generator {
     t.println("public interface " + t.className + " {");
     v.println("public interface " + v.className + " {");
     
-    for (Table table : sg.stru.tables.values()) {
+    for (Table table : sortTablesByName(sg.stru.tables.values())) {
       t.println("  String " + table.name + " = \"" + conf.tabPrefix + table.name + "\";");
       v.println("  String " + table.name + " = \"" + conf.vPrefix + table.name + "\";");
-      for (Field field : table.fields) {
+      for (Field field : sortFieldsByName(table.fields)) {
         t.println("  String " + table.name + "_" + field.name + " = \"" + conf.tabPrefix
             + table.name + "_" + field.name + "\";");
         v.println("  String " + table.name + "_" + field.name + " = \"" + conf.vPrefix + table.name
@@ -912,6 +914,34 @@ public abstract class Nf6Generator {
     
     t.generateTo(conf.javaGenDir);
     v.generateTo(conf.javaGenDir);
+  }
+  
+  private List<Field> sortFieldsByName(List<Field> fields) {
+    List<Field> ret = new ArrayList<>();
+    ret.addAll(fields);
+    
+    Collections.sort(ret, new Comparator<Field>() {
+      @Override
+      public int compare(Field o1, Field o2) {
+        return o1.name.compareTo(o2.name);
+      }
+    });
+    
+    return ret;
+  }
+  
+  private static List<Table> sortTablesByName(Collection<Table> tables) {
+    List<Table> ret = new ArrayList<>();
+    ret.addAll(tables);
+    
+    Collections.sort(ret, new Comparator<Table>() {
+      @Override
+      public int compare(Table o1, Table o2) {
+        return o1.name.compareTo(o2.name);
+      }
+    });
+    
+    return ret;
   }
   
   private void generateVT() {
