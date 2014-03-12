@@ -141,4 +141,46 @@ public class FutureCallDefTest extends AbstractWithDbTest {
     assertThat(lastRet).isEqualTo(2);
     
   }
+  
+  @Test
+  public void last_int() throws Exception {
+    {
+      List<String> sqls = new ArrayList<>();
+      
+      sqls.add("insert into m_client (client) values (11)");
+      sqls.add("insert into m_client_surname (client, surname) values (11, 'Колпаков')");
+      sqls.add("insert into m_client_name (client, name) values (11, 'Евгений')");
+      sqls.add("insert into m_client_patronymic (client, patronymic) values (11, 'Анатольевич')");
+      sqls.add("insert into m_client_age (client, age) values (11, 30)");
+      
+      sqls.add("insert into m_client (client) values (21)");
+      sqls.add("insert into m_client_surname (client, surname) values (21, 'Берсенев')");
+      sqls.add("insert into m_client_name (client, name) values (21, 'Олег')");
+      sqls.add("insert into m_client_patronymic (client, patronymic) values (21, 'Алексеевич')");
+      sqls.add("insert into m_client_age (client, age) values (21, 30)");
+      
+      sqls.add("insert into m_client (client) values (13)");
+      sqls.add("insert into m_client_surname (client, surname) values (13, 'Иванов')");
+      sqls.add("insert into m_client_name (client, name) values (13, 'Иван')");
+      sqls.add("insert into m_client_patronymic (client, patronymic) values (13, 'Иванович')");
+      sqls.add("insert into m_client_age (client, age) values (13, 14)");
+      
+      executeSqls(sqls);
+    }
+    
+    Request req = new Request();
+    req.callNow = true;
+    req.paramList.add(new Param(Integer.TYPE, "age"));
+    req.resultDataClass = Long.class;
+    req.resultType = ResultType.SIMPLE;
+    req.type = RequestType.Sele;
+    req.sql = "select client from v_client where age = #{age}";
+    
+    FutureCallDef<Long> fc = new FutureCallDef<>(conf, sg.stru, jdbc, req, new Object[] { 14 });
+    
+    Long id = fc.last();
+    
+    assertThat(id).isEqualTo(13);
+    
+  }
 }

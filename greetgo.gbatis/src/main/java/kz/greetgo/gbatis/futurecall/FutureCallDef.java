@@ -13,8 +13,6 @@ import java.util.Map;
 
 import kz.greetgo.gbatis.model.FutureCall;
 import kz.greetgo.gbatis.model.Request;
-import kz.greetgo.gbatis.util.ReflectUtil;
-import kz.greetgo.gbatis.util.Setter;
 import kz.greetgo.gbatis.util.SqlUtil;
 import kz.greetgo.sqlmanager.gen.Conf;
 import kz.greetgo.sqlmanager.model.Stru;
@@ -201,8 +199,7 @@ public class FutureCallDef<T> implements FutureCall<T> {
   private T assembleMap(ResultSet rs) throws Exception {
     Map<Object, Object> ret = new HashMap<>();
     while (rs.next()) {
-      Object object = request.newResultRowInstance();
-      copyRow(rs, object);
+      Object object = request.createResultRowFromRS(rs);
       Object key = SqlUtil.fromSql(rs.getObject(request.mapKeyField), request.mapKeyClass);
       ret.put(key, object);
     }
@@ -213,36 +210,15 @@ public class FutureCallDef<T> implements FutureCall<T> {
   private T assembleList(ResultSet rs) throws Exception {
     List<Object> ret = new ArrayList<>();
     while (rs.next()) {
-      Object object = request.newResultRowInstance();
-      copyRow(rs, object);
-      ret.add(object);
+      ret.add(request.createResultRowFromRS(rs));
     }
     return (T)ret;
-  }
-  
-  private void copyRow(ResultSet rs, Object object) throws SQLException, IllegalAccessException {
-    for (Setter setter : ReflectUtil.scanSetters(object).values()) {
-      if (hasColumn(rs, setter.name())) {
-        setter.set(SqlUtil.fromSql(rs.getObject(setter.name()), setter.type()));
-      }
-    }
-  }
-  
-  private static boolean hasColumn(ResultSet rs, String name) throws SQLException {
-    try {
-      rs.findColumn(name);
-      return true;
-    } catch (SQLException e) {
-      return false;
-    }
   }
   
   @SuppressWarnings("unchecked")
   private T assembleSimple(ResultSet rs) throws Exception {
     if (!rs.next()) return null;
-    Object object = request.newResultRowInstance();
-    copyRow(rs, object);
-    return (T)object;
+    return (T)request.createResultRowFromRS(rs);
   }
   
 }
