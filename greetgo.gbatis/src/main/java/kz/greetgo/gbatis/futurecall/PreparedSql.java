@@ -189,20 +189,37 @@ class PreparedSql {
     StringBuilder sb = new StringBuilder();
     String str = request.sql;
     
-    int index = 0;
     while (true) {
-      int idx1 = str.indexOf("#{", index);
-      if (idx1 < 0) break;
-      int idx2 = str.indexOf('}', idx1);
-      if (idx2 < 0) throw new IllegalSqlParameterException("Незаконченный параметр в sql: "
-          + str.substring(idx1 + 2));
+      boolean isDollar = false;
       
-      String paramName = str.substring(idx1 + 2, idx2);
-      params.add(SqlUtil.forSql(getParamValue(paramName)));
+      int idxStart = str.indexOf("#{");
+      {
+        int idxDollar = str.indexOf("${");
+        
+        if (idxDollar >= 0 && idxDollar < idxStart) {
+          idxStart = idxDollar;
+          isDollar = true;
+        }
+        
+        if (idxStart < 0 && idxDollar < 0) break;
+      }
       
-      sb.append(str.substring(0, idx1));
-      sb.append('?');
-      str = str.substring(idx2 + 1);
+      int idxEnd = str.indexOf('}', idxStart);
+      if (idxEnd < 0) throw new IllegalSqlParameterException("Незаконченный параметр в sql: "
+          + str.substring(idxStart + 2));
+      
+      String paramName = str.substring(idxStart + 2, idxEnd);
+      
+      sb.append(str.substring(0, idxStart));
+      
+      if (isDollar) {
+        sb.append(SqlUtil.forSql(getParamValue(paramName)));
+      } else {
+        params.add(SqlUtil.forSql(getParamValue(paramName)));
+        sb.append('?');
+      }
+      
+      str = str.substring(idxEnd + 1);
     }
     
     sb.append(str);
