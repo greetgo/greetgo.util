@@ -111,6 +111,7 @@ public class Request {
   private static boolean isSimpleClass(Class<?> cl) {
     if (cl.isPrimitive()) return true;
     if (cl.isEnum()) return true;
+    if (cl.isAssignableFrom(String.class)) return true;
     return SIMPLE_CLASSES.contains(cl);
   }
 }

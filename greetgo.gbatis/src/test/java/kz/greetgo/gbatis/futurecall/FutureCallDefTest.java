@@ -291,4 +291,41 @@ public class FutureCallDefTest extends AbstractWithDbTest {
     
   }
   
+  @Test
+  public void last_sele_str() throws Exception {
+    
+    Request req = new Request();
+    req.callNow = true;
+    req.resultDataClass = String.class;
+    req.resultType = ResultType.SIMPLE;
+    req.type = RequestType.Sele;
+    req.sql = "select 'Hello world'";
+    
+    FutureCallDef<String> fc = new FutureCallDef<>(conf, sg.stru, jdbc, req, new Object[] {});
+    
+    String asd = fc.last();
+    
+    assertThat(asd).isEqualTo("Hello world");
+    
+  }
+  
+  @Test
+  public void last_sele_str_list() throws Exception {
+    
+    Request req = new Request();
+    req.callNow = true;
+    req.resultDataClass = String.class;
+    req.resultType = ResultType.LIST;
+    req.type = RequestType.Sele;
+    req.sql = "select 'Hello world'";
+    
+    FutureCallDef<List<String>> fc = new FutureCallDef<>(conf, sg.stru, jdbc, req, new Object[] {});
+    
+    List<String> asd = fc.last();
+    
+    assertThat(asd).hasSize(1);
+    assertThat(asd.get(0)).isEqualTo("Hello world");
+    
+  }
+  
 }
