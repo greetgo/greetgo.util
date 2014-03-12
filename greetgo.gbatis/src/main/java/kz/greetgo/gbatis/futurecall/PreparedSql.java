@@ -196,7 +196,11 @@ class PreparedSql {
       {
         int idxDollar = str.indexOf("${");
         
-        if (idxDollar >= 0 && idxDollar < idxStart) {
+        if (idxDollar >= 0 && idxStart >= 0 && idxDollar < idxStart
+        
+        ||
+        
+        idxDollar >= 0 && idxStart < 0) {
           idxStart = idxDollar;
           isDollar = true;
         }
