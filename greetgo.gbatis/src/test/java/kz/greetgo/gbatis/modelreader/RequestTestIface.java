@@ -3,6 +3,7 @@ package kz.greetgo.gbatis.modelreader;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import kz.greetgo.gbatis.model.FutureCall;
 import kz.greetgo.gbatis.probes.asd.ClassNameValue;
@@ -84,4 +85,11 @@ public interface RequestTestIface {
   
   @Modi("modi sql text")
   void voidModi();
+  
+  @Sele("sele")
+  FutureCall<Set<Asd>> resultType_futureCall_set();
+  
+  @Sele("sele")
+  Set<Asd> resultType_set();
+  
 }

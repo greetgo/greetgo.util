@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import kz.greetgo.gbatis.model.Param;
 import kz.greetgo.gbatis.model.Request;
@@ -46,6 +47,24 @@ public class FutureCallDefTest extends AbstractWithDbTest {
     public String toString() {
       return "Client [id=" + id + ", surname=" + surname + ", name=" + name + ", patronymic="
           + patronymic + "]";
+    }
+    
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + (int)(id ^ (id >>> 32));
+      return result;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (getClass() != obj.getClass()) return false;
+      Client other = (Client)obj;
+      if (id != other.id) return false;
+      return true;
     }
   }
   
@@ -183,4 +202,53 @@ public class FutureCallDefTest extends AbstractWithDbTest {
     assertThat(id).isEqualTo(13);
     
   }
+  
+  @Test
+  public void last_sele_set() throws Exception {
+    {
+      List<String> sqls = new ArrayList<>();
+      
+      sqls.add("insert into m_client (client) values (11)");
+      sqls.add("insert into m_client_surname (client, surname) values (11, 'Колпаков')");
+      sqls.add("insert into m_client_name (client, name) values (11, 'Евгений')");
+      sqls.add("insert into m_client_patronymic (client, patronymic) values (11, 'Анатольевич')");
+      sqls.add("insert into m_client_age (client, age) values (11, 30)");
+      
+      sqls.add("insert into m_client (client) values (21)");
+      sqls.add("insert into m_client_surname (client, surname) values (21, 'Берсенев')");
+      sqls.add("insert into m_client_name (client, name) values (21, 'Олег')");
+      sqls.add("insert into m_client_patronymic (client, patronymic) values (21, 'Алексеевич')");
+      sqls.add("insert into m_client_age (client, age) values (21, 30)");
+      
+      sqls.add("insert into m_client (client) values (13)");
+      sqls.add("insert into m_client_surname (client, surname) values (13, 'Иванов')");
+      sqls.add("insert into m_client_name (client, name) values (13, 'Иван')");
+      sqls.add("insert into m_client_patronymic (client, patronymic) values (13, 'Иванович')");
+      sqls.add("insert into m_client_age (client, age) values (13, 14)");
+      
+      executeSqls(sqls);
+    }
+    
+    Request req = new Request();
+    req.callNow = true;
+    req.paramList.add(new Param(Integer.TYPE, "age"));
+    req.resultDataClass = Client.class;
+    req.resultType = ResultType.SET;
+    req.type = RequestType.Sele;
+    req.sql = "select client as id, surname, name, patronymic"
+        + " from v_client where age = #{age} order by client";
+    
+    FutureCallDef<Set<Client>> fc = new FutureCallDef<>(conf, sg.stru, jdbc, req,
+        new Object[] { 30 });
+    
+    Set<Client> list = fc.last();
+    
+    for (Client cl : list) {
+      System.out.println(cl);
+    }
+    
+    assertThat(list).hasSize(2);
+    
+  }
+  
 }

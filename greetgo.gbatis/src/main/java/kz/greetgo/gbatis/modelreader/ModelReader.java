@@ -272,6 +272,20 @@ public class ModelReader {
       throw new ModelReaderException("Result List without type arguments in " + method);
     }
     
+    if (method.getReturnType().isAssignableFrom(Set.class)) {
+      if (method.getGenericReturnType() instanceof ParameterizedType) {
+        ParameterizedType type = (ParameterizedType)method.getGenericReturnType();
+        if (type.getActualTypeArguments().length != 1) {
+          throw new ModelReaderException(List.class + " has more or less then one type argument");
+        }
+        ret.resultDataClass = (Class<?>)type.getActualTypeArguments()[0];
+        ret.resultType = ResultType.SET;
+        ret.callNow = true;
+        return;
+      }
+      throw new ModelReaderException("Result List without type arguments in " + method);
+    }
+    
     if (method.getReturnType().isAssignableFrom(Map.class)) {
       if (method.getGenericReturnType() instanceof ParameterizedType) {
         if (ret.mapKeyField == null) {
@@ -358,6 +372,17 @@ public class ModelReader {
           }
           
           ret.resultType = ResultType.LIST;
+          ret.resultDataClass = (Class<?>)ptype.getActualTypeArguments()[0];
+          return;
+        }
+        
+        if (((Class<?>)ptype.getRawType()).isAssignableFrom(Set.class)) {
+          if (ptype.getActualTypeArguments().length != 1) {
+            throw new ModelReaderException(List.class
+                + " has more or less then one type argument in result of " + method);
+          }
+          
+          ret.resultType = ResultType.SET;
           ret.resultDataClass = (Class<?>)ptype.getActualTypeArguments()[0];
           return;
         }

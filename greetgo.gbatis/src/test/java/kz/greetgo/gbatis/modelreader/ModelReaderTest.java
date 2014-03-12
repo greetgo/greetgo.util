@@ -368,4 +368,44 @@ public class ModelReaderTest {
     assertThat(request.mapKeyField).isNull();
     assertThat(request.sql).isEqualTo("modi sql text");
   }
+  
+  @Test
+  public void resultType_futureCall_set() throws Exception {
+    
+    Method method = findMethodWithName(testIface.getMethods(), "resultType_futureCall_set");
+    
+    //
+    //
+    Request request = ModelReader.methodToRequest(method, sg.stru, conf);
+    //
+    //
+    
+    assertThat(request).isNotNull();
+    
+    assertThat(request.resultType).isEqualTo(ResultType.SET);
+    assertThat(request.resultDataClass + "").isEqualTo(RequestTestIface.Asd.class + "");
+    assertThat(request.callNow).isFalse();
+    assertThat(request.mapKeyField).isNull();
+    assertThat(request.mapKeyClass).isNull();
+  }
+  
+  @Test
+  public void resultType_set() throws Exception {
+    
+    Method method = findMethodWithName(testIface.getMethods(), "resultType_set");
+    
+    //
+    //
+    Request request = ModelReader.methodToRequest(method, sg.stru, conf);
+    //
+    //
+    
+    assertThat(request).isNotNull();
+    
+    assertThat(request.resultType).isEqualTo(ResultType.SET);
+    assertThat(request.resultDataClass + "").isEqualTo(RequestTestIface.Asd.class + "");
+    assertThat(request.callNow).isTrue();
+    assertThat(request.mapKeyField).isNull();
+    assertThat(request.mapKeyClass).isNull();
+  }
 }

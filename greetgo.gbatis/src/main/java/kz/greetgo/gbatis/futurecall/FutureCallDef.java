@@ -8,8 +8,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import kz.greetgo.gbatis.model.FutureCall;
 import kz.greetgo.gbatis.model.Request;
@@ -186,6 +188,9 @@ public class FutureCallDef<T> implements FutureCall<T> {
     case LIST:
       return assembleList(rs);
       
+    case SET:
+      return assembleSet(rs);
+      
     case MAP:
       return assembleMap(rs);
       
@@ -209,6 +214,15 @@ public class FutureCallDef<T> implements FutureCall<T> {
   @SuppressWarnings("unchecked")
   private T assembleList(ResultSet rs) throws Exception {
     List<Object> ret = new ArrayList<>();
+    while (rs.next()) {
+      ret.add(request.createResultRowFromRS(rs));
+    }
+    return (T)ret;
+  }
+  
+  @SuppressWarnings("unchecked")
+  private T assembleSet(ResultSet rs) throws Exception {
+    Set<Object> ret = new HashSet<>();
     while (rs.next()) {
       ret.add(request.createResultRowFromRS(rs));
     }
