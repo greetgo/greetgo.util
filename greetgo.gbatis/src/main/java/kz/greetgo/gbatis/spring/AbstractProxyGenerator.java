@@ -34,11 +34,11 @@ public abstract class AbstractProxyGenerator implements BeanDefinitionRegistryPo
   
   private ApplicationContext appContext;
   
-  protected abstract Conf getConf();
+  protected abstract Conf getConf() throws Exception;
   
-  protected abstract Stru getStru();
+  protected abstract Stru getStru() throws Exception;
   
-  protected abstract JdbcTemplate getJdbcTemplate();
+  protected abstract JdbcTemplate getJdbcTemplate() throws Exception;
   
   protected abstract List<String> getBasePackageList();
   
