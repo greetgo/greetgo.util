@@ -5,6 +5,8 @@
       <class name="kz.greetgo.gbatis.futurecall.FutureCallDefTest" />
       <class name="kz.greetgo.gbatis.modelreader.ModelReaderTest" />
       <class name="kz.greetgo.gbatis.spring.AbstractProxyGeneratorTest" />
+      <class name="kz.greetgo.gbatis.util.SqlUtilTest" />
+      <class name="kz.greetgo.gbatis.modelreader.XmlRequestSaxHandlerTest" />
     </classes>
   </test>
 </suite>

@@ -251,4 +251,44 @@ public class FutureCallDefTest extends AbstractWithDbTest {
     
   }
   
+  @Test
+  public void last_sele_enum() throws Exception {
+    
+    Request req = new Request();
+    req.callNow = true;
+    req.paramList.add(new Param(Integer.TYPE, "age"));
+    req.resultDataClass = EnumAsd.class;
+    req.resultType = ResultType.SIMPLE;
+    req.type = RequestType.Sele;
+    req.sql = "select 'ASD'";
+    
+    FutureCallDef<EnumAsd> fc = new FutureCallDef<>(conf, sg.stru, jdbc, req, new Object[] { 30 });
+    
+    EnumAsd asd = fc.last();
+    
+    assertThat(asd).isEqualTo(EnumAsd.ASD);
+    
+  }
+  
+  @Test
+  public void last_sele_enum_list() throws Exception {
+    
+    Request req = new Request();
+    req.callNow = true;
+    req.paramList.add(new Param(Integer.TYPE, "age"));
+    req.resultDataClass = EnumAsd.class;
+    req.resultType = ResultType.LIST;
+    req.type = RequestType.Sele;
+    req.sql = "select 'ASD'";
+    
+    FutureCallDef<List<EnumAsd>> fc = new FutureCallDef<>(conf, sg.stru, jdbc, req,
+        new Object[] { 30 });
+    
+    List<EnumAsd> asd = fc.last();
+    
+    assertThat(asd).hasSize(1);
+    assertThat(asd.get(0)).isEqualTo(EnumAsd.ASD);
+    
+  }
+  
 }

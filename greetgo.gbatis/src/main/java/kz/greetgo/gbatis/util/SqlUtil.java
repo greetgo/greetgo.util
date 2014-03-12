@@ -48,7 +48,11 @@ public class SqlUtil {
   
   @SuppressWarnings("unchecked")
   public static <T> T fromSql(Object value, Class<T> toType) {
-    if (value == null) return null;
+    if (value == null) {
+      if (toType == null) return null;
+      if (toType.isPrimitive()) return (T)defaultPrimitiveValue(toType);
+      return null;
+    }
     if (value instanceof java.util.Date) {
       return (T)new java.util.Date(((java.util.Date)value).getTime());
     }
@@ -56,6 +60,19 @@ public class SqlUtil {
     if (toType != null) return (T)sqlValueConvertTo(value, toType);
     
     return (T)value;
+  }
+  
+  private static Object defaultPrimitiveValue(Class<?> pr) {
+    if (Integer.TYPE.equals(pr)) return new Integer(0);
+    if (Long.TYPE.equals(pr)) return new Long(0);
+    if (Boolean.TYPE.equals(pr)) return Boolean.FALSE;
+    if (Short.TYPE.equals(pr)) return new Short((short)0);
+    if (Float.TYPE.equals(pr)) return new Float(0);
+    if (Double.TYPE.equals(pr)) return new Double(0);
+    if (Byte.TYPE.equals(pr)) return new Byte((byte)0);
+    if (Character.TYPE.equals(pr)) return new Character((char)0);
+    
+    throw new IllegalArgumentException("No default value for class " + pr);
   }
   
   private static Object sqlValueConvertTo(Object value, Class<?> toType) {
