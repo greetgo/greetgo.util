@@ -3,7 +3,9 @@ package kz.greetgo.gbatis.futurecall;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import kz.greetgo.gbatis.model.Param;
@@ -48,7 +50,7 @@ public class FutureCallDefTest extends AbstractWithDbTest {
   }
   
   @Test
-  public void last() throws Exception {
+  public void last_sele() throws Exception {
     {
       List<String> sqls = new ArrayList<>();
       
@@ -101,6 +103,42 @@ public class FutureCallDefTest extends AbstractWithDbTest {
     assertThat(list.get(1).surname).isEqualTo("Берсенев");
     assertThat(list.get(1).name).isEqualTo("Олег");
     assertThat(list.get(1).patronymic).isEqualTo("Алексеевич");
+    
+  }
+  
+  @Test
+  public void last_modi() throws Exception {
+    {
+      List<String> sqls = new ArrayList<>();
+      
+      sqls.add("insert into m_client (client) values (11)");
+      sqls.add("insert into m_client_age (client, age) values (11, 30)");
+      
+      sqls.add("insert into m_client (client) values (21)");
+      sqls.add("insert into m_client_age (client, age) values (21, 30)");
+      
+      sqls.add("insert into m_client (client) values (13)");
+      sqls.add("insert into m_client_age (client, age) values (13, 14)");
+      
+      executeSqls(sqls);
+    }
+    Request req = new Request();
+    req.callNow = true;
+    req.paramList.add(new Param(Integer.TYPE, "age"));
+    req.paramList.add(new Param(Date.class, "atTime"));
+    req.resultDataClass = Integer.TYPE;
+    req.resultType = ResultType.SIMPLE;
+    req.type = RequestType.Modi;
+    req.sql = "update m_client_age set ts = #{atTime} where age = #{age}";
+    
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    
+    Object[] args = new Object[] { 30, sdf.parse("2014-01-01 11:00:00") };
+    FutureCallDef<Integer> fc = new FutureCallDef<>(conf, sg.stru, jdbc, req, args);
+    
+    Integer lastRet = fc.last();
+    
+    assertThat(lastRet).isEqualTo(2);
     
   }
 }

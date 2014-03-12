@@ -8,6 +8,7 @@ import kz.greetgo.gbatis.model.FutureCall;
 import kz.greetgo.gbatis.probes.asd.ClassNameValue;
 import kz.greetgo.gbatis.t.Call;
 import kz.greetgo.gbatis.t.MapKey;
+import kz.greetgo.gbatis.t.Modi;
 import kz.greetgo.gbatis.t.Prm;
 import kz.greetgo.gbatis.t.Sele;
 import kz.greetgo.gbatis.t.T1;
@@ -80,4 +81,7 @@ public interface RequestTestIface {
   @Sele("sele")
   @MapKey("mapKeyFieldName")
   FutureCall<Map<String, Asd>> resultType_futureCall_map();
+  
+  @Modi("modi sql text")
+  void voidModi();
 }

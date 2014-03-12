@@ -87,9 +87,47 @@ public class FutureCallDef<T> implements FutureCall<T> {
     case Sele:
       return callSelect(con, preparedSql);
       
+    case Modi:
+      return callModi(con, preparedSql);
+      
     default:
       throw new IllegalArgumentException("Unknown request type = " + request.type);
     }
+  }
+  
+  private T callModi(Connection con, PreparedSql preparedSql) throws Exception {
+    PreparedStatement ps = con.prepareStatement(preparedSql.sql);
+    if (sqlViewer != null && sqlViewer.needView()) {
+      sqlViewer.view(preparedSql.sql, preparedSql.params);
+    }
+    try {
+      
+      {
+        int index = 1;
+        for (Object param : preparedSql.params) {
+          ps.setObject(index++, param);
+        }
+      }
+      
+      return castInt(ps.executeUpdate(), request.resultDataClass);
+      
+    } finally {
+      ps.close();
+    }
+  }
+  
+  @SuppressWarnings("unchecked")
+  private static <T> T castInt(int value, Class<?> returnClass) {
+    if (Integer.class.equals(returnClass) || Integer.TYPE.equals(returnClass)) {
+      return (T)new Integer(value);
+    }
+    if (Long.class.equals(returnClass) || Long.TYPE.equals(returnClass)) {
+      return (T)new Long(value);
+    }
+    if (Void.class.equals(returnClass) || Void.TYPE.equals(returnClass)) {
+      return null;
+    }
+    throw new IllegalArgumentException("Cannot use type " + returnClass + " in @Modi");
   }
   
   private T callSelect(Connection con, PreparedSql preparedSql) throws Exception {

@@ -8,14 +8,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Определяет SQL запрос, возвращающий данные
+ * Определяет SQL запрос
  * 
  * @author pompei
  */
 @Documented
 @Target(METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Sele {
+public @interface Modi {
   /**
    * Определяет текст SQL-запроса
    * 

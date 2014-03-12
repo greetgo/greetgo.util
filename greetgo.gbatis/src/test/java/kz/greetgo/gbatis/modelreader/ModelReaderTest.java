@@ -346,4 +346,26 @@ public class ModelReaderTest {
     assertThat(request.mapKeyClass + "").isEqualTo(String.class + "");
     assertThat(request.mapKeyField).isEqualTo("mapKeyFieldName");
   }
+  
+  @Test
+  public void voidModi() throws Exception {
+    
+    Method method = findMethodWithName(testIface.getMethods(), "voidModi");
+    
+    //
+    //
+    Request request = ModelReader.methodToRequest(method, sg.stru, conf);
+    //
+    //
+    
+    assertThat(request).isNotNull();
+    
+    assertThat(request.type).isEqualTo(RequestType.Modi);
+    assertThat(request.resultType).isEqualTo(ResultType.SIMPLE);
+    assertThat(request.resultDataClass + "").isEqualTo(Void.TYPE + "");
+    assertThat(request.callNow).isTrue();
+    assertThat(request.mapKeyClass).isNull();
+    assertThat(request.mapKeyField).isNull();
+    assertThat(request.sql).isEqualTo("modi sql text");
+  }
 }

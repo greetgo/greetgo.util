@@ -25,6 +25,7 @@ import kz.greetgo.gbatis.t.Call;
 import kz.greetgo.gbatis.t.DefaultXml;
 import kz.greetgo.gbatis.t.FromXml;
 import kz.greetgo.gbatis.t.MapKey;
+import kz.greetgo.gbatis.t.Modi;
 import kz.greetgo.gbatis.t.Prm;
 import kz.greetgo.gbatis.t.Sele;
 import kz.greetgo.gbatis.t.T1;
@@ -97,6 +98,15 @@ public class ModelReader {
           tdotList.add(tdot);
           continue FOR;
         }
+      }
+      
+      if (ann instanceof Modi) {
+        if (ret.type != null) {
+          throw new ModelReaderException("request.type = " + ret.type + " but found " + ann);
+        }
+        ret.type = RequestType.Modi;
+        ret.sql = ((Modi)ann).value();
+        continue FOR;
       }
       
       if (ann instanceof Sele) {
@@ -241,6 +251,13 @@ public class ModelReader {
   }
   
   private static void fillResult(Request ret, Method method) {
+    if (ret.type == RequestType.Modi) {
+      ret.resultDataClass = method.getReturnType();
+      ret.resultType = ResultType.SIMPLE;
+      ret.callNow = true;
+      return;
+    }
+    
     if (method.getReturnType().isAssignableFrom(List.class)) {
       if (method.getGenericReturnType() instanceof ParameterizedType) {
         ParameterizedType type = (ParameterizedType)method.getGenericReturnType();
