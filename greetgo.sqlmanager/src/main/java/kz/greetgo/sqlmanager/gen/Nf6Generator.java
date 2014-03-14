@@ -309,6 +309,8 @@ public abstract class Nf6Generator {
   
   public void generateJava() {
     
+    checkIdLengths();
+    
     Set<String> set = new HashSet<>();
     
     for (Table table : sg.stru.tables.values()) {
@@ -336,6 +338,23 @@ public abstract class Nf6Generator {
     }
     
     generateIfaces();
+  }
+  
+  private void checkIdLengths() {
+    if (conf.maxIdLength == null) return;
+    
+    for (Table table : sg.stru.tables.values()) {
+      for (Field field : table.fields) {
+        checkIdLength(conf.vPrefix + table.name + '_' + field.name);
+        checkIdLength(conf.tabPrefix + table.name + '_' + field.name);
+        checkIdLength(conf._p_ + table.name + '_' + field.name);
+      }
+    }
+    
+  }
+  
+  private void checkIdLength(String id) {
+    if (id.length() > conf.maxIdLength) throw new TooLongIdException(id);
   }
   
   private ClassOuter generateFieldsJava(Table table) {

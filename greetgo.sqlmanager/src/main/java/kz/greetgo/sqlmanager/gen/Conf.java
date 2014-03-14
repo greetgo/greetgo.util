@@ -14,6 +14,7 @@ public class Conf {
   public String _p_ = "p_";
   public String _value_ = "__value__";
   public String daoSuffix = "Dao";
+  public Integer maxIdLength = 30;
   
   public String javaGenDir;
   public String modelPackage;
