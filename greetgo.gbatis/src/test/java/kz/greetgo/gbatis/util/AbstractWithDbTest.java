@@ -25,6 +25,13 @@ import com.mchange.v2.c3p0.PooledDataSource;
 public abstract class AbstractWithDbTest {
   public static String userid = "gbatis";
   
+  private int useridIndex = 0;
+  
+  private String userid() {
+    if (useridIndex == 0) return userid;
+    return userid + useridIndex;
+  }
+  
   protected Conf conf;
   protected StruGenerator sg;
   
@@ -68,8 +75,8 @@ public abstract class AbstractWithDbTest {
       ComboPooledDataSource ds = new ComboPooledDataSource();
       ds.setDriverClass("org.postgresql.Driver");
       ds.setJdbcUrl(getUrl());
-      ds.setUser(userid);
-      ds.setPassword(userid);
+      ds.setUser(userid());
+      ds.setPassword(userid());
       
       ds.setAcquireIncrement(1);
       ds.setMinPoolSize(1);
@@ -90,17 +97,17 @@ public abstract class AbstractWithDbTest {
         
         Exception error = null;
         
-        TRIES: for (int i = 0; i < 5; i++) {
+        TRIES: for (useridIndex = 0; true; useridIndex++) {
           
           try {
-            PreparedStatement ps = con.prepareStatement("drop database " + userid);
+            PreparedStatement ps = con.prepareStatement("drop database " + userid());
             ps.executeUpdate();
             ps.close();
           } catch (PSQLException e) {
             System.err.println(e.getMessage());
           }
           try {
-            PreparedStatement ps = con.prepareStatement("drop user " + userid);
+            PreparedStatement ps = con.prepareStatement("drop user " + userid());
             ps.executeUpdate();
             ps.close();
           } catch (PSQLException e) {
@@ -108,7 +115,7 @@ public abstract class AbstractWithDbTest {
           }
           
           try {
-            PreparedStatement ps = con.prepareStatement("create database " + userid);
+            PreparedStatement ps = con.prepareStatement("create database " + userid());
             ps.executeUpdate();
             ps.close();
             
@@ -124,15 +131,15 @@ public abstract class AbstractWithDbTest {
         if (error != null) throw error;
         
         {
-          PreparedStatement ps = con.prepareStatement("create user " + userid
-              + " encrypted password '" + userid + "'");
+          PreparedStatement ps = con.prepareStatement("create user " + userid()
+              + " encrypted password '" + userid() + "'");
           ps.executeUpdate();
           ps.close();
         }
         
         {
-          PreparedStatement ps = con.prepareStatement("grant all on database " + userid + " to "
-              + userid);
+          PreparedStatement ps = con.prepareStatement("grant all on database " + userid() + " to "
+              + userid());
           ps.executeUpdate();
           ps.close();
         }
@@ -143,7 +150,7 @@ public abstract class AbstractWithDbTest {
     }
     
     {
-      Connection con = DriverManager.getConnection(getUrl(), userid, userid);
+      Connection con = DriverManager.getConnection(getUrl(), userid(), userid());
       try {
         Nf6Generator nf6generator = new Nf6GeneratorPostgres(new Conf(), sg);
         {
@@ -170,7 +177,7 @@ public abstract class AbstractWithDbTest {
   }
   
   protected String getUrl() {
-    return changeDb(SysParams.pgAdminUrl(), userid);
+    return changeDb(SysParams.pgAdminUrl(), userid());
   }
   
   protected JdbcTemplate jdbc;
