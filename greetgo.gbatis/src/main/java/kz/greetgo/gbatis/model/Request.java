@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import kz.greetgo.gbatis.util.ReflectUtil;
@@ -25,13 +26,13 @@ public class Request {
   public String mapKeyField;
   public Class<?> mapKeyClass;
   
-  private static void copyRow(ResultSet rs, Object object) throws SQLException,
-      IllegalAccessException {
+  private static void copyRow(ResultSet rs, Object object, Map<String, Boolean> hasColumnCache)
+      throws SQLException, IllegalAccessException {
     for (Setter setter : ReflectUtil.scanSetters(object).values()) {
       
       {
         String name = toUnderScore(setter.name());
-        if (hasColumn(rs, name)) {
+        if (hasColumn(rs, name, hasColumnCache)) {
           setter.set(SqlUtil.fromSql(rs.getObject(name), setter.type()));
           continue;
         }
@@ -39,7 +40,7 @@ public class Request {
       
       {
         String name = setter.name();
-        if (hasColumn(rs, name)) {
+        if (hasColumn(rs, name, hasColumnCache)) {
           setter.set(SqlUtil.fromSql(rs.getObject(name), setter.type()));
           continue;
         }
@@ -72,23 +73,31 @@ public class Request {
     return sb.toString();
   }
   
-  private static boolean hasColumn(ResultSet rs, String name) throws SQLException {
+  private static boolean hasColumn(ResultSet rs, String name, Map<String, Boolean> hasColumnCache)
+      throws SQLException {
+    if (hasColumnCache != null) {
+      Boolean ret = hasColumnCache.get(name);
+      if (ret != null) return ret.booleanValue();
+    }
     try {
       rs.findColumn(name);
+      if (hasColumnCache != null) hasColumnCache.put(name, true);
       return true;
     } catch (SQLException e) {
+      if (hasColumnCache != null) hasColumnCache.put(name, false);
       return false;
     }
   }
   
-  public Object createResultRowFromRS(ResultSet rs) throws Exception {
+  public Object createResultRowFromRS(ResultSet rs, Map<String, Boolean> hasColumnCache)
+      throws Exception {
     if (isSimpleClass(resultDataClass)) {
       return SqlUtil.fromSql(rs.getObject(1), resultDataClass);
     }
     
     {
       Object object = resultDataClass.newInstance();
-      copyRow(rs, object);
+      copyRow(rs, object, hasColumnCache);
       return object;
     }
   }

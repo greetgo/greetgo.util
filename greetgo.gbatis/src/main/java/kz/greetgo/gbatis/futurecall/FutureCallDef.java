@@ -203,8 +203,9 @@ public class FutureCallDef<T> implements FutureCall<T> {
   @SuppressWarnings("unchecked")
   private T assembleMap(ResultSet rs) throws Exception {
     Map<Object, Object> ret = new HashMap<>();
+    Map<String, Boolean> hasColumnCache = new HashMap<>();
     while (rs.next()) {
-      Object object = request.createResultRowFromRS(rs);
+      Object object = request.createResultRowFromRS(rs, hasColumnCache);
       Object key = SqlUtil.fromSql(rs.getObject(request.mapKeyField), request.mapKeyClass);
       ret.put(key, object);
     }
@@ -214,8 +215,9 @@ public class FutureCallDef<T> implements FutureCall<T> {
   @SuppressWarnings("unchecked")
   private T assembleList(ResultSet rs) throws Exception {
     List<Object> ret = new ArrayList<>();
+    Map<String, Boolean> hasColumnCache = new HashMap<>();
     while (rs.next()) {
-      ret.add(request.createResultRowFromRS(rs));
+      ret.add(request.createResultRowFromRS(rs, hasColumnCache));
     }
     return (T)ret;
   }
@@ -223,8 +225,9 @@ public class FutureCallDef<T> implements FutureCall<T> {
   @SuppressWarnings("unchecked")
   private T assembleSet(ResultSet rs) throws Exception {
     Set<Object> ret = new HashSet<>();
+    Map<String, Boolean> hasColumnCache = new HashMap<>();
     while (rs.next()) {
-      ret.add(request.createResultRowFromRS(rs));
+      ret.add(request.createResultRowFromRS(rs, hasColumnCache));
     }
     return (T)ret;
   }
@@ -232,7 +235,7 @@ public class FutureCallDef<T> implements FutureCall<T> {
   @SuppressWarnings("unchecked")
   private T assembleSimple(ResultSet rs) throws Exception {
     if (!rs.next()) return null;
-    return (T)request.createResultRowFromRS(rs);
+    return (T)request.createResultRowFromRS(rs, null);
   }
   
 }
