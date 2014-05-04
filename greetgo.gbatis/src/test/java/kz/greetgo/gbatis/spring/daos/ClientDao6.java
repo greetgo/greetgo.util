@@ -17,6 +17,10 @@ public interface ClientDao6 {
       + " from x_client where age <= #{age} order by client")
   FutureCall<List<Client>> youngClients(@Prm("age") int age);
   
+  @T1(value = "m_client", fields = { "${field}, age" })
+  @Sele("select client as id, ${field} from x_client where age <= #{age} order by client")
+  FutureCall<List<String>> youngClientsField(@Prm("age") int age, @Prm("field") String field);
+  
   @T1("m_client")
   @Sele("select client as id,surname,name,patronymic,age from x_client")
   FutureCall<List<Client>> allClients();

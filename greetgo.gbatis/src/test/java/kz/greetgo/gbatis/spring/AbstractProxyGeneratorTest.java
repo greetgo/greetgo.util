@@ -102,6 +102,10 @@ public class AbstractProxyGeneratorTest extends AbstractWithDbTest {
       System.out.println("!!!!!!!! " + client);
     }
     
+    List<String> surnames = clientDao6.youngClientsField(17, "surname").at(beforeOlding);
+    
+    System.out.println("surnames = " + surnames);
+    
     ctx.close();
   }
   

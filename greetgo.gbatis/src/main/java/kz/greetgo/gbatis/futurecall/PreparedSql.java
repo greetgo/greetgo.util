@@ -102,7 +102,7 @@ class PreparedSql {
         from.append("x." + fi.name + " = x" + i + "." + fi.name);
       }
       
-      select.append(", x" + i + "." + fieldName);
+      select.append(", x" + i + "." + prepareFieldName(fieldName));
       
     }
     
@@ -146,10 +146,42 @@ class PreparedSql {
   }
   
   private Field getField(Table table, String fieldName) {
+    fieldName = prepareFieldName(fieldName);
     for (Field field : table.fields) {
       if (field.name.equals(fieldName)) return field;
     }
     throw new IllegalArgumentException("No field " + fieldName + " for table " + table.name);
+  }
+  
+  private String prepareFieldName(String fieldName) {
+    String temp = fieldName;
+    
+    StringBuilder ret = new StringBuilder();
+    while (true) {
+      int idx1 = temp.indexOf("${");
+      if (idx1 < 0) break;
+      int idx2 = temp.indexOf("}");
+      if (idx2 < 0) throw new IllegalArgumentException("Whonge field format: " + fieldName);
+      String varName = temp.substring(idx1 + 2, idx2);
+      ret.append(temp.substring(0, idx1));
+      ret.append(getStrArg(varName));
+      temp = temp.substring(idx2 + 1);
+    }
+    ret.append(temp);
+    return ret.toString();
+  }
+  
+  private String getStrArg(String varName) {
+    int index = 0;
+    for (Param param : request.paramList) {
+      if (varName.equals(param.name)) {
+        break;
+      }
+      index++;
+    }
+    if (index >= args.length) throw new IllegalArgumentException("No argument with name = "
+        + varName);
+    return "" + args[index];
   }
   
   private void init() throws Exception {

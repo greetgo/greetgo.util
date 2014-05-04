@@ -121,4 +121,29 @@ public class PreparedSqlTest {
     assertThat(sql.sql).contains("select * from x_client where");
   }
   
+  @Test
+  public void prepare_04() throws Exception {
+    Request r = new Request();
+    
+    r.withList.add(new WithView("v_client", "x_client", "surname", "name", "age"));
+    
+    r.sql = "select * from ${table} where age = #{age} and age = #{age2} or age = #{age}";
+    r.paramList.add(new Param(Integer.class, "age"));
+    r.paramList.add(new Param(Integer.class, "age2"));
+    r.paramList.add(new Param(String.class, "table"));
+    
+    PreparedSql sql = PreparedSql.prepare(conf, sg.stru, r, new Object[] { 13, 709, "x_client" },
+        new Date(), DbType.PostgreSQL, 100, 300);
+    
+    assertThat(sql).isNotNull();
+    assertThat(sql.sql).isNotNull();
+    
+    System.out.println("sql.sql = " + sql.sql);
+    for (int i = 0, C = sql.params.size(); i < C; i++) {
+      System.out.println("Param" + (i + 1) + " = " + sql.params.get(i));
+    }
+    
+    assertThat(sql.sql).contains("select * from x_client where");
+  }
+  
 }

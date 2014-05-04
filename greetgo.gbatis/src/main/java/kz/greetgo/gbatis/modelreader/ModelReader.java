@@ -218,11 +218,6 @@ public class ModelReader {
       for (Field field : table.fields) {
         fieldNames.add(field.name);
       }
-      for (String fieldName : fieldList) {
-        if (!fieldNames.contains(fieldName)) {
-          throw new ModelReaderException("No field " + fieldName + " in table " + table.name);
-        }
-      }
     }
     
     WithView withView = new WithView();
