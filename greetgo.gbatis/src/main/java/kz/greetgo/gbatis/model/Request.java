@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -121,6 +122,7 @@ public class Request {
     if (cl.isPrimitive()) return true;
     if (cl.isEnum()) return true;
     if (cl.isAssignableFrom(String.class)) return true;
+    if (cl.isAssignableFrom(Date.class)) return true;
     return SIMPLE_CLASSES.contains(cl);
   }
 }

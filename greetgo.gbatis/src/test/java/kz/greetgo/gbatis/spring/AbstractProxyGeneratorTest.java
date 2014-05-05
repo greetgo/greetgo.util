@@ -3,6 +3,7 @@ package kz.greetgo.gbatis.spring;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -106,7 +107,13 @@ public class AbstractProxyGeneratorTest extends AbstractWithDbTest {
     
     System.out.println("surnames = " + surnames);
     
+    {
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+      Date atNowMinus3 = clientDao6.nowMinus3();
+      Date atNow = clientDao6.now();
+      System.out.println("now - 3 = " + sdf.format(atNowMinus3));
+      System.out.println("now     = " + sdf.format(atNow));
+    }
     ctx.close();
   }
-  
 }

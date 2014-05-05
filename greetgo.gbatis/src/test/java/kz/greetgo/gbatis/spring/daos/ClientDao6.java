@@ -45,4 +45,8 @@ public interface ClientDao6 {
   
   @Call("{call p_client_age (#{id}, #{age})}")
   void insClientAge(@Prm("id") long id, @Prm("age") int age);
+  
+  @Sele("select moment() - interval '3 days' - interval '21 seconds'")
+  Date nowMinus3();
+  
 }
