@@ -123,7 +123,7 @@ public class FontTableContentElement implements ContentElement {
       c.add("<w:family w:val=\"swiss\" />");
       c.add("<w:pitch w:val=\"variable\" />");
       c.add("<w:sig w:usb0=\"20002A87\" w:usb1=\"80000000\""
-          + "w:usb2=\"00000008\" w:usb3=\"00000000\" "
+          + " w:usb2=\"00000008\" w:usb3=\"00000000\" "
           + " w:csb0=\"000001FF\" w:csb1=\"00000000\" />");
       elements.put(name, new FontElement(name, c.iterator()));
     }
