@@ -5,6 +5,9 @@ import kz.greetgo.msoffice.docx.Document;
 import kz.greetgo.msoffice.docx.Docx;
 import kz.greetgo.msoffice.docx.Para;
 import kz.greetgo.msoffice.docx.Run;
+import kz.greetgo.msoffice.docx.Table;
+import kz.greetgo.msoffice.docx.TableCell;
+import kz.greetgo.msoffice.docx.TableRow;
 import kz.greetgo.msoffice.docx.Underline;
 
 public class ProbeGenDocx {
@@ -57,6 +60,53 @@ public class ProbeGenDocx {
         частьАбзаца.setBold(true);
         частьАбзаца.setTextSize(70);
         частьАбзаца.addText("Вот так!");
+      }
+    }
+    
+    {
+      Table table = doc.createTable();
+      {
+        TableRow row =table.createRow();
+        {
+          TableCell tableCell=row.createCell();
+          {
+            Para para = tableCell.createPara();
+            {
+              Run частьАбзаца = para.createRun();
+              частьАбзаца.addText("column one");
+            }
+          }
+        }
+        {
+          TableCell tableCell=row.createCell();
+          {
+            Para para = tableCell.createPara();
+            {
+              Run частьАбзаца = para.createRun();
+              частьАбзаца.addText("column two");
+            }
+          }
+        }
+        {
+          TableCell tableCell=row.createCell();
+          {
+            Para para = tableCell.createPara();
+            {
+              Run частьАбзаца = para.createRun();
+              частьАбзаца.addText("column three");
+            }
+          }
+        }
+        {
+          TableCell tableCell=row.createCell();
+          {
+            Para para = tableCell.createPara();
+            {
+              Run частьАбзаца = para.createRun();
+              частьАбзаца.addText("column four");
+            }
+          }
+        }
       }
     }
     
