@@ -90,10 +90,13 @@ public class ProbeGenDocx {
         cell1.setGridSpan(3);
         cell1.getBorders().setLineStyle(LineStyle.SINGLE);
         cell1.getBorders().setSize(4);
+        cell1.getBorders().getInsideH().setSize(0);
+        cell1.getBorders().getInsideV().setSize(0);
         cell1.getMargins().setWidth(108);
         cell1.getMargins().getTop().setWidth(0);
         cell1.getMargins().getBottom().setWidth(0);
-        
+        cell1.getShd().setVal("clear");
+        cell1.getShd().setFill("C0C0C0");
         Para para = cell1.createPara();
         para.setAlign(Align.CENTER);
         Run title = para.createRun();

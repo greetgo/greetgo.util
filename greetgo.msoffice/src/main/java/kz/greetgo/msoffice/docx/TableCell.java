@@ -24,6 +24,7 @@ public class TableCell implements XmlWriter {
   private List<FlowElement> elements = new ArrayList<FlowElement>();
   private final Borders borders = new Borders("w:tcBorders");
   private final Margins margins = new Margins("w:tcMar");
+  private final Shd shd =new Shd();
   
   @Override
   public void write(PrintStream out) {
@@ -61,7 +62,7 @@ public class TableCell implements XmlWriter {
         }
         getBorders().write(out);
         getMargins().write(out);
-        
+        getShd().write(out);
         out.print("<w:hideMark />");
       }
       if (needTcPr) out.print("</w:tcPr>");
@@ -120,5 +121,9 @@ public class TableCell implements XmlWriter {
 
   public void setGridSpan(Integer gridSpan) {
     this.gridSpan = gridSpan;
+  }
+  
+  public Shd getShd() {
+    return shd;
   }
 }
