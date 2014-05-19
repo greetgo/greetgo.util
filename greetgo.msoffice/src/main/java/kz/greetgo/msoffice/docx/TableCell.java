@@ -19,7 +19,8 @@ public class TableCell implements XmlWriter {
   
   private VertAlign vertAlign = VertAlign.TOP;
   private Integer width = null;
-  
+  private Integer gridSpan ;
+
   private List<FlowElement> elements = new ArrayList<FlowElement>();
   private final Borders borders = new Borders("w:tcBorders");
   private final Margins margins = new Margins("w:tcMar");
@@ -41,6 +42,11 @@ public class TableCell implements XmlWriter {
           options.add("<w:tcW w:w=\"" + w + "\" w:type=\"dxa\" />");
         }
       }
+      
+      if(getGridSpan()!=null){
+        options.add("<w:gridSpan w:val=\""+getGridSpan()+"\" />");
+      }
+      
       boolean needTcPr = false;
       {
         if (options.size() > 0) needTcPr = true;
@@ -55,6 +61,8 @@ public class TableCell implements XmlWriter {
         }
         getBorders().write(out);
         getMargins().write(out);
+        
+        out.print("<w:hideMark />");
       }
       if (needTcPr) out.print("</w:tcPr>");
       for (FlowElement e : elements) {
@@ -104,5 +112,13 @@ public class TableCell implements XmlWriter {
   
   public Margins getMargins() {
     return margins;
+  }
+  
+  public Integer getGridSpan() {
+    return gridSpan;
+  }
+
+  public void setGridSpan(Integer gridSpan) {
+    this.gridSpan = gridSpan;
   }
 }

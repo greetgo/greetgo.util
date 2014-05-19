@@ -24,6 +24,9 @@ public class Table implements FlowElement {
   private List<TableRow> rows = new ArrayList<TableRow>();
   private final Borders borders = new Borders("w:tblBorders");
   private final Margins margins = new Margins("w:tblCellMar");
+  private String tableLookVal;
+  private Integer tableWidth;
+  private Integer tblCellSpacing = 0;
   
   class TableInfo {
     TableCol getTableCol(int colIndex) {
@@ -65,8 +68,15 @@ public class Table implements FlowElement {
     }
     
     out.print("<w:tblPr>");
+    if(getTableWidth()!=null){
+      out.print("<w:tblW w:w=\""+getTableWidth()+"\" w:type=\"dxa\" />");
+    }
+    out.print("<w:tblCellSpacing w:w=\""+0+"\" w:type=\"dxa\" />");
     getBorders().write(out);
     getMargins().write(out);
+    if(getTableLookVal()!=null){
+      out.print("<w:tblLook w:val=\""+tableLookVal+"\" />");
+    }
     out.print("</w:tblPr>");
     
     for (TableRow row : rows) {
@@ -105,7 +115,31 @@ public class Table implements FlowElement {
     return ret;
     
   }
+
+  public String getTableLookVal() {
+    return tableLookVal;
+  }
+
+  public void setTableLookVal(String tableLookVal) {
+    this.tableLookVal = tableLookVal;
+  }
+
+  public Integer getTableWidth() {
+    return tableWidth;
+  }
+
+  public void setTableWidth(Integer tableWidth) {
+    this.tableWidth = tableWidth;
+  }
   
+  public Integer getTblCellSpacing() {
+    return tblCellSpacing;
+  }
+
+  public void setTblCellSpacing(Integer tblCellSpacing) {
+    this.tblCellSpacing = tblCellSpacing;
+  }
+
   public Margins getMargins() {
     return margins;
   }
