@@ -3,8 +3,13 @@ package kz.greetgo.msoffice.docx.gen;
 import kz.greetgo.msoffice.docx.Align;
 import kz.greetgo.msoffice.docx.Document;
 import kz.greetgo.msoffice.docx.Docx;
+import kz.greetgo.msoffice.docx.LineStyle;
 import kz.greetgo.msoffice.docx.Para;
 import kz.greetgo.msoffice.docx.Run;
+import kz.greetgo.msoffice.docx.Table;
+import kz.greetgo.msoffice.docx.TableCell;
+import kz.greetgo.msoffice.docx.TableCol;
+import kz.greetgo.msoffice.docx.TableRow;
 import kz.greetgo.msoffice.docx.Underline;
 
 public class ProbeGenDocx {
@@ -59,7 +64,46 @@ public class ProbeGenDocx {
         частьАбзаца.addText("Вот так!");
       }
     }
-    
+
+    {
+      Para para = doc.createPara();
+      para.setAlign(Align.CENTER);
+      {
+        Run частьАбзаца = para.createRun();
+        частьАбзаца.setBold(true);
+        частьАбзаца.setTextSize(70);
+      }
+    }
+    Table table = doc.createTable();
+    table.setTableWidth(9540);
+    table.setTblCellSpacing(0);
+    table.getMargins().setWidth(105);
+    table.setTableLookVal("04A0");
+    {
+      TableRow row = table.createRow();
+      row.setTblCellSpacing(0);
+      {
+        TableCol col1 = table.createCol();
+        col1.setWidth(4601);
+        TableCell cell1 = row.createCell();
+        cell1.setWidth(9300);
+        cell1.setGridSpan(3);
+        cell1.getBorders().setLineStyle(LineStyle.SINGLE);
+        cell1.getBorders().setSize(4);
+        cell1.getMargins().setWidth(108);
+        cell1.getMargins().getTop().setWidth(0);
+        cell1.getMargins().getBottom().setWidth(0);
+        
+        Para para = cell1.createPara();
+        para.setAlign(Align.CENTER);
+        Run title = para.createRun();
+        title.setTextSize(13);
+        title.setFontName("Arial");
+        title.addText("Краткая информация по Заемщику/Гаранту и проекту");
+        
+      }
+    }
+  
     docx.write("build/example-gen.docx");
     
     System.out.println("OK");
