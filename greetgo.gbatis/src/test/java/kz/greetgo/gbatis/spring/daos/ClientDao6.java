@@ -49,4 +49,6 @@ public interface ClientDao6 {
   @Sele("select moment() - interval '3 days' - interval '21 seconds'")
   Date nowMinus3();
   
+  @Sele("with asd as (select 1 as x) select 1 from asd where x = 2")
+  FutureCall<Boolean> getFalse();
 }

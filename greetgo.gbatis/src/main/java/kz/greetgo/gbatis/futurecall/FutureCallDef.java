@@ -234,7 +234,11 @@ public class FutureCallDef<T> implements FutureCall<T> {
   
   @SuppressWarnings("unchecked")
   private T assembleSimple(ResultSet rs) throws Exception {
-    if (!rs.next()) return null;
+    if (!rs.next()) {
+      if (Boolean.class.equals(request.resultDataClass)) return (T)Boolean.FALSE;
+      if (Boolean.TYPE.equals(request.resultDataClass)) return (T)Boolean.FALSE;
+      return null;
+    }
     return (T)request.createResultRowFromRS(rs, null);
   }
   

@@ -114,6 +114,13 @@ public class AbstractProxyGeneratorTest extends AbstractWithDbTest {
       System.out.println("now - 3 = " + sdf.format(atNowMinus3));
       System.out.println("now     = " + sdf.format(atNow));
     }
+    
+    {
+      Boolean bool = clientDao6.getFalse().last();
+      assertThat(bool).isNotNull();
+      assertThat(bool).isFalse();
+    }
+    
     ctx.close();
   }
 }
