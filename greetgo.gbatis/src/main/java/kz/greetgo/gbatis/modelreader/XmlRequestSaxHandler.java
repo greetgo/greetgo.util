@@ -47,8 +47,10 @@ public class XmlRequestSaxHandler extends AbstractContentHandler {
       xmlRequest.withViewList.add(withView);
       withView.table = atts.getValue("value");
       withView.view = atts.getValue("name");
-      for (String field : atts.getValue("fields").split(",")) {
-        withView.fields.add(field.trim());
+      String fields = atts.getValue("fields");
+      if (fields != null) for (String field : fields.split(",")) {
+        String tmp = field.trim();
+        if (tmp.length() > 0) withView.fields.add(tmp);
       }
     }
   }
@@ -68,6 +70,10 @@ public class XmlRequestSaxHandler extends AbstractContentHandler {
     }
     if ("with".equals(localName)) {
       if (withView == null) throw new SAXException("Left close tag: </with>");
+      for (String field : text().split(",")) {
+        String tmp = field.trim();
+        if (tmp.length() > 0) withView.fields.add(tmp);
+      }
       withView = null;
       return;
     }
