@@ -6,7 +6,6 @@ public class GenXlsxProbe {
   public static void main(String[] args) throws Exception {
     String tmpDir = System.getProperty("user.home") + "/tmp";
     String workDir = tmpDir + "/asdss";
-    workDir = "tmp/gen";
     
     try {
       Runtime.getRuntime().exec("rm -rvf " + workDir).waitFor();
