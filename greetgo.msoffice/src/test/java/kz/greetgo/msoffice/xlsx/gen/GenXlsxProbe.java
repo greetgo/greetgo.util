@@ -4,8 +4,7 @@ import java.io.FileOutputStream;
 
 public class GenXlsxProbe {
   public static void main(String[] args) throws Exception {
-    String tmpDir = System.getProperty("user.home") + "/tmp";
-    String workDir = tmpDir + "/asdss";
+    String workDir = "build/workDir";
     
     try {
       Runtime.getRuntime().exec("rm -rvf " + workDir).waitFor();
@@ -23,7 +22,7 @@ public class GenXlsxProbe {
     
     f.finish();
     
-    FileOutputStream fout = new FileOutputStream("tmp/asd11.xlsx");
+    FileOutputStream fout = new FileOutputStream("build/test.xlsx");
     
     f.print(fout);
     
