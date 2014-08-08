@@ -76,6 +76,7 @@ public class SharedStrings {
       }
     }
     
+    fc.close();
     raf.close();
   }
 }
