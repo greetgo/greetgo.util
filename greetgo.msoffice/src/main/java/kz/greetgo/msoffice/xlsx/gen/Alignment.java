@@ -28,9 +28,9 @@ public class Alignment {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((horizontal == null) ? 0 : horizontal.hashCode());
-    result = prime * result + ((vertical == null) ? 0 : vertical.hashCode());
-    result = prime * result + (wrapText ? 1231 : 1237);
+    result = prime * result + ((horizontal == null) ? 0 :horizontal.hashCode());
+    result = prime * result + ((vertical == null) ? 0 :vertical.hashCode());
+    result = prime * result + (wrapText ? 1231 :1237);
     return result;
   }
   
@@ -122,14 +122,6 @@ public class Alignment {
   
   public void setWrapText(boolean wrapText) {
     this.wrapText = wrapText;
-  }
-  
-  /**
-   * Use {@link #wrap()}
-   */
-  @Deprecated
-  public void makeTextWrap() {
-    setWrapText(true);
   }
   
   public Alignment wrap() {

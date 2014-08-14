@@ -144,18 +144,6 @@ public class Sheet {
     curRow += rowCount;
   }
   
-  /**
-   * Instead use
-   * 
-   * <pre>
-   * row().finish()
-   * </pre>
-   */
-  @Deprecated
-  public void finishRow() {
-    innerFinishRow();
-  }
-  
   public void innerFinishRow() {
     if (!inRow) return;
     out.println("</row>");
@@ -165,30 +153,6 @@ public class Sheet {
   public void skipRow() {
     init();
     skipRows(1);
-  }
-  
-  /**
-   * Instead use
-   * 
-   * <pre>
-   * row().start()
-   * </pre>
-   */
-  @Deprecated
-  public void startRow() {
-    row().start();
-  }
-  
-  /**
-   * Instead use
-   * 
-   * <pre>
-   * row().height(123).start()
-   * </pre>
-   */
-  @Deprecated
-  public void startRow(double height) {
-    row().height(height).start();
   }
   
   public class Row {
@@ -406,6 +370,8 @@ public class Sheet {
     mergeCells.print(out);
     pageMargins.print(out);
     out.println("</worksheet>");
+    out.close();
+    out = null;
   }
   
   public void addMergeInRow(int colFrom, int colTo) {
