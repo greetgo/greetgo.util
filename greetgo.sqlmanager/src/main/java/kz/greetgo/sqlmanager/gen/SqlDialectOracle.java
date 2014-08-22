@@ -16,7 +16,7 @@ public class SqlDialectOracle implements SqlDialect {
     simpleTypeMap.put(SimpleType.tlong, "number");
     simpleTypeMap.put(SimpleType.tlongline, "varchar2(1000)");
     simpleTypeMap.put(SimpleType.ttext, "clob");
-    simpleTypeMap.put(SimpleType.ttime, "timestamp");
+    simpleTypeMap.put(SimpleType.ttime, "timestamp(9)");
     simpleTypeMap.put(SimpleType.tword, "varchar2(100)");
   }
   private final Map<SimpleType, String> simpleTypeProcMap = new HashMap<>();
@@ -44,5 +44,15 @@ public class SqlDialectOracle implements SqlDialect {
     String ret = simpleTypeProcMap.get(simpleType);
     if (ret == null) throw new RuntimeException("No proc SQL type for " + simpleType);
     return ret;
+  }
+  
+  @Override
+  public String timestamp() {
+    return "timestamp(9)";
+  }
+  
+  @Override
+  public String current_timestamp() {
+    return "systimestamp";
   }
 }

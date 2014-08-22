@@ -1,10 +1,10 @@
 package kz.pompei.dao.oracle.asd.asd;
-
-import org.apache.ibatis.annotations.Select;
+import kz.greetgo.gbatis.t.Autoimpl;
+import kz.greetgo.gbatis.t.Sele;
 import kz.pompei.dao.asd.asd.AddressDao;
-
-public interface AddressOracleDao extends AddressDao {
+@Autoimpl
+public interface AddressOracleDao extends AddressDao{
   @Override
-  @Select("select s_address.nextval from dual")
+  @Sele("select s_address.nextval from dual")
   long next();
 }

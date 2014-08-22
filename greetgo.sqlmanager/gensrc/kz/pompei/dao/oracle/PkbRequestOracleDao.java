@@ -1,10 +1,10 @@
 package kz.pompei.dao.oracle;
-
-import org.apache.ibatis.annotations.Select;
+import kz.greetgo.gbatis.t.Autoimpl;
 import kz.pompei.dao.PkbRequestDao;
-
-public interface PkbRequestOracleDao extends PkbRequestDao {
+import kz.greetgo.gbatis.t.Sele;
+@Autoimpl
+public interface PkbRequestOracleDao extends PkbRequestDao{
   @Override
-  @Select("select s_pkbRequest.nextval from dual")
+  @Sele("select s_pkbRequest.nextval from dual")
   long next();
 }

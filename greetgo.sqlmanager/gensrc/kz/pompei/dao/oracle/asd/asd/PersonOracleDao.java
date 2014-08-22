@@ -1,10 +1,10 @@
 package kz.pompei.dao.oracle.asd.asd;
-
-import org.apache.ibatis.annotations.Select;
+import kz.greetgo.gbatis.t.Autoimpl;
 import kz.pompei.dao.asd.asd.PersonDao;
-
-public interface PersonOracleDao extends PersonDao {
+import kz.greetgo.gbatis.t.Sele;
+@Autoimpl
+public interface PersonOracleDao extends PersonDao{
   @Override
-  @Select("select s_person.nextval from dual")
+  @Sele("select s_person.nextval from dual")
   long next();
 }

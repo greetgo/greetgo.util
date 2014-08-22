@@ -1,10 +1,10 @@
 package kz.pompei.dao.postgres;
-
-import org.apache.ibatis.annotations.Select;
+import kz.greetgo.gbatis.t.Autoimpl;
 import kz.pompei.dao.PkbRequestDao;
-
-public interface PkbRequestPostgresDao extends PkbRequestDao {
+import kz.greetgo.gbatis.t.Sele;
+@Autoimpl
+public interface PkbRequestPostgresDao extends PkbRequestDao{
   @Override
-  @Select("select nextval('s_pkbRequest')")
+  @Sele("select nextval('s_pkbRequest')")
   long next();
 }

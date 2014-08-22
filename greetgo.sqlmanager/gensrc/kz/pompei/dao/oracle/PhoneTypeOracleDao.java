@@ -1,5 +1,6 @@
 package kz.pompei.dao.oracle;
-
+import kz.greetgo.gbatis.t.Autoimpl;
 import kz.pompei.dao.PhoneTypeDao;
-
-public interface PhoneTypeOracleDao extends PhoneTypeDao {}
+@Autoimpl
+public interface PhoneTypeOracleDao extends PhoneTypeDao{
+}

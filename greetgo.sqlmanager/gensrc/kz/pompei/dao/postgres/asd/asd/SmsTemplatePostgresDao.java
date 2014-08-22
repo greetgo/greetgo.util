@@ -1,10 +1,10 @@
 package kz.pompei.dao.postgres.asd.asd;
-
 import kz.pompei.dao.asd.asd.SmsTemplateDao;
-import org.apache.ibatis.annotations.Select;
-
-public interface SmsTemplatePostgresDao extends SmsTemplateDao {
+import kz.greetgo.gbatis.t.Autoimpl;
+import kz.greetgo.gbatis.t.Sele;
+@Autoimpl
+public interface SmsTemplatePostgresDao extends SmsTemplateDao{
   @Override
-  @Select("select nextval('s_smsTemplate')")
+  @Sele("select nextval('s_smsTemplate')")
   long next();
 }

@@ -8,4 +8,8 @@ public interface SqlDialect {
   
   String procType(SimpleType simpleType);
   
+  String timestamp();
+  
+  String current_timestamp();
+  
 }

@@ -1,10 +1,10 @@
 package kz.pompei.dao.postgres.asd.asd;
-
-import org.apache.ibatis.annotations.Select;
+import kz.greetgo.gbatis.t.Autoimpl;
 import kz.pompei.dao.asd.asd.PersonDao;
-
-public interface PersonPostgresDao extends PersonDao {
+import kz.greetgo.gbatis.t.Sele;
+@Autoimpl
+public interface PersonPostgresDao extends PersonDao{
   @Override
-  @Select("select nextval('s_person')")
+  @Sele("select nextval('s_person')")
   long next();
 }

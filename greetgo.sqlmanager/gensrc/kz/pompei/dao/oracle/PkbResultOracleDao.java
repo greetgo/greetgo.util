@@ -1,5 +1,6 @@
 package kz.pompei.dao.oracle;
-
 import kz.pompei.dao.PkbResultDao;
-
-public interface PkbResultOracleDao extends PkbResultDao {}
+import kz.greetgo.gbatis.t.Autoimpl;
+@Autoimpl
+public interface PkbResultOracleDao extends PkbResultDao{
+}

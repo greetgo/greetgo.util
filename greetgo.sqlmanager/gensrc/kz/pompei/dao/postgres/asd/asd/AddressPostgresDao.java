@@ -1,10 +1,10 @@
 package kz.pompei.dao.postgres.asd.asd;
-
-import org.apache.ibatis.annotations.Select;
+import kz.greetgo.gbatis.t.Autoimpl;
+import kz.greetgo.gbatis.t.Sele;
 import kz.pompei.dao.asd.asd.AddressDao;
-
-public interface AddressPostgresDao extends AddressDao {
+@Autoimpl
+public interface AddressPostgresDao extends AddressDao{
   @Override
-  @Select("select nextval('s_address')")
+  @Sele("select nextval('s_address')")
   long next();
 }

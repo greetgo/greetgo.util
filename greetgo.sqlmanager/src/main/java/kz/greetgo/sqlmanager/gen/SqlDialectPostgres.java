@@ -45,4 +45,14 @@ public class SqlDialectPostgres implements SqlDialect {
     if (ret == null) throw new RuntimeException("No Proc SQL type for " + simpleType);
     return ret;
   }
+  
+  @Override
+  public String timestamp() {
+    return "timestamp";
+  }
+  
+  @Override
+  public String current_timestamp() {
+    return "current_timestamp";
+  }
 }

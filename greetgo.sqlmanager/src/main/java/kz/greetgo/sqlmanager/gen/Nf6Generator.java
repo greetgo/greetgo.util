@@ -170,7 +170,8 @@ public abstract class Nf6Generator {
         }
       }
     }
-    out.println("  " + conf.cre + " timestamp default current_timestamp not null,");
+    out.println("  " + conf.cre + " " + sqld().timestamp() + " default "
+        + sqld().current_timestamp() + " not null,");
     StringBuilder sb = new StringBuilder();
     for (String name : keyNames) {
       if (sb.length() > 0) sb.append(", ");
@@ -207,7 +208,8 @@ public abstract class Nf6Generator {
       }
     }
     
-    out.println("  " + conf.ts + " timestamp default current_timestamp not null,");
+    out.println("  " + conf.ts + " " + sqld().timestamp() + " default "
+        + sqld().current_timestamp() + " not null,");
     
     {
       List<SimpleType> types = new ArrayList<>();
