@@ -29,6 +29,16 @@ import kz.greetgo.gbatis.t.Modi;
 import kz.greetgo.gbatis.t.Prm;
 import kz.greetgo.gbatis.t.Sele;
 import kz.greetgo.gbatis.t.T1;
+import kz.greetgo.gbatis.t.T10;
+import kz.greetgo.gbatis.t.T11;
+import kz.greetgo.gbatis.t.T12;
+import kz.greetgo.gbatis.t.T13;
+import kz.greetgo.gbatis.t.T14;
+import kz.greetgo.gbatis.t.T15;
+import kz.greetgo.gbatis.t.T16;
+import kz.greetgo.gbatis.t.T17;
+import kz.greetgo.gbatis.t.T18;
+import kz.greetgo.gbatis.t.T19;
 import kz.greetgo.gbatis.t.T2;
 import kz.greetgo.gbatis.t.T3;
 import kz.greetgo.gbatis.t.T4;
@@ -237,6 +247,16 @@ public class ModelReader {
     if (ann instanceof T7) return 7;
     if (ann instanceof T8) return 8;
     if (ann instanceof T9) return 9;
+    if (ann instanceof T10) return 10;
+    if (ann instanceof T11) return 11;
+    if (ann instanceof T12) return 12;
+    if (ann instanceof T13) return 13;
+    if (ann instanceof T14) return 14;
+    if (ann instanceof T15) return 15;
+    if (ann instanceof T16) return 16;
+    if (ann instanceof T17) return 17;
+    if (ann instanceof T18) return 18;
+    if (ann instanceof T19) return 19;
     return null;
   }
   
