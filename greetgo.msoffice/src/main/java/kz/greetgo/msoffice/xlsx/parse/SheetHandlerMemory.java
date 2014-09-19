@@ -175,6 +175,7 @@ public class SheetHandlerMemory extends DefaultHandler implements Sheet {
   private class MyCell extends Cell {
     @SuppressWarnings("unused")
     public int sheet_id;
+    public String value;
     
     @SuppressWarnings("unused")
     MyCell() {}
@@ -196,14 +197,14 @@ public class SheetHandlerMemory extends DefaultHandler implements Sheet {
     
     @Override
     public String asStr() {
-      if (isStr()) return values.get(Long.parseLong(v));
+      if (isStr()) return value;
       return v;
     }
     
     @Override
     public Date asDate() {
       if (isStr()) return null;
-      return UtilOffice.excelToDate(values.get(Long.parseLong(v)));
+      return UtilOffice.excelToDate(value);
     }
     
     @Override
@@ -220,7 +221,7 @@ public class SheetHandlerMemory extends DefaultHandler implements Sheet {
     
     @Override
     public BigDecimal asBigDecimal() {
-      String s = values.get(Long.parseLong(v));
+      String s = value;
       if (isStr()) return null;
       if (s == null) return null;
       return new BigDecimal(s);
@@ -268,7 +269,9 @@ public class SheetHandlerMemory extends DefaultHandler implements Sheet {
       Integer maxColumn = m != null ? m.get((long)row) :null;
       if (maxColumn != null) {
         for (int i = 0; i <= maxColumn; i++) {
-          ret.add(r.get(i));
+          MyCell myCell = r.get(i);
+          if (myCell != null && myCell.isStr()) myCell.value = values.get(Long.parseLong(myCell.v));
+          ret.add(myCell);
         }
       }
     }
@@ -291,7 +294,9 @@ public class SheetHandlerMemory extends DefaultHandler implements Sheet {
     for (Map.Entry<Long, Map<Integer, MyCell>> row : rows.entrySet()) {
       List<Cell> r = new ArrayList<Cell>();
       for (int i = 0; i < colCountInRow; i++) {
-        r.add(row.getValue().get(i));
+        MyCell myCell = row.getValue().get(i);
+        if (myCell != null && myCell.isStr()) myCell.value = values.get(Long.parseLong(myCell.v));
+        r.add(myCell);
       }
       handler.handle(r, row.getKey().intValue());
     }
