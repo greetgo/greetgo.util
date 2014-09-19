@@ -204,7 +204,7 @@ public class SheetHandlerMemory extends DefaultHandler implements Sheet {
     @Override
     public Date asDate() {
       if (isStr()) return null;
-      return UtilOffice.excelToDate(value);
+      return UtilOffice.excelToDate(asStr());
     }
     
     @Override
