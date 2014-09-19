@@ -5,7 +5,7 @@ apply plugin: 'maven'
 group = 'kz.greetgo'
 
 sourceCompatibility = 1.7
-version = '0.0.1'
+version = '0.0.2'
 
 def nowDate = new Date()
 def nowFormattedDate = nowDate.format("yyyy-MM-dd/HH:mm:ss")
@@ -51,10 +51,6 @@ repositories {
 
 dependencies {
   ext.springVersion = "3.0.7.RELEASE"
-  
-  compile "org.springframework:spring-context-support:${springVersion}"
-  compile "javax.mail:mail:1.4.4"
-  compile "commons-io:commons-io:1.3.2"
   
   testCompile 'org.testng:testng:6.1.1'
   testCompile 'org.easytesting:fest-assert-core:2.0M10'
