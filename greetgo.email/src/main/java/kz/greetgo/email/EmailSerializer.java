@@ -14,6 +14,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class EmailSerializer {
+  
   public void serialize(PrintStream out, Email email) {
     out.println("<?xml version='1.0' encoding='UTF-8' ?>");
     out.println("<letter>");

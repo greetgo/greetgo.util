@@ -6,30 +6,27 @@ import java.util.Date;
 import java.util.Random;
 
 public class EmailSaver implements EmailSender {
-  private final String sendDir;
-  private final String name;
   
-  public EmailSaver(String name, String sendDir) {
-    this.name = name;
-    this.sendDir = sendDir;
-  }
+  private final String sendDir;
+  private final String filePrefixName;
   
   private final Random rnd = new Random();
   
-  private String createFullName() {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
-    
-    return name + '-' + sdf.format(new Date()) + '.' + rnd.nextInt() + ".email.xml";
+  public EmailSaver(String filePrefixName, String sendDir) {
+    this.filePrefixName = filePrefixName;
+    this.sendDir = sendDir;
   }
   
   @Override
   public void send(Email email) {
-    String filename = createFullName();
+    String filename = createFileName();
+    
     File file = new File(sendDir + "/" + filename + ".creating");
     file.getParentFile().mkdirs();
-    EmailSerializer s = new EmailSerializer();
+    
+    EmailSerializer emailSerializer = new EmailSerializer();
     try {
-      s.serialize(file, email);
+      emailSerializer.serialize(file, email);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -37,4 +34,8 @@ public class EmailSaver implements EmailSender {
     file.renameTo(new File(sendDir + "/" + filename));
   }
   
+  private String createFileName() {
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
+    return filePrefixName + '-' + format.format(new Date()) + '.' + rnd.nextInt() + ".email.xml";
+  }
 }
