@@ -12,8 +12,8 @@ public abstract class BaseCallback<R> implements AsyncCallback<R> {
   @Override
   public void onFailure(Throwable caught) {
     
-    if (caught instanceof StatusCodeException
-        && ((StatusCodeException)caught).getStatusCode() == 401) {
+    if ((caught instanceof StatusCodeException && ((StatusCodeException)caught).getStatusCode() == 401)
+        || (caught.getMessage() != null && caught.getMessage().contains("j_spring_security_check"))) {
       Window.Location.reload();
       return;
     }
