@@ -1,7 +1,6 @@
 package kz.greetgo.sgwt.base;
 
 import kz.greetgo.gwtshare.base.ClientException;
-import kz.greetgo.gwtshare.base.SgwtException;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -25,11 +24,10 @@ public abstract class BaseCallback<R> implements AsyncCallback<R> {
     }
     
     if (Window.Location.getParameter("hideerrors") == null) {
-      boolean isShow = caught instanceof SgwtException
+      boolean isSafe = caught instanceof ClientException
           || Window.Location.getParameter("showerrors") != null;
-      if (isShow) SC.warn(caught.getMessage());
+      SC.warn(isSafe ? caught.getMessage() :"Сбой сервера.");
     }
-    
     caught.printStackTrace();
   }
 }
