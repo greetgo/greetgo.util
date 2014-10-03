@@ -34,6 +34,8 @@ public class Sheet {
   private String displayName;
   private final MergeCells mergeCells = new MergeCells();
   
+  private int lastColumn;
+  
   public PageMargins pageMargins() {
     return pageMargins;
   }
@@ -55,8 +57,8 @@ public class Sheet {
   }
   
   public Sheet cellStr(int col, String strValue) {
-    if (col <= 0) throw new IllegalArgumentException("must be col > 0, but col = " + col);
     init();
+    setLastColumn(col);
     style.clearNumFmt();
     
     if (strValue == null) {
@@ -74,9 +76,16 @@ public class Sheet {
     return this;
   }
   
-  public Sheet cellInt(int col, int intValue) {
+  private void setLastColumn(int col) {
     if (col <= 0) throw new IllegalArgumentException("must be col > 0, but col = " + col);
+    if (col <= lastColumn) throw new IllegalArgumentException("must be col > " + lastColumn
+        + ", but col = " + col);
+    lastColumn = col;
+  }
+  
+  public Sheet cellInt(int col, int intValue) {
     init();
+    setLastColumn(col);
     style.clearNumFmt();
     
     int styleIndex = style.index();
@@ -87,8 +96,8 @@ public class Sheet {
   }
   
   public Sheet cellDouble(int col, double doubleValue, NumFmt numFmt) {
-    if (col <= 0) throw new IllegalArgumentException("must be col > 0, but col = " + col);
     init();
+    setLastColumn(col);
     style.numFmt = numFmt;
     
     int styleIndex = style.index();
@@ -99,8 +108,8 @@ public class Sheet {
   }
   
   public Sheet cellDouble(int col, double doubleValue) {
-    if (col <= 0) throw new IllegalArgumentException("must be col > 0, but col = " + col);
     init();
+    setLastColumn(col);
     style.clearNumFmt();
     
     int styleIndex = style.index();
@@ -111,8 +120,8 @@ public class Sheet {
   }
   
   private Sheet cellDate(int col, Date date, NumFmt numFmt) {
-    if (col <= 0) throw new IllegalArgumentException("must be col > 0, but col = " + col);
     init();
+    setLastColumn(col);
     style.numFmt = numFmt;
     
     int styleIndex = style.index();
@@ -221,6 +230,8 @@ public class Sheet {
     public Row start() {
       init();
       innerFinishRow();
+      
+      lastColumn = 0;
       
       StringBuilder after = new StringBuilder();
       out.printf("<row r=\"%d\"", ++curRow);
