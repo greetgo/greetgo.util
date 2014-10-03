@@ -1,10 +1,15 @@
 package kz.greetgo.msoffice.xlsx.gen;
 
+import java.io.File;
 import java.io.FileOutputStream;
 
 public class GenXlsxProbe {
   public static void main(String[] args) throws Exception {
-    String workDir = "build/workDir";
+    String outDir = "/home/pompei/trans/msoffice.test";
+    String workDir = outDir + "/workDir";
+    
+    new File(outDir).mkdirs();
+    new File(workDir).mkdirs();
     
     try {
       Runtime.getRuntime().exec("rm -rvf " + workDir).waitFor();
@@ -15,14 +20,15 @@ public class GenXlsxProbe {
     Xlsx f = new Xlsx();
     f.setWorkDir(workDir);
     
-    sheet1(f);
-    sheet2(f);
-    sheet3_outline(f);
-    sheet4_numFmt(f);
+    sheet1(f, false);
+    sheet2(f, false);
+    sheet3_outline(f, false);
+    sheet4_numFmt(f, false);
+    sheet5_outline(f, true);
     
     f.finish();
     
-    FileOutputStream fout = new FileOutputStream("build/test.xlsx");
+    FileOutputStream fout = new FileOutputStream(outDir + "/gen.xlsx");
     
     f.print(fout);
     
@@ -31,8 +37,8 @@ public class GenXlsxProbe {
     System.out.println("COMPLETE");
   }
   
-  private static void sheet1(Xlsx f) {
-    Sheet sheet = f.newSheet(true);
+  private static void sheet1(Xlsx f, boolean active) {
+    Sheet sheet = f.newSheet(active);
     {
       sheet.style().patternFill().setType(PatternFillType.solid);
       sheet.style().patternFill().setFgColor(Color.blue());
@@ -102,8 +108,8 @@ public class GenXlsxProbe {
     }
   }
   
-  private static void sheet2(Xlsx f) {
-    Sheet sheet = f.newSheet(false);
+  private static void sheet2(Xlsx f, boolean active) {
+    Sheet sheet = f.newSheet(active);
     {
       sheet.style().patternFill().setType(PatternFillType.solid);
       sheet.style().patternFill().setFgColor(Color.blue());
@@ -147,8 +153,8 @@ public class GenXlsxProbe {
     }
   }
   
-  private static void sheet3_outline(Xlsx f) {
-    Sheet sheet = f.newSheet(false);
+  private static void sheet3_outline(Xlsx f, boolean active) {
+    Sheet sheet = f.newSheet(active);
     
     sheet.setSummaryBelow(false);
     sheet.skipRows(2);
@@ -170,10 +176,11 @@ public class GenXlsxProbe {
     }
   }
   
-  private static void sheet4_numFmt(Xlsx f) {
-    Sheet sheet = f.newSheet(false);
+  private static void sheet4_numFmt(Xlsx f, boolean active) {
+    Sheet sheet = f.newSheet(active);
     
     sheet.skipRows(2);
+    sheet.setSummaryBelow(false);
     
     {
       sheet.row().collapsed().start();
@@ -196,4 +203,75 @@ public class GenXlsxProbe {
       sheet.row().finish();
     }
   }
+  
+  private static void sheet5_outline(Xlsx f, boolean active) {
+    Sheet sheet = f.newSheet(active);
+    sheet.setSummaryBelow(false);
+    
+    sheet.setWidth(1, 40);
+    sheet.setWidth(2, 20);
+    sheet.setWidth(3, 20);
+    
+    sheet.row().start();
+    sheet.cellStr(1, "Пример группировки");
+    sheet.row().finish();
+    
+    sheet.skipRows(2);
+    
+    {
+      sheet.row().start();
+      sheet.cellStr(1, "Это заголовок группы");
+      sheet.cellStr(2, "Данные в заголовке");
+      sheet.cellStr(3, "Бла бла бла");
+      sheet.cellInt(4, 34555);
+      sheet.row().finish();
+      
+      for (int i = 0; i < 5; i++) {
+        sheet.row().outline().hidden().start();
+        sheet.cellStr(1, "Это свёрнутый элемент");
+        sheet.cellStr(2, "Данные в элементе");
+        sheet.cellStr(3, "Фу фу фу " + i);
+        sheet.cellInt(4, 222 + i);
+        sheet.row().finish();
+      }
+      
+    }
+    {
+      sheet.row().start();
+      sheet.cellStr(1, "Это заголовок ещё одной группы группы");
+      sheet.cellStr(2, "Данные в заголовке");
+      sheet.cellStr(3, "Бла бла бла ЫЫЫ");
+      sheet.cellInt(4, 765);
+      sheet.row().finish();
+      
+      for (int i = 0; i < 10; i++) {
+        sheet.row().outline().hidden().start();
+        sheet.cellStr(1, "Это свёрнутый элемент");
+        sheet.cellStr(2, "Данные в элементе");
+        sheet.cellStr(3, "МААМАМА " + i);
+        sheet.cellInt(4, 765 + i);
+        sheet.row().finish();
+      }
+      
+    }
+    
+    {
+      sheet.row().start();
+      sheet.cellStr(1, "Это заголовок группы");
+      sheet.cellStr(2, "Данные в заголовке");
+      sheet.cellStr(3, "Бла бла бла");
+      sheet.cellInt(4, 34555);
+      sheet.row().finish();
+      
+      for (int i = 0; i < 5; i++) {
+        sheet.row().outline().hidden().start();
+        sheet.cellStr(1, "Это свёрнутый элемент");
+        sheet.cellStr(2, "Данные в элементе");
+        sheet.cellStr(3, "Фу фу фу " + i);
+        sheet.cellInt(4, 222 + i);
+        sheet.row().finish();
+      }
+    }
+  }
+  
 }
