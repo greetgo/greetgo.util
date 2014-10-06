@@ -6,6 +6,8 @@ public class Field {
   public boolean nullable = true;
   public String defaultValue;
   
+  public String comment;
+  
   public Field() {}
   
   public Field(Table owner, String name, String type, boolean nullable, String defaultValue) {
@@ -24,16 +26,16 @@ public class Field {
   
   @Override
   public String toString() {
-    return "\n\t\t" + name + ' ' + type + (nullable ? "" : " NOT NULL")
-        + (defaultValue == null ? "" : " DEFAULT " + defaultValue);
+    return "\n\t\t" + name + ' ' + type + (nullable ? "" :" NOT NULL")
+        + (defaultValue == null ? "" :" DEFAULT " + defaultValue);
   }
   
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((name == null) ? 0 : name.hashCode());
-    result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+    result = prime * result + ((name == null) ? 0 :name.hashCode());
+    result = prime * result + ((owner == null) ? 0 :owner.hashCode());
     return result;
   }
   
@@ -66,4 +68,8 @@ public class Field {
     return true;
   }
   
+  public String trimComment() {
+    if (comment == null) return "";
+    return comment.trim();
+  }
 }

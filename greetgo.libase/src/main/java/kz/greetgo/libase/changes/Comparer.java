@@ -60,6 +60,32 @@ public class Comparer {
       }
     }
     
+    for (Relation relationFrom : from.relations.values()) {
+      if (!(relationFrom instanceof Table)) continue;
+      Table tableFrom = (Table)relationFrom;
+      Table tableTo = to.table(tableFrom.name);
+      if (tableTo == null) {
+        if (tableFrom.trimComment().length() > 0) {
+          changeList.add(new TableComment(tableFrom));
+        }
+        for (Field fieldFrom : tableFrom.allFields) {
+          changeList.add(new FieldComment(tableFrom, fieldFrom));
+        }
+        continue;
+      }
+      if (tableFrom.trimComment().length() > 0
+          && !tableTo.trimComment().equals(tableFrom.trimComment())) {
+        changeList.add(new TableComment(tableFrom));
+      }
+      for (Field fieldFrom : tableFrom.allFields) {
+        Field fieldTo = tableTo.field(fieldFrom.name);
+        if (fieldTo == null || fieldFrom.trimComment().length() > 0
+            && !fieldTo.trimComment().equals(fieldFrom.trimComment())) {
+          changeList.add(new FieldComment(tableFrom, fieldFrom));
+        }
+      }
+    }
+    
     return changeList;
   }
   
@@ -210,14 +236,14 @@ public class Comparer {
         if (cr.relation instanceof View) return 4;
         return 5;
       }
-      return 6;
+      if (o instanceof TableComment) return 6;
+      if (o instanceof FieldComment) return 7;
+      return 8;
     }
   }
   
-  private static final CMP CMP = new CMP();
-  
   public static void sort(List<Change> changes) {
-    Collections.sort(changes, CMP);
+    Collections.sort(changes, new CMP());
   }
   
 }

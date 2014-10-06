@@ -10,6 +10,8 @@ public class Table extends Relation {
   public final List<Field> keyFields = new ArrayList<>();
   public final Set<ForeignKey> foreignKeys = new HashSet<>();
   
+  public String comment;
+  
   public Table() {}
   
   public Table(String name) {
@@ -32,5 +34,10 @@ public class Table extends Relation {
   @Override
   public String relationName() {
     return "table " + name;
+  }
+  
+  public String trimComment() {
+    if (comment == null) return "";
+    return comment.trim();
   }
 }

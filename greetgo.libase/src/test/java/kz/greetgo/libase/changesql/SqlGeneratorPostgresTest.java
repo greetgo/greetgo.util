@@ -11,6 +11,8 @@ import kz.greetgo.libase.changes.AlterPartPart;
 import kz.greetgo.libase.changes.Change;
 import kz.greetgo.libase.changes.CreateOrReplaceView;
 import kz.greetgo.libase.changes.CreateRelation;
+import kz.greetgo.libase.changes.FieldComment;
+import kz.greetgo.libase.changes.TableComment;
 import kz.greetgo.libase.model.Creator;
 import kz.greetgo.libase.model.DbStru;
 import kz.greetgo.libase.model.Field;
@@ -120,5 +122,47 @@ public class SqlGeneratorPostgresTest {
     assertThat(sqlResult).hasSize(1);
     assertThat(sqlResult.get(0)).isEqualTo(
         "create or replace view asd as select 'hello world' hello_world");
+  }
+  
+  @Test
+  public void generate_TableComment() throws Exception {
+    DbStru stru = new DbStru();
+    Creator.addTable(stru, "asd *id int notnull, name varchar(100)");
+    stru.table("asd").comment = "wow";
+    
+    TableComment x = new TableComment(stru.table("asd"));
+    
+    List<Change> changes = new ArrayList<>();
+    changes.add(x);
+    
+    List<String> sqlResult = new ArrayList<>();
+    SqlGeneratorPostgres g = new SqlGeneratorPostgres();
+    g.generate(sqlResult, changes);
+    
+    System.out.println(sqlResult);
+    
+    assertThat(sqlResult).hasSize(1);
+    assertThat(sqlResult.get(0)).isEqualTo("COMMENT ON TABLE asd IS 'wow'");
+  }
+  
+  @Test
+  public void generate_FieldComment() throws Exception {
+    DbStru stru = new DbStru();
+    Creator.addTable(stru, "asd *id int notnull, name varchar(100)");
+    stru.table("asd").field("name").comment = "asd123";
+    
+    FieldComment x = new FieldComment(stru.table("asd"), stru.table("asd").field("name"));
+    
+    List<Change> changes = new ArrayList<>();
+    changes.add(x);
+    
+    List<String> sqlResult = new ArrayList<>();
+    SqlGeneratorPostgres g = new SqlGeneratorPostgres();
+    g.generate(sqlResult, changes);
+    
+    System.out.println(sqlResult);
+    
+    assertThat(sqlResult).hasSize(1);
+    assertThat(sqlResult.get(0)).isEqualTo("comment on column asd.name is 'asd123'");
   }
 }

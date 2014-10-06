@@ -16,6 +16,8 @@ import kz.greetgo.libase.changes.CreateRelation;
 import kz.greetgo.libase.changes.CreateSequence;
 import kz.greetgo.libase.changes.CreateTrigger;
 import kz.greetgo.libase.changes.DropCreateTrigger;
+import kz.greetgo.libase.changes.FieldComment;
+import kz.greetgo.libase.changes.TableComment;
 import kz.greetgo.libase.model.Field;
 import kz.greetgo.libase.model.FieldVector;
 import kz.greetgo.libase.model.ForeignKey;
@@ -74,6 +76,13 @@ public class SqlGeneratorOracle implements SqlGenerator {
     if (change instanceof CreateTrigger) {
       res.add(generateCreateTrigger(((CreateTrigger)change).trigger));
       return;
+    }
+    if (change instanceof TableComment) {
+      res.add(GeneratorAddon.generateTableComment(((TableComment)change).table));
+    }
+    if (change instanceof FieldComment) {
+      FieldComment x = (FieldComment)change;
+      res.add(GeneratorAddon.generateFieldComment(x.table, x.field));
     }
     
     throw new IllegalArgumentException("Unknown change " + change);

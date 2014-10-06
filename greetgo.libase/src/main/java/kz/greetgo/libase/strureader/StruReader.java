@@ -1,6 +1,7 @@
 package kz.greetgo.libase.strureader;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import kz.greetgo.libase.model.DbStru;
 import kz.greetgo.libase.model.Field;
@@ -101,6 +102,27 @@ public class StruReader {
         t.actionTiming = tr.actionTiming;
         t.actionStatement = tr.actionStatement;
         ret.triggers.put(t, t);
+      }
+    }
+    
+    {
+      for (Entry<String, String> e : rowReader.readTableComments().entrySet()) {
+        Table table = ret.table(e.getKey());
+        if (table != null) {
+          table.comment = e.getValue();
+        }
+      }
+    }
+    {
+      for (Entry<String, String> e : rowReader.readColumnComments().entrySet()) {
+        String[] split = e.getKey().split("\\.");
+        Table table = ret.table(split[0]);
+        if (table != null) {
+          Field field = table.field(split[1]);
+          if (field != null) {
+            field.comment = e.getValue();
+          }
+        }
       }
     }
     

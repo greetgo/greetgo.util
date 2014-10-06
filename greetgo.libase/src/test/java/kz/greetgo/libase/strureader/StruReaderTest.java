@@ -4,9 +4,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 import kz.greetgo.libase.model.DbStru;
+import kz.greetgo.libase.model.Field;
 import kz.greetgo.libase.model.Relation;
 import kz.greetgo.libase.model.Sequence;
 import kz.greetgo.libase.model.StoreFunc;
+import kz.greetgo.libase.model.Table;
 import kz.greetgo.libase.model.Trigger;
 import kz.greetgo.libase.model.View;
 
@@ -36,10 +38,26 @@ public class StruReaderTest {
     RowReaderPostgres rowReader = new RowReaderPostgres(connection);
     DbStru stru = StruReader.read(rowReader);
     for (Relation r : stru.relations.values()) {
-      if (r instanceof View) {
+      if (r instanceof View && "a".equals("aa")) {
         System.out.println(r);
       }
+      
+      if (r instanceof Table) {
+        Table t = (Table)r;
+        if (t.comment != null) {
+          System.out.println("COMMENT ON TABLE " + t.name + " IS '" + t.comment + "'");
+        }
+        for (Field f : t.allFields) {
+          if (f.comment != null) {
+            System.out.println("  comment on column " + t.name + '.' + f.name + " is '" + f.comment
+                + "'");
+          }
+        }
+      }
     }
+    
+    if ("a".equals("a")) return;
+    
     for (Sequence s : stru.sequences) {
       System.out.println(s);
     }

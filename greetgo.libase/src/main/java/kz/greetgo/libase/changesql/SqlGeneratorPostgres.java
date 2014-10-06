@@ -16,6 +16,8 @@ import kz.greetgo.libase.changes.CreateRelation;
 import kz.greetgo.libase.changes.CreateSequence;
 import kz.greetgo.libase.changes.CreateTrigger;
 import kz.greetgo.libase.changes.DropCreateTrigger;
+import kz.greetgo.libase.changes.FieldComment;
+import kz.greetgo.libase.changes.TableComment;
 import kz.greetgo.libase.model.Field;
 import kz.greetgo.libase.model.FieldVector;
 import kz.greetgo.libase.model.ForeignKey;
@@ -66,6 +68,13 @@ public class SqlGeneratorPostgres implements SqlGenerator {
     }
     if (change instanceof CreateTrigger) {
       return generateCreateTrigger(((CreateTrigger)change).trigger);
+    }
+    if (change instanceof TableComment) {
+      return GeneratorAddon.generateTableComment(((TableComment)change).table);
+    }
+    if (change instanceof FieldComment) {
+      FieldComment x = (FieldComment)change;
+      return GeneratorAddon.generateFieldComment(x.table, x.field);
     }
     
     throw new IllegalArgumentException("Unknown change " + change);
