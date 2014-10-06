@@ -5,7 +5,7 @@ apply plugin: 'maven'
 group = 'kz.greetgo'
 
 sourceCompatibility = 1.7
-version = '0.1.11'
+version = '1.0.0'
 
 def nowDate = new Date()
 def nowFormattedDate = nowDate.format("yyyy-MM-dd/HH:mm:ss")
@@ -42,23 +42,21 @@ project.eclipse.classpath.file.whenMerged { cp ->
 }
 
 repositories {
-  mavenRepo (
-      name: 'Our repository',
-      url: 'http://192.168.0.1:8080/repository/internal/'
-      )
+  maven {
+    name 'Our repository'
+    url 'http://192.168.0.1:8080/repository/internal/'
+  }
   mavenCentral()
 }
 
 configurations { repoUpload }
 
 dependencies {
-  compile 'postgresql:postgresql:9.1-901.jdbc4'
-  
   testCompile 'org.testng:testng:6.1.1'
   testCompile 'org.easytesting:fest-assert-core:2.0M10'
   
   // needed for DAV protocol on maven uploads
-  repoUpload "org.apache.maven.wagon:wagon-webdav-jackrabbit:1.0-beta-6"
+  //repoUpload "org.apache.maven.wagon:wagon-webdav-jackrabbit:1.0-beta-6"
 }
 
 test { useTestNG() }
@@ -89,5 +87,11 @@ uploadArchives {
       name project.name
       packaging 'jar'
     }
+  }
+}
+
+sourceSets {
+  test {
+    resources.srcDirs = ["src/test/java", "src/test/resources"]
   }
 }

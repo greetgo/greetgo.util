@@ -79,3 +79,5 @@ enum HelloEnum as kz.greetgo.sqlmanager.parser2.HelloEnum
 enum AnnotationType
   ONE TWO THREE
   FOUR FIVE SIX
+
+commentDir comment/dir

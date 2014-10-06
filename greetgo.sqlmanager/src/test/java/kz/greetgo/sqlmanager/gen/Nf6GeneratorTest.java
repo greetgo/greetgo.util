@@ -22,10 +22,13 @@ public class Nf6GeneratorTest {
     nf6generator.libType = LibType.GBATIS;
     PrintStream out = new PrintStream("build/ddl-postgres-nf6.sql", "UTF-8");
     PrintStream outP = new PrintStream("build/ddl-postgres-nf6-programs.sql", "UTF-8");
+    PrintStream outComment = new PrintStream("build/ddl-postgres-nf6-comment.sql", "UTF-8");
     nf6generator.printSqls(out);
     nf6generator.printPrograms(outP);
+    nf6generator.printComment(outComment);
     out.close();
     outP.close();
+    outComment.close();
     
     nf6generator.conf.javaGenDir = "gensrc";
     nf6generator.conf.modelPackage = "kz.pompei.dbmodel";

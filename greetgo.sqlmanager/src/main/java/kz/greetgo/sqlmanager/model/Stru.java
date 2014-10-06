@@ -5,4 +5,6 @@ import java.util.Map;
 
 public class Stru {
   public final Map<String, Table> tables = new HashMap<>();
+  
+  public Map<String, String> tableComment, fieldComment;
 }

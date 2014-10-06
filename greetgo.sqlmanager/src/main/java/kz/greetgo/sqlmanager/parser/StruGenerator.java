@@ -3,8 +3,14 @@ package kz.greetgo.sqlmanager.parser;
 import static kz.greetgo.sqlmanager.model.SimpleType.SimpleTypes;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +32,11 @@ import kz.greetgo.sqlmanager.model.command.SelectAll;
 import kz.greetgo.sqlmanager.model.command.ToDictionary;
 
 public class StruGenerator {
+  private static final String COMMENT = ".comment";
+  
   public final Stru stru = new Stru();
+  
+  private URL commentDir = null;
   
   private static final Pattern ORDER_BY = Pattern.compile(".*orderBy\\s*\\(([^\\)]+)\\).*");
   private static final Pattern TO_DICT = Pattern.compile("\\s*(\\S+)\\s+(.*)");
@@ -227,6 +237,15 @@ public class StruGenerator {
       return;
     }
     
+    if ("commentDir".equals(p.left)) {
+      if (commentDir != null) {
+        throw new StruParseException("Повторная инициализация поля commentDir=[" + commentDir
+            + "] из " + currentUrl);
+      }
+      commentDir = new URL(currentUrl, p.right);
+      return;
+    }
+    
     if ("subpackage".equals(p.left)) {
       currentSubpackage = p.right;
       return;
@@ -395,6 +414,8 @@ public class StruGenerator {
       }
     }
     
+    readComments();
+    
     if (!printPStru) return;
     
     for (PTable ptable : tables.values()) {
@@ -417,5 +438,98 @@ public class StruGenerator {
       }
       System.out.println();
     }
+    
   }
+  
+  private void readComments() throws Exception {
+    if (commentDir == null) return;
+    stru.fieldComment = new HashMap<>();
+    stru.tableComment = new HashMap<>();
+    
+    File[] files = new File(commentDir.toURI()).listFiles(new FileFilter() {
+      @Override
+      public boolean accept(File pathname) {
+        return pathname.getName().toLowerCase().endsWith(COMMENT);
+      }
+    });
+    
+    for (File file : files) {
+      parseCommentFile(file);
+    }
+    
+    checkComments();
+  }
+  
+  private String readFileAsUTF8(File file) throws FileNotFoundException,
+      UnsupportedEncodingException, IOException {
+    StringBuilder sb = new StringBuilder();
+    {
+      InputStream in = new FileInputStream(file);
+      BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+      
+      while (true) {
+        String line = br.readLine();
+        if (line == null) break;
+        if (sb.length() > 0) sb.append("\n");
+        sb.append(line);
+      }
+      br.close();
+    }
+    return sb.toString();
+  }
+  
+  private static final Pattern SPACE = Pattern.compile("\\s");
+  
+  private void parseCommentFile(File file) throws Exception {
+    
+    String tableName = file.getName();
+    tableName = tableName.substring(0, tableName.length() - COMMENT.length());
+    
+    String content = readFileAsUTF8(file);
+    
+    Table table = stru.tables.get(tableName);
+    if (table == null) throw new StruParseException("No table " + tableName
+        + " (it is comment parsing)");
+    
+    String[] split = content.split("\\$");
+    stru.tableComment.put(table.name, split[0].trim());
+    
+    for (int i = 1, C = split.length; i < C; i++) {
+      String str = split[i].trim();
+      
+      Matcher m = SPACE.matcher(str);
+      
+      String fieldName = str;
+      String comment = null;
+      if (m.find()) {
+        fieldName = str.substring(0, m.start());
+        comment = str.substring(m.start()).trim();
+      }
+      
+      stru.fieldComment.put(table.name + '.' + fieldName, comment);
+    }
+  }
+  
+  private static boolean no(String comment) {
+    if (comment == null) return true;
+    return comment.trim().length() == 0;
+  }
+  
+  private void checkComments() {
+    if (stru.tableComment == null) return;
+    
+    for (Table table : stru.tables.values()) {
+      String tableComment = stru.tableComment.get(table.name);
+      if (no(tableComment)) {
+        throw new StruParseException("No comment for table " + table.name);
+      }
+      for (Field field : table.fields) {
+        String fieldComment = stru.fieldComment.get(table.name + '.' + field.name);
+        if (no(fieldComment)) {
+          throw new StruParseException("No comment for field " + table.name + '.' + field.name);
+        }
+      }
+    }
+  }
+  
 }

@@ -1024,4 +1024,55 @@ public abstract class Nf6Generator {
     
     java.println("}");
   }
+  
+  private static boolean def(String comment) {
+    if (comment == null) return false;
+    return comment.trim().length() > 0;
+  }
+  
+  public void printComment(PrintStream out) {
+    for (Table table : sg.stru.tables.values()) {
+      printTableComments(out, table);
+      printFieldComments(out, table);
+    }
+  }
+  
+  private void printTableComments(PrintStream out, Table table) {
+    String tableName = conf.tabPrefix + table.name;
+    {
+      String comment = sg.stru.tableComment.get(table.name);
+      if (def(comment)) {
+        out.println("COMMENT ON TABLE " + tableName + " IS '" + comment + "'" + conf.separator);
+      }
+    }
+    for (FieldInfo fi : table.keyInfo()) {
+      out.println("comment on column " + tableName + '.' + fi.name
+          + " is 'Ключевое поле материнской таблицы'" + conf.separator);
+    }
+    out.println("comment on column " + tableName + '.' + conf.cre + " is 'Момент создания записи'"
+        + conf.separator);
+  }
+  
+  private void printFieldComments(PrintStream out, Table table) {
+    String tableName = conf.tabPrefix + table.name;
+    for (Field field : table.fields) {
+      String fieldTableName = tableName + "_" + field.name;
+      {
+        String comment = sg.stru.fieldComment.get(table.name + '.' + field.name);
+        if (def(comment)) {
+          out.println("COMMENT ON TABLE " + fieldTableName + " IS '" + comment + "'"
+              + conf.separator);
+        }
+      }
+      for (FieldInfo fi : table.keyInfo()) {
+        out.println("comment on column " + fieldTableName + '.' + fi.name
+            + " is 'Ссылка на ключевое поле материнской таблицы'" + conf.separator);
+      }
+      
+      for (FieldInfo fi : field.fieldInfo()) {
+        out.println("comment on column " + fieldTableName + '.' + fi.name + " is 'Значение поля'"
+            + conf.separator);
+      }
+    }
+  }
 }
