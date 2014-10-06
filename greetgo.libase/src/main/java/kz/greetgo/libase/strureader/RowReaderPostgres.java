@@ -364,4 +364,72 @@ public class RowReaderPostgres implements RowReader {
       ps.close();
     }
   }
+  
+  @Override
+  public Map<String, String> readTableComments() throws Exception {
+    StringBuilder s = new StringBuilder();
+    s.append("with tt as (");
+    s.append("  select tt.table_name from information_schema.tables tt");
+    s.append("  where tt.table_schema = 'public' and table_name not in");
+    s.append("  (select table_name from information_schema.views where table_schema = 'public')");
+    s.append("), res as (");
+    s.append("  select tt.table_name, pg_catalog.obj_description(c.oid) cmmnt");
+    s.append("  from tt, pg_catalog.pg_class c");
+    s.append("  where tt.table_name = c.relname");
+    s.append(")");
+    s.append("");
+    s.append("select * from res where cmmnt is not null");
+    
+    PreparedStatement ps = connection.prepareStatement(s.toString());
+    try {
+      ResultSet rs = ps.executeQuery();
+      
+      try {
+        Map<String, String> ret = new HashMap<>();
+        while (rs.next()) {
+          ret.put(rs.getString("table_name"), rs.getString("cmmnt"));
+        }
+        return ret;
+      } finally {
+        rs.close();
+      }
+      
+    } finally {
+      ps.close();
+    }
+  }
+  
+  @Override
+  public Map<String, String> readColumnComments() throws Exception {
+    StringBuilder s = new StringBuilder();
+    s.append("with res as (");
+    s.append("  select cols.table_name, cols.column_name, (");
+    s.append("    select pg_catalog.col_description(oid,cols.ordinal_position::int)");
+    s.append("    from pg_catalog.pg_class c where c.relname=cols.table_name");
+    s.append("  ) as column_comment");
+    s.append("  from information_schema.columns cols");
+    s.append("  where cols.table_schema='public'");
+    s.append(")");
+    s.append("");
+    s.append("select * from res where column_comment is not null");
+    
+    PreparedStatement ps = connection.prepareStatement(s.toString());
+    try {
+      ResultSet rs = ps.executeQuery();
+      try {
+        Map<String, String> ret = new HashMap<>();
+        
+        while (rs.next()) {
+          ret.put(rs.getString("table_name") + '.' + rs.getString("column_name"),
+              rs.getString("column_comment"));
+        }
+        
+        return ret;
+      } finally {
+        rs.close();
+      }
+    } finally {
+      ps.close();
+    }
+  }
 }

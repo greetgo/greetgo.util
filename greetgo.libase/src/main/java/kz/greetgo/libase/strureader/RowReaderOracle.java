@@ -316,4 +316,62 @@ public class RowReaderOracle implements RowReader {
       ps.close();
     }
   }
+  
+  @Override
+  public Map<String, String> readTableComments() throws Exception {
+    StringBuilder s = new StringBuilder();
+    s.append("select * from all_tab_comments");
+    s.append("  where owner = sys_context('USERENV','SESSION_SCHEMA')");
+    s.append("  and comments is not null");
+    
+    PreparedStatement ps = connection.prepareStatement(s.toString());
+    
+    try {
+      ResultSet rs = ps.executeQuery();
+      try {
+        
+        Map<String, String> ret = new HashMap<>();
+        while (rs.next()) {
+          ret.put(rs.getString("TABLE_NAME"), rs.getString("COMMENTS"));
+        }
+        return ret;
+        
+      } finally {
+        rs.close();
+      }
+      
+    } finally {
+      ps.close();
+    }
+    
+  }
+  
+  @Override
+  public Map<String, String> readColumnComments() throws Exception {
+    StringBuilder s = new StringBuilder();
+    s.append("select * from all_col_comments");
+    s.append("  where owner = sys_context('USERENV','SESSION_SCHEMA')");
+    s.append("  and comments is not null");
+    
+    PreparedStatement ps = connection.prepareStatement(s.toString());
+    
+    try {
+      ResultSet rs = ps.executeQuery();
+      try {
+        
+        Map<String, String> ret = new HashMap<>();
+        while (rs.next()) {
+          ret.put(rs.getString("TABLE_NAME") + '.' + rs.getString("COLUMN_NAME"),
+              rs.getString("COMMENTS"));
+        }
+        return ret;
+        
+      } finally {
+        rs.close();
+      }
+      
+    } finally {
+      ps.close();
+    }
+  }
 }

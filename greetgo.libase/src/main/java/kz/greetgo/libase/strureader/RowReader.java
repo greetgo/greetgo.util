@@ -17,4 +17,8 @@ public interface RowReader {
   List<StoreFuncRow> readAllFuncs() throws Exception;
   
   Map<String, TriggerRow> readAllTriggers() throws Exception;
+  
+  Map<String, String> readTableComments() throws Exception;
+  
+  Map<String, String> readColumnComments() throws Exception;
 }

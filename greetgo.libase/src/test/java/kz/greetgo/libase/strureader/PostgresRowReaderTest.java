@@ -1,9 +1,12 @@
 package kz.greetgo.libase.strureader;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -85,5 +88,24 @@ public class PostgresRowReaderTest {
     for (TriggerRow x : reader.readAllTriggers().values()) {
       System.out.println(x);
     }
+  }
+  
+  @Test
+  public void readTableComments() throws Exception {
+    RowReaderPostgres reader = new RowReaderPostgres(connection);
+    Map<String, String> map = reader.readTableComments();
+    for (Entry<String, String> e : map.entrySet()) {
+      System.out.println(e);
+    }
+  }
+  
+  @Test
+  public void readColumnComments() throws Exception {
+    RowReaderPostgres reader = new RowReaderPostgres(connection);
+    Map<String, String> map = reader.readColumnComments();
+    for (Entry<String, String> e : map.entrySet()) {
+      System.out.println(e);
+    }
+    assertThat(1);
   }
 }
