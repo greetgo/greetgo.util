@@ -6,6 +6,15 @@ import kz.greetgo.gbatis.model.WithView;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+/**
+ * Обработчик xml-а запроса
+ * 
+ * <p>
+ * Используется для получения {@link XmlRequest} из xml-а запроса посредством SAX-сканированием
+ * </p>
+ * 
+ * @author pompei
+ */
 public class XmlRequestSaxHandler extends AbstractContentHandler {
   
   private XmlRequestAcceptor acceptor;

@@ -1,5 +1,10 @@
 package kz.greetgo.gbatis.model;
 
+/**
+ * Хранит информацию параметра в SQL-запросе
+ * 
+ * @author pompei
+ */
 public class Param {
   public Class<?> type;
   public String name;

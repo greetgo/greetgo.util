@@ -9,7 +9,7 @@ import kz.greetgo.gbatis.model.Param;
 import kz.greetgo.gbatis.model.Request;
 import kz.greetgo.gbatis.model.WithView;
 import kz.greetgo.sqlmanager.gen.Conf;
-import kz.greetgo.sqlmanager.parser.StruGenerator;
+import kz.greetgo.sqlmanager.parser.StruShaper;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -17,11 +17,11 @@ import org.testng.annotations.Test;
 public class PreparedSqlTest {
   
   private Conf conf;
-  private StruGenerator sg;
+  private StruShaper sg;
   
   private void setupSG() throws Exception {
     URL url = getClass().getResource("PreparedSqlTest.stru.nf3");
-    sg = new StruGenerator();
+    sg = new StruShaper();
     sg.printPStru = false;
     sg.parse(url);
   }

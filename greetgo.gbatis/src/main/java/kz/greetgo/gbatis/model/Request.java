@@ -15,16 +15,61 @@ import kz.greetgo.gbatis.util.ReflectUtil;
 import kz.greetgo.gbatis.util.Setter;
 import kz.greetgo.gbatis.util.SqlUtil;
 
+/**
+ * Инкапулирует в себе информацию о запросе к БД
+ * 
+ * @author pompei
+ */
 public class Request {
+  /**
+   * SQL с параметрами в форме GBatis (этот SQL ещё надо обрадотать, заменив GBatis параметры на
+   * значения или ?)
+   */
   public String sql;
+  /**
+   * Тип запроса
+   */
   public RequestType type;
+  /**
+   * Список предварительных селектов для конструкции With
+   */
   public final List<WithView> withList = new ArrayList<>();
+  /**
+   * Список параметров со значениями для GBatis параметров SQL-я
+   */
   public final List<Param> paramList = new ArrayList<>();
   
+  /**
+   * Тип возвращаемого результата
+   */
   public ResultType resultType;
+  
+  /**
+   * Java-класс, в который нужно засунуть результат
+   */
   public Class<?> resultDataClass;
+  
+  /**
+   * Признак немедленного выполнения запроса.
+   * <p>
+   * Если равен <code>false</code>, то запрос не выполняется, а возвращается объект реализующий
+   * {@link FutureCall}, иначе немедленно вызывается метод {@link FutureCall#last()}
+   * </p>
+   */
   public boolean callNow;
+  /**
+   * Имя поля для использования ключа мапы.
+   * <p>
+   * Используется если <nobr><code>{@link #resultType} == {@link ResultType.MAP}</code></nobr>
+   * </p>
+   */
   public String mapKeyField;
+  /**
+   * Класс ключа мапы
+   * <p>
+   * Используется если <nobr><code>{@link #resultType} == {@link ResultType.MAP}</code></nobr>
+   * </p>
+   */
   public Class<?> mapKeyClass;
   
   private static void copyRow(ResultSet rs, Object object, Map<String, Boolean> hasColumnCache)

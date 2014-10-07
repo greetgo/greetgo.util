@@ -14,7 +14,7 @@ import kz.greetgo.conf.SysParams;
 import kz.greetgo.sqlmanager.gen.Conf;
 import kz.greetgo.sqlmanager.gen.Nf6Generator;
 import kz.greetgo.sqlmanager.gen.Nf6GeneratorPostgres;
-import kz.greetgo.sqlmanager.parser.StruGenerator;
+import kz.greetgo.sqlmanager.parser.StruShaper;
 
 import org.postgresql.util.PSQLException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -33,10 +33,10 @@ public abstract class AbstractWithDbTest {
   }
   
   protected Conf conf;
-  protected StruGenerator sg;
+  protected StruShaper sg;
   
   protected void prepareSG() throws Exception {
-    sg = new StruGenerator();
+    sg = new StruShaper();
     sg.printPStru = false;
     sg.parse(getStruUrl());
   }

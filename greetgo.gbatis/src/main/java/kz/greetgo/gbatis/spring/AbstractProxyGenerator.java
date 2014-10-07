@@ -12,7 +12,7 @@ import kz.greetgo.gbatis.classscanner.ClassScannerDef;
 import kz.greetgo.gbatis.futurecall.FutureCallDef;
 import kz.greetgo.gbatis.futurecall.SqlViewer;
 import kz.greetgo.gbatis.model.Request;
-import kz.greetgo.gbatis.modelreader.ModelReader;
+import kz.greetgo.gbatis.modelreader.RequestGenerator;
 import kz.greetgo.gbatis.t.Autoimpl;
 import kz.greetgo.sqlmanager.gen.Conf;
 import kz.greetgo.sqlmanager.model.Stru;
@@ -29,6 +29,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+/**
+ * Инициализирует spring объектами из gbatis-а
+ * 
+ * @author pompei
+ */
 public abstract class AbstractProxyGenerator implements BeanDefinitionRegistryPostProcessor,
     ApplicationContextAware {
   
@@ -134,7 +139,7 @@ public abstract class AbstractProxyGenerator implements BeanDefinitionRegistryPo
         if (request != null) return request;
       }
       {
-        Request request = ModelReader.methodToRequest(method, getStru(), getConf());
+        Request request = RequestGenerator.methodToRequest(method, getStru(), getConf());
         requestCache.put(id, request);
         return request;
       }

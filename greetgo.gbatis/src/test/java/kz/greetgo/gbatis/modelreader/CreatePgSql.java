@@ -5,7 +5,7 @@ import java.net.URL;
 import kz.greetgo.sqlmanager.gen.Conf;
 import kz.greetgo.sqlmanager.gen.Nf6Generator;
 import kz.greetgo.sqlmanager.gen.Nf6GeneratorPostgres;
-import kz.greetgo.sqlmanager.parser.StruGenerator;
+import kz.greetgo.sqlmanager.parser.StruShaper;
 
 public class CreatePgSql {
   public static void main(String[] args) throws Exception {
@@ -15,7 +15,7 @@ public class CreatePgSql {
   
   private void run() throws Exception {
     URL url = getClass().getResource("stru.nf3");
-    StruGenerator sg = new StruGenerator();
+    StruShaper sg = new StruShaper();
     sg.printPStru = false;
     sg.parse(url);
     

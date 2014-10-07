@@ -4,6 +4,12 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
+/**
+ * Класс заглушка для {@link ContentHandler}, чтобы постоянно не реализовывать все методы
+ * интерфейса, только те которые нужны в данный момент
+ * 
+ * @author pompei
+ */
 public abstract class AbstractContentHandler implements ContentHandler {
   
   @Override

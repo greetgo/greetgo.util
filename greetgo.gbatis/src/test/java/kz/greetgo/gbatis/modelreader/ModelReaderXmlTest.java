@@ -10,7 +10,7 @@ import kz.greetgo.gbatis.model.Param;
 import kz.greetgo.gbatis.model.Request;
 import kz.greetgo.gbatis.model.RequestType;
 import kz.greetgo.sqlmanager.gen.Conf;
-import kz.greetgo.sqlmanager.parser.StruGenerator;
+import kz.greetgo.sqlmanager.parser.StruShaper;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -19,7 +19,7 @@ public class ModelReaderXmlTest {
   
   private Conf conf;
   
-  private StruGenerator sg;
+  private StruShaper sg;
   
   @BeforeMethod
   public void setup() throws Exception {
@@ -38,7 +38,7 @@ public class ModelReaderXmlTest {
     conf.daoSuffix = "Dao";
     
     URL url = getClass().getResource("stru.nf3");
-    sg = new StruGenerator();
+    sg = new StruShaper();
     sg.printPStru = false;
     sg.parse(url);
   }
@@ -52,7 +52,7 @@ public class ModelReaderXmlTest {
     
     //
     //
-    Request request = ModelReader.methodToRequest(method, sg.stru, conf);
+    Request request = RequestGenerator.methodToRequest(method, sg.stru, conf);
     //
     //
     
@@ -68,7 +68,7 @@ public class ModelReaderXmlTest {
     
   }
   
-  @Test(expectedExceptions = ModelReaderException.class,
+  @Test(expectedExceptions = RequestGeneratorException.class,
       expectedExceptionsMessageRegExp = "No sql for .*")
   public void noSql() throws Exception {
     
@@ -76,7 +76,7 @@ public class ModelReaderXmlTest {
     
     //
     //
-    ModelReader.methodToRequest(method, sg.stru, conf);
+    RequestGenerator.methodToRequest(method, sg.stru, conf);
     //
     //
   }
@@ -88,7 +88,7 @@ public class ModelReaderXmlTest {
     
     //
     //
-    Request request = ModelReader.methodToRequest(method, sg.stru, conf);
+    Request request = RequestGenerator.methodToRequest(method, sg.stru, conf);
     //
     //
     
@@ -105,7 +105,7 @@ public class ModelReaderXmlTest {
     
     //
     //
-    Request request = ModelReader.methodToRequest(method, sg.stru, conf);
+    Request request = RequestGenerator.methodToRequest(method, sg.stru, conf);
     //
     //
     
@@ -122,7 +122,7 @@ public class ModelReaderXmlTest {
     
     //
     //
-    Request request = ModelReader.methodToRequest(method, sg.stru, conf);
+    Request request = RequestGenerator.methodToRequest(method, sg.stru, conf);
     //
     //
     

@@ -13,10 +13,16 @@ import kz.greetgo.gbatis.model.WithView;
 import kz.greetgo.gbatis.util.SqlUtil;
 import kz.greetgo.sqlmanager.gen.Conf;
 import kz.greetgo.sqlmanager.model.Field;
-import kz.greetgo.sqlmanager.model.FieldInfo;
+import kz.greetgo.sqlmanager.model.FieldDb;
 import kz.greetgo.sqlmanager.model.Stru;
 import kz.greetgo.sqlmanager.model.Table;
 
+/**
+ * Подготавливает SQL и его параметры и предоставляет подготовленный SQL с параметрами для
+ * дальнейшего запуска
+ * 
+ * @author pompei
+ */
 class PreparedSql {
   public String sql;
   public final List<Object> params = new ArrayList<>();
@@ -79,7 +85,7 @@ class PreparedSql {
     StringBuilder from = new StringBuilder();
     
     select.append("select x.").append(conf.cre);
-    for (FieldInfo fieldInfo : table.keyInfo()) {
+    for (FieldDb fieldInfo : table.dbKeys()) {
       select.append(", x.").append(fieldInfo.name);
     }
     from.append(" from ");
@@ -92,7 +98,7 @@ class PreparedSql {
       Field field = getField(table, fieldName);
       from.append(" left join " + fieldView(field) + " x" + i);
       boolean first = true;
-      for (FieldInfo fi : table.keyInfo()) {
+      for (FieldDb fi : table.dbKeys()) {
         if (first) {
           from.append(" on ");
           first = false;
@@ -125,7 +131,7 @@ class PreparedSql {
       
       {
         boolean first = true;
-        for (FieldInfo fi : field.table.keyInfo()) {
+        for (FieldDb fi : field.table.dbKeys()) {
           if (first) {
             first = false;
           } else {

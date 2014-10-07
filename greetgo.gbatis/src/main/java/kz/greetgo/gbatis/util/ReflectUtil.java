@@ -6,8 +6,20 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Утилиты для облегчения работы с рефлекцией
+ * 
+ * @author pompei
+ */
 public class ReflectUtil {
   
+  /**
+   * Кэширует первые результат, и возвращает его при последующих запросах
+   * 
+   * @param getter
+   *          кэшируемый геттер
+   * @return кэш геттера
+   */
   public static <T> Getter<T> cachedFirst(final Getter<T> getter) {
     return new Getter<T>() {
       T returning = null;
@@ -24,6 +36,13 @@ public class ReflectUtil {
     };
   }
   
+  /**
+   * Уменьшает регистр первого символа строки
+   * 
+   * @param str
+   *          исходная строка
+   * @return преобразованна строка
+   */
   public static String firstToLowcase(String str) {
     if (str == null) return null;
     if (str.length() < 2) return str.toLowerCase();
@@ -31,8 +50,8 @@ public class ReflectUtil {
   }
   
   /**
-   * Сканирует класс объекта, и формирует список объектов, которые производят
-   * установку полей объекта
+   * Сканирует класс объекта, и формирует список объектов, которые производят установку полей
+   * объекта
    * 
    * @param object
    *          сканируемый объект

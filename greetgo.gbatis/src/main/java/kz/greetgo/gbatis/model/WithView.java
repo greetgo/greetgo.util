@@ -3,6 +3,14 @@ package kz.greetgo.gbatis.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import kz.greetgo.gbatis.t.T1;
+import kz.greetgo.gbatis.t.T2;
+
+/**
+ * Инкапулирует данные из аннотаций {@link T1}, {@link T2}, ...
+ * 
+ * @author pompei
+ */
 public class WithView {
   public String table, view;
   public final List<String> fields = new ArrayList<>();

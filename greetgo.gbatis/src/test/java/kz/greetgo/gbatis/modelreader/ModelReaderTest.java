@@ -11,7 +11,7 @@ import kz.greetgo.gbatis.model.Request;
 import kz.greetgo.gbatis.model.RequestType;
 import kz.greetgo.gbatis.model.ResultType;
 import kz.greetgo.sqlmanager.gen.Conf;
-import kz.greetgo.sqlmanager.parser.StruGenerator;
+import kz.greetgo.sqlmanager.parser.StruShaper;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -20,7 +20,7 @@ public class ModelReaderTest {
   
   private Conf conf;
   
-  private StruGenerator sg;
+  private StruShaper sg;
   
   @BeforeMethod
   public void setup() throws Exception {
@@ -39,7 +39,7 @@ public class ModelReaderTest {
     conf.daoSuffix = "Dao";
     
     URL url = getClass().getResource("stru.nf3");
-    sg = new StruGenerator();
+    sg = new StruShaper();
     sg.printPStru = false;
     sg.parse(url);
   }
@@ -53,7 +53,7 @@ public class ModelReaderTest {
     
     //
     //
-    Request request = ModelReader.methodToRequest(method, sg.stru, conf);
+    Request request = RequestGenerator.methodToRequest(method, sg.stru, conf);
     //
     //
     
@@ -67,7 +67,7 @@ public class ModelReaderTest {
     
   }
   
-  @Test(expectedExceptions = ModelReaderException.class,
+  @Test(expectedExceptions = RequestGeneratorException.class,
       expectedExceptionsMessageRegExp = "No sql for .*RequestTestIface\\.left\\(\\)")
   public void noSql() throws Exception {
     
@@ -75,7 +75,7 @@ public class ModelReaderTest {
     
     //
     //
-    ModelReader.methodToRequest(method, sg.stru, conf);
+    RequestGenerator.methodToRequest(method, sg.stru, conf);
     //
     //
   }
@@ -87,7 +87,7 @@ public class ModelReaderTest {
     
     //
     //
-    Request request = ModelReader.methodToRequest(method, sg.stru, conf);
+    Request request = RequestGenerator.methodToRequest(method, sg.stru, conf);
     //
     //
     
@@ -104,7 +104,7 @@ public class ModelReaderTest {
     
     //
     //
-    Request request = ModelReader.methodToRequest(method, sg.stru, conf);
+    Request request = RequestGenerator.methodToRequest(method, sg.stru, conf);
     //
     //
     
@@ -121,7 +121,7 @@ public class ModelReaderTest {
     
     //
     //
-    Request request = ModelReader.methodToRequest(method, sg.stru, conf);
+    Request request = RequestGenerator.methodToRequest(method, sg.stru, conf);
     //
     //
     
@@ -157,7 +157,7 @@ public class ModelReaderTest {
     
     //
     //
-    Request request = ModelReader.methodToRequest(method, sg.stru, conf);
+    Request request = RequestGenerator.methodToRequest(method, sg.stru, conf);
     //
     //
     
@@ -177,7 +177,7 @@ public class ModelReaderTest {
     
     //
     //
-    Request request = ModelReader.methodToRequest(method, sg.stru, conf);
+    Request request = RequestGenerator.methodToRequest(method, sg.stru, conf);
     //
     //
     
@@ -190,7 +190,7 @@ public class ModelReaderTest {
     assertThat(request.mapKeyClass).isNull();
   }
   
-  @Test(expectedExceptions = ModelReaderException.class,
+  @Test(expectedExceptions = RequestGeneratorException.class,
       expectedExceptionsMessageRegExp = "Result List without type arguments in .+")
   public void resultType_emptyList() throws Exception {
     
@@ -198,10 +198,10 @@ public class ModelReaderTest {
     
     //
     //
-    ModelReader.methodToRequest(method, sg.stru, conf);
+    RequestGenerator.methodToRequest(method, sg.stru, conf);
   }
   
-  @Test(expectedExceptions = ModelReaderException.class,
+  @Test(expectedExceptions = RequestGeneratorException.class,
       expectedExceptionsMessageRegExp = "Result Map without type arguments in .+")
   public void resultType_emptyMap() throws Exception {
     
@@ -209,10 +209,10 @@ public class ModelReaderTest {
     
     //
     //
-    ModelReader.methodToRequest(method, sg.stru, conf);
+    RequestGenerator.methodToRequest(method, sg.stru, conf);
   }
   
-  @Test(expectedExceptions = ModelReaderException.class,
+  @Test(expectedExceptions = RequestGeneratorException.class,
       expectedExceptionsMessageRegExp = "No MapKey in .+")
   public void resultType_noMapKey() throws Exception {
     
@@ -220,7 +220,7 @@ public class ModelReaderTest {
     
     //
     //
-    ModelReader.methodToRequest(method, sg.stru, conf);
+    RequestGenerator.methodToRequest(method, sg.stru, conf);
   }
   
   @Test
@@ -230,7 +230,7 @@ public class ModelReaderTest {
     
     //
     //
-    Request request = ModelReader.methodToRequest(method, sg.stru, conf);
+    Request request = RequestGenerator.methodToRequest(method, sg.stru, conf);
     //
     //
     
@@ -243,7 +243,7 @@ public class ModelReaderTest {
     assertThat(request.mapKeyField).isEqualTo("mapKeyFieldName");
   }
   
-  @Test(expectedExceptions = ModelReaderException.class,
+  @Test(expectedExceptions = RequestGeneratorException.class,
       expectedExceptionsMessageRegExp = "Result FutureCall without type argument in .+")
   public void resultType_emptyFutureCall() throws Exception {
     
@@ -251,7 +251,7 @@ public class ModelReaderTest {
     
     //
     //
-    ModelReader.methodToRequest(method, sg.stru, conf);
+    RequestGenerator.methodToRequest(method, sg.stru, conf);
   }
   
   @Test
@@ -261,7 +261,7 @@ public class ModelReaderTest {
     
     //
     //
-    Request request = ModelReader.methodToRequest(method, sg.stru, conf);
+    Request request = RequestGenerator.methodToRequest(method, sg.stru, conf);
     //
     //
     
@@ -274,7 +274,7 @@ public class ModelReaderTest {
     assertThat(request.mapKeyField).isNull();
   }
   
-  @Test(expectedExceptions = ModelReaderException.class,
+  @Test(expectedExceptions = RequestGeneratorException.class,
       expectedExceptionsMessageRegExp = "Result List in FutureCall without type arguments in .+")
   public void resultType_futureCall_emptyList() throws Exception {
     
@@ -282,7 +282,7 @@ public class ModelReaderTest {
     
     //
     //
-    ModelReader.methodToRequest(method, sg.stru, conf);
+    RequestGenerator.methodToRequest(method, sg.stru, conf);
   }
   
   @Test
@@ -292,7 +292,7 @@ public class ModelReaderTest {
     
     //
     //
-    Request request = ModelReader.methodToRequest(method, sg.stru, conf);
+    Request request = RequestGenerator.methodToRequest(method, sg.stru, conf);
     //
     //
     
@@ -305,7 +305,7 @@ public class ModelReaderTest {
     assertThat(request.mapKeyClass).isNull();
   }
   
-  @Test(expectedExceptions = ModelReaderException.class,
+  @Test(expectedExceptions = RequestGeneratorException.class,
       expectedExceptionsMessageRegExp = "Result FutureCall Map without type arguments in .+")
   public void resultType_futureCall_emptyMap() throws Exception {
     
@@ -313,10 +313,10 @@ public class ModelReaderTest {
     
     //
     //
-    ModelReader.methodToRequest(method, sg.stru, conf);
+    RequestGenerator.methodToRequest(method, sg.stru, conf);
   }
   
-  @Test(expectedExceptions = ModelReaderException.class,
+  @Test(expectedExceptions = RequestGeneratorException.class,
       expectedExceptionsMessageRegExp = "No MapKey in .+")
   public void resultType_futureCall_noMapKey() throws Exception {
     
@@ -324,7 +324,7 @@ public class ModelReaderTest {
     
     //
     //
-    ModelReader.methodToRequest(method, sg.stru, conf);
+    RequestGenerator.methodToRequest(method, sg.stru, conf);
   }
   
   @Test
@@ -334,7 +334,7 @@ public class ModelReaderTest {
     
     //
     //
-    Request request = ModelReader.methodToRequest(method, sg.stru, conf);
+    Request request = RequestGenerator.methodToRequest(method, sg.stru, conf);
     //
     //
     
@@ -354,7 +354,7 @@ public class ModelReaderTest {
     
     //
     //
-    Request request = ModelReader.methodToRequest(method, sg.stru, conf);
+    Request request = RequestGenerator.methodToRequest(method, sg.stru, conf);
     //
     //
     
@@ -376,7 +376,7 @@ public class ModelReaderTest {
     
     //
     //
-    Request request = ModelReader.methodToRequest(method, sg.stru, conf);
+    Request request = RequestGenerator.methodToRequest(method, sg.stru, conf);
     //
     //
     
@@ -396,7 +396,7 @@ public class ModelReaderTest {
     
     //
     //
-    Request request = ModelReader.methodToRequest(method, sg.stru, conf);
+    Request request = RequestGenerator.methodToRequest(method, sg.stru, conf);
     //
     //
     

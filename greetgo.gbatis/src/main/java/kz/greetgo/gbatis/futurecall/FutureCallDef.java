@@ -23,6 +23,12 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+/**
+ * Реализация получения отложенных данных
+ * 
+ * @see FutureCall
+ * @author pompei
+ */
 public class FutureCallDef<T> implements FutureCall<T> {
   
   private Conf conf;

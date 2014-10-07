@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractSQL<T> {
+abstract class AbstractSQL<T> {
   
   private static final String AND = ") \nAND (";
   private static final String OR = ") \nOR (";

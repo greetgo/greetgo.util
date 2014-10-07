@@ -57,7 +57,21 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-public class ModelReader {
+/**
+ * Генератор класса {@link Request}
+ * 
+ * <p>
+ * Предназначет для реализации метода <nobr>{@link #methodToRequest(Method, Stru, Conf)}</nobr>
+ * </p>
+ * 
+ * <p>
+ * Содержит основную логику GBatis - именно сюда нужно будет вносить изменения, если будут
+ * появляться новые фичи
+ * </p>
+ * 
+ * @author pompei
+ */
+public class RequestGenerator {
   
   private static class T_dot implements Comparable<T_dot> {
     final int index;
@@ -74,6 +88,20 @@ public class ModelReader {
     }
   }
   
+  /**
+   * Генерация объекта класса {@link Request} из метода Dao-интерфейса в соответствии с
+   * предоставленной структурой DOM и конфигурацией
+   * 
+   * @param method
+   *          метод запроса
+   * @param stru
+   *          структура DOM
+   * @param conf
+   *          конфигурация
+   * @return сгенерированный запрос
+   * @throws Exception
+   *           пробрасывается во избежание try/catch-ей
+   */
   public static Request methodToRequest(Method method, Stru stru, Conf conf) throws Exception {
     Request ret = new Request();
     
@@ -86,10 +114,10 @@ public class ModelReader {
     fillResult(ret, method);
     
     if (ret.sql == null) {
-      throw new ModelReaderException("No sql for " + method);
+      throw new RequestGeneratorException("No sql for " + method);
     }
     if (ret.type == null) {
-      throw new ModelReaderException("No type for " + method);
+      throw new RequestGeneratorException("No type for " + method);
     }
     
     return ret;
@@ -112,7 +140,7 @@ public class ModelReader {
       
       if (ann instanceof Modi) {
         if (ret.type != null) {
-          throw new ModelReaderException("request.type = " + ret.type + " but found " + ann);
+          throw new RequestGeneratorException("request.type = " + ret.type + " but found " + ann);
         }
         ret.type = RequestType.Modi;
         ret.sql = ((Modi)ann).value();
@@ -121,7 +149,7 @@ public class ModelReader {
       
       if (ann instanceof Sele) {
         if (ret.type != null) {
-          throw new ModelReaderException("request.type = " + ret.type + " but found " + ann);
+          throw new RequestGeneratorException("request.type = " + ret.type + " but found " + ann);
         }
         ret.type = RequestType.Sele;
         ret.sql = ((Sele)ann).value();
@@ -130,7 +158,7 @@ public class ModelReader {
       
       if (ann instanceof Call) {
         if (ret.type != null) {
-          throw new ModelReaderException("request.type = " + ret.type + " but found " + ann);
+          throw new RequestGeneratorException("request.type = " + ret.type + " but found " + ann);
         }
         ret.type = RequestType.Call;
         ret.sql = ((Call)ann).value();
@@ -203,14 +231,14 @@ public class ModelReader {
     }
     
     if (!tableName.startsWith(conf.tabPrefix)) {
-      throw new ModelReaderException("Table " + tableName + " is not started with "
+      throw new RequestGeneratorException("Table " + tableName + " is not started with "
           + conf.tabPrefix);
     }
     
     Table table = stru.tables.get(tableName.substring(conf.tabPrefix.length()));
     
     if (table == null) {
-      throw new ModelReaderException("No table " + tableName);
+      throw new RequestGeneratorException("No table " + tableName);
     }
     
     if (name == null || name.trim().length() == 0) {
@@ -277,39 +305,39 @@ public class ModelReader {
       if (method.getGenericReturnType() instanceof ParameterizedType) {
         ParameterizedType type = (ParameterizedType)method.getGenericReturnType();
         if (type.getActualTypeArguments().length != 1) {
-          throw new ModelReaderException(List.class + " has more or less then one type argument");
+          throw new RequestGeneratorException(List.class + " has more or less then one type argument");
         }
         ret.resultDataClass = (Class<?>)type.getActualTypeArguments()[0];
         ret.resultType = ResultType.LIST;
         ret.callNow = true;
         return;
       }
-      throw new ModelReaderException("Result List without type arguments in " + method);
+      throw new RequestGeneratorException("Result List without type arguments in " + method);
     }
     
     if (method.getReturnType().isAssignableFrom(Set.class)) {
       if (method.getGenericReturnType() instanceof ParameterizedType) {
         ParameterizedType type = (ParameterizedType)method.getGenericReturnType();
         if (type.getActualTypeArguments().length != 1) {
-          throw new ModelReaderException(List.class + " has more or less then one type argument");
+          throw new RequestGeneratorException(List.class + " has more or less then one type argument");
         }
         ret.resultDataClass = (Class<?>)type.getActualTypeArguments()[0];
         ret.resultType = ResultType.SET;
         ret.callNow = true;
         return;
       }
-      throw new ModelReaderException("Result List without type arguments in " + method);
+      throw new RequestGeneratorException("Result List without type arguments in " + method);
     }
     
     if (method.getReturnType().isAssignableFrom(Map.class)) {
       if (method.getGenericReturnType() instanceof ParameterizedType) {
         if (ret.mapKeyField == null) {
-          throw new ModelReaderException("No MapKey in " + method);
+          throw new RequestGeneratorException("No MapKey in " + method);
         }
         
         ParameterizedType type = (ParameterizedType)method.getGenericReturnType();
         if (type.getActualTypeArguments().length != 2) {
-          throw new ModelReaderException(List.class + " has more or less then two type argument");
+          throw new RequestGeneratorException(List.class + " has more or less then two type argument");
         }
         ret.mapKeyClass = (Class<?>)type.getActualTypeArguments()[0];
         ret.resultDataClass = (Class<?>)type.getActualTypeArguments()[1];
@@ -317,14 +345,14 @@ public class ModelReader {
         ret.callNow = true;
         return;
       }
-      throw new ModelReaderException("Result Map without type arguments in " + method);
+      throw new RequestGeneratorException("Result Map without type arguments in " + method);
     }
     
     if (method.getReturnType().isAssignableFrom(FutureCall.class)) {
       if (method.getGenericReturnType() instanceof ParameterizedType) {
         ParameterizedType type = (ParameterizedType)method.getGenericReturnType();
         if (type.getActualTypeArguments().length != 1) {
-          throw new ModelReaderException(List.class + " has more or less then one type argument");
+          throw new RequestGeneratorException(List.class + " has more or less then one type argument");
         }
         
         Type futureCallArgType = type.getActualTypeArguments()[0];
@@ -332,7 +360,7 @@ public class ModelReader {
         fillFutureCallResult(ret, futureCallArgType, method);
         return;
       }
-      throw new ModelReaderException("Result FutureCall without type argument in " + method);
+      throw new RequestGeneratorException("Result FutureCall without type argument in " + method);
     }
     
     ret.resultDataClass = method.getReturnType();
@@ -346,10 +374,10 @@ public class ModelReader {
     
     if (futureCallArgType instanceof Class) {
       if (((Class<?>)futureCallArgType).isAssignableFrom(Map.class)) {
-        throw new ModelReaderException("Result FutureCall Map without type arguments in " + method);
+        throw new RequestGeneratorException("Result FutureCall Map without type arguments in " + method);
       }
       if (((Class<?>)futureCallArgType).isAssignableFrom(List.class)) {
-        throw new ModelReaderException("Result List in FutureCall without type arguments in "
+        throw new RequestGeneratorException("Result List in FutureCall without type arguments in "
             + method);
       }
     }
@@ -367,10 +395,10 @@ public class ModelReader {
         
         if (((Class<?>)ptype.getRawType()).isAssignableFrom(Map.class)) {
           if (ret.mapKeyField == null) {
-            throw new ModelReaderException("No MapKey in " + method);
+            throw new RequestGeneratorException("No MapKey in " + method);
           }
           if (ptype.getActualTypeArguments().length != 2) {
-            throw new ModelReaderException(Map.class
+            throw new RequestGeneratorException(Map.class
                 + " has more or less then two type argument in result of " + method);
           }
           
@@ -382,7 +410,7 @@ public class ModelReader {
         
         if (((Class<?>)ptype.getRawType()).isAssignableFrom(List.class)) {
           if (ptype.getActualTypeArguments().length != 1) {
-            throw new ModelReaderException(List.class
+            throw new RequestGeneratorException(List.class
                 + " has more or less then one type argument in result of " + method);
           }
           
@@ -393,7 +421,7 @@ public class ModelReader {
         
         if (((Class<?>)ptype.getRawType()).isAssignableFrom(Set.class)) {
           if (ptype.getActualTypeArguments().length != 1) {
-            throw new ModelReaderException(List.class
+            throw new RequestGeneratorException(List.class
                 + " has more or less then one type argument in result of " + method);
           }
           
@@ -407,7 +435,7 @@ public class ModelReader {
     }
     
     if (futureCallArgClass == null) {
-      throw new ModelReaderException("Cannot prepare result for " + method);
+      throw new RequestGeneratorException("Cannot prepare result for " + method);
     }
     
     ret.resultType = ResultType.SIMPLE;
