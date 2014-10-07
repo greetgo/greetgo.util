@@ -60,14 +60,14 @@ public class Request {
   /**
    * Имя поля для использования ключа мапы.
    * <p>
-   * Используется если <nobr><code>{@link #resultType} == {@link ResultType.MAP}</code></nobr>
+   * Используется если <nobr><code>{@link #resultType} == MAP</code></nobr>
    * </p>
    */
   public String mapKeyField;
   /**
    * Класс ключа мапы
    * <p>
-   * Используется если <nobr><code>{@link #resultType} == {@link ResultType.MAP}</code></nobr>
+   * Используется если <nobr><code>{@link #resultType} == MAP</code></nobr>
    * </p>
    */
   public Class<?> mapKeyClass;
