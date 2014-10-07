@@ -20,12 +20,36 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Создаёт прокси-классы, которые предоставляют значения конфигурационных параметров из
+ * конфигурационных интерфейсов, с помощью метода {@link #createConfig(Class)}
+ * 
+ * <p>
+ * Конфигурационные файлы располагаются в папке, предоставляемой методом {@link #getBaseDir()}.
+ * </p>
+ * <p>
+ * Имя конфигурационного файла соответствует имени конфигурационного интерфейса.
+ * </p>
+ * <p>
+ * Расширение конфигурационного файла предоставляется методом {@link #getConfigFileExt()}
+ * </p>
+ * 
+ * @author pompei
+ */
 public abstract class HotConfigFactory {
   private final List<Invokator> invokators = new ArrayList<Invokator>();
   private boolean resetEnabled = true;
   
+  /**
+   * Предоставляет имя папки, в которой будут создаваться конфигурационные файлы
+   * 
+   * @return имя папки, в которой будут создаваться конфигурационные файлы
+   */
   protected abstract String getBaseDir();
   
+  /**
+   * Помечает все конфиги, чтобы они перечитались из файлов
+   */
   public void reset() {
     if (!resetEnabled) return;
     
@@ -34,6 +58,13 @@ public abstract class HotConfigFactory {
     }
   }
   
+  /**
+   * Создаёт и возвращает инстанцию конфига, реализующую конфигурационный интерфейс
+   * 
+   * @param class1
+   *          конфигурационный интерфейс
+   * @return инстанцию конфига, реализующую конфигурационный интерфейс
+   */
   @SuppressWarnings("unchecked")
   public <T> T createConfig(Class<T> class1) {
     return (T)Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] { class1 },
@@ -51,6 +82,11 @@ public abstract class HotConfigFactory {
     }
   }
   
+  /**
+   * Создаёт и возвращает динамический модификатор параметров
+   * 
+   * @return динамический модификатор параметров
+   */
   public HotConfigModifier createModifier() {
     return new HotConfigModifier() {
       @Override

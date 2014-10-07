@@ -13,21 +13,56 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 
+ * Хранит данные конфигурации, считанные из конфигурационного файла
+ * 
+ * @author pompei
+ */
 public class ConfData {
   private final Map<String, List<Object>> data = new HashMap<>();
   
+  /**
+   * Возвращает сами данные из конфигурационного файла
+   * 
+   * @return данные из конфигурационного файла
+   */
   public Map<String, List<Object>> getData() {
     return data;
   }
   
+  /**
+   * Чтение данных из конфигурационного файла
+   * 
+   * @param fileName
+   *          имя читаемого файла
+   * @throws Exception
+   *           для проброса исключений, чтобы не загромождать код try/catch-ми
+   */
   public void readFromFile(String fileName) throws Exception {
     readFromFile(new File(fileName));
   }
   
+  /**
+   * Чтение данных из конфигурационного файла
+   * 
+   * @param file
+   *          читаемый файл
+   * @throws Exception
+   *           для проброса исключений, чтобы не загромождать код try/catch-ми
+   */
   public void readFromFile(File file) throws Exception {
     readFromStream(new FileInputStream(file));
   }
   
+  /**
+   * Чтение данных из потока
+   * 
+   * @param inputStream
+   *          читаемый поток
+   * @throws Exception
+   *           для проброса исключений, чтобы не загромождать код try/catch-ми
+   */
   public void readFromStream(InputStream inputStream) throws Exception {
     final LinkedList<Map<String, List<Object>>> stack = new LinkedList<>();
     stack.add(data);
@@ -98,6 +133,13 @@ public class ConfData {
     }
   }
   
+  /**
+   * Получение параметра по имени
+   * 
+   * @param path
+   *          имя переменной (может содержать слэши и точки)
+   * @return значение читаемого параметра
+   */
   public String strEx(String path) {
     String[] split = path.split("/");
     Map<String, List<Object>> cur = data;
@@ -112,6 +154,17 @@ public class ConfData {
     return getStr(cur, new Name(split[split.length - 1]), prevPath);
   }
   
+  /**
+   * Читает параметр с указанием значения по умолчанию, которое будет использоваться, если этого
+   * параметра нет в файле конфигурации
+   * 
+   * @param path
+   *          имя переменной (может содержать слэши и точки)
+   * @param defaultValue
+   *          значение по умолчанию
+   * @return прочитанное значение или значение по умолчанию, если этого параметра нет в
+   *         конфигурационного файла
+   */
   public String str(String path, String defaultValue) {
     try {
       return strEx(path);
@@ -120,12 +173,30 @@ public class ConfData {
     }
   }
   
+  /**
+   * Читает параметр как целое число
+   * 
+   * @param path
+   *          имя переменной (может содержать слэши и точки)
+   * @return значение параметра
+   */
   public int inte(String path) {
     String str = str(path);
     if (str == null) return 0;
     return Integer.parseInt(str);
   }
   
+  /**
+   * Читает параметр как целое число с возможностью указания значения по умолчанию, если такого
+   * параметра нет в файле
+   * 
+   * @param path
+   *          имя переменной (может содержать слэши и точки)
+   * @param defaultValue
+   *          значение по умолчанию
+   * @return прочитанное значение или значение по умолчанию, если этого параметра нет в
+   *         конфигурационного файла
+   */
   public int inte(String path, int defaultValue) {
     String str = str(path);
     if (str == null) return defaultValue;
