@@ -1073,6 +1073,9 @@ public abstract class Nf6Generator {
         out.println("comment on column " + fieldTableName + '.' + fi.name + " is 'Значение поля'"
             + conf.separator);
       }
+      
+      out.println("comment on column " + fieldTableName + '.' + conf.ts
+          + " is 'Момент последнего изменения значения'" + conf.separator);
     }
   }
 }
