@@ -42,10 +42,10 @@ project.eclipse.classpath.file.whenMerged { cp ->
 }
 
 repositories {
-  mavenRepo (
-      name: 'Our repository',
-      url: 'http://192.168.0.1:8080/repository/internal/'
-      )
+  maven {
+    name 'Our repository'
+    url 'http://192.168.0.1:8080/repository/internal/'
+  }
   mavenCentral()
 }
 
