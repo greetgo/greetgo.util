@@ -5,15 +5,15 @@ import java.net.URL;
 import kz.greetgo.sqlmanager.model.Field;
 import kz.greetgo.sqlmanager.model.Table;
 import kz.greetgo.sqlmanager.model.command.Command;
-import kz.greetgo.sqlmanager.parser.StruGenerator;
+import kz.greetgo.sqlmanager.parser.StruShaper;
 
 import org.testng.annotations.Test;
 
-public class StruGeneratorTest {
+public class StruShaperTest {
   @Test
   public void test() throws Exception {
     URL url = getClass().getResource("example.nf3");
-    StruGenerator sg = new StruGenerator();
+    StruShaper sg = new StruShaper();
     sg.printPStru = false;
     sg.parse(url);
     

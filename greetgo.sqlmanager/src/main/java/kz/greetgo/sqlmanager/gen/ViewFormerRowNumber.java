@@ -1,8 +1,16 @@
 package kz.greetgo.sqlmanager.gen;
 
 import kz.greetgo.sqlmanager.model.Field;
-import kz.greetgo.sqlmanager.model.FieldInfo;
+import kz.greetgo.sqlmanager.model.FieldDb;
 
+/**
+ * Формирователь вьюшек доступа к NF3 данным посредством использования функции
+ * <code>row_number()</code>
+ * 
+ * @see ViewFormer
+ * @author pompei
+ * 
+ */
 public class ViewFormerRowNumber extends ViewFormerMax {
   
   protected ViewFormerRowNumber(Conf conf) {
@@ -22,13 +30,13 @@ public class ViewFormerRowNumber extends ViewFormerMax {
     {
       boolean first = true;
       for (Field key : field.table.keys) {
-        for (FieldInfo fi : key.fieldInfo()) {
+        for (FieldDb fi : key.dbFields()) {
           sb.append(first ? "" :", ");
           first = false;
           sb.append(fi.name);
         }
       }
-      for (FieldInfo fi : field.fieldInfo()) {
+      for (FieldDb fi : field.dbFields()) {
         sb.append(", " + fi.name);
       }
     }
@@ -38,7 +46,7 @@ public class ViewFormerRowNumber extends ViewFormerMax {
     {
       boolean first = true;
       for (Field key : field.table.keys) {
-        for (FieldInfo fi : key.fieldInfo()) {
+        for (FieldDb fi : key.dbFields()) {
           sb.append(first ? "" :", ");
           first = false;
           sb.append("m." + fi.name);

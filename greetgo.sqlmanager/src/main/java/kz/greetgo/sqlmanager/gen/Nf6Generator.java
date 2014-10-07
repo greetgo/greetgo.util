@@ -13,18 +13,38 @@ import java.util.Set;
 
 import kz.greetgo.sqlmanager.model.EnumType;
 import kz.greetgo.sqlmanager.model.Field;
-import kz.greetgo.sqlmanager.model.FieldInfo;
+import kz.greetgo.sqlmanager.model.FieldDb;
 import kz.greetgo.sqlmanager.model.SimpleType;
 import kz.greetgo.sqlmanager.model.Table;
 import kz.greetgo.sqlmanager.model.Type;
 import kz.greetgo.sqlmanager.model.command.Command;
 import kz.greetgo.sqlmanager.model.command.SelectAll;
 import kz.greetgo.sqlmanager.model.command.ToDictionary;
-import kz.greetgo.sqlmanager.parser.StruGenerator;
 import kz.greetgo.sqlmanager.parser.StruParseException;
+import kz.greetgo.sqlmanager.parser.StruShaper;
 
+/**
+ * Содержит основную логику генерации
+ * 
+ * <p>
+ * Класс абстрактный, потому что для различных БД генерируемый код может отличатся. Но пока основной
+ * генерируемый код расположен здесь</i>
+ * </p>
+ * 
+ * @author pompei
+ * 
+ */
 public abstract class Nf6Generator {
   
+  /**
+   * Тип внешней библиотеки
+   * 
+   * <p>
+   * Инициируется значением {@link LibType.MYBATIS} для обратной совместимости. <i>Для того, чтобы
+   * старый код, которые был написан для MyBatis, ещё до введения типа {@link LibType}, работал бы
+   * без ошибок</i>
+   * </p>
+   */
   public LibType libType = LibType.MYBATIS;
   
   public static final String MYBATIS_StatementType = "org.apache.ibatis.mapping.StatementType";
@@ -45,19 +65,48 @@ public abstract class Nf6Generator {
   public static final String OBJECTS = "java.util.Objects";
   public static final String ARRAYS = "java.util.Arrays";
   
-  private final StruGenerator sg;
+  /**
+   * Содержит DOM
+   */
+  private final StruShaper sg;
   
+  /**
+   * Получет диалект для рабочей БД
+   * 
+   * @return Получает {@link SqlDialect}
+   */
   protected abstract SqlDialect sqld();
   
+  /**
+   * Содежрит конфигурацию генератора
+   */
   public final Conf conf;
+  
+  /**
+   * Ссылка на формирователь вьюшек, для доступа к данным
+   */
   protected final ViewFormer viewFormer;
   
-  public Nf6Generator(Conf conf, StruGenerator sg) {
+  /**
+   * Основной конструктор
+   * 
+   * @param conf
+   *          конфигурация генерации
+   * @param sg
+   *          подготовленная структура
+   */
+  public Nf6Generator(Conf conf, StruShaper sg) {
     this.conf = conf;
     this.sg = sg;
     this.viewFormer = new ViewFormerRowNumber(conf);
   }
   
+  /**
+   * Распечатка SQL-ей для генерации структуры данных (таблицы, секвенсы, вьюшки)
+   * 
+   * @param out
+   *          место вывода SQL-ей
+   */
   public void printSqls(PrintStream out) {
     
     printPrepareSqls(out);
@@ -112,6 +161,12 @@ public abstract class Nf6Generator {
     printViews(tnames, out);
   }
   
+  /**
+   * Распечатка SQL-ей для генерации хранимой логики (хранимые процедуры и функции)
+   * 
+   * @param out
+   *          место вывода SQL-ей
+   */
   public void printPrograms(PrintStream out) {
     List<String> tnames = getTnames();
     printInsertFunctions(tnames, out);
@@ -305,10 +360,39 @@ public abstract class Nf6Generator {
     }
   }
   
+  /**
+   * Генерация хранимой логики для таблицы
+   * 
+   * <p>
+   * у каждой БД, синтаксис хранимых процедур/функций сильно различен, поэтому эта генерация
+   * вынесена в дочерние классы
+   * </p>
+   * 
+   * @param out
+   *          место куда выводятся SQL-и
+   * @param table
+   *          таблица, для которой генерируются SQL-и
+   */
   protected abstract void printTableInsertFunction(PrintStream out, Table table);
   
+  /**
+   * Генерация хранимой логики для поля
+   * 
+   * <p>
+   * у каждой БД, синтаксис хранимых процедур/функций сильно различен, поэтому эта генерация
+   * вынесена в дочерние классы
+   * </p>
+   * 
+   * @param out
+   *          место куда выводятся SQL-и
+   * @param field
+   *          поле, для которого генерируются SQL-и
+   */
   protected abstract void printFieldInsertFunction(PrintStream out, Field field);
   
+  /**
+   * Генерация java-классов моделей данных и DAO-интерфейсов для MyBatis или GBatis
+   */
   public void generateJava() {
     
     checkIdLengths();
@@ -379,7 +463,7 @@ public abstract class Nf6Generator {
     ou.println("public abstract class " + ou.className + _parent_ + " {");
     
     for (Field field : table.fields) {
-      for (FieldInfo fi : field.fieldInfo()) {
+      for (FieldDb fi : field.dbFields()) {
         FieldOuter f = ou.addField(fi.javaType, fi.name);
         ou.println("public " + ou._(f.type.objectType()) + " " + f.name + ";");
       }
@@ -413,7 +497,7 @@ public abstract class Nf6Generator {
     java.println("public class " + java.className + " extends " + java._(fieldsClass.name()) + " {");
     
     for (Field f : table.keys) {
-      for (FieldInfo fi : f.fieldInfo()) {
+      for (FieldDb fi : f.dbFields()) {
         java.println("public " + java._(fi.javaType.javaType()) + " " + fi.name + ";");
       }
     }
@@ -422,7 +506,7 @@ public abstract class Nf6Generator {
       java.println("@Override public int hashCode() {");
       java.print("return " + java._(ARRAYS) + ".hashCode(new Object[] {");
       for (Field f : table.keys) {
-        for (FieldInfo fi : f.fieldInfo()) {
+        for (FieldDb fi : f.dbFields()) {
           java.print(fi.name + ",");
         }
       }
@@ -437,7 +521,7 @@ public abstract class Nf6Generator {
       java.println(java.className + " other = (" + java.className + ")obj;");
       boolean first = true;
       for (Field field : table.keys) {
-        for (FieldInfo fi : field.fieldInfo()) {
+        for (FieldDb fi : field.dbFields()) {
           java.print(first ? "return " :"&& ");
           first = false;
           java.print(java._(OBJECTS) + ".equals(" + fi.name + ", other." + fi.name + ")");
@@ -455,7 +539,7 @@ public abstract class Nf6Generator {
       java.print("public " + java.className + "(");
       boolean first = true;
       for (Field field : table.keys) {
-        for (FieldInfo fi : field.fieldInfo()) {
+        for (FieldDb fi : field.dbFields()) {
           java.print(first ? "" :", ");
           first = false;
           java.print(java._(fi.javaType.javaType()) + " " + fi.name);
@@ -464,7 +548,7 @@ public abstract class Nf6Generator {
       java.println(") {");
       
       for (Field field : table.keys) {
-        for (FieldInfo fi : field.fieldInfo()) {
+        for (FieldDb fi : field.dbFields()) {
           java.println("this." + fi.name + " = " + fi.name + ";");
         }
       }
@@ -570,12 +654,12 @@ public abstract class Nf6Generator {
   private void generateDaoTableLoad(ClassOuter comm, Table table, ClassOuter java,
       ClassOuter fieldsClass) {
     
-    List<FieldInfo> keyInfo = table.keyInfo();
+    List<FieldDb> keyInfo = table.dbKeys();
     {
       comm.print("  @" + annSele(comm) + "(\"select * from " + conf.vPrefix + table.name);
       {
         boolean first = true;
-        for (FieldInfo fi : keyInfo) {
+        for (FieldDb fi : keyInfo) {
           comm.print(first ? " where " :" and ");
           first = false;
           comm.print(fi.name + " = #{" + fi.name + "}");
@@ -586,7 +670,7 @@ public abstract class Nf6Generator {
       comm.print("  " + comm._(java.name()) + " load(");
       {
         boolean first = true;
-        for (FieldInfo fi : keyInfo) {
+        for (FieldDb fi : keyInfo) {
           comm.print(first ? "" :", ");
           first = false;
           comm.print("@" + annPrm(comm) + "(\"" + fi.name + "\")");
@@ -607,7 +691,7 @@ public abstract class Nf6Generator {
       comm.print("  @" + annSele(comm) + "(\"select * from " + conf.vPrefix + table.name);
       {
         boolean first = true;
-        for (FieldInfo fi : keyInfo) {
+        for (FieldDb fi : keyInfo) {
           comm.print(first ? " where " :" and ");
           first = false;
           comm.print(fi.name + " = #{" + fi.name + "}");
@@ -618,7 +702,7 @@ public abstract class Nf6Generator {
       comm.print("  " + comm._(LIST) + "<" + comm._(java.name()) + "> loadList(");
       {
         boolean first = true;
-        for (FieldInfo fi : keyInfo) {
+        for (FieldDb fi : keyInfo) {
           comm.print(first ? "" :", ");
           first = false;
           comm.print("@" + annPrm(comm) + "(\"" + fi.name + "\")");
@@ -640,7 +724,7 @@ public abstract class Nf6Generator {
   private void generateDaoTableInserts(ClassOuter comm, Table table, ClassOuter java,
       ClassOuter fieldsClass) {
     
-    List<FieldInfo> keyInfo = table.keyInfo();
+    List<FieldDb> keyInfo = table.dbKeys();
     {
       if (libType == LibType.MYBATIS) {
         comm.println("  @" + comm._(MYBATIS_OPTIONS) + "(statementType = "
@@ -651,7 +735,7 @@ public abstract class Nf6Generator {
       comm.print(" (");
       {
         boolean first = true;
-        for (FieldInfo fi : keyInfo) {
+        for (FieldDb fi : keyInfo) {
           comm.print(first ? "" :", ");
           first = false;
           comm.print("#{" + fi.name + "}");
@@ -671,7 +755,7 @@ public abstract class Nf6Generator {
       comm.print(" (");
       {
         boolean first = true;
-        for (FieldInfo fi : keyInfo) {
+        for (FieldDb fi : keyInfo) {
           comm.print(first ? "" :", ");
           first = false;
           comm.print("#{" + fi.name + "}");
@@ -682,7 +766,7 @@ public abstract class Nf6Generator {
       
       {
         boolean first = true;
-        for (FieldInfo fi : keyInfo) {
+        for (FieldDb fi : keyInfo) {
           comm.print(first ? "" :", ");
           first = false;
           
@@ -701,9 +785,9 @@ public abstract class Nf6Generator {
   private void generateDaoFieldInserts(ClassOuter comm, Field field, ClassOuter java,
       ClassOuter fieldsClass) {
     
-    List<FieldInfo> keyInfo = field.table.keyInfo();
-    List<FieldInfo> fieldInfo = field.fieldInfo();
-    List<FieldInfo> all = new ArrayList<>();
+    List<FieldDb> keyInfo = field.table.dbKeys();
+    List<FieldDb> fieldInfo = field.dbFields();
+    List<FieldDb> all = new ArrayList<>();
     all.addAll(keyInfo);
     all.addAll(fieldInfo);
     {
@@ -720,8 +804,8 @@ public abstract class Nf6Generator {
     }
   }
   
-  private void setFieldWithNow(ClassOuter comm, Field field, List<FieldInfo> keyInfo,
-      List<FieldInfo> all) {
+  private void setFieldWithNow(ClassOuter comm, Field field, List<FieldDb> keyInfo,
+      List<FieldDb> all) {
     
     if (libType == LibType.MYBATIS) {
       comm.println("  @" + comm._(MYBATIS_OPTIONS) + "(statementType = "
@@ -732,7 +816,7 @@ public abstract class Nf6Generator {
     
     comm.print(" (");
     {
-      for (FieldInfo fi : keyInfo) {
+      for (FieldDb fi : keyInfo) {
         if (SimpleType.tbool.equals(fi.javaType)) {
           comm.print("#{" + fi.name + "Int}, ");
         } else {
@@ -744,7 +828,7 @@ public abstract class Nf6Generator {
     comm.print("  void set" + firstUpper(field.name) + "WithNow(");
     {
       boolean first = true;
-      for (FieldInfo fi : keyInfo) {
+      for (FieldDb fi : keyInfo) {
         comm.print(first ? "" :", ");
         first = false;
         comm.print("@" + annPrm(comm) + "(\"" + fi.name + "\")" + comm._(fi.javaType.javaType())
@@ -754,8 +838,8 @@ public abstract class Nf6Generator {
     comm.println(");");
   }
   
-  private void setField(ClassOuter comm, Field field, List<FieldInfo> keyInfo,
-      List<FieldInfo> fieldInfo, List<FieldInfo> all) {
+  private void setField(ClassOuter comm, Field field, List<FieldDb> keyInfo,
+      List<FieldDb> fieldInfo, List<FieldDb> all) {
     
     if (libType == LibType.MYBATIS) {
       comm.println("  @" + comm._(MYBATIS_OPTIONS) + "(statementType = "
@@ -767,7 +851,7 @@ public abstract class Nf6Generator {
     comm.print(" (");
     {
       boolean first = true;
-      for (FieldInfo fi : all) {
+      for (FieldDb fi : all) {
         comm.print(first ? "" :", ");
         first = false;
         if (SimpleType.tbool.equals(fi.javaType)) {
@@ -781,7 +865,7 @@ public abstract class Nf6Generator {
     comm.print("  void set" + firstUpper(field.name) + "(");
     {
       boolean first = true;
-      for (FieldInfo fi : keyInfo) {
+      for (FieldDb fi : keyInfo) {
         comm.print(first ? "" :", ");
         first = false;
         comm.print("@" + annPrm(comm) + "(\"" + fi.name + "\")" + comm._(fi.javaType.javaType())
@@ -789,7 +873,7 @@ public abstract class Nf6Generator {
       }
     }
     {
-      for (FieldInfo fi : fieldInfo) {
+      for (FieldDb fi : fieldInfo) {
         if (SimpleType.tbool.equals(fi.javaType)) {
           comm.print(", @" + annPrm(comm) + "(\"" + fi.name + "Int\") int " + fi.name + "Int");
         } else {
@@ -802,7 +886,7 @@ public abstract class Nf6Generator {
   }
   
   private void insFieldWithNow(ClassOuter comm, Field field, ClassOuter java,
-      List<FieldInfo> keyInfo, List<FieldInfo> all) {
+      List<FieldDb> keyInfo, List<FieldDb> all) {
     
     if (libType == LibType.MYBATIS) {
       comm.println("  @" + comm._(MYBATIS_OPTIONS) + "(statementType = "
@@ -812,7 +896,7 @@ public abstract class Nf6Generator {
     comm.print("  @" + annCall(comm) + "(\"{call " + conf._p_ + field.table.name + "_" + field.name);
     comm.print(" (");
     {
-      for (FieldInfo fi : keyInfo) {
+      for (FieldDb fi : keyInfo) {
         if (SimpleType.tbool.equals(fi.javaType)) {
           comm.print("#{" + fi.name + "Int}, ");
         } else {
@@ -825,7 +909,7 @@ public abstract class Nf6Generator {
         + field.table.name + ");");
   }
   
-  private void insField(ClassOuter comm, Field field, ClassOuter java, List<FieldInfo> all) {
+  private void insField(ClassOuter comm, Field field, ClassOuter java, List<FieldDb> all) {
     if (libType == LibType.MYBATIS) {
       comm.println("  @" + comm._(MYBATIS_OPTIONS) + "(statementType = "
           + comm._(MYBATIS_StatementType) + ".CALLABLE)");
@@ -836,7 +920,7 @@ public abstract class Nf6Generator {
     comm.print(" (");
     {
       boolean first = true;
-      for (FieldInfo fi : all) {
+      for (FieldDb fi : all) {
         comm.print(first ? "" :", ");
         first = false;
         if (SimpleType.tbool.equals(fi.javaType)) {
@@ -856,13 +940,13 @@ public abstract class Nf6Generator {
     StringBuilder sb = new StringBuilder();
     viewFormer.formTableSelect(sb, table, "tts.ts", 0, 0);
     
-    List<FieldInfo> keyInfo = table.keyInfo();
+    List<FieldDb> keyInfo = table.dbKeys();
     {
       comm.print("  @" + annSele(comm) + "(\"with tts as (select #{ts} ts from dual), xx as (" + sb
           + ") select * from xx");
       {
         boolean first = true;
-        for (FieldInfo fi : keyInfo) {
+        for (FieldDb fi : keyInfo) {
           comm.print(first ? " where " :" and ");
           first = false;
           comm.print("xx." + fi.name + " = #{" + fi.name + "}");
@@ -872,7 +956,7 @@ public abstract class Nf6Generator {
       
       comm.print("  " + comm._(java.name()) + " loadAt(@" + annPrm(comm) + "(\"" + conf.ts + "\")"
           + comm._(DATE) + " " + conf.ts);
-      for (FieldInfo fi : keyInfo) {
+      for (FieldDb fi : keyInfo) {
         comm.print(", @" + annPrm(comm) + "(\"" + fi.name + "\")");
         comm.print(comm._(fi.javaType.javaType()) + " " + fi.name);
       }
@@ -891,7 +975,7 @@ public abstract class Nf6Generator {
           + ") select * from xx");
       {
         boolean first = true;
-        for (FieldInfo fi : keyInfo) {
+        for (FieldDb fi : keyInfo) {
           comm.print(first ? " where " :" and ");
           first = false;
           comm.print("xx." + fi.name + " = #{" + fi.name + "}");
@@ -901,7 +985,7 @@ public abstract class Nf6Generator {
       
       comm.print("  " + comm._(LIST) + "<" + comm._(java.name()) + "> loadListAt(@" + annPrm(comm)
           + "(\"" + conf.ts + "\")" + comm._(DATE) + " " + conf.ts);
-      for (FieldInfo fi : keyInfo) {
+      for (FieldDb fi : keyInfo) {
         comm.print(", @" + annPrm(comm) + "(\"" + fi.name + "\")");
         comm.print(comm._(fi.javaType.javaType()) + " " + fi.name);
       }
@@ -1011,7 +1095,7 @@ public abstract class Nf6Generator {
     {
       java.print("  return new " + java._(todict.toClass) + "(");
       boolean first = true;
-      for (FieldInfo fi : table.keyInfo()) {
+      for (FieldDb fi : table.dbKeys()) {
         java.print(first ? "" :", ");
         first = false;
         java.print(fi.name);
@@ -1030,6 +1114,12 @@ public abstract class Nf6Generator {
     return comment.trim().length() > 0;
   }
   
+  /**
+   * Распечатка SQL-ей для генерации коментов к таблицам и полям
+   * 
+   * @param out
+   *          место вывода SQL-ей
+   **/
   public void printComment(PrintStream out) {
     for (Table table : sg.stru.tables.values()) {
       printTableComments(out, table);
@@ -1045,7 +1135,7 @@ public abstract class Nf6Generator {
         out.println("COMMENT ON TABLE " + tableName + " IS '" + comment + "'" + conf.separator);
       }
     }
-    for (FieldInfo fi : table.keyInfo()) {
+    for (FieldDb fi : table.dbKeys()) {
       out.println("comment on column " + tableName + '.' + fi.name
           + " is 'Ключевое поле материнской таблицы'" + conf.separator);
     }
@@ -1064,12 +1154,12 @@ public abstract class Nf6Generator {
               + conf.separator);
         }
       }
-      for (FieldInfo fi : table.keyInfo()) {
+      for (FieldDb fi : table.dbKeys()) {
         out.println("comment on column " + fieldTableName + '.' + fi.name
             + " is 'Ссылка на ключевое поле материнской таблицы'" + conf.separator);
       }
       
-      for (FieldInfo fi : field.fieldInfo()) {
+      for (FieldDb fi : field.dbFields()) {
         out.println("comment on column " + fieldTableName + '.' + fi.name + " is 'Значение поля'"
             + conf.separator);
       }

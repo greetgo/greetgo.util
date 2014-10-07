@@ -4,6 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Простой тип (long, int, float, ...)
+ * 
+ * @author pompei
+ * 
+ */
 public class SimpleType extends Type implements JavaType {
   
   public final boolean needSequence;

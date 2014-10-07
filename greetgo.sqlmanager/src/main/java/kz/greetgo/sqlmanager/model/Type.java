@@ -5,6 +5,11 @@ import java.util.List;
 
 import kz.greetgo.sqlmanager.model.command.Command;
 
+/**
+ * Определяет тип в NF3-нотации для связи с Java, и SQL, и между ними
+ * 
+ * @author pompei
+ */
 public abstract class Type {
   public final String name;
   public final String subpackage;

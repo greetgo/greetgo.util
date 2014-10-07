@@ -3,7 +3,7 @@ package kz.greetgo.sqlmanager.gen;
 import java.net.URL;
 
 import kz.greetgo.sqlmanager.model.Table;
-import kz.greetgo.sqlmanager.parser.StruGenerator;
+import kz.greetgo.sqlmanager.parser.StruShaper;
 
 import org.testng.annotations.Test;
 
@@ -11,7 +11,7 @@ public class ViewFormerRowNumberTest {
   @Test
   public void formTableSelect() throws Exception {
     URL url = getClass().getResource("example.nf3");
-    StruGenerator sg = new StruGenerator();
+    StruShaper sg = new StruShaper();
     sg.printPStru = false;
     sg.parse(url);
     
@@ -28,7 +28,7 @@ public class ViewFormerRowNumberTest {
   @Test
   public void formFieldSelect() throws Exception {
     URL url = getClass().getResource("example.nf3");
-    StruGenerator sg = new StruGenerator();
+    StruShaper sg = new StruShaper();
     sg.printPStru = false;
     sg.parse(url);
     

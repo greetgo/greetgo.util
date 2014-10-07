@@ -3,9 +3,9 @@ package kz.greetgo.sqlmanager.gen;
 import java.io.PrintStream;
 
 import kz.greetgo.sqlmanager.model.Field;
-import kz.greetgo.sqlmanager.model.FieldInfo;
+import kz.greetgo.sqlmanager.model.FieldDb;
 import kz.greetgo.sqlmanager.model.Table;
-import kz.greetgo.sqlmanager.parser.StruGenerator;
+import kz.greetgo.sqlmanager.parser.StruShaper;
 
 public class Nf6GeneratorOracle extends Nf6Generator {
   
@@ -17,7 +17,7 @@ public class Nf6GeneratorOracle extends Nf6Generator {
     return sqlDialect;
   }
   
-  public Nf6GeneratorOracle(Conf conf, StruGenerator sg) {
+  public Nf6GeneratorOracle(Conf conf, StruShaper sg) {
     super(conf, sg);
   }
   
@@ -29,7 +29,7 @@ public class Nf6GeneratorOracle extends Nf6Generator {
     {
       boolean first = true;
       for (Field key : table.keys) {
-        for (FieldInfo fi : key.fieldInfo()) {
+        for (FieldDb fi : key.dbFields()) {
           out.print(first ? "" :", ");
           first = false;
           out.print(fi.name + "__ " + sqld().procType(fi.stype));
@@ -44,7 +44,7 @@ public class Nf6GeneratorOracle extends Nf6Generator {
       {
         boolean first = true;
         for (Field key : table.keys) {
-          for (FieldInfo fi : key.fieldInfo()) {
+          for (FieldDb fi : key.dbFields()) {
             out.print(first ? "" :", ");
             first = false;
             out.print(fi.name);
@@ -55,7 +55,7 @@ public class Nf6GeneratorOracle extends Nf6Generator {
       {
         boolean first = true;
         for (Field key : table.keys) {
-          for (FieldInfo fi : key.fieldInfo()) {
+          for (FieldDb fi : key.dbFields()) {
             out.print(first ? "" :", ");
             first = false;
             out.print(fi.name + "__");
@@ -80,13 +80,13 @@ public class Nf6GeneratorOracle extends Nf6Generator {
     {
       boolean first = true;
       for (Field key : field.table.keys) {
-        for (FieldInfo fi : key.fieldInfo()) {
+        for (FieldDb fi : key.dbFields()) {
           out.print(first ? "" :", ");
           first = false;
           out.print(fi.name + "__ " + sqld().procType(fi.stype));
         }
       }
-      for (FieldInfo fi : field.fieldInfo()) {
+      for (FieldDb fi : field.dbFields()) {
         out.print(", " + fi.name + "__ " + sqld().procType(fi.stype));
       }
     }
@@ -103,7 +103,7 @@ public class Nf6GeneratorOracle extends Nf6Generator {
     {
       boolean first = true;
       for (Field key : field.table.keys) {
-        for (FieldInfo fi : key.fieldInfo()) {
+        for (FieldDb fi : key.dbFields()) {
           out.print(first ? "    where " :"    and ");
           out.println(fi.name + " = " + fi.name + "__");
           first = false;
@@ -121,7 +121,7 @@ public class Nf6GeneratorOracle extends Nf6Generator {
     {
       boolean first = true;
       for (Field key : field.table.keys) {
-        for (FieldInfo fi : key.fieldInfo()) {
+        for (FieldDb fi : key.dbFields()) {
           out.print(first ? "    where " :"    and ");
           out.println(fi.name + " = " + fi.name + "__");
           first = false;
@@ -133,7 +133,7 @@ public class Nf6GeneratorOracle extends Nf6Generator {
     {
       boolean first = true;
       for (Field key : field.table.keys) {
-        for (FieldInfo fi : key.fieldInfo()) {
+        for (FieldDb fi : key.dbFields()) {
           out.print(first ? "      where " :"      and ");
           out.println(fi.name + " = " + fi.name + "__");
           first = false;
@@ -143,7 +143,7 @@ public class Nf6GeneratorOracle extends Nf6Generator {
     out.println("      ) ; ");
     out.println();
     
-    for (FieldInfo fi : field.fieldInfo()) {
+    for (FieldDb fi : field.dbFields()) {
       out.println("  if doit = 0 and " + fi.name + "__ is null and r." + fi.name
           + " is not null then doit := 1 ; end if ; ");
       out.println("  if doit = 0 and " + fi.name + "__ is not null and r." + fi.name
@@ -161,13 +161,13 @@ public class Nf6GeneratorOracle extends Nf6Generator {
     {
       boolean first = true;
       for (Field key : field.table.keys) {
-        for (FieldInfo fi : key.fieldInfo()) {
+        for (FieldDb fi : key.dbFields()) {
           out.print(first ? "" :", ");
           first = false;
           out.print(fi.name);
         }
       }
-      for (FieldInfo fi : field.fieldInfo()) {
+      for (FieldDb fi : field.dbFields()) {
         out.print(", " + fi.name);
       }
     }
@@ -175,13 +175,13 @@ public class Nf6GeneratorOracle extends Nf6Generator {
     {
       boolean first = true;
       for (Field key : field.table.keys) {
-        for (FieldInfo fi : key.fieldInfo()) {
+        for (FieldDb fi : key.dbFields()) {
           out.print(first ? "" :", ");
           first = false;
           out.print(fi.name + "__");
         }
       }
-      for (FieldInfo fi : field.fieldInfo()) {
+      for (FieldDb fi : field.dbFields()) {
         out.print(", " + fi.name + "__");
       }
     }

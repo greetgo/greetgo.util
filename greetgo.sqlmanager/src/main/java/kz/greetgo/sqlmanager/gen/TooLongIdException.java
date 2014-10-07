@@ -1,5 +1,11 @@
 package kz.greetgo.sqlmanager.gen;
 
+/**
+ * Ошибка ограничания длинны идентификатора
+ * 
+ * @author pompei
+ * 
+ */
 public class TooLongIdException extends RuntimeException {
   
   public TooLongIdException() {}

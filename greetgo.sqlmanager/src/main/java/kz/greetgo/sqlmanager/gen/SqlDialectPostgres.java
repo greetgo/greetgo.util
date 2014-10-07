@@ -5,6 +5,11 @@ import java.util.Map;
 
 import kz.greetgo.sqlmanager.model.SimpleType;
 
+/**
+ * Диалект для Постгреса. См.: {@link SqlDialect}
+ * 
+ * @author pompei
+ */
 public class SqlDialectPostgres implements SqlDialect {
   
   private final Map<SimpleType, String> simpleTypeMap = new HashMap<>();

@@ -31,16 +31,36 @@ import kz.greetgo.sqlmanager.model.command.Command;
 import kz.greetgo.sqlmanager.model.command.SelectAll;
 import kz.greetgo.sqlmanager.model.command.ToDictionary;
 
-public class StruGenerator {
+/**
+ * Формирователь структуры классов в форме NF3
+ * 
+ * @author pompei
+ */
+public class StruShaper {
+  /**
+   * Постфикс файлов, в которых содержатся коменты к таблицам
+   */
   private static final String COMMENT = ".comment";
   
+  /**
+   * DOM для NF3
+   */
   public final Stru stru = new Stru();
   
+  /**
+   * Папка, в которой лежат файлы коментов
+   */
   private URL commentDir = null;
   
   private static final Pattern ORDER_BY = Pattern.compile(".*orderBy\\s*\\(([^\\)]+)\\).*");
   private static final Pattern TO_DICT = Pattern.compile("\\s*(\\S+)\\s+(.*)");
   
+  /**
+   * Помощник для парсинга с дополнительных команд
+   * 
+   * @author pompei
+   * 
+   */
   private class PCommand {
     final PTable owner;
     final String name, descr;
@@ -82,6 +102,11 @@ public class StruGenerator {
     }
   }
   
+  /**
+   * Помощник для парсинга таблиц
+   * 
+   * @author pompei
+   */
   private class PTable {
     final String subpackage;
     final String name, descr;
@@ -156,6 +181,12 @@ public class StruGenerator {
     }
   }
   
+  /**
+   * Помощник для парсинга полей
+   * 
+   * @author pompei
+   * 
+   */
   private class PField {
     final String name, descr;
     
@@ -167,6 +198,12 @@ public class StruGenerator {
     }
   }
   
+  /**
+   * Помощник для парсинга енумов
+   * 
+   * @author pompei
+   * 
+   */
   class PEnum extends PTable {
     final List<String> lines = new ArrayList<>();
     final String as;
@@ -227,6 +264,16 @@ public class StruGenerator {
   private static final Pattern ENUM_AS = Pattern.compile("\\s*(\\S+)\\s+as\\s+(\\S+)\\s*",
       Pattern.CASE_INSENSITIVE);
   
+  /**
+   * Парсит очереную строку из файла .nf3
+   * 
+   * @param line
+   *          очередная строка
+   * @param currentUrl
+   *          УРЛ парсируемого файла
+   * @throws Exception
+   *           проброс для избегания try/catch-ей
+   */
   private void appendLine(String line, URL currentUrl) throws Exception {
     if (line == null) return;
     Pair p = new Pair(line);
@@ -303,6 +350,14 @@ public class StruGenerator {
   
   private final Set<URL> parsedUrls = new HashSet<>();
   
+  /**
+   * Парсинг очередного файла
+   * 
+   * @param url
+   *          УРЛ очередного анализируемого файла
+   * @throws Exception
+   *           проброс для избегания try/catch-ей
+   */
   public void parseURL(URL url) throws Exception {
     if (parsedUrls.contains(url)) return;
     parsedUrls.add(url);
@@ -317,6 +372,14 @@ public class StruGenerator {
     br.close();
   }
   
+  /**
+   * Парсинг и пост-обработка
+   * 
+   * @param url
+   *          УРЛ обрабатываемого файла
+   * @throws Exception
+   *           проброс для избегания try/catch-ей
+   */
   public void parse(URL url) throws Exception {
     
     parseURL(url);

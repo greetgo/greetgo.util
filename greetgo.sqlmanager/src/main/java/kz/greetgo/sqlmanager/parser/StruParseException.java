@@ -1,5 +1,10 @@
 package kz.greetgo.sqlmanager.parser;
 
+/**
+ * Ошибка парсинга NF3-файлов
+ * 
+ * @author pompei
+ */
 public class StruParseException extends RuntimeException {
   
   public StruParseException() {}

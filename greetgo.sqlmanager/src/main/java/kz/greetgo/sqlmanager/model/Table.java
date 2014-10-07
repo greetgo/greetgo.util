@@ -3,6 +3,11 @@ package kz.greetgo.sqlmanager.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Таблица в NF3-нотации
+ * 
+ * @author pompei
+ */
 public class Table extends Type {
   public final List<Field> keys = new ArrayList<>();
   public final List<Field> fields = new ArrayList<>();
@@ -41,6 +46,11 @@ public class Table extends Type {
     }
   }
   
+  /**
+   * Формирует и возвращает список наименований ключевых полей в БД
+   * 
+   * @return список наименований ключевых полей в БД
+   */
   public List<String> keyNames() {
     List<String> ret = new ArrayList<>();
     for (Field field : keys) {
@@ -63,8 +73,13 @@ public class Table extends Type {
     return keyType instanceof SimpleType && ((SimpleType)keyType).needSequence;
   }
   
-  public List<FieldInfo> keyInfo() {
-    List<FieldInfo> ret = new ArrayList<>();
+  /**
+   * Формирует и возвращает список ключевых полей в БД
+   * 
+   * @return список ключевых полей в БД
+   */
+  public List<FieldDb> dbKeys() {
+    List<FieldDb> ret = new ArrayList<>();
     
     for (Field f : keys) {
       List<SimpleType> types = new ArrayList<>();
@@ -75,7 +90,7 @@ public class Table extends Type {
         String name = f.name + (C == 1 ? "" :"" + i);
         SimpleType stype = types.get(i - 1);
         JavaType javaType = javaTypes.get(i - 1);
-        ret.add(new FieldInfo(stype, javaType, name));
+        ret.add(new FieldDb(stype, javaType, name));
       }
     }
     

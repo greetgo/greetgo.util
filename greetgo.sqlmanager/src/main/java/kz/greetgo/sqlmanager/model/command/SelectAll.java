@@ -1,5 +1,11 @@
 package kz.greetgo.sqlmanager.model.command;
 
+/**
+ * Дополнительная команда для генерации метода в Dao-интерфейсе, который выбирает все значения
+ * NF3-таблицы
+ * 
+ * @author pompei
+ */
 public class SelectAll extends Command {
   public final String methodName;
   public final String orderBy;

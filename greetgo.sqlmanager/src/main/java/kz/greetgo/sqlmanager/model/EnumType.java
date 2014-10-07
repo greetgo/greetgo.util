@@ -3,6 +3,12 @@ package kz.greetgo.sqlmanager.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Абстрагирует тип енума
+ * 
+ * @author pompei
+ * 
+ */
 public class EnumType extends Type implements JavaType {
   public final String as;
   public final List<String> values = new ArrayList<>();

@@ -7,6 +7,13 @@ import kz.greetgo.sqlmanager.model.Field;
 import kz.greetgo.sqlmanager.model.SimpleType;
 import kz.greetgo.sqlmanager.model.Table;
 
+/**
+ * Формирователь вьюшек доступа к NF3 данным посредством использования функции <code>max</code>
+ * 
+ * @see ViewFormer
+ * @author pompei
+ * 
+ */
 public class ViewFormerMax extends ViewFormerAbstract {
   
   protected ViewFormerMax(Conf conf) {

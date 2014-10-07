@@ -3,9 +3,9 @@ package kz.greetgo.sqlmanager.gen;
 import java.io.PrintStream;
 
 import kz.greetgo.sqlmanager.model.Field;
-import kz.greetgo.sqlmanager.model.FieldInfo;
+import kz.greetgo.sqlmanager.model.FieldDb;
 import kz.greetgo.sqlmanager.model.Table;
-import kz.greetgo.sqlmanager.parser.StruGenerator;
+import kz.greetgo.sqlmanager.parser.StruShaper;
 
 public class Nf6GeneratorPostgres extends Nf6Generator {
   
@@ -17,7 +17,7 @@ public class Nf6GeneratorPostgres extends Nf6Generator {
     return sqlDialect;
   }
   
-  public Nf6GeneratorPostgres(Conf conf, StruGenerator sg) {
+  public Nf6GeneratorPostgres(Conf conf, StruShaper sg) {
     super(conf, sg);
   }
   
@@ -27,7 +27,7 @@ public class Nf6GeneratorPostgres extends Nf6Generator {
     {
       boolean first = true;
       for (Field key : table.keys) {
-        for (FieldInfo fi : key.fieldInfo()) {
+        for (FieldDb fi : key.dbFields()) {
           out.print(first ? "" :", ");
           first = false;
           out.print(fi.name + "__ " + sqld().procType(fi.stype));
@@ -41,7 +41,7 @@ public class Nf6GeneratorPostgres extends Nf6Generator {
     {
       boolean first = true;
       for (Field key : table.keys) {
-        for (FieldInfo fi : key.fieldInfo()) {
+        for (FieldDb fi : key.dbFields()) {
           out.print(first ? "" :", ");
           first = false;
           out.print(fi.name);
@@ -52,7 +52,7 @@ public class Nf6GeneratorPostgres extends Nf6Generator {
     {
       boolean first = true;
       for (Field key : table.keys) {
-        for (FieldInfo fi : key.fieldInfo()) {
+        for (FieldDb fi : key.dbFields()) {
           out.print(first ? "" :", ");
           first = false;
           out.print(fi.name + "__");
@@ -73,13 +73,13 @@ public class Nf6GeneratorPostgres extends Nf6Generator {
     {
       boolean first = true;
       for (Field key : field.table.keys) {
-        for (FieldInfo fi : key.fieldInfo()) {
+        for (FieldDb fi : key.dbFields()) {
           out.print(first ? "" :", ");
           first = false;
           out.print(fi.name + "__ " + sqld().procType(fi.stype));
         }
       }
-      for (FieldInfo fi : field.fieldInfo()) {
+      for (FieldDb fi : field.dbFields()) {
         out.print(", " + fi.name + "__ " + sqld().procType(fi.stype));
       }
     }
@@ -95,7 +95,7 @@ public class Nf6GeneratorPostgres extends Nf6Generator {
     {
       boolean first = true;
       for (Field key : field.table.keys) {
-        for (FieldInfo fi : key.fieldInfo()) {
+        for (FieldDb fi : key.dbFields()) {
           out.print(first ? "" :", ");
           first = false;
           out.print("m." + fi.name);
@@ -108,7 +108,7 @@ public class Nf6GeneratorPostgres extends Nf6Generator {
     {
       boolean first = true;
       for (Field key : field.table.keys) {
-        for (FieldInfo fi : key.fieldInfo()) {
+        for (FieldDb fi : key.dbFields()) {
           out.print(first ? "    where " :"    and ");
           first = false;
           out.println("m." + fi.name + " = " + fi.name + "__");
@@ -120,7 +120,7 @@ public class Nf6GeneratorPostgres extends Nf6Generator {
     out.println();
     out.println("  doit := 0 ; ");
     
-    for (FieldInfo fi : field.fieldInfo()) {
+    for (FieldDb fi : field.dbFields()) {
       out.println("  if doit = 0 and r." + fi.name + " is null and " + fi.name
           + "__ is not null then doit := 1 ; end if ; ");
       out.println("  if doit = 0 and r." + fi.name + " is not null and " + fi.name
@@ -135,13 +135,13 @@ public class Nf6GeneratorPostgres extends Nf6Generator {
     {
       boolean first = true;
       for (Field key : field.table.keys) {
-        for (FieldInfo fi : key.fieldInfo()) {
+        for (FieldDb fi : key.dbFields()) {
           out.print(first ? "" :", ");
           first = false;
           out.print(fi.name);
         }
       }
-      for (FieldInfo fi : field.fieldInfo()) {
+      for (FieldDb fi : field.dbFields()) {
         out.print(", " + fi.name);
       }
     }
@@ -149,13 +149,13 @@ public class Nf6GeneratorPostgres extends Nf6Generator {
     {
       boolean first = true;
       for (Field key : field.table.keys) {
-        for (FieldInfo fi : key.fieldInfo()) {
+        for (FieldDb fi : key.dbFields()) {
           out.print(first ? "" :", ");
           first = false;
           out.print(fi.name + "__");
         }
       }
-      for (FieldInfo fi : field.fieldInfo()) {
+      for (FieldDb fi : field.dbFields()) {
         out.print(", " + fi.name + "__");
       }
     }

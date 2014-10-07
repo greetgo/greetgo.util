@@ -5,6 +5,11 @@ import java.util.Map;
 
 import kz.greetgo.sqlmanager.model.SimpleType;
 
+/**
+ * Диалект для Оракла. См.: {@link SqlDialect}
+ * 
+ * @author pompei
+ */
 public class SqlDialectOracle implements SqlDialect {
   
   private final Map<SimpleType, String> simpleTypeMap = new HashMap<>();
