@@ -64,7 +64,7 @@ public class ProbeGenDocx {
         частьАбзаца.addText("Вот так!");
       }
     }
-
+    
     {
       Para para = doc.createPara();
       para.setAlign(Align.CENTER);
@@ -98,15 +98,17 @@ public class ProbeGenDocx {
         cell1.getShd().setVal("clear");
         cell1.getShd().setFill("C0C0C0");
         Para para = cell1.createPara();
-        para.setAlign(Align.CENTER);
+        para.setAlign(Align.BOTH);
         Run title = para.createRun();
         title.setTextSize(13);
         title.setFontName("Arial");
-        title.addText("Краткая информация по Заемщику/Гаранту и проекту");
+        for (int i = 0; i < 10; i++) {
+          title.addText("Краткая информация по Заемщику/Гаранту и проекту " + i);
+        }
         
       }
     }
-  
+    
     docx.write("build/example-gen.docx");
     
     System.out.println("OK");
