@@ -74,44 +74,136 @@ public class ProbeGenDocx {
         частьАбзаца.setTextSize(70);
       }
     }
-    Table table = doc.createTable();
-    table.setTableWidth(9540);
-    table.setTblCellSpacing(0);
-    table.getMargins().setWidth(105);
-    table.setTableLookVal("04A0");
     {
-      TableRow row = table.createRow();
-      row.setTblCellSpacing(0);
+      Table table = doc.createTable();
+      table.setTableWidth(9540);
+      table.setTblCellSpacing(0);
+      table.getMargins().setWidth(105);
+      table.setTableLookVal("04A0");
       {
-        TableCol col1 = table.createCol();
-        col1.setWidth(4601);
-        
-        TableCell cell1 = row.createCell();
-        cell1.setWidth(9300);
-        cell1.setGridSpan(3);
-        cell1.getBorders().setLineStyle(LineStyle.SINGLE);
-        cell1.getBorders().setSize(4);
-        cell1.getBorders().getInsideH().setSize(0);
-        cell1.getBorders().getInsideV().setSize(0);
-        cell1.getMargins().setWidth(108);
-        cell1.getMargins().getTop().setWidth(0);
-        cell1.getMargins().getBottom().setWidth(0);
-        cell1.getShd().setVal("clear");
-        cell1.getShd().setFill("C0C0C0");
-        Para para = cell1.createPara();
-        para.setAlign(Align.BOTH);
-        Run title = para.createRun();
-        title.setTextSize(13);
-        title.setFontName("Arial");
-        for (int i = 0; i < 10; i++) {
-          title.addText("Краткая информация по Заемщику/Гаранту и проекту " + i);
+        TableRow row = table.createRow();
+        row.setTblCellSpacing(0);
+        {
+          TableCol col1 = table.createCol();
+          col1.setWidth(4601);
+          
+          TableCell cell1 = row.createCell();
+          cell1.setWidth(9300);
+          cell1.setGridSpan(3);
+          cellStyle(cell1);
+          cell1.getShd().setVal("clear");
+          cell1.getShd().setFill("C0C0C0");
+          Para para = cell1.createPara();
+          para.setAlign(Align.BOTH);
+          Run title = para.createRun();
+          title.setTextSize(13);
+          title.setFontName("Arial");
+          for (int i = 0; i < 10; i++) {
+            title.addText("Краткая информация по Заемщику/Гаранту и проекту " + i);
+          }
+          
         }
+      }
+    }
+    {
+      Table table = doc.createTable();
+      table.setTableWidth(9540);
+      table.setTblCellSpacing(0);
+      table.getMargins().setWidth(105);
+      table.setTableLookVal("04A0");
+      
+      TableCol col1 = table.createCol();
+      col1.setWidth(4601 / 3);
+      TableCol col2 = table.createCol();
+      col2.setWidth(4601 / 3);
+      TableCol col3 = table.createCol();
+      col3.setWidth(4601 / 3);
+      
+      {
+        TableRow row = table.createRow();
+        row.setTblCellSpacing(0);
         
+        {
+          TableCell cell = row.createCell();
+          cellStyle(cell);
+          setCellText(cell, "Текст уау 1");
+        }
+        {
+          TableCell cell = row.createCell();
+          cellStyle(cell);
+          setCellText(cell, "Текст уау 2");
+        }
+        {
+          TableCell cell = row.createCell();
+          cellStyle(cell);
+          setCellText(cell, "Текст уау 3 fdsf");
+        }
+      }
+      {
+        TableRow row = table.createRow();
+        row.setTblCellSpacing(0);
+        
+        {
+          TableCell cell = row.createCell();
+          cellStyle(cell);
+          setCellText(cell, "Текст SSS 1");
+        }
+        {
+          TableCell cell = row.createCell();
+          cellStyle(cell);
+          setCellText(cell, "Текст SSS 2");
+        }
+        {
+          TableCell cell = row.createCell();
+          cellStyle(cell);
+          cell.mergeRestart();
+          setCellText(cell, "Текст SSS 3 fdsf");
+        }
+      }
+      {
+        TableRow row = table.createRow();
+        row.setTblCellSpacing(0);
+        
+        {
+          TableCell cell = row.createCell();
+          cellStyle(cell);
+          setCellText(cell, "Текст SDF 1");
+        }
+        {
+          TableCell cell = row.createCell();
+          cellStyle(cell);
+          setCellText(cell, "Текст SDF 2");
+        }
+        {
+          TableCell cell = row.createCell();
+          cellStyle(cell);
+          cell.mergeCotinue();
+        }
       }
     }
     
-    docx.write("build/example-gen.docx");
+    docx.write("build/example-gen2.docx");
     
     System.out.println("OK");
+  }
+  
+  private static void setCellText(TableCell cell, String text) {
+    Para para = cell.createPara();
+    para.setAlign(Align.BOTH);
+    Run title = para.createRun();
+    title.setTextSize(13);
+    title.setFontName("Arial");
+    
+    title.addText(text);
+  }
+  
+  private static void cellStyle(TableCell cell) {
+    cell.getBorders().setLineStyle(LineStyle.SINGLE);
+    cell.getBorders().setSize(4);
+    cell.getBorders().getInsideH().setSize(0);
+    cell.getBorders().getInsideV().setSize(0);
+    cell.getMargins().setWidth(108);
+    cell.getMargins().getTop().setWidth(0);
+    cell.getMargins().getBottom().setWidth(0);
   }
 }

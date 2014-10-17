@@ -74,7 +74,7 @@ public class Table implements FlowElement {
     out.print("<w:tblCellSpacing w:w=\"" + 0 + "\" w:type=\"dxa\" />");
     getBorders().write(out);
     getMargins().write(out);
-    if (getTableLookVal() != null) {
+    if (tableLookVal != null) {
       out.print("<w:tblLook w:val=\"" + tableLookVal + "\" />");
     }
     out.print("</w:tblPr>");

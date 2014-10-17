@@ -21,6 +21,8 @@ public class TableCell implements XmlWriter {
   private Integer width = null;
   private Integer gridSpan;
   
+  private ColMergeStatus colMergeStatus = ColMergeStatus.NONE;
+  
   private List<FlowElement> elements = new ArrayList<FlowElement>();
   private final Borders borders = new Borders("w:tcBorders");
   private final Margins margins = new Margins("w:tcMar");
@@ -53,6 +55,7 @@ public class TableCell implements XmlWriter {
         if (options.size() > 0) needTcPr = true;
         if (!getBorders().isEmpty()) needTcPr = true;
         if (!getMargins().isEmpty()) needTcPr = true;
+        if (colMergeStatus != ColMergeStatus.NONE) needTcPr = true;
       }
       
       if (needTcPr) out.print("<w:tcPr>");
@@ -64,10 +67,25 @@ public class TableCell implements XmlWriter {
         getMargins().write(out);
         getShd().write(out);
         out.print("<w:hideMark />");
+        
+        {
+          switch (colMergeStatus) {
+          case RESTART:
+            out.print("<w:vMerge w:val=\"restart\" />");
+            break;
+          
+          case CONTINUE:
+            out.print("<w:vMerge />");
+            break;
+          }
+        }
       }
       if (needTcPr) out.print("</w:tcPr>");
       for (FlowElement e : elements) {
         e.write(out);
+      }
+      if (elements.size() == 0) {
+        out.print("<w:p />");
       }
     }
     out.print("</w:tc>");
@@ -126,4 +144,13 @@ public class TableCell implements XmlWriter {
   public Shd getShd() {
     return shd;
   }
+  
+  public void mergeRestart() {
+    colMergeStatus = ColMergeStatus.RESTART;
+  }
+  
+  public void mergeCotinue() {
+    colMergeStatus = ColMergeStatus.CONTINUE;
+  }
+  
 }
