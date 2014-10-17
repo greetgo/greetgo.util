@@ -19,12 +19,12 @@ public class TableCell implements XmlWriter {
   
   private VertAlign vertAlign = VertAlign.TOP;
   private Integer width = null;
-  private Integer gridSpan ;
-
+  private Integer gridSpan;
+  
   private List<FlowElement> elements = new ArrayList<FlowElement>();
   private final Borders borders = new Borders("w:tcBorders");
   private final Margins margins = new Margins("w:tcMar");
-  private final Shd shd =new Shd();
+  private final Shd shd = new Shd();
   
   @Override
   public void write(PrintStream out) {
@@ -44,8 +44,8 @@ public class TableCell implements XmlWriter {
         }
       }
       
-      if(getGridSpan()!=null){
-        options.add("<w:gridSpan w:val=\""+getGridSpan()+"\" />");
+      if (getGridSpan() != null) {
+        options.add("<w:gridSpan w:val=\"" + getGridSpan() + "\" />");
       }
       
       boolean needTcPr = false;
@@ -118,7 +118,7 @@ public class TableCell implements XmlWriter {
   public Integer getGridSpan() {
     return gridSpan;
   }
-
+  
   public void setGridSpan(Integer gridSpan) {
     this.gridSpan = gridSpan;
   }

@@ -85,6 +85,7 @@ public class ProbeGenDocx {
       {
         TableCol col1 = table.createCol();
         col1.setWidth(4601);
+        
         TableCell cell1 = row.createCell();
         cell1.setWidth(9300);
         cell1.setGridSpan(3);

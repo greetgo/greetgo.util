@@ -38,8 +38,8 @@ public class Border {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((color == null) ? 0 : color.hashCode());
-    result = prime * result + ((style == null) ? 0 : style.hashCode());
+    result = prime * result + ((color == null) ? 0 :color.hashCode());
+    result = prime * result + ((style == null) ? 0 :style.hashCode());
     return result;
   }
   

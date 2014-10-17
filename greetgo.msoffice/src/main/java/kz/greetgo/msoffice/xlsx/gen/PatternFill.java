@@ -49,9 +49,9 @@ public class PatternFill extends Fill {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((bgColor == null) ? 0 : bgColor.hashCode());
-    result = prime * result + ((fgColor == null) ? 0 : fgColor.hashCode());
-    result = prime * result + ((type == null) ? 0 : type.hashCode());
+    result = prime * result + ((bgColor == null) ? 0 :bgColor.hashCode());
+    result = prime * result + ((fgColor == null) ? 0 :fgColor.hashCode());
+    result = prime * result + ((type == null) ? 0 :type.hashCode());
     return result;
   }
   

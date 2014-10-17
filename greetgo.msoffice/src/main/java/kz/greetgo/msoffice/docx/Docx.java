@@ -16,8 +16,7 @@ import java.util.zip.ZipOutputStream;
 import kz.greetgo.msoffice.UtilOffice;
 
 /**
- * Главный класс для создания файлов
- * формата docx
+ * Главный класс для создания файлов формата docx
  * 
  * @author pompei
  * 
