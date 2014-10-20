@@ -5,7 +5,8 @@ import java.io.FileOutputStream;
 
 public class GenXlsxProbe {
   public static void main(String[] args) throws Exception {
-    String outDir = "/home/pompei/trans/msoffice.test";
+    //    String outDir = "/home/pompei/trans/msoffice.test";
+    String outDir = "build";
     String workDir = outDir + "/workDir";
     
     new File(outDir).mkdirs();
