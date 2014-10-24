@@ -5,7 +5,7 @@ apply plugin: 'maven'
 group = 'kz.greetgo'
 
 sourceCompatibility = 1.7
-version = '0.0.3'
+version = '0.0.4'
 
 def nowDate = new Date()
 def nowFormattedDate = nowDate.format("yyyy-MM-dd/HH:mm:ss")
@@ -27,14 +27,14 @@ eclipse {
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
   }
-  
+
   pathVariables 'GRADLE_USER_HOME': gradle.gradleUserHomeDir
 }
 
 project.eclipse.classpath.file.whenMerged { cp ->
   if (project.hasProperty("sourceCompatibility")) {
     cp.entries.findAll { it.path.contains('JRE_CONTAINER') }.each {
-      
+
       it.path += "/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/" +
           "JavaSE-$project.sourceCompatibility"
     }
@@ -51,7 +51,7 @@ repositories {
 
 dependencies {
   ext.springVersion = "3.0.7.RELEASE"
-  
+
   testCompile 'org.testng:testng:6.1.1'
   testCompile 'org.easytesting:fest-assert-core:2.0M10'
 }
@@ -79,7 +79,7 @@ uploadArchives {
     repository(
       url: 'http://192.168.0.1:8080/repository/internal/'
     )
-    
+
     pom.project {
       name project.name
       packaging 'jar'

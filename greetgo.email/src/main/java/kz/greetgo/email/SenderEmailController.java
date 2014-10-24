@@ -3,7 +3,9 @@ package kz.greetgo.email;
 import java.io.File;
 import java.io.FileFilter;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class SenderEmailController {
   
@@ -76,12 +78,32 @@ public class SenderEmailController {
     ret.sendingFile = new File(ret.file.getAbsolutePath() + ".sending");
     
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-    ret.sendedFile = new File(sendedDir + "/" + format.format(new Date()) + "/" + ret.file.getName());
+    ret.sendedFile = new File(sendedDir + "/" + format.format(new Date()) + "/"
+        + ret.file.getName());
     
     return ret;
   }
   
-  public void cleanOldSendedFiles(int daysBefore) {
-    // TODO XXX
+  public void cleanOldSendedFiles(final int daysBefore) {
+    final Calendar cal = new GregorianCalendar();
+    final Date now = new Date();
+    File[] files = sendedDir.listFiles(new FileFilter() {
+      @Override
+      public boolean accept(File pathname) {
+        if (!pathname.isFile()) return false;
+        if (!pathname.getName().endsWith(".xml")) return false;
+        
+        cal.setTimeInMillis(pathname.lastModified());
+        cal.add(Calendar.DAY_OF_YEAR, daysBefore);
+        
+        return cal.getTime().before(now);
+      }
+    });
+    if (files == null) return;
+    if (files.length == 0) return;
+    
+    for (File file : files) {
+      file.delete();
+    }
   }
 }
