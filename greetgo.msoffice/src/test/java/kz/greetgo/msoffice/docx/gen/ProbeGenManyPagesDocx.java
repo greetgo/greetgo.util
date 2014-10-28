@@ -23,7 +23,7 @@ public class ProbeGenManyPagesDocx {
       }
       {
         Run частьАбзаца = para.createRun();
-        частьАбзаца.addText(" И ещё текст.");
+        частьАбзаца.addText(" 在中國這個文本.");
       }
       {
         Run частьАбзаца = para.createRun();
