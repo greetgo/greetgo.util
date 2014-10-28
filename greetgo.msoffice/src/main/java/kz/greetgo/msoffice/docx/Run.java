@@ -165,4 +165,11 @@ public class Run implements XmlWriter {
   public Font getFont() {
     return font;
   }
+  
+  private FieldAppender fieldAppender = null;
+  
+  public FieldAppender field() {
+    if (fieldAppender == null) fieldAppender = new FieldAppender(elements);
+    return fieldAppender;
+  }
 }

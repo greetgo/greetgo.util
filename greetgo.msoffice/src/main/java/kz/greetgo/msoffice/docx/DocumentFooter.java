@@ -10,7 +10,7 @@ public class DocumentFooter extends DocumentFlow {
   
   @Override
   public ContentType getContentType() {
-    return ContentType.HEADER;
+    return ContentType.FOOTER;
   }
   
   @Override

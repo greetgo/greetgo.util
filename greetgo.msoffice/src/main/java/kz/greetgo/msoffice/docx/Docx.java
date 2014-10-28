@@ -142,13 +142,11 @@ public class Docx {
   private Content content = null;
   
   private Content getContent() {
-    if (content == null) {
-      content = Content.createDefaultContent(msHelper);
-    }
+    if (content == null) content = Content.createDefaultContent(msHelper);
     return content;
   }
   
-  private boolean headerConnected = false;
+  private boolean headerConnected = false, footerConnected = false;
   
   private RelationshipMap getRelationshipMap(String subjectPartName) {
     RelationshipMap ret = relationShipMaps.get(subjectPartName);
@@ -188,7 +186,7 @@ public class Docx {
     checkInit();
     
     DocumentFooter footer = getContent().getOrCreateFooter();
-    if (!headerConnected) {
+    if (!footerConnected) {
       Document doc = getDocument();
       
       RelationshipMap rsm = getRelationshipMap(doc.getPartName());
@@ -204,7 +202,7 @@ public class Docx {
       ref.setTagName("w:footerReference");
       doc.addReference(ref);
       
-      headerConnected = true;
+      footerConnected = true;
     }
     return footer;
   }
@@ -275,7 +273,7 @@ public class Docx {
     r.setFontName(DefaultFontNames.TIMES_NEW_ROMAN);
     r.addText("Привет вир!!!");
     
-    w.write("/home/pompei/tmp/u.docx");
+    w.write("build/u.docx");
     
     System.out.println("Complete.....");
   }
