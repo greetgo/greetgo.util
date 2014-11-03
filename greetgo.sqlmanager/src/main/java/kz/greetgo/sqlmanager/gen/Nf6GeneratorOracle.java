@@ -157,36 +157,30 @@ public class Nf6GeneratorOracle extends Nf6Generator {
     out.println();
     
     out.println("  if doit = 1 then ");
-    out.print("    insert into " + tname + " (");
-    {
-      boolean first = true;
-      for (Field key : field.table.keys) {
-        for (FieldDb fi : key.dbFields()) {
-          out.print(first ? "" :", ");
-          first = false;
-          out.print(fi.name);
-        }
-      }
-      for (FieldDb fi : field.dbFields()) {
-        out.print(", " + fi.name);
-      }
-    }
-    out.print(") values (");
-    {
-      boolean first = true;
-      for (Field key : field.table.keys) {
-        for (FieldDb fi : key.dbFields()) {
-          out.print(first ? "" :", ");
-          first = false;
-          out.print(fi.name + "__");
-        }
-      }
-      for (FieldDb fi : field.dbFields()) {
-        out.print(", " + fi.name + "__");
-      }
-    }
-    out.println(") ; ");
+    printInsertSql(out, tname, field);
     out.println("  end if ; ");
+    
+    if (conf.genOperTables) {
+      out.println();
+      String oname = conf.oPref + field.table.name + "_" + field.name;
+      out.print("  select count(1) into doit from " + oname);
+      {
+        boolean first = true;
+        for (Field key : field.table.keys) {
+          for (FieldDb fi : key.dbFields()) {
+            out.print(first ? " where " :" and ");
+            first = false;
+            out.print(fi.name + " = " + fi.name + "__");
+          }
+        }
+      }
+      out.println(" ; ");
+      out.println("  if doit = 0 then");
+      printInsertSql(out, oname, field);
+      out.println("  else");
+      printUpdateSql(out, oname, field);
+      out.println("  end if ; ");
+    }
     
     out.println("end ; ");
     out.println(conf.separator);
@@ -198,5 +192,10 @@ public class Nf6GeneratorOracle extends Nf6Generator {
     out.println("is begin return systimestamp ; end ; ");
     out.println(conf.separator);
     out.println();
+  }
+  
+  @Override
+  protected String minus() {
+    return "minus";
   }
 }

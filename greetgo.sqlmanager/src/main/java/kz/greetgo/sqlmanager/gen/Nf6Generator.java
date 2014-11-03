@@ -102,6 +102,97 @@ public abstract class Nf6Generator {
   }
   
   /**
+   * Распечатка SQL-ей, для копирования данных из исторических таблиц в оперативные
+   * 
+   * @param out
+   *          место вывода SQL-ей
+   */
+  public void printHistToOperSqls(PrintStream out, String separator) {
+    if (separator == null) separator = conf.separator;
+    
+    List<String> tnames = getTnames();
+    
+    for (String tname : tnames) {
+      Table table = sg.stru.tables.get(tname);
+      for (Field field : table.fields) {
+        out.println(separator.replaceAll("NAME", tname + "_" + field.name));
+        printHistToOperField(out, field);
+      }
+    }
+  }
+  
+  private void printHistToOperField(PrintStream out, Field field) {
+    String mname = conf.tabPrefix + field.table.name + "_" + field.name;
+    String oname = conf.oPref + field.table.name + "_" + field.name;
+    
+    String ins = conf.insertedAt;
+    String modi = conf.lastModifiedAt;
+    
+    final String keys;
+    {
+      StringBuilder sb = new StringBuilder();
+      for (Field key : field.table.keys) {
+        for (FieldDb dbKey : key.dbFields()) {
+          sb.append(dbKey.name).append(", ");
+        }
+      }
+      sb.setLength(sb.length() - 2);
+      keys = sb.toString();
+    }
+    
+    final String fields;
+    {
+      StringBuilder sb = new StringBuilder();
+      for (FieldDb dbField : field.dbFields()) {
+        sb.append(dbField.name).append(", ");
+      }
+      sb.setLength(sb.length() - 2);
+      fields = sb.toString();
+    }
+    
+    String all = keys + ", " + fields;
+    String copy = "  " + all;
+    if (ins != null) copy += ", " + ins;
+    if (modi != null) copy += ", " + modi;
+    
+    String ts = conf.ts;
+    
+    out.println("insert into " + oname + '(');
+    out.println(copy);
+    out.println(") select");
+    out.println(copy);
+    out.println("from");
+    out.println('(');
+    out.println("  select distinct " + keys + " from " + mname);
+    out.println("  " + minus());
+    out.println("  select " + keys + " from " + oname);
+    out.println(") x1");
+    out.println("natural join");
+    out.println('(');
+    out.print("  select " + all);
+    if (modi != null) out.print(", " + ts + " as " + modi);
+    out.println(',');
+    out.println("    row_number() over (partition by " + keys + " order by " + ts
+        + " desc) as modi_nom");
+    out.println("  from " + mname);
+    out.println(") x2");
+    if (ins != null) {
+      out.println("natural join");
+      out.println('(');
+      
+      out.println("  select " + keys + ", " + ts + " as " + ins + ',');
+      out.println("    row_number() over (partition by " + keys + " order by " + ts
+          + " asc) as ins_nom");
+      out.println("  from " + mname);
+      out.println(") x3");
+    }
+    out.println("where modi_nom = 1");
+    if (ins != null) out.println("and ins_nom = 1");
+  }
+  
+  protected abstract String minus();
+  
+  /**
    * Распечатка SQL-ей для генерации структуры данных (таблицы, секвенсы, вьюшки)
    * 
    * @param out
@@ -118,6 +209,9 @@ public abstract class Nf6Generator {
       printKeyTable(table, out);
       for (Field field : table.fields) {
         printFieldsTable(field, out);
+        if (conf.genOperTables) {
+          printFieldsOperTable(field, out);
+        }
       }
       out.println();
     }
@@ -153,6 +247,10 @@ public abstract class Nf6Generator {
             }
           out.println("alter table " + conf.tabPrefix + tname + "_" + field.name + " add "
               + formForeignKey(fieldNames, (Table)field.type) + conf.separator);
+          if (conf.genOperTables) {
+            out.println("alter table " + conf.oPref + tname + "_" + field.name + " add "
+                + formForeignKey(fieldNames, (Table)field.type) + conf.separator);
+          }
         }
       }
     }
@@ -234,6 +332,82 @@ public abstract class Nf6Generator {
     }
     out.println("  primary key(" + sb + ")");
     out.println(')' + conf.separator);
+  }
+  
+  private void printFieldsOperTable(Field field, PrintStream out) {
+    
+    List<String> keyFields = new ArrayList<>();
+    
+    out.println("create table " + conf.oPref + field.table.name + "_" + field.name + " (");
+    
+    for (Field key : field.table.keys) {
+      List<SimpleType> types = new ArrayList<>();
+      key.type.assignSimpleTypes(types);
+      
+      if (types.size() == 0) throw new StruParseException("No simple type for " + key.type.name);
+      
+      if (types.size() == 1) {
+        String sqlType = sqld().sqlType(types.get(0));
+        out.println("  " + key.name + " " + sqlType + " not null,");
+        keyFields.add(key.name);
+      } else {
+        int i = 1;
+        for (SimpleType stype : types) {
+          String name = key.name + i++;
+          keyFields.add(name);
+          String sqlType = sqld().sqlType(stype);
+          out.println("  " + name + " " + sqlType + " not null,");
+        }
+      }
+    }
+    
+    {
+      List<SimpleType> types = new ArrayList<>();
+      field.type.assignSimpleTypes(types);
+      
+      if (types.size() == 0) throw new StruParseException("No simple type for field "
+          + field.table.name + "." + field.name);
+      
+      if (types.size() == 1) {
+        String sqlType = sqld().sqlType(types.get(0));
+        out.println("  " + field.name + " " + sqlType + ",");
+      } else {
+        int i = 1;
+        for (SimpleType stype : types) {
+          String name = field.name + i++;
+          String sqlType = sqld().sqlType(stype);
+          out.println("  " + name + " " + sqlType + ",");
+        }
+      }
+    }
+    
+    if (conf.insertedAt != null) {
+      out.println("  " + conf.insertedAt + ' ' + sqld().timestamp() + " default "
+          + sqld().current_timestamp() + " not null,");
+    }
+    if (conf.lastModifiedAt != null) {
+      out.println("  " + conf.lastModifiedAt + ' ' + sqld().timestamp() + " default "
+          + sqld().current_timestamp() + " not null,");
+    }
+    
+    {
+      out.print("  primary key (");
+      boolean first = true;
+      for (String f : keyFields) {
+        if (first) {
+          first = false;
+        } else {
+          out.print(", ");
+        }
+        out.print(f);
+      }
+      out.println("),");
+    }
+    {
+      out.println("  " + formForeignKey(keyFields, field.table));
+    }
+    
+    out.println(")" + conf.separator);
   }
   
   private void printFieldsTable(Field field, PrintStream out) {
@@ -328,12 +502,22 @@ public abstract class Nf6Generator {
     for (String tname : tnames) {
       Table table = sg.stru.tables.get(tname);
       for (Field field : table.fields) {
-        printFieldView(out, field);
-        out.println();
+        if (conf.genOperTables) {
+          printFieldViewToOper(out, field);
+        } else {
+          printFieldView(out, field);
+          out.println();
+        }
       }
       printTableView(out, table);
       out.println();
     }
+  }
+  
+  private void printFieldViewToOper(PrintStream out, Field field) {
+    out.println("create     view " + conf.vPrefix + field.table.name + "_" + field.name + " as");
+    out.println("  select * from " + conf.oPref + field.table.name + "_" + field.name
+        + conf.separator);
   }
   
   private void printFieldView(PrintStream out, Field field) {
@@ -1167,5 +1351,65 @@ public abstract class Nf6Generator {
       out.println("comment on column " + fieldTableName + '.' + conf.ts
           + " is 'Момент последнего изменения значения'" + conf.separator);
     }
+  }
+  
+  protected void printUpdateSql(PrintStream out, String tname, Field field) {
+    out.print("    update " + tname);
+    {
+      {
+        boolean first = true;
+        for (FieldDb fi : field.dbFields()) {
+          out.print(first ? " set " :", ");
+          first = false;
+          out.print(fi.name + " = " + fi.name + "__");
+        }
+        if (conf.lastModifiedAt != null) {
+          out.print(", " + conf.lastModifiedAt + " = " + sqld().current_timestamp());
+        }
+      }
+      {
+        boolean first = true;
+        for (Field key : field.table.keys) {
+          for (FieldDb fi : key.dbFields()) {
+            out.print(first ? " where " :" and ");
+            first = false;
+            out.print(fi.name + " = " + fi.name + "__");
+          }
+        }
+      }
+    }
+    out.println(" ; ");
+  }
+  
+  protected void printInsertSql(PrintStream out, String tname, Field field) {
+    out.print("    insert into " + tname + " (");
+    {
+      boolean first = true;
+      for (Field key : field.table.keys) {
+        for (FieldDb fi : key.dbFields()) {
+          out.print(first ? "" :", ");
+          first = false;
+          out.print(fi.name);
+        }
+      }
+      for (FieldDb fi : field.dbFields()) {
+        out.print(", " + fi.name);
+      }
+    }
+    out.print(") values (");
+    {
+      boolean first = true;
+      for (Field key : field.table.keys) {
+        for (FieldDb fi : key.dbFields()) {
+          out.print(first ? "" :", ");
+          first = false;
+          out.print(fi.name + "__");
+        }
+      }
+      for (FieldDb fi : field.dbFields()) {
+        out.print(", " + fi.name + "__");
+      }
+    }
+    out.println(") ; ");
   }
 }

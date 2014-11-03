@@ -29,6 +29,11 @@ public class Conf {
    */
   public String vPrefix = "v_";
   /**
+   * Префикс оперативной таблицы
+   */
+  public String oPref = "o_";
+  
+  /**
    * Префикс with-вьюшки
    * <p>
    * <i>With-вьюшка - это предварительно сформированный селект в with-выражении SQL</i>
@@ -137,4 +142,21 @@ public class Conf {
    * </p>
    */
   public String modelStruImplements;
+  
+  /**
+   * Подключает генерацию оперативных таблиц и работу с ними (префикс <code>o_</code>). При этом,
+   * вьюшки с префиксом <code>v_</code> бедут переадресованы на эти таблицы. Также изменена работа
+   * со вставкой данных.
+   */
+  public boolean genOperTables = false;
+  
+  /**
+   * Время вставки записи в таблицу: поле в таблице с префиксом <code>o_</code>
+   */
+  public String insertedAt = "inserted_at";
+  
+  /**
+   * Время последнего изменения поля: поле в таблице с префиксом <code>o_</code>
+   */
+  public String lastModifiedAt = "last_modified_at";
 }
