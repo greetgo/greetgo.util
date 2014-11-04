@@ -102,10 +102,10 @@ public class FutureCallDef<T> implements FutureCall<T> {
   }
   
   private T callModi(Connection con, PreparedSql preparedSql) throws Exception {
+    long startedAt = System.currentTimeMillis();
+    
     PreparedStatement ps = con.prepareStatement(preparedSql.sql);
-    if (sqlViewer != null && sqlViewer.needView()) {
-      sqlViewer.view(preparedSql.sql, preparedSql.params);
-    }
+    
     try {
       
       {
@@ -119,6 +119,20 @@ public class FutureCallDef<T> implements FutureCall<T> {
       
     } finally {
       ps.close();
+      
+      logSql(preparedSql, startedAt);
+    }
+  }
+  
+  private void logSql(PreparedSql preparedSql, long startedAt) {
+    if (sqlViewer == null) return;
+    
+    try {
+      long delay = System.currentTimeMillis() - startedAt;
+      if (!sqlViewer.needView()) return;
+      sqlViewer.view(preparedSql.sql, preparedSql.params, delay);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
   
@@ -137,10 +151,10 @@ public class FutureCallDef<T> implements FutureCall<T> {
   }
   
   private T callSelect(Connection con, PreparedSql preparedSql) throws Exception {
+    long startedAt = System.currentTimeMillis();
+    
     PreparedStatement ps = con.prepareStatement(preparedSql.sql);
-    if (sqlViewer != null && sqlViewer.needView()) {
-      sqlViewer.view(preparedSql.sql, preparedSql.params);
-    }
+    
     try {
       
       {
@@ -157,6 +171,8 @@ public class FutureCallDef<T> implements FutureCall<T> {
         
       } finally {
         rs.close();
+        
+        logSql(preparedSql, startedAt);
       }
       
     } finally {
@@ -165,6 +181,7 @@ public class FutureCallDef<T> implements FutureCall<T> {
   }
   
   private T callFunction(Connection con, PreparedSql preparedSql) throws Exception {
+    long startedAt = System.currentTimeMillis();
     
     CallableStatement cs = con.prepareCall(preparedSql.sql);
     try {
@@ -180,6 +197,7 @@ public class FutureCallDef<T> implements FutureCall<T> {
       
     } finally {
       cs.close();
+      logSql(preparedSql, startedAt);
     }
     
     return null;

@@ -41,7 +41,7 @@ public class TestProxyGenerator extends AbstractProxyGenerator {
   
   private final SqlViewer sqlViewer = new SqlViewer() {
     @Override
-    public void view(String sql, List<Object> params) {
+    public void view(String sql, List<Object> params, long delay) {
       System.out.println(sql);
       int i = 0;
       for (Object p : params) {

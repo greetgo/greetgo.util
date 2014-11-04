@@ -27,6 +27,8 @@ public interface SqlViewer {
    *          выполняемый SQL
    * @param params
    *          список значений, подставляемых на места (?) в выполняемом SQL-е
+   * @param delay
+   *          время выполнения запроса
    */
-  void view(String sql, List<Object> params);
+  void view(String sql, List<Object> params, long delay);
 }
