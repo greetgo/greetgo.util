@@ -1,8 +1,12 @@
 package kz.greetgo.gbatis.model;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import kz.greetgo.gbatis.futurecall.DbType;
+import kz.greetgo.gbatis.util.SqlUtil;
 
 public class SqlWithParams {
   public RequestType type;
@@ -61,5 +65,14 @@ public class SqlWithParams {
     ret.sql = sql;
     ret.params.addAll(params);
     return ret;
+  }
+  
+  public SqlWithParams page(DbType dbType, int offset, int count) {
+    try {
+      sql = SqlUtil.preparePagedSql(dbType, sql, offset, count, params);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+    return this;
   }
 }
