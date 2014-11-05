@@ -19,7 +19,7 @@ public class SqlWithParams {
     return ret;
   }
   
-  public static SqlWithParams select(String sql, Collection<Object> params) {
+  public static SqlWithParams selectWith(String sql, Collection<Object> params) {
     SqlWithParams ret = new SqlWithParams();
     ret.type = RequestType.Sele;
     ret.sql = sql;
@@ -37,7 +37,7 @@ public class SqlWithParams {
     return ret;
   }
   
-  public static SqlWithParams call(String sql, Collection<Object> params) {
+  public static SqlWithParams callWith(String sql, Collection<Object> params) {
     SqlWithParams ret = new SqlWithParams();
     ret.type = RequestType.Call;
     ret.sql = sql;
@@ -55,7 +55,7 @@ public class SqlWithParams {
     return ret;
   }
   
-  public static SqlWithParams modi(String sql, Collection<Object> params) {
+  public static SqlWithParams modiWith(String sql, Collection<Object> params) {
     SqlWithParams ret = new SqlWithParams();
     ret.type = RequestType.Modi;
     ret.sql = sql;
