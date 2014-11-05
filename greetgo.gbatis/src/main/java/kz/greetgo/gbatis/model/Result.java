@@ -34,4 +34,34 @@ public class Result {
    * Место вывода sql-ей для трэйсинга (может быть null)
    */
   public SqlViewer sqlViewer = null;
+  
+  public static Result setOf(Class<?> classs) {
+    Result ret = new Result();
+    ret.resultDataClass = classs;
+    ret.type = ResultType.SET;
+    return ret;
+  }
+  
+  public static Result listOf(Class<?> classs) {
+    Result ret = new Result();
+    ret.resultDataClass = classs;
+    ret.type = ResultType.LIST;
+    return ret;
+  }
+  
+  public static Result simple(Class<?> classs) {
+    Result ret = new Result();
+    ret.resultDataClass = classs;
+    ret.type = ResultType.SIMPLE;
+    return ret;
+  }
+  
+  public static Result mapOf(String keyFieldName, Class<?> keyClass, Class<?> valueClass) {
+    Result ret = new Result();
+    ret.resultDataClass = valueClass;
+    ret.type = ResultType.MAP;
+    ret.mapKeyClass = keyClass;
+    ret.mapKeyField = keyFieldName;
+    return ret;
+  }
 }
