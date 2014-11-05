@@ -163,11 +163,11 @@ public class ModelReaderTest {
     
     assertThat(request).isNotNull();
     
-    assertThat(request.resultType).isEqualTo(ResultType.LIST);
-    assertThat(request.resultDataClass + "").isEqualTo(RequestTestIface.Asd.class + "");
+    assertThat(request.result.type).isEqualTo(ResultType.LIST);
+    assertThat(request.result.resultDataClass + "").isEqualTo(RequestTestIface.Asd.class + "");
     assertThat(request.callNow).isTrue();
-    assertThat(request.mapKeyField).isNull();
-    assertThat(request.mapKeyClass).isNull();
+    assertThat(request.result.mapKeyField).isNull();
+    assertThat(request.result.mapKeyClass).isNull();
   }
   
   @Test
@@ -183,11 +183,11 @@ public class ModelReaderTest {
     
     assertThat(request).isNotNull();
     
-    assertThat(request.resultType).isEqualTo(ResultType.SIMPLE);
-    assertThat(request.resultDataClass + "").isEqualTo(RequestTestIface.Asd.class + "");
+    assertThat(request.result.type).isEqualTo(ResultType.SIMPLE);
+    assertThat(request.result.resultDataClass + "").isEqualTo(RequestTestIface.Asd.class + "");
     assertThat(request.callNow).isTrue();
-    assertThat(request.mapKeyField).isNull();
-    assertThat(request.mapKeyClass).isNull();
+    assertThat(request.result.mapKeyField).isNull();
+    assertThat(request.result.mapKeyClass).isNull();
   }
   
   @Test(expectedExceptions = RequestGeneratorException.class,
@@ -236,11 +236,11 @@ public class ModelReaderTest {
     
     assertThat(request).isNotNull();
     
-    assertThat(request.resultType).isEqualTo(ResultType.MAP);
-    assertThat(request.resultDataClass + "").isEqualTo(RequestTestIface.Asd.class + "");
+    assertThat(request.result.type).isEqualTo(ResultType.MAP);
+    assertThat(request.result.resultDataClass + "").isEqualTo(RequestTestIface.Asd.class + "");
     assertThat(request.callNow).isTrue();
-    assertThat(request.mapKeyClass + "").isEqualTo(String.class + "");
-    assertThat(request.mapKeyField).isEqualTo("mapKeyFieldName");
+    assertThat(request.result.mapKeyClass + "").isEqualTo(String.class + "");
+    assertThat(request.result.mapKeyField).isEqualTo("mapKeyFieldName");
   }
   
   @Test(expectedExceptions = RequestGeneratorException.class,
@@ -267,11 +267,11 @@ public class ModelReaderTest {
     
     assertThat(request).isNotNull();
     
-    assertThat(request.resultType).isEqualTo(ResultType.SIMPLE);
-    assertThat(request.resultDataClass + "").isEqualTo(RequestTestIface.Asd.class + "");
+    assertThat(request.result.type).isEqualTo(ResultType.SIMPLE);
+    assertThat(request.result.resultDataClass + "").isEqualTo(RequestTestIface.Asd.class + "");
     assertThat(request.callNow).isFalse();
-    assertThat(request.mapKeyClass).isNull();
-    assertThat(request.mapKeyField).isNull();
+    assertThat(request.result.mapKeyClass).isNull();
+    assertThat(request.result.mapKeyField).isNull();
   }
   
   @Test(expectedExceptions = RequestGeneratorException.class,
@@ -298,11 +298,11 @@ public class ModelReaderTest {
     
     assertThat(request).isNotNull();
     
-    assertThat(request.resultType).isEqualTo(ResultType.LIST);
-    assertThat(request.resultDataClass + "").isEqualTo(RequestTestIface.Asd.class + "");
+    assertThat(request.result.type).isEqualTo(ResultType.LIST);
+    assertThat(request.result.resultDataClass + "").isEqualTo(RequestTestIface.Asd.class + "");
     assertThat(request.callNow).isFalse();
-    assertThat(request.mapKeyField).isNull();
-    assertThat(request.mapKeyClass).isNull();
+    assertThat(request.result.mapKeyField).isNull();
+    assertThat(request.result.mapKeyClass).isNull();
   }
   
   @Test(expectedExceptions = RequestGeneratorException.class,
@@ -340,11 +340,11 @@ public class ModelReaderTest {
     
     assertThat(request).isNotNull();
     
-    assertThat(request.resultType).isEqualTo(ResultType.MAP);
-    assertThat(request.resultDataClass + "").isEqualTo(RequestTestIface.Asd.class + "");
+    assertThat(request.result.type).isEqualTo(ResultType.MAP);
+    assertThat(request.result.resultDataClass + "").isEqualTo(RequestTestIface.Asd.class + "");
     assertThat(request.callNow).isFalse();
-    assertThat(request.mapKeyClass + "").isEqualTo(String.class + "");
-    assertThat(request.mapKeyField).isEqualTo("mapKeyFieldName");
+    assertThat(request.result.mapKeyClass + "").isEqualTo(String.class + "");
+    assertThat(request.result.mapKeyField).isEqualTo("mapKeyFieldName");
   }
   
   @Test
@@ -361,11 +361,11 @@ public class ModelReaderTest {
     assertThat(request).isNotNull();
     
     assertThat(request.type).isEqualTo(RequestType.Modi);
-    assertThat(request.resultType).isEqualTo(ResultType.SIMPLE);
-    assertThat(request.resultDataClass + "").isEqualTo(Void.TYPE + "");
+    assertThat(request.result.type).isEqualTo(ResultType.SIMPLE);
+    assertThat(request.result.resultDataClass + "").isEqualTo(Void.TYPE + "");
     assertThat(request.callNow).isTrue();
-    assertThat(request.mapKeyClass).isNull();
-    assertThat(request.mapKeyField).isNull();
+    assertThat(request.result.mapKeyClass).isNull();
+    assertThat(request.result.mapKeyField).isNull();
     assertThat(request.sql).isEqualTo("modi sql text");
   }
   
@@ -382,11 +382,11 @@ public class ModelReaderTest {
     
     assertThat(request).isNotNull();
     
-    assertThat(request.resultType).isEqualTo(ResultType.SET);
-    assertThat(request.resultDataClass + "").isEqualTo(RequestTestIface.Asd.class + "");
+    assertThat(request.result.type).isEqualTo(ResultType.SET);
+    assertThat(request.result.resultDataClass + "").isEqualTo(RequestTestIface.Asd.class + "");
     assertThat(request.callNow).isFalse();
-    assertThat(request.mapKeyField).isNull();
-    assertThat(request.mapKeyClass).isNull();
+    assertThat(request.result.mapKeyField).isNull();
+    assertThat(request.result.mapKeyClass).isNull();
   }
   
   @Test
@@ -402,10 +402,10 @@ public class ModelReaderTest {
     
     assertThat(request).isNotNull();
     
-    assertThat(request.resultType).isEqualTo(ResultType.SET);
-    assertThat(request.resultDataClass + "").isEqualTo(RequestTestIface.Asd.class + "");
+    assertThat(request.result.type).isEqualTo(ResultType.SET);
+    assertThat(request.result.resultDataClass + "").isEqualTo(RequestTestIface.Asd.class + "");
     assertThat(request.callNow).isTrue();
-    assertThat(request.mapKeyField).isNull();
-    assertThat(request.mapKeyClass).isNull();
+    assertThat(request.result.mapKeyField).isNull();
+    assertThat(request.result.mapKeyClass).isNull();
   }
 }

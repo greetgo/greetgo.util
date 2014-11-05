@@ -9,6 +9,7 @@ import java.util.List;
 
 import kz.greetgo.gbatis.model.Param;
 import kz.greetgo.gbatis.model.Request;
+import kz.greetgo.gbatis.model.SqlWithParams;
 import kz.greetgo.gbatis.model.WithView;
 import kz.greetgo.gbatis.util.SqlUtil;
 import kz.greetgo.sqlmanager.gen.Conf;
@@ -24,8 +25,7 @@ import kz.greetgo.sqlmanager.model.Table;
  * @author pompei
  */
 class PreparedSql {
-  public String sql;
-  public final List<Object> params = new ArrayList<>();
+  public final SqlWithParams sql = new SqlWithParams();
   
   private Conf conf;
   private Stru stru;
@@ -36,8 +36,8 @@ class PreparedSql {
   private int pageSize;
   private DbType dbType;
   
-  public static PreparedSql prepare(Conf conf, Stru stru, Request request, Object[] args, Date at,
-      DbType dbType, int offset, int pageSize) throws Exception {
+  public static SqlWithParams prepare(Conf conf, Stru stru, Request request, Object[] args,
+      Date at, DbType dbType, int offset, int pageSize) throws Exception {
     
     PreparedSql ret = new PreparedSql();
     
@@ -52,7 +52,7 @@ class PreparedSql {
     
     ret.init();
     
-    return ret;
+    return ret.sql;
   }
   
   private static class WithSql {
@@ -200,7 +200,9 @@ class PreparedSql {
       sb.append(' ');
     }
     
-    sql = sb + preparePagedSql(dbType, prepareQuestionSql(), offset, pageSize, params);
+    sql.sql = sb + preparePagedSql(dbType, prepareQuestionSql(), offset, pageSize, sql.params);
+    
+    sql.type = request.type;
   }
   
   private void appendWithSqls(StringBuilder sb) {
@@ -211,7 +213,7 @@ class PreparedSql {
       sb.append(conf.tsTab + " as (select " + placeHolder + " as " + conf.ts
           + (dbType == DbType.Oracle ? " from dual" :"") + ")");
       needComma = true;
-      params.add(new java.sql.Timestamp(at.getTime()));
+      sql.params.add(new java.sql.Timestamp(at.getTime()));
     }
     for (WithSql withSql : withSqls) {
       if (needComma) {
@@ -257,7 +259,7 @@ class PreparedSql {
       if (isDollar) {
         sb.append(SqlUtil.forSql(getParamValue(paramName)));
       } else {
-        params.add(SqlUtil.forSql(getParamValue(paramName)));
+        sql.params.add(SqlUtil.forSql(getParamValue(paramName)));
         sb.append('?');
       }
       

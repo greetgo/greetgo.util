@@ -97,8 +97,8 @@ public class FutureCallDefTest extends AbstractWithDbTest {
     Request req = new Request();
     req.callNow = true;
     req.paramList.add(new Param(Integer.TYPE, "age"));
-    req.resultDataClass = Client.class;
-    req.resultType = ResultType.LIST;
+    req.result.resultDataClass = Client.class;
+    req.result.type = ResultType.LIST;
     req.type = RequestType.Sele;
     req.sql = "select client as id, surname, name, patronymic"
         + " from v_client where age = #{age} order by client";
@@ -145,8 +145,8 @@ public class FutureCallDefTest extends AbstractWithDbTest {
     req.callNow = true;
     req.paramList.add(new Param(Integer.TYPE, "age"));
     req.paramList.add(new Param(Date.class, "atTime"));
-    req.resultDataClass = Integer.TYPE;
-    req.resultType = ResultType.SIMPLE;
+    req.result.resultDataClass = Integer.TYPE;
+    req.result.type = ResultType.SIMPLE;
     req.type = RequestType.Modi;
     req.sql = "update m_client_age set ts = #{atTime} where age = #{age}";
     
@@ -190,8 +190,8 @@ public class FutureCallDefTest extends AbstractWithDbTest {
     Request req = new Request();
     req.callNow = true;
     req.paramList.add(new Param(Integer.TYPE, "age"));
-    req.resultDataClass = Long.class;
-    req.resultType = ResultType.SIMPLE;
+    req.result.resultDataClass = Long.class;
+    req.result.type = ResultType.SIMPLE;
     req.type = RequestType.Sele;
     req.sql = "select client from v_client where age = #{age}";
     
@@ -232,8 +232,8 @@ public class FutureCallDefTest extends AbstractWithDbTest {
     Request req = new Request();
     req.callNow = true;
     req.paramList.add(new Param(Integer.TYPE, "age"));
-    req.resultDataClass = Client.class;
-    req.resultType = ResultType.SET;
+    req.result.resultDataClass = Client.class;
+    req.result.type = ResultType.SET;
     req.type = RequestType.Sele;
     req.sql = "select client as id, surname, name, patronymic"
         + " from v_client where age = #{age} order by client";
@@ -257,8 +257,8 @@ public class FutureCallDefTest extends AbstractWithDbTest {
     Request req = new Request();
     req.callNow = true;
     req.paramList.add(new Param(Integer.TYPE, "age"));
-    req.resultDataClass = EnumAsd.class;
-    req.resultType = ResultType.SIMPLE;
+    req.result.resultDataClass = EnumAsd.class;
+    req.result.type = ResultType.SIMPLE;
     req.type = RequestType.Sele;
     req.sql = "select 'ASD'";
     
@@ -276,8 +276,8 @@ public class FutureCallDefTest extends AbstractWithDbTest {
     Request req = new Request();
     req.callNow = true;
     req.paramList.add(new Param(Integer.TYPE, "age"));
-    req.resultDataClass = EnumAsd.class;
-    req.resultType = ResultType.LIST;
+    req.result.resultDataClass = EnumAsd.class;
+    req.result.type = ResultType.LIST;
     req.type = RequestType.Sele;
     req.sql = "select 'ASD'";
     
@@ -296,8 +296,8 @@ public class FutureCallDefTest extends AbstractWithDbTest {
     
     Request req = new Request();
     req.callNow = true;
-    req.resultDataClass = String.class;
-    req.resultType = ResultType.SIMPLE;
+    req.result.resultDataClass = String.class;
+    req.result.type = ResultType.SIMPLE;
     req.type = RequestType.Sele;
     req.sql = "select 'Hello world'";
     
@@ -314,8 +314,8 @@ public class FutureCallDefTest extends AbstractWithDbTest {
     
     Request req = new Request();
     req.callNow = true;
-    req.resultDataClass = String.class;
-    req.resultType = ResultType.LIST;
+    req.result.resultDataClass = String.class;
+    req.result.type = ResultType.LIST;
     req.type = RequestType.Sele;
     req.sql = "select 'Hello world'";
     

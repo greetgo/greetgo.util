@@ -121,7 +121,7 @@ public abstract class AbstractProxyGenerator implements BeanDefinitionRegistryPo
     FutureCallDef<Object> futureCall = new FutureCallDef<Object>(getConf(), getStru(),
         getJdbcTemplate(), request, args);
     
-    futureCall.sqlViewer = getSqlViewer();
+    futureCall.request.result.sqlViewer = getSqlViewer();
     
     if (request.callNow) return futureCall.last();
     

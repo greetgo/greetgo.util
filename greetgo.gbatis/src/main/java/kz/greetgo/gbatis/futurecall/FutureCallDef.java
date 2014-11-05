@@ -1,20 +1,13 @@
 package kz.greetgo.gbatis.futurecall;
 
-import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import kz.greetgo.gbatis.model.FutureCall;
 import kz.greetgo.gbatis.model.Request;
+import kz.greetgo.gbatis.model.SqlWithParams;
+import kz.greetgo.gbatis.util.OperUtil;
 import kz.greetgo.gbatis.util.SqlUtil;
 import kz.greetgo.sqlmanager.gen.Conf;
 import kz.greetgo.sqlmanager.model.Stru;
@@ -31,13 +24,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class FutureCallDef<T> implements FutureCall<T> {
   
-  private Conf conf;
-  private Stru stru;
-  private JdbcTemplate jdbc;
-  private Request request;
-  private Object[] args;
-  
-  public SqlViewer sqlViewer = null;
+  private final Conf conf;
+  private final Stru stru;
+  private final JdbcTemplate jdbc;
+  public final Request request;
+  private final Object[] args;
   
   public FutureCallDef(Conf conf, Stru stru, JdbcTemplate jdbc, Request request, Object[] args) {
     this.conf = conf;
@@ -79,191 +70,10 @@ public class FutureCallDef<T> implements FutureCall<T> {
   private T onPagedWithConnection(Connection con, Date at, int offset, int pageSize)
       throws Exception {
     
-    PreparedSql preparedSql = PreparedSql.prepare(conf, stru, request, args, at,
+    SqlWithParams sql = PreparedSql.prepare(conf, stru, request, args, at,
         SqlUtil.defineDbType(con), offset, pageSize);
     
-    return callPrepared(con, preparedSql);
-  }
-  
-  private T callPrepared(Connection con, PreparedSql preparedSql) throws Exception {
-    switch (request.type) {
-    case Call:
-      return callFunction(con, preparedSql);
-      
-    case Sele:
-      return callSelect(con, preparedSql);
-      
-    case Modi:
-      return callModi(con, preparedSql);
-      
-    default:
-      throw new IllegalArgumentException("Unknown request type = " + request.type);
-    }
-  }
-  
-  private T callModi(Connection con, PreparedSql preparedSql) throws Exception {
-    long startedAt = System.currentTimeMillis();
-    
-    PreparedStatement ps = con.prepareStatement(preparedSql.sql);
-    
-    try {
-      
-      {
-        int index = 1;
-        for (Object param : preparedSql.params) {
-          ps.setObject(index++, param);
-        }
-      }
-      
-      return castInt(ps.executeUpdate(), request.resultDataClass);
-      
-    } finally {
-      ps.close();
-      
-      logSql(preparedSql, startedAt);
-    }
-  }
-  
-  private void logSql(PreparedSql preparedSql, long startedAt) {
-    if (sqlViewer == null) return;
-    
-    try {
-      long delay = System.currentTimeMillis() - startedAt;
-      if (!sqlViewer.needView()) return;
-      sqlViewer.view(preparedSql.sql, preparedSql.params, delay);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-  
-  @SuppressWarnings("unchecked")
-  private static <T> T castInt(int value, Class<?> returnClass) {
-    if (Integer.class.equals(returnClass) || Integer.TYPE.equals(returnClass)) {
-      return (T)new Integer(value);
-    }
-    if (Long.class.equals(returnClass) || Long.TYPE.equals(returnClass)) {
-      return (T)new Long(value);
-    }
-    if (Void.class.equals(returnClass) || Void.TYPE.equals(returnClass)) {
-      return null;
-    }
-    throw new IllegalArgumentException("Cannot use type " + returnClass + " in @Modi");
-  }
-  
-  private T callSelect(Connection con, PreparedSql preparedSql) throws Exception {
-    long startedAt = System.currentTimeMillis();
-    
-    PreparedStatement ps = con.prepareStatement(preparedSql.sql);
-    
-    try {
-      
-      {
-        int index = 1;
-        for (Object param : preparedSql.params) {
-          ps.setObject(index++, param);
-        }
-      }
-      
-      ResultSet rs = ps.executeQuery();
-      try {
-        
-        return assemble(rs);
-        
-      } finally {
-        rs.close();
-        
-        logSql(preparedSql, startedAt);
-      }
-      
-    } finally {
-      ps.close();
-    }
-  }
-  
-  private T callFunction(Connection con, PreparedSql preparedSql) throws Exception {
-    long startedAt = System.currentTimeMillis();
-    
-    CallableStatement cs = con.prepareCall(preparedSql.sql);
-    try {
-      
-      {
-        int index = 1;
-        for (Object param : preparedSql.params) {
-          cs.setObject(index++, param);
-        }
-      }
-      
-      cs.execute();
-      
-    } finally {
-      cs.close();
-      logSql(preparedSql, startedAt);
-    }
-    
-    return null;
-  }
-  
-  private T assemble(ResultSet rs) throws Exception {
-    
-    switch (request.resultType) {
-    case SIMPLE:
-      return assembleSimple(rs);
-      
-    case LIST:
-      return assembleList(rs);
-      
-    case SET:
-      return assembleSet(rs);
-      
-    case MAP:
-      return assembleMap(rs);
-      
-    default:
-      throw new IllegalArgumentException("Unknown request.resultType = " + request.resultType);
-    }
-    
-  }
-  
-  @SuppressWarnings("unchecked")
-  private T assembleMap(ResultSet rs) throws Exception {
-    Map<Object, Object> ret = new HashMap<>();
-    Map<String, Boolean> hasColumnCache = new HashMap<>();
-    while (rs.next()) {
-      Object object = request.createResultRowFromRS(rs, hasColumnCache);
-      Object key = SqlUtil.fromSql(rs.getObject(request.mapKeyField), request.mapKeyClass);
-      ret.put(key, object);
-    }
-    return (T)ret;
-  }
-  
-  @SuppressWarnings("unchecked")
-  private T assembleList(ResultSet rs) throws Exception {
-    List<Object> ret = new ArrayList<>();
-    Map<String, Boolean> hasColumnCache = new HashMap<>();
-    while (rs.next()) {
-      ret.add(request.createResultRowFromRS(rs, hasColumnCache));
-    }
-    return (T)ret;
-  }
-  
-  @SuppressWarnings("unchecked")
-  private T assembleSet(ResultSet rs) throws Exception {
-    Set<Object> ret = new HashSet<>();
-    Map<String, Boolean> hasColumnCache = new HashMap<>();
-    while (rs.next()) {
-      ret.add(request.createResultRowFromRS(rs, hasColumnCache));
-    }
-    return (T)ret;
-  }
-  
-  @SuppressWarnings("unchecked")
-  private T assembleSimple(ResultSet rs) throws Exception {
-    if (!rs.next()) {
-      if (Boolean.class.equals(request.resultDataClass)) return (T)Boolean.FALSE;
-      if (Boolean.TYPE.equals(request.resultDataClass)) return (T)Boolean.FALSE;
-      return null;
-    }
-    return (T)request.createResultRowFromRS(rs, null);
+    return OperUtil.call(con, sql, request.result);
   }
   
 }

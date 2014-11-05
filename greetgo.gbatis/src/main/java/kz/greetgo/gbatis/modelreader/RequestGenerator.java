@@ -166,7 +166,7 @@ public class RequestGenerator {
       }
       
       if (ann instanceof MapKey) {
-        ret.mapKeyField = ((MapKey)ann).value();
+        ret.result.mapKeyField = ((MapKey)ann).value();
         continue FOR;
       }
     }
@@ -295,8 +295,8 @@ public class RequestGenerator {
   
   private static void fillResult(Request ret, Method method) {
     if (ret.type == RequestType.Modi) {
-      ret.resultDataClass = method.getReturnType();
-      ret.resultType = ResultType.SIMPLE;
+      ret.result.resultDataClass = method.getReturnType();
+      ret.result.type = ResultType.SIMPLE;
       ret.callNow = true;
       return;
     }
@@ -305,10 +305,11 @@ public class RequestGenerator {
       if (method.getGenericReturnType() instanceof ParameterizedType) {
         ParameterizedType type = (ParameterizedType)method.getGenericReturnType();
         if (type.getActualTypeArguments().length != 1) {
-          throw new RequestGeneratorException(List.class + " has more or less then one type argument");
+          throw new RequestGeneratorException(List.class
+              + " has more or less then one type argument");
         }
-        ret.resultDataClass = (Class<?>)type.getActualTypeArguments()[0];
-        ret.resultType = ResultType.LIST;
+        ret.result.resultDataClass = (Class<?>)type.getActualTypeArguments()[0];
+        ret.result.type = ResultType.LIST;
         ret.callNow = true;
         return;
       }
@@ -319,10 +320,11 @@ public class RequestGenerator {
       if (method.getGenericReturnType() instanceof ParameterizedType) {
         ParameterizedType type = (ParameterizedType)method.getGenericReturnType();
         if (type.getActualTypeArguments().length != 1) {
-          throw new RequestGeneratorException(List.class + " has more or less then one type argument");
+          throw new RequestGeneratorException(List.class
+              + " has more or less then one type argument");
         }
-        ret.resultDataClass = (Class<?>)type.getActualTypeArguments()[0];
-        ret.resultType = ResultType.SET;
+        ret.result.resultDataClass = (Class<?>)type.getActualTypeArguments()[0];
+        ret.result.type = ResultType.SET;
         ret.callNow = true;
         return;
       }
@@ -331,17 +333,18 @@ public class RequestGenerator {
     
     if (method.getReturnType().isAssignableFrom(Map.class)) {
       if (method.getGenericReturnType() instanceof ParameterizedType) {
-        if (ret.mapKeyField == null) {
+        if (ret.result.mapKeyField == null) {
           throw new RequestGeneratorException("No MapKey in " + method);
         }
         
         ParameterizedType type = (ParameterizedType)method.getGenericReturnType();
         if (type.getActualTypeArguments().length != 2) {
-          throw new RequestGeneratorException(List.class + " has more or less then two type argument");
+          throw new RequestGeneratorException(List.class
+              + " has more or less then two type argument");
         }
-        ret.mapKeyClass = (Class<?>)type.getActualTypeArguments()[0];
-        ret.resultDataClass = (Class<?>)type.getActualTypeArguments()[1];
-        ret.resultType = ResultType.MAP;
+        ret.result.mapKeyClass = (Class<?>)type.getActualTypeArguments()[0];
+        ret.result.resultDataClass = (Class<?>)type.getActualTypeArguments()[1];
+        ret.result.type = ResultType.MAP;
         ret.callNow = true;
         return;
       }
@@ -352,7 +355,8 @@ public class RequestGenerator {
       if (method.getGenericReturnType() instanceof ParameterizedType) {
         ParameterizedType type = (ParameterizedType)method.getGenericReturnType();
         if (type.getActualTypeArguments().length != 1) {
-          throw new RequestGeneratorException(List.class + " has more or less then one type argument");
+          throw new RequestGeneratorException(List.class
+              + " has more or less then one type argument");
         }
         
         Type futureCallArgType = type.getActualTypeArguments()[0];
@@ -363,8 +367,8 @@ public class RequestGenerator {
       throw new RequestGeneratorException("Result FutureCall without type argument in " + method);
     }
     
-    ret.resultDataClass = method.getReturnType();
-    ret.resultType = ResultType.SIMPLE;
+    ret.result.resultDataClass = method.getReturnType();
+    ret.result.type = ResultType.SIMPLE;
     ret.callNow = true;
   }
   
@@ -374,7 +378,8 @@ public class RequestGenerator {
     
     if (futureCallArgType instanceof Class) {
       if (((Class<?>)futureCallArgType).isAssignableFrom(Map.class)) {
-        throw new RequestGeneratorException("Result FutureCall Map without type arguments in " + method);
+        throw new RequestGeneratorException("Result FutureCall Map without type arguments in "
+            + method);
       }
       if (((Class<?>)futureCallArgType).isAssignableFrom(List.class)) {
         throw new RequestGeneratorException("Result List in FutureCall without type arguments in "
@@ -394,7 +399,7 @@ public class RequestGenerator {
         futureCallArgClass = (Class<?>)ptype.getRawType();
         
         if (((Class<?>)ptype.getRawType()).isAssignableFrom(Map.class)) {
-          if (ret.mapKeyField == null) {
+          if (ret.result.mapKeyField == null) {
             throw new RequestGeneratorException("No MapKey in " + method);
           }
           if (ptype.getActualTypeArguments().length != 2) {
@@ -402,9 +407,9 @@ public class RequestGenerator {
                 + " has more or less then two type argument in result of " + method);
           }
           
-          ret.resultType = ResultType.MAP;
-          ret.mapKeyClass = (Class<?>)ptype.getActualTypeArguments()[0];
-          ret.resultDataClass = (Class<?>)ptype.getActualTypeArguments()[1];
+          ret.result.type = ResultType.MAP;
+          ret.result.mapKeyClass = (Class<?>)ptype.getActualTypeArguments()[0];
+          ret.result.resultDataClass = (Class<?>)ptype.getActualTypeArguments()[1];
           return;
         }
         
@@ -414,8 +419,8 @@ public class RequestGenerator {
                 + " has more or less then one type argument in result of " + method);
           }
           
-          ret.resultType = ResultType.LIST;
-          ret.resultDataClass = (Class<?>)ptype.getActualTypeArguments()[0];
+          ret.result.type = ResultType.LIST;
+          ret.result.resultDataClass = (Class<?>)ptype.getActualTypeArguments()[0];
           return;
         }
         
@@ -425,8 +430,8 @@ public class RequestGenerator {
                 + " has more or less then one type argument in result of " + method);
           }
           
-          ret.resultType = ResultType.SET;
-          ret.resultDataClass = (Class<?>)ptype.getActualTypeArguments()[0];
+          ret.result.type = ResultType.SET;
+          ret.result.resultDataClass = (Class<?>)ptype.getActualTypeArguments()[0];
           return;
         }
         
@@ -438,8 +443,8 @@ public class RequestGenerator {
       throw new RequestGeneratorException("Cannot prepare result for " + method);
     }
     
-    ret.resultType = ResultType.SIMPLE;
-    ret.resultDataClass = futureCallArgClass;
+    ret.result.type = ResultType.SIMPLE;
+    ret.result.resultDataClass = futureCallArgClass;
   }
   
   private static void readXmls(Request ret, Method method, Stru stru, Conf conf) throws Exception {
