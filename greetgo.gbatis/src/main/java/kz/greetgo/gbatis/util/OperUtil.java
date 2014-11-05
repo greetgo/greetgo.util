@@ -301,7 +301,8 @@ public class OperUtil {
     return (T)OperUtil.createResultRowFromRS(rs, null, result.resultDataClass);
   }
   
-  public static <T> T call(Connection con, SqlWithParams sql, Result result) throws Exception {
+  public static <T> T callException(Connection con, SqlWithParams sql, Result result)
+      throws Exception {
     switch (sql.type) {
     case Call:
       return callFunction(con, sql, result);
@@ -314,6 +315,14 @@ public class OperUtil {
       
     default:
       throw new IllegalArgumentException("Unknown request type = " + sql.type);
+    }
+  }
+  
+  public static <T> T call(Connection con, SqlWithParams sql, Result result) {
+    try {
+      return callException(con, sql, result);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
   }
 }

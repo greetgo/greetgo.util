@@ -73,7 +73,7 @@ public class FutureCallDef<T> implements FutureCall<T> {
     SqlWithParams sql = PreparedSql.prepare(conf, stru, request, args, at,
         SqlUtil.defineDbType(con), offset, pageSize);
     
-    return OperUtil.call(con, sql, request.result);
+    return OperUtil.callException(con, sql, request.result);
   }
   
 }
