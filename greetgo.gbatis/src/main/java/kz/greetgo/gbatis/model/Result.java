@@ -35,7 +35,7 @@ public class Result {
    */
   public SqlViewer sqlViewer = null;
   
-  public Result sqlViewer(SqlViewer sqlViewer) {
+  public Result with(SqlViewer sqlViewer) {
     this.sqlViewer = sqlViewer;
     return this;
   }
