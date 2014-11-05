@@ -35,8 +35,19 @@ public class Result {
    */
   public SqlViewer sqlViewer = null;
   
+  /**
+   * Объект для создания элемента данных. Если <code>null</code>, то используется метод newInstance
+   * у класса объекта
+   */
+  public Creator<?> creator = null;
+  
   public Result with(SqlViewer sqlViewer) {
     this.sqlViewer = sqlViewer;
+    return this;
+  }
+  
+  public Result with(Creator<?> creator) {
+    this.creator = creator;
     return this;
   }
   

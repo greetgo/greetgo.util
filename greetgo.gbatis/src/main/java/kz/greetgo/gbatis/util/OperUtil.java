@@ -107,14 +107,17 @@ public class OperUtil {
     return SIMPLE_CLASSES.contains(cl);
   }
   
-  public static Object createResultRowFromRS(ResultSet rs, Map<String, Boolean> hasColumnCache,
-      Class<?> resultDataClass) throws Exception {
-    if (isSimpleClass(resultDataClass)) {
-      return SqlUtil.fromSql(rs.getObject(1), resultDataClass);
+  public static Object
+      createObject(ResultSet rs, Map<String, Boolean> hasColumnCache, Result result)
+          throws Exception {
+    if (isSimpleClass(result.resultDataClass)) {
+      return SqlUtil.fromSql(rs.getObject(1), result.resultDataClass);
     }
     
     {
-      Object object = resultDataClass.newInstance();
+      Object object = result.creator == null ? //
+      result.resultDataClass.newInstance() //
+          :result.creator.create();
       copyRow(rs, object, hasColumnCache);
       return object;
     }
@@ -174,7 +177,7 @@ public class OperUtil {
     if (Void.class.equals(returnClass) || Void.TYPE.equals(returnClass)) {
       return null;
     }
-    throw new IllegalArgumentException("Cannot use type " + returnClass + " in @Modi");
+    throw new IllegalArgumentException("Cannot use type " + returnClass + " in Modi");
   }
   
   private static <T> T callSelect(Connection con, SqlWithParams sql, Result result)
@@ -264,7 +267,7 @@ public class OperUtil {
     Map<Object, Object> ret = new HashMap<>();
     Map<String, Boolean> hasColumnCache = new HashMap<>();
     while (rs.next()) {
-      Object object = createResultRowFromRS(rs, hasColumnCache, result.resultDataClass);
+      Object object = createObject(rs, hasColumnCache, result);
       Object key = SqlUtil.fromSql(rs.getObject(result.mapKeyField), result.mapKeyClass);
       ret.put(key, object);
     }
@@ -276,7 +279,7 @@ public class OperUtil {
     List<Object> ret = new ArrayList<>();
     Map<String, Boolean> hasColumnCache = new HashMap<>();
     while (rs.next()) {
-      ret.add(createResultRowFromRS(rs, hasColumnCache, result.resultDataClass));
+      ret.add(createObject(rs, hasColumnCache, result));
     }
     return (T)ret;
   }
@@ -284,9 +287,9 @@ public class OperUtil {
   @SuppressWarnings("unchecked")
   private static <T> T assembleSet(ResultSet rs, Result result) throws Exception {
     Set<Object> ret = new HashSet<>();
-    Map<String, Boolean> hasColumnCache = new HashMap<>();
+    Map<String, Boolean> columnCache = new HashMap<>();
     while (rs.next()) {
-      ret.add(createResultRowFromRS(rs, hasColumnCache, result.resultDataClass));
+      ret.add(createObject(rs, columnCache, result));
     }
     return (T)ret;
   }
@@ -298,7 +301,7 @@ public class OperUtil {
       if (Boolean.TYPE.equals(result.resultDataClass)) return (T)Boolean.FALSE;
       return null;
     }
-    return (T)OperUtil.createResultRowFromRS(rs, null, result.resultDataClass);
+    return (T)createObject(rs, null, result);
   }
   
   public static <T> T callException(Connection con, SqlWithParams sql, Result result)
