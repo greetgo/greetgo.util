@@ -35,6 +35,11 @@ public class Result {
    */
   public SqlViewer sqlViewer = null;
   
+  public Result sqlViewer(SqlViewer sqlViewer) {
+    this.sqlViewer = sqlViewer;
+    return this;
+  }
+  
   public static Result setOf(Class<?> classs) {
     Result ret = new Result();
     ret.resultDataClass = classs;
