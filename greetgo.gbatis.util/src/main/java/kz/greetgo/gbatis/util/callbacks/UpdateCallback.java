@@ -88,7 +88,7 @@ public final class UpdateCallback implements ConnectionCallback<Integer> {
         }
         if (value == null) throw new IllegalArgumentException("It is updating table " + tableName
             + ". This table has primary key with field " + field.getName()
-            + ". But its asd in object with class " + object.getClass()
+            + ". But its value in object with class " + object.getClass()
             + " is null. I do not know what to update.");
         keyData.add(new Data(value, colinfoMap.get(fn)));
       } else if (colinfoMap.keySet().contains(fn)) {

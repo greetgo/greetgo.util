@@ -1,11 +1,15 @@
-package kz.greetgo.gbatis.util.callbacks;
+package kz.greetgo.gbatis.util.callbacks.meta;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Set;
 
 import kz.greetgo.gbatis.futurecall.SqlViewer;
+import kz.greetgo.gbatis.model.Result;
+import kz.greetgo.gbatis.model.SqlWithParams;
+import kz.greetgo.gbatis.util.OperUtil;
 import kz.greetgo.gbatis.util.model.ForeignKey;
+import kz.greetgo.gbatis.util.sqls.SqlSrc;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
@@ -13,7 +17,6 @@ import org.springframework.jdbc.core.ConnectionCallback;
 public class ReferencesToCallback implements ConnectionCallback<Set<ForeignKey>> {
   public SqlViewer sqlViewer;
   
-  @SuppressWarnings("unused")
   private final String tableName;
   
   public ReferencesToCallback(String tableName) {
@@ -27,7 +30,8 @@ public class ReferencesToCallback implements ConnectionCallback<Set<ForeignKey>>
   
   @Override
   public Set<ForeignKey> doInConnection(Connection con) throws SQLException, DataAccessException {
-    // TODO Auto-generated method stub
-    return null;
+    String sqlStr = SqlSrc.get(con).sql("meta/referencesTo");
+    SqlWithParams sql = SqlWithParams.select(sqlStr, tableName);
+    return OperUtil.call(con, sql, Result.setOf(ForeignKey.class).with(sqlViewer));
   }
 }

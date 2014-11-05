@@ -1,12 +1,12 @@
 package kz.greetgo.gbatis.util.callbacks;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import kz.greetgo.gbatis.futurecall.SqlViewer;
-import kz.greetgo.gbatis.util.SqlUtil;
+import kz.greetgo.gbatis.model.Result;
+import kz.greetgo.gbatis.model.SqlWithParams;
+import kz.greetgo.gbatis.util.OperUtil;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
@@ -37,30 +37,7 @@ public final class CountWhereCallback implements ConnectionCallback<Integer> {
     sql.append("select count(1) from ").append(tableName);
     U.appendWhere(sql, where);
     
-    long startedAt = System.currentTimeMillis();
-    
-    PreparedStatement ps = con.prepareStatement(sql.toString());
-    if (values != null) {
-      int index = 1;
-      for (Object value : values) {
-        ps.setObject(index++, SqlUtil.forSql(value));
-      }
-    }
-    String err = U.SQLERROR;
-    try {
-      ResultSet rs = ps.executeQuery();
-      try {
-        rs.next();
-        int ret = rs.getInt(1);
-        err = null;
-        return ret;
-      } finally {
-        rs.close();
-      }
-    } finally {
-      ps.close();
-      
-      if (U.need(sqlViewer)) U.view(startedAt, sqlViewer, err, sql.toString(), values);
-    }
+    SqlWithParams sqlp = SqlWithParams.select(sql.toString(), values);
+    return OperUtil.call(con, sqlp, Result.simple(Integer.class));
   }
 }
