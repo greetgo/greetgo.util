@@ -110,7 +110,7 @@ public class OperUtil {
   public static Object
       createObject(ResultSet rs, Map<String, Boolean> hasColumnCache, Result result)
           throws Exception {
-    if (isSimpleClass(result.resultDataClass)) {
+    if (result.resultDataClass != null && isSimpleClass(result.resultDataClass)) {
       return SqlUtil.fromSql(rs.getObject(1), result.resultDataClass);
     }
     
