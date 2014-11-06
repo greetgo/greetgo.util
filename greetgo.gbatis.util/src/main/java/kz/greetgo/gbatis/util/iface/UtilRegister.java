@@ -3,6 +3,8 @@ package kz.greetgo.gbatis.util.iface;
 import java.util.Date;
 import java.util.List;
 
+import kz.greetgo.gbatis.model.Creator;
+
 public interface UtilRegister {
   void cleanTables(String... tableName);
   
@@ -59,8 +61,6 @@ public interface UtilRegister {
   int selectInt(CharSequence sql, List<Object> params);
   
   int seleInt(CharSequence sql, Object... params);
-  
-  <T> T seleOneTo(T toObject, CharSequence sql, Object... params);
   
   /**
    * По ключевым полям проверяет наличие объекта в БД: если находит, то обновляет остальные поля,

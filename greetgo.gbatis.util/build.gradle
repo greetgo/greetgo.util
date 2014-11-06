@@ -63,7 +63,7 @@ dependencies {
   //compile 'org.slf4j:log4j-over-slf4j:1.7.5'
   compile 'com.metapossum:metapossum-scanner:1.0.1'
 
-  compile 'kz.greetgo:greetgo.gbatis:2.1.6'
+  compile 'kz.greetgo:greetgo.gbatis:2.1.8'
 
   testCompile 'org.testng:testng:6.1.1'
   testCompile 'org.easytesting:fest-assert-core:2.0M10'
