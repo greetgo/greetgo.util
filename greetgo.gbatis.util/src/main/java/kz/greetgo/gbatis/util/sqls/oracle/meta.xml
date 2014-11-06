@@ -49,14 +49,14 @@
       column_id nomer
     from ALL_TAB_COLUMNS
     where owner =  sys_context('USERENV','SESSION_SCHEMA')
-    and table_name = upper( #{tableName} )
+    and table_name = upper( ? )
     order by column_id
   ]]></sql>
 
   <sql id="keyNames" type="Sele"><![CDATA[
     SELECT cols.column_name
     FROM all_constraints cons, all_cons_columns cols
-    WHERE cols.table_name = upper( #{tableName} )
+    WHERE cols.table_name = upper( ? )
     and cons.owner =  sys_context('USERENV','SESSION_SCHEMA')
     AND cons.constraint_type = 'P'
     AND cons.constraint_name = cols.constraint_name

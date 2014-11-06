@@ -46,7 +46,7 @@
       case when is_nullable = 'YES' then 1 else 0 end canNull,
       ordinal_position nomer
     from information_schema.columns where
-    table_name = lower( #{tableName} )
+    table_name = lower( ? )
     order by ordinal_position
   ]]></sql>
 
@@ -60,7 +60,7 @@
           AND tc.table_name = c.table_name
           AND ccu.column_name = c.column_name
     WHERE constraint_type = 'PRIMARY KEY'
-    AND tc.table_name = lower( #{tableName} )
+    AND tc.table_name = lower( ? )
     ORDER BY c.ordinal_position
   ]]></sql>
 

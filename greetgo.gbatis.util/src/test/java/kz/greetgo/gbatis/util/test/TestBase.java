@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import kz.greetgo.gbatis.futurecall.DbType;
+import kz.greetgo.gbatis.futurecall.SqlViewer;
 import kz.greetgo.gbatis.model.Result;
 import kz.greetgo.gbatis.model.SqlWithParams;
 import kz.greetgo.gbatis.util.OperUtil;
@@ -18,6 +19,8 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.DataProvider;
 
 public abstract class TestBase {
+  
+  protected static final String CONNECT_PROVIDER = "connectProvider";
   
   @DataProvider
   protected Object[][] connectProvider() throws Exception {
@@ -88,6 +91,20 @@ public abstract class TestBase {
     }
   }
   
+  protected static SqlViewer stdSqlViewer() {
+    return new SqlViewer() {
+      @Override
+      public void view(String sql, List<Object> params, long delay) {
+        System.out.println(sql);
+      }
+      
+      @Override
+      public boolean needView() {
+        return true;
+      }
+    };
+  }
+  
   protected int count(Connection con, String tableName, Object... fieldsAndValues) {
     StringBuilder sb = new StringBuilder("select count(1) from ");
     sb.append(tableName);
@@ -96,7 +113,7 @@ public abstract class TestBase {
     List<Object> params = new ArrayList<>();
     for (int i = 0; i < C; i += 2) {
       String field = (String)fieldsAndValues[i];
-      Object value = (String)fieldsAndValues[i + 1];
+      Object value = fieldsAndValues[i + 1];
       
       sb.append(i == 0 ? " where " :" and ").append(field).append(" = ?");
       params.add(value);
