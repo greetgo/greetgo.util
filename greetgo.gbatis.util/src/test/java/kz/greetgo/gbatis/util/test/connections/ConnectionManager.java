@@ -1,10 +1,14 @@
 package kz.greetgo.gbatis.util.test.connections;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import kz.greetgo.gbatis.futurecall.DbType;
 
 public abstract class ConnectionManager {
+  private String dbSchema;
+  
   public static ConnectionManager get(DbType dbType) {
     final Class<?> classs;
     try {
@@ -19,5 +23,22 @@ public abstract class ConnectionManager {
     }
   }
   
+  protected static void query(Connection con, String sql) throws SQLException {
+    PreparedStatement ps = con.prepareStatement(sql);
+    try {
+      ps.executeUpdate();
+    } finally {
+      ps.close();
+    }
+  }
+
   public abstract Connection getNewConnection() throws Exception;
+  
+  public void setDbSchema(String dbSchema) {
+    this.dbSchema = dbSchema;
+  }
+  
+  public String getDbSchema() {
+    return dbSchema;
+  }
 }

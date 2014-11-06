@@ -1,12 +1,17 @@
 package kz.greetgo.gbatis.util.test;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import kz.greetgo.gbatis.futurecall.DbType;
+import kz.greetgo.gbatis.model.Result;
+import kz.greetgo.gbatis.model.SqlWithParams;
+import kz.greetgo.gbatis.util.OperUtil;
 import kz.greetgo.gbatis.util.test.connections.ConnectionManager;
 
 import org.testng.annotations.AfterClass;
@@ -43,6 +48,7 @@ public abstract class TestBase {
       for (DbType dbType : DbType.values()) {
         ConnectionManager connectionManager = ConnectionManager.get(dbType);
         if (connectionManager == null) continue;
+        connectionManager.setDbSchema(dbSchema());
         Connection connection = connectionManager.getNewConnection();
         connectionMap.put(dbType, connection);
       }
@@ -57,5 +63,46 @@ public abstract class TestBase {
       con.close();
     }
     connectionMap = null;
+  }
+  
+  protected abstract String dbSchema();
+  
+  protected static void query(Connection con, String sql) throws SQLException {
+    PreparedStatement ps = con.prepareStatement(sql);
+    try {
+      ps.executeUpdate();
+    } finally {
+      ps.close();
+    }
+  }
+  
+  protected static boolean queryForce(Connection con, String sql) throws SQLException {
+    PreparedStatement ps = con.prepareStatement(sql);
+    try {
+      ps.executeUpdate();
+      return true;
+    } catch (SQLException e) {
+      return false;
+    } finally {
+      ps.close();
+    }
+  }
+  
+  protected int count(Connection con, String tableName, Object... fieldsAndValues) {
+    StringBuilder sb = new StringBuilder("select count(1) from ");
+    sb.append(tableName);
+    int C = fieldsAndValues.length;
+    if (C % 2 > 0) throw new IllegalArgumentException();
+    List<Object> params = new ArrayList<>();
+    for (int i = 0; i < C; i += 2) {
+      String field = (String)fieldsAndValues[i];
+      Object value = (String)fieldsAndValues[i + 1];
+      
+      sb.append(i == 0 ? " where " :" and ").append(field).append(" = ?");
+      params.add(value);
+    }
+    
+    return OperUtil.call(con, SqlWithParams.selectWith(sb.toString(), params),
+        Result.simple(Integer.class));
   }
 }

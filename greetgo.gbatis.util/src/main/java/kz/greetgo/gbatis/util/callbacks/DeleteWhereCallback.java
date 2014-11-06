@@ -38,6 +38,6 @@ public final class DeleteWhereCallback implements ConnectionCallback<Integer> {
     U.appendWhere(sql, where);
     
     SqlWithParams sqlp = SqlWithParams.modi(sql.toString(), values);
-    return OperUtil.call(con, sqlp, Result.simple(Integer.class));
+    return OperUtil.call(con, sqlp, Result.simple(Integer.class).with(sqlViewer));
   }
 }
