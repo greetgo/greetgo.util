@@ -131,8 +131,13 @@ public class ReflectUtil {
         public void set(Object value) {
           try {
             field.set(object, value);
-          } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+          } catch (IllegalAccessException e1) {
+            field.setAccessible(true);
+            try {
+              field.set(object, value);
+            } catch (IllegalAccessException e) {
+              throw new RuntimeException(e);
+            }
           }
         }
       });
