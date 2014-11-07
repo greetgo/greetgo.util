@@ -81,8 +81,8 @@ public abstract class AbstractUtilRegister implements UtilRegister {
         
         Set<TableReference> allReferences = jdbc().execute(new AllReferencesCallback(sqlViewer()));
         for (TableReference ref : allReferences) {
-          Set<ForeignKey> set = referenceMap.get(ref.toTableName);
-          if (set == null) referenceMap.put(ref.toTableName, set = new HashSet<>());
+          Set<ForeignKey> set = referenceMap.get(ref.toTableName.toLowerCase());
+          if (set == null) referenceMap.put(ref.toTableName.toLowerCase(), set = new HashSet<>());
           set.add(ref.from());
         }
         

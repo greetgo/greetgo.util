@@ -13,6 +13,8 @@ public class ConnectionManagerPostgreSQL extends ConnectionManager {
   
   @Override
   public Connection getNewConnection() throws Exception {
+    if ("a".equals("a1")) return null;
+    Class.forName("org.postgresql.Driver");
     
     try {
       return DriverManager.getConnection(getConnectionUrl(), getDbSchema(), getDbSchema());

@@ -53,6 +53,7 @@ public abstract class TestBase {
         if (connectionManager == null) continue;
         connectionManager.setDbSchema(dbSchema());
         Connection connection = connectionManager.getNewConnection();
+        if (connection == null) continue;
         connectionMap.put(dbType, connection);
       }
     }
