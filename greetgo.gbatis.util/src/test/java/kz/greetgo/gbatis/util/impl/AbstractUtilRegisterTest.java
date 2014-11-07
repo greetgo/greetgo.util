@@ -3,8 +3,10 @@ package kz.greetgo.gbatis.util.impl;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
+import kz.greetgo.gbatis.model.Creator;
 import kz.greetgo.gbatis.util.callbacks.NoUpdateException;
 import kz.greetgo.gbatis.util.test.TestBase;
 
@@ -225,12 +227,7 @@ public class AbstractUtilRegisterTest extends TestBase {
     assertThat(r.existsKey("for_existsKey", x)).isFalse();
   }
   
-  public static class ForSeleList {
-    public String id, value;
-  }
-  
-  @Test(dataProvider = CONNECT_PROVIDER)
-  public void seleList(Connection con) throws Exception {
+  private TestingUtilRegister prepareDataFor_seleList(Connection con) throws SQLException {
     TestingUtilRegister r = new TestingUtilRegister();
     r.setConnection(con);
     r.sqlViewer = stdSqlViewer();
@@ -244,6 +241,16 @@ public class AbstractUtilRegisterTest extends TestBase {
     query(con, "insert into for_seleList values('left', 'fdsagfad')");
     query(con, "insert into for_seleList values('left', 'fdgfdsh')");
     query(con, "insert into for_seleList values('fdsf', 'ghfhgh')");
+    return r;
+  }
+  
+  public static class ForSeleList {
+    public String id, value;
+  }
+  
+  @Test(dataProvider = CONNECT_PROVIDER)
+  public void seleList_newInstance(Connection con) throws Exception {
+    TestingUtilRegister r = prepareDataFor_seleList(con);
     
     //
     //
@@ -257,6 +264,109 @@ public class AbstractUtilRegisterTest extends TestBase {
     assertThat(res).hasSize(3);
     assertThat(res.get(1).id).isEqualTo("ok");
     assertThat(res.get(1).value).isEqualTo("value 002");
+    
   }
   
+  @Test(dataProvider = CONNECT_PROVIDER)
+  public void seleList_creator(Connection con) throws Exception {
+    TestingUtilRegister r = prepareDataFor_seleList(con);
+    
+    final class Asd {
+      public String id, value;
+    }
+    
+    //
+    //
+    //
+    List<Asd> res = r.seleList(new Creator<Asd>() {
+      @Override
+      public Asd create() {
+        return new Asd();
+      }
+    }, "select * from for_seleList where id=? order by value", "ok");
+    //
+    //
+    //
+    
+    assertThat(res).hasSize(3);
+    assertThat(res.get(1).id).isEqualTo("ok");
+    assertThat(res.get(1).value).isEqualTo("value 002");
+    
+  }
+  
+  @Test(dataProvider = CONNECT_PROVIDER)
+  public void execUpdate(Connection con) throws Exception {
+    TestingUtilRegister r = new TestingUtilRegister();
+    r.setConnection(con);
+    r.sqlViewer = stdSqlViewer();
+    
+    queryForce(con, "drop table for_execUpdate");
+    query(con, "create table for_execUpdate(id varchar(20), value varchar(20))");
+    
+    query(con, "insert into for_execUpdate values('ok', 'left value')");
+    query(con, "insert into for_execUpdate values('left', 'fdsagfad')");
+    query(con, "insert into for_execUpdate values('left1', 'fdgfdsh')");
+    query(con, "insert into for_execUpdate values('fdsf', 'ghfhgh')");
+    
+    //
+    //
+    //
+    r.execUpdate("update for_execUpdate set value=? where id='ok'", "right value");
+    //
+    //
+    //
+    
+    String res = r.getStrField("for_execUpdate", "value", "id", "ok");
+    assertThat(res).isEqualTo("right value");
+  }
+  
+  @Test(dataProvider = CONNECT_PROVIDER)
+  public void seleLong(Connection con) throws Exception {
+    TestingUtilRegister r = new TestingUtilRegister();
+    r.setConnection(con);
+    r.sqlViewer = stdSqlViewer();
+    
+    queryForce(con, "drop table for_seleLong");
+    query(con, "create table for_seleLong(id varchar(20), value int)");
+    
+    query(con, "insert into for_seleLong values('ok', -123456)");
+    query(con, "insert into for_seleLong values('left', 321)");
+    query(con, "insert into for_seleLong values('left1', -5435)");
+    query(con, "insert into for_seleLong values('fdsf', 1)");
+    
+    //
+    //
+    //
+    long res = r.seleLong("select value from for_seleLong where id=?", "ok");
+    //
+    //
+    //
+    
+    assertThat(res).isEqualTo(-123456L);
+  }
+  
+  @Test(dataProvider = CONNECT_PROVIDER)
+  public void seleInt(Connection con) throws Exception {
+    TestingUtilRegister r = new TestingUtilRegister();
+    r.setConnection(con);
+    r.sqlViewer = stdSqlViewer();
+    
+    queryForce(con, "drop table for_seleInt");
+    query(con, "create table for_seleInt(id varchar(20), value int)");
+    
+    query(con, "insert into for_seleInt values('ok', -123456)");
+    query(con, "insert into for_seleInt values('left', 321)");
+    query(con, "insert into for_seleInt values('left1', -5435)");
+    query(con, "insert into for_seleInt values('fdsf', 1)");
+    
+    //
+    //
+    //
+    int res = r.seleInt("select value from for_seleInt where id=?", "ok");
+    //
+    //
+    //
+    
+    assertThat(res).isEqualTo(-123456);
+  }
 }

@@ -409,7 +409,7 @@ public abstract class AbstractUtilRegister implements UtilRegister {
     return bool(getField(Boolean.class, tableName, gettingField, fieldValuePairs));
   }
   
-  private static boolean bool(Boolean obj) {
+  public static boolean bool(Boolean obj) {
     if (obj == null) return false;
     return obj.booleanValue();
   }

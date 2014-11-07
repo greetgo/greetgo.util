@@ -95,7 +95,13 @@ public abstract class TestBase {
     return new SqlViewer() {
       @Override
       public void view(String sql, List<Object> params, long delay) {
-        System.out.println(sql);
+        StringBuilder sb = new StringBuilder();
+        for (Object p : params) {
+          sb.append('[').append(p).append(']');
+        }
+        sb.append(' ');
+        sb.append(sql);
+        System.out.println(sb);
       }
       
       @Override
