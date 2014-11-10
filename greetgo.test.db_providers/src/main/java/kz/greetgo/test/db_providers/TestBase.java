@@ -2,19 +2,16 @@ package kz.greetgo.test.db_providers;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import kz.greetgo.gbatis.futurecall.DbType;
-import kz.greetgo.gbatis.futurecall.SqlViewer;
-import kz.greetgo.gbatis.model.Result;
-import kz.greetgo.gbatis.model.SqlWithParams;
-import kz.greetgo.gbatis.util.OperUtil;
 import kz.greetgo.test.db_providers.connections.ConnectionManager;
-import kz.greetgo.util.ConnectionDataSource;
+import kz.greetgo.util.db.ConnectionDataSource;
+import kz.greetgo.util.db.DbType;
 
 public abstract class TestBase {
   
@@ -112,27 +109,8 @@ public abstract class TestBase {
     }
   }
   
-  protected static SqlViewer stdSqlViewer() {
-    return new SqlViewer() {
-      @Override
-      public void view(String sql, List<Object> params, long delay) {
-        StringBuilder sb = new StringBuilder();
-        for (Object p : params) {
-          sb.append('[').append(p).append(']');
-        }
-        sb.append(' ');
-        sb.append(sql);
-        System.out.println(sb);
-      }
-      
-      @Override
-      public boolean needView() {
-        return true;
-      }
-    };
-  }
-  
-  protected int count(Connection con, String tableName, Object... fieldsAndValues) {
+  protected int count(Connection con, String tableName, Object... fieldsAndValues)
+      throws SQLException {
     StringBuilder sb = new StringBuilder("select count(1) from ");
     sb.append(tableName);
     int C = fieldsAndValues.length;
@@ -146,7 +124,21 @@ public abstract class TestBase {
       params.add(value);
     }
     
-    return OperUtil.call(con, SqlWithParams.selectWith(sb.toString(), params),
-        Result.simple(Integer.class));
+    PreparedStatement ps = con.prepareStatement(sb.toString());
+    try {
+      int index = 1;
+      for (Object p : params) {
+        ps.setObject(index++, p);
+      }
+      ResultSet rs = ps.executeQuery();
+      try {
+        if (!rs.next()) throw new RuntimeException("No row");
+        return rs.getInt(1);
+      } finally {
+        rs.close();
+      }
+    } finally {
+      ps.close();
+    }
   }
 }

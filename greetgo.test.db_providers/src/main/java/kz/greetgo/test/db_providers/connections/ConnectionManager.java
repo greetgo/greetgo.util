@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import kz.greetgo.gbatis.futurecall.DbType;
+import kz.greetgo.util.db.DbType;
 
 public abstract class ConnectionManager {
   private String dbSchema;
@@ -31,7 +31,7 @@ public abstract class ConnectionManager {
       ps.close();
     }
   }
-
+  
   public abstract Connection getNewConnection() throws Exception;
   
   public void setDbSchema(String dbSchema) {
