@@ -14,6 +14,7 @@ import kz.greetgo.gbatis.model.Result;
 import kz.greetgo.gbatis.model.SqlWithParams;
 import kz.greetgo.gbatis.util.OperUtil;
 import kz.greetgo.test.db_providers.connections.ConnectionManager;
+import kz.greetgo.util.ConnectionDataSource;
 
 public abstract class TestBase {
   
@@ -32,6 +33,26 @@ public abstract class TestBase {
     Object[][] ret = new Object[C][];
     for (int i = 0; i < C; i++) {
       ret[i] = new Object[] { conList.get(i) };
+    }
+    
+    return ret;
+  }
+  
+  protected Object[][] dataSourceProvider() throws Exception {
+    
+    List<Connection> conList = new ArrayList<>();
+    
+    Map<DbType, Connection> conMap = getConnectionMap();
+    
+    for (DbType dbType : usingDbTypes()) {
+      Connection con = conMap.get(dbType);
+      if (con != null) conList.add(con);
+    }
+    
+    int C = conList.size();
+    Object[][] ret = new Object[C][];
+    for (int i = 0; i < C; i++) {
+      ret[i] = new Object[] { new ConnectionDataSource(conList.get(i)) };
     }
     
     return ret;
