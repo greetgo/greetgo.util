@@ -65,7 +65,8 @@ dependencies {
 
   compile 'kz.greetgo:greetgo.gbatis:2.1.10'
 
-  testCompile 'kz.greetgo:greetgo.conf:0.0.12'
+  //testCompile 'kz.greetgo:greetgo.conf:0.0.12'
+  testCompile 'kz.greetgo:greetgo.test.db_providers:0.0.2'
 
   testCompile 'org.testng:testng:6.1.1'
   testCompile 'org.easytesting:fest-assert-core:2.0M10'

@@ -15,6 +15,39 @@ import org.springframework.jdbc.datasource.AbstractDataSource;
 
 public class TestingUtilRegister extends AbstractUtilRegister {
   
+  private final class ConnectionDataSource extends AbstractDataSource {
+    private final Connection con;
+    
+    private ConnectionDataSource(Connection con) {
+      this.con = con;
+    }
+    
+    @Override
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+      throw new SQLFeatureNotSupportedException();
+    }
+    
+    @Override
+    public Connection getConnection(String username, String password) throws SQLException {
+      throw new UnsupportedOperationException();
+    }
+    
+    @Override
+    public Connection getConnection() throws SQLException {
+      return (Connection)Proxy.newProxyInstance(getClass().getClassLoader(),
+          new Class<?>[] { Connection.class }, new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+              if (method.getName().equals("close") && method.getParameterTypes().length == 0) {
+                //skip closing of connection
+                return null;
+              }
+              return method.invoke(con, args);
+            }
+          });
+    }
+  }
+
   private JdbcTemplate jdbc;
   
   @Override
@@ -23,32 +56,7 @@ public class TestingUtilRegister extends AbstractUtilRegister {
   }
   
   public void setConnection(final Connection con) {
-    jdbc = new JdbcTemplate(new AbstractDataSource() {
-      @Override
-      public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        throw new SQLFeatureNotSupportedException();
-      }
-      
-      @Override
-      public Connection getConnection(String username, String password) throws SQLException {
-        throw new UnsupportedOperationException();
-      }
-      
-      @Override
-      public Connection getConnection() throws SQLException {
-        return (Connection)Proxy.newProxyInstance(getClass().getClassLoader(),
-            new Class<?>[] { Connection.class }, new InvocationHandler() {
-              @Override
-              public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                if (method.getName().equals("close") && method.getParameterTypes().length == 0) {
-                  //skip closing of connection
-                  return null;
-                }
-                return method.invoke(con, args);
-              }
-            });
-      }
-    });
+    jdbc = new JdbcTemplate(new ConnectionDataSource(con));
   }
   
   public SqlViewer sqlViewer;

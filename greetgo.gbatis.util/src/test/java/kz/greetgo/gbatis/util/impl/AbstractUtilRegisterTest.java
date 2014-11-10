@@ -8,16 +8,11 @@ import java.util.List;
 
 import kz.greetgo.gbatis.model.Creator;
 import kz.greetgo.gbatis.util.callbacks.NoUpdateException;
-import kz.greetgo.gbatis.util.test.TestBase;
+import kz.greetgo.gbatis.util.test.MyTestBase;
 
 import org.testng.annotations.Test;
 
-public class AbstractUtilRegisterTest extends TestBase {
-  
-  @Override
-  protected String dbSchema() {
-    return "gbatis_util";
-  }
+public class AbstractUtilRegisterTest extends MyTestBase {
   
   @Test(dataProvider = CONNECT_PROVIDER)
   public void cleanTables(Connection con) throws Exception {
