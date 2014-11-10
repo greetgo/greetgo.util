@@ -1,4 +1,4 @@
-package kz.greetgo.util;
+package kz.greetgo.util.db;
 
 import java.io.PrintWriter;
 import java.sql.SQLException;

@@ -1,4 +1,4 @@
-package kz.greetgo.util;
+package kz.greetgo.util.db;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
