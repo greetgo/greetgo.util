@@ -9,7 +9,7 @@ import javax.sql.DataSource;
 
 import kz.greetgo.fstorage.FStorage;
 import kz.greetgo.fstorage.FileDot;
-import kz.greetgo.fstorage.util.ServerUtil;
+import kz.greetgo.util.ServerUtil;
 
 public abstract class AbstractFStorage implements FStorage {
   protected final DataSource dataSource;

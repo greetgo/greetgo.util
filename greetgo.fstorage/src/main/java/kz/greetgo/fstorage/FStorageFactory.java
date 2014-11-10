@@ -1,10 +1,15 @@
 package kz.greetgo.fstorage;
 
+import static kz.greetgo.util.db.DbTypeDetector.detect;
+
+import java.sql.SQLException;
+
 import javax.sql.DataSource;
 
 import kz.greetgo.fstorage.impl.AbstractFStorage;
 import kz.greetgo.fstorage.impl.oracle.FStorageOracle;
 import kz.greetgo.fstorage.impl.postgres.FStoragePostgres;
+import kz.greetgo.util.db.DbType;
 
 public class FStorageFactory {
   private int fieldFilenameLen = 300;
@@ -44,14 +49,21 @@ public class FStorageFactory {
     this.tableCount = tableCount;
   }
   
-  public FStorage createForPostgres() {
+  public FStorage create() throws SQLException {
     check();
-    return prepare(new FStoragePostgres(dataSource, tableName, tableCount));
-  }
-  
-  public FStorage createForOracle() {
-    check();
-    return prepare(new FStorageOracle(dataSource, tableName, tableCount));
+    DbType dbType = detect(dataSource);
+    
+    switch (dbType) {
+    case PostgreSQL:
+      return prepare(new FStoragePostgres(dataSource, tableName, tableCount));
+      
+    case Oracle:
+      return prepare(new FStorageOracle(dataSource, tableName, tableCount));
+      
+    default:
+      throw new IllegalArgumentException("Cannot create FStorage for DbType = " + dbType);
+    }
+    
   }
   
   private AbstractFStorage prepare(AbstractFStorage ret) {
