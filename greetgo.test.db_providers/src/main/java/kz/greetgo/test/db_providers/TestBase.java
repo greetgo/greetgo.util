@@ -15,14 +15,8 @@ import kz.greetgo.gbatis.model.SqlWithParams;
 import kz.greetgo.gbatis.util.OperUtil;
 import kz.greetgo.test.db_providers.connections.ConnectionManager;
 
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.DataProvider;
-
 public abstract class TestBase {
   
-  protected static final String CONNECT_PROVIDER = "connectProvider";
-  
-  @DataProvider
   protected Object[][] connectProvider() throws Exception {
     
     List<Connection> conList = new ArrayList<>();
@@ -62,8 +56,11 @@ public abstract class TestBase {
     return connectionMap;
   }
   
-  @AfterClass
-  protected void cleanConnectionMap() throws Exception {
+  protected void cleanAll() throws Exception {
+    cleanConnectionMap();
+  }
+  
+  private void cleanConnectionMap() throws Exception {
     if (connectionMap == null) return;
     for (Connection con : connectionMap.values()) {
       con.close();

@@ -2,23 +2,21 @@ package kz.greetgo.test.db_providers.connections;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import kz.greetgo.conf.SysParams;
 
-import org.postgresql.util.PSQLException;
-
 public class ConnectionManagerPostgreSQL extends ConnectionManager {
   
   @Override
   public Connection getNewConnection() throws Exception {
-    if ("a".equals("a1")) return null;
     Class.forName("org.postgresql.Driver");
     
     try {
       return DriverManager.getConnection(getConnectionUrl(), getDbSchema(), getDbSchema());
-    } catch (PSQLException e) {
+    } catch (SQLException e) {
       prepareDbSchema();
       
       return DriverManager.getConnection(getConnectionUrl(), getDbSchema(), getDbSchema());
