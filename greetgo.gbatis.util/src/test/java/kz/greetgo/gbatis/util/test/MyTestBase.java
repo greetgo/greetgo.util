@@ -1,7 +1,7 @@
 package kz.greetgo.gbatis.util.test;
 
-import kz.greetgo.gbatis.futurecall.DbType;
 import kz.greetgo.test.db_providers.TestBase;
+import kz.greetgo.util.db.DbType;
 
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.DataProvider;

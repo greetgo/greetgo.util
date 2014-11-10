@@ -6,10 +6,10 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import kz.greetgo.gbatis.futurecall.DbType;
-import kz.greetgo.gbatis.util.SqlUtil;
 import kz.greetgo.gbatis.util.sqls.oracle.SqlSrcOracle;
 import kz.greetgo.gbatis.util.sqls.postgres.SqlSrcPostgres;
+import kz.greetgo.util.db.DbType;
+import kz.greetgo.util.db.DbTypeDetector;
 
 public abstract class SqlSrc {
   protected SqlSrc() {}
@@ -17,7 +17,7 @@ public abstract class SqlSrc {
   private static final Map<DbType, SqlSrc> SQL_SRC_MAP = new HashMap<>();
   
   public static SqlSrc get(Connection con) throws SQLException {
-    return get(SqlUtil.defineDbType(con));
+    return get(DbTypeDetector.detect(con));
   }
   
   public static SqlSrc get(DbType dbType) {

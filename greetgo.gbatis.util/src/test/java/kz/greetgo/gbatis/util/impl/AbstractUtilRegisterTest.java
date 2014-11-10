@@ -18,7 +18,6 @@ public class AbstractUtilRegisterTest extends MyTestBase {
   public void cleanTables(Connection con) throws Exception {
     TestingUtilRegister r = new TestingUtilRegister();
     r.setConnection(con);
-    r.sqlViewer = stdSqlViewer();
     
     if (queryForce(con, "drop table for_clean_refNull")) {
       query(con, "drop table for_clean_refNotNull");
@@ -57,7 +56,6 @@ public class AbstractUtilRegisterTest extends MyTestBase {
   public void getField(Connection con) throws Exception {
     TestingUtilRegister r = new TestingUtilRegister();
     r.setConnection(con);
-    r.sqlViewer = stdSqlViewer();
     
     queryForce(con, "drop table getField");
     query(con, "create table getField(id1 int, id2 int, intValue int, strValue varchar(10))");
@@ -87,7 +85,6 @@ public class AbstractUtilRegisterTest extends MyTestBase {
   public void update(Connection con) throws Exception {
     TestingUtilRegister r = new TestingUtilRegister();
     r.setConnection(con);
-    r.sqlViewer = stdSqlViewer();
     
     queryForce(con, "drop table for_update");
     query(con, "create table for_update(id1 int, id2 int, intValue int,"
@@ -125,7 +122,6 @@ public class AbstractUtilRegisterTest extends MyTestBase {
   public void update_exception(Connection con) throws Exception {
     TestingUtilRegister r = new TestingUtilRegister();
     r.setConnection(con);
-    r.sqlViewer = stdSqlViewer();
     
     queryForce(con, "drop table for_update");
     query(con, "create table for_update(id1 int, id2 int, intValue int,"
@@ -152,7 +148,6 @@ public class AbstractUtilRegisterTest extends MyTestBase {
   public void deleteWhere(Connection con) throws Exception {
     TestingUtilRegister r = new TestingUtilRegister();
     r.setConnection(con);
-    r.sqlViewer = stdSqlViewer();
     
     queryForce(con, "drop table for_deleteWhere");
     query(con, "create table for_deleteWhere(id1 int, id2 int, value varchar(10))");
@@ -176,7 +171,6 @@ public class AbstractUtilRegisterTest extends MyTestBase {
   public void countWhere(Connection con) throws Exception {
     TestingUtilRegister r = new TestingUtilRegister();
     r.setConnection(con);
-    r.sqlViewer = stdSqlViewer();
     
     queryForce(con, "drop table for_countWhere");
     query(con, "create table for_countWhere(id1 int, id2 int, value varchar(10))");
@@ -204,7 +198,6 @@ public class AbstractUtilRegisterTest extends MyTestBase {
   public void existsKey(Connection con) throws Exception {
     TestingUtilRegister r = new TestingUtilRegister();
     r.setConnection(con);
-    r.sqlViewer = stdSqlViewer();
     
     queryForce(con, "drop table for_existsKey");
     query(con, "create table for_existsKey(id1 int, id2 int, value varchar(10),"
@@ -225,7 +218,6 @@ public class AbstractUtilRegisterTest extends MyTestBase {
   private TestingUtilRegister prepareDataFor_seleList(Connection con) throws SQLException {
     TestingUtilRegister r = new TestingUtilRegister();
     r.setConnection(con);
-    r.sqlViewer = stdSqlViewer();
     
     queryForce(con, "drop table for_seleList");
     query(con, "create table for_seleList(id varchar(10), value varchar(10))");
@@ -293,7 +285,6 @@ public class AbstractUtilRegisterTest extends MyTestBase {
   public void execUpdate(Connection con) throws Exception {
     TestingUtilRegister r = new TestingUtilRegister();
     r.setConnection(con);
-    r.sqlViewer = stdSqlViewer();
     
     queryForce(con, "drop table for_execUpdate");
     query(con, "create table for_execUpdate(id varchar(20), value varchar(20))");
@@ -319,7 +310,6 @@ public class AbstractUtilRegisterTest extends MyTestBase {
   public void seleLong(Connection con) throws Exception {
     TestingUtilRegister r = new TestingUtilRegister();
     r.setConnection(con);
-    r.sqlViewer = stdSqlViewer();
     
     queryForce(con, "drop table for_seleLong");
     query(con, "create table for_seleLong(id varchar(20), value int)");
@@ -344,7 +334,6 @@ public class AbstractUtilRegisterTest extends MyTestBase {
   public void seleInt(Connection con) throws Exception {
     TestingUtilRegister r = new TestingUtilRegister();
     r.setConnection(con);
-    r.sqlViewer = stdSqlViewer();
     
     queryForce(con, "drop table for_seleInt");
     query(con, "create table for_seleInt(id varchar(20), value int)");

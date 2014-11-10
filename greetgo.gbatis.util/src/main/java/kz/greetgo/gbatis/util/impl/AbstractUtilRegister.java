@@ -18,7 +18,6 @@ import kz.greetgo.gbatis.model.Result;
 import kz.greetgo.gbatis.model.ResultType;
 import kz.greetgo.gbatis.model.SqlWithParams;
 import kz.greetgo.gbatis.util.OperUtil;
-import kz.greetgo.gbatis.util.SqlUtil;
 import kz.greetgo.gbatis.util.callbacks.CountWhereCallback;
 import kz.greetgo.gbatis.util.callbacks.DeleteWhereCallback;
 import kz.greetgo.gbatis.util.callbacks.GetFieldCallback;
@@ -32,6 +31,7 @@ import kz.greetgo.gbatis.util.iface.UtilRegister;
 import kz.greetgo.gbatis.util.model.Colinfo;
 import kz.greetgo.gbatis.util.model.ForeignKey;
 import kz.greetgo.gbatis.util.model.TableReference;
+import kz.greetgo.util.db.DbTypeDetector;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
@@ -300,7 +300,7 @@ public abstract class AbstractUtilRegister implements UtilRegister {
         result.type = ResultType.LIST;
         
         SqlWithParams sqlp = SqlWithParams.selectWith(sql.toString(), params);
-        sqlp.page(SqlUtil.defineDbType(con), offset, count);
+        sqlp.page(DbTypeDetector.detect(con), offset, count);
         
         return OperUtil.call(con, sqlp, result);
       }
