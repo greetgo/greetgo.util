@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import kz.greetgo.gbatis.futurecall.DbType;
 import kz.greetgo.gbatis.util.SqlUtil;
+import kz.greetgo.util.db.DbType;
 
 public class SqlWithParams {
   public RequestType type;

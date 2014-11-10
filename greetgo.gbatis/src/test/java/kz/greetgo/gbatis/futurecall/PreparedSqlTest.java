@@ -11,6 +11,7 @@ import kz.greetgo.gbatis.model.SqlWithParams;
 import kz.greetgo.gbatis.model.WithView;
 import kz.greetgo.sqlmanager.gen.Conf;
 import kz.greetgo.sqlmanager.parser.StruShaper;
+import kz.greetgo.util.db.DbType;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

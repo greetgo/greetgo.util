@@ -8,9 +8,9 @@ import kz.greetgo.gbatis.model.FutureCall;
 import kz.greetgo.gbatis.model.Request;
 import kz.greetgo.gbatis.model.SqlWithParams;
 import kz.greetgo.gbatis.util.OperUtil;
-import kz.greetgo.gbatis.util.SqlUtil;
 import kz.greetgo.sqlmanager.gen.Conf;
 import kz.greetgo.sqlmanager.model.Stru;
+import kz.greetgo.util.db.DbTypeDetector;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
@@ -71,7 +71,7 @@ public class FutureCallDef<T> implements FutureCall<T> {
       throws Exception {
     
     SqlWithParams sql = PreparedSql.prepare(conf, stru, request, args, at,
-        SqlUtil.defineDbType(con), offset, pageSize);
+        DbTypeDetector.detect(con), offset, pageSize);
     
     return OperUtil.callException(con, sql, request.result);
   }

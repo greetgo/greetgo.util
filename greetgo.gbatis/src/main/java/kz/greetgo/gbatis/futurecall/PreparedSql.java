@@ -17,6 +17,7 @@ import kz.greetgo.sqlmanager.model.Field;
 import kz.greetgo.sqlmanager.model.FieldDb;
 import kz.greetgo.sqlmanager.model.Stru;
 import kz.greetgo.sqlmanager.model.Table;
+import kz.greetgo.util.db.DbType;
 
 /**
  * Подготавливает SQL и его параметры и предоставляет подготовленный SQL с параметрами для

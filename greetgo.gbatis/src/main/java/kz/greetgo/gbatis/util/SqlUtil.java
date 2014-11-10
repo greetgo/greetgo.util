@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
-import kz.greetgo.gbatis.futurecall.DbType;
+import kz.greetgo.util.db.DbType;
 
 public class SqlUtil {
   
@@ -266,13 +266,6 @@ public class SqlUtil {
     }
     
     throw new IllegalArgumentException("Unknown product surname = " + db + " to append pagination");
-  }
-  
-  public static DbType defineDbType(Connection con) throws SQLException {
-    String db = con.getMetaData().getDatabaseProductName().toLowerCase();
-    if ("oracle".equals(db)) return DbType.Oracle;
-    if ("postgresql".equals(db)) return DbType.PostgreSQL;
-    throw new IllegalArgumentException("Unknown connection db type");
   }
   
   public static String preparePagedSql(DbType dbType, CharSequence sql, int offset, int count,
