@@ -40,4 +40,8 @@ public class ConnectionDataSource extends AbstractDataSource {
         });
   }
   
+  @Override
+  public String toString() {
+    return "DS for " + con;
+  }
 }
