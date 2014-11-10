@@ -13,11 +13,11 @@ public class ConnectionManagerOracle extends ConnectionManager {
     Class.forName("oracle.jdbc.driver.OracleDriver");
     
     try {
-      return DriverManager.getConnection(url(), getDbSchema(), getDbSchema());
+      return DriverManager.getConnection(url(), mySchema(), mySchema());
     } catch (SQLException e) {
       prepareDbSchema();
       
-      return DriverManager.getConnection(url(), getDbSchema(), getDbSchema());
+      return DriverManager.getConnection(url(), mySchema(), mySchema());
     }
   }
   
@@ -34,14 +34,18 @@ public class ConnectionManagerOracle extends ConnectionManager {
     }
   }
   
+  private String mySchema() {
+    return System.getProperty("user.name") + '_' + getDbSchema();
+  }
+  
   private void prepareDbSchemaException() throws Exception {
     Class.forName("oracle.jdbc.driver.OracleDriver");
     
     Connection con = DriverManager.getConnection(url(), SysParams.oracleAdminUserid(),
         SysParams.oracleAdminPassword());
     try {
-      query(con, "create user " + getDbSchema() + " identified by " + getDbSchema());
-      query(con, "grant all privileges to " + getDbSchema());
+      query(con, "create user " + mySchema() + " identified by " + mySchema());
+      query(con, "grant all privileges to " + mySchema());
     } finally {
       con.close();
     }
