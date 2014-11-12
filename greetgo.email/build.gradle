@@ -79,7 +79,6 @@ uploadArchives {
     repository(
       url: 'http://192.168.0.1:8080/repository/internal/'
     )
-
     pom.project {
       name project.name
       packaging 'jar'
