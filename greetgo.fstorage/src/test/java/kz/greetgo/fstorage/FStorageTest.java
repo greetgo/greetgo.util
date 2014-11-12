@@ -36,7 +36,7 @@ public class FStorageTest extends MyTestBase {
   }
   
   @Test(dataProvider = DATA_PROVIDER)
-  public void testName(DataSource dataSource) throws Exception {
+  public void addNewFile_getFile(DataSource dataSource) throws Exception {
     Random rnd = new Random();
     
     final List<LocalFileDot> lfdList = new ArrayList<>();
