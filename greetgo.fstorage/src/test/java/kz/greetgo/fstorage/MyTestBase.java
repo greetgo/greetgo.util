@@ -15,7 +15,7 @@ public abstract class MyTestBase extends TestBase {
   
   @Override
   protected DbType[] usingDbTypes() {
-    //    return new DbType[] { DbType.PostgreSQL };
+    //    return new DbType[] { DbType.Oracle };
     return DbType.values();
   }
   

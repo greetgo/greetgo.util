@@ -2,6 +2,8 @@ package kz.greetgo.fstorage;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -57,6 +59,8 @@ public class FStorageTest extends MyTestBase {
     f.setTableCount(10);
     f.setTableName("test_file_table");
     
+    dropAllTables(dataSource.getConnection(), "test_file_table", 10);
+    
     FStorage fs = f.create();
     
     for (LocalFileDot lfd : lfdList) {
@@ -69,5 +73,34 @@ public class FStorageTest extends MyTestBase {
       assertThat(fd.filename).isEqualTo(lfd.filename);
       assertThat(fd.data).isEqualTo(lfd.data);
     }
+  }
+  
+  private void dropAllTables(Connection con, String tableSuffix, int tableCount)
+      throws SQLException {
+    
+    int size = 0;
+    {
+      int a = tableCount;
+      while (a > 0) {
+        size++;
+        a = a / 10;
+      }
+    }
+    
+    for (int i = 0; i < tableCount; i++) {
+      
+      String nom = "" + i;
+      while (nom.length() < size) {
+        nom = "0" + nom;
+      }
+      
+      String tn = tableSuffix + tableCount + '_' + nom;
+      
+      queryForce(con, "drop table " + tn);
+    }
+    
+    queryForce(con, "drop sequence " + tableSuffix + "_seq");
+    
+    con.close();
   }
 }
