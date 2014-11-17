@@ -4,13 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BuildTypeMessages {
-  public static Map<String, String> data = new HashMap<>();
+  
+  public static Map<BuildType, Message> data = new HashMap<>();
   static {
-    data.put("Scoring_Baf_ServerTest",
-        "ВНИМАНИЕ! упали тэс ты системы ско ринг. баф. ско ринг. баф");
-    
-    data.put("asd", "ВНИМАНИЕ! упали тэс ты системы ско ринг. эр бэ ка. ско ринг. эр бэ ка");
-    
-    //Cc20_ServerTests
+    data.put(BuildType.Scoring_Baf_ServerTest, Message.DownTests_ScoringBaf);
+    data.put(BuildType.Cc20_ServerTests, Message.DownTests_CC20);
+  }
+  
+  public static Message getMessageFor(BuildType buildType) {
+    Message ret = data.get(buildType);
+    if (ret == null) throw new NoMessageForBuildType(buildType);
+    return ret;
   }
 }
