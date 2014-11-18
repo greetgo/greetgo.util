@@ -20,7 +20,7 @@ public class StorageDir implements Storage {
   
   public static Storage defaultSD() {
     if (defaultSD != null) return defaultSD;
-    return defaultSD = new StorageDir("data/storage");
+    return defaultSD = new StorageDir("data/storage1");
   }
   
   private final String dir;
@@ -32,7 +32,7 @@ public class StorageDir implements Storage {
   private static final String EXT = "build_type";
   
   private File fileFor(BuildType buildType) {
-    return new File(dir + "/" + buildType.name() + '.' + EXT);
+    return new File(dir + '/' + buildType.name() + '.' + EXT);
   }
   
   @Override
