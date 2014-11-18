@@ -10,23 +10,23 @@ import kz.greetgo.teamcity.soundir.configs.BuildTypeComp;
 import kz.greetgo.teamcity.soundir.configs.Comp;
 import kz.greetgo.teamcity.soundir.player.Play;
 
-public class SoundSender implements Runnable {
+public class SoundSenter implements Runnable {
   private final BuildType buildType;
   private Finisher finisher;
   
-  public static SoundSender around(BuildType buildType) {
-    return new SoundSender(buildType);
+  public static SoundSenter around(BuildType buildType) {
+    return new SoundSenter(buildType);
   }
   
   public void go() {
     new Thread(this).start();
   }
   
-  public SoundSender(BuildType buildType) {
+  private SoundSenter(BuildType buildType) {
     this.buildType = buildType;
   }
   
-  public SoundSender with(Finisher finisher) {
+  public SoundSenter with(Finisher finisher) {
     this.finisher = finisher;
     return this;
   }
@@ -63,6 +63,6 @@ public class SoundSender implements Runnable {
       }
     }
     
-    if (finisher != null) finisher.finish();
+    if (finisher != null) finisher.finish(buildType);
   }
 }

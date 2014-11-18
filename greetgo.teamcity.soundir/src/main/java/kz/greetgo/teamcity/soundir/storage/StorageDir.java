@@ -8,10 +8,8 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import kz.greetgo.teamcity.soundir.configs.BuildType;
@@ -38,9 +36,9 @@ public class StorageDir implements Storage {
   }
   
   @Override
-  public List<BuildTypeStatus> loadAll() {
+  public Map<BuildType, BuildTypeStatus> loadAll() {
     File fdir = new File(dir);
-    if (!fdir.exists()) return new ArrayList<>();
+    if (!fdir.exists()) return new HashMap<>();
     File[] files = fdir.listFiles(new FileFilter() {
       @Override
       public boolean accept(File pathname) {
@@ -48,12 +46,12 @@ public class StorageDir implements Storage {
       }
     });
     
-    List<BuildTypeStatus> ret = new ArrayList<>();
+    Map<BuildType, BuildTypeStatus> ret = new HashMap<>();
     
     for (File file : files) {
       BuildTypeStatus bts = loadFromFile(file);
       if (bts == null) continue;
-      ret.add(bts);
+      ret.put(bts.buildType, bts);
     }
     
     return ret;
@@ -98,7 +96,7 @@ public class StorageDir implements Storage {
   }
   
   private static String dateToStr(Date date) {
-    if (date == null) return null;
+    if (date == null) return "";
     return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
   }
   

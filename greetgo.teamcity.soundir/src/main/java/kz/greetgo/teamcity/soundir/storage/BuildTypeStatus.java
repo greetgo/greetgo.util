@@ -6,10 +6,10 @@ import kz.greetgo.teamcity.soundir.configs.BuildType;
 import kz.greetgo.teamcity.soundir.teamcity.model.Status;
 
 public class BuildTypeStatus {
-  BuildType buildType;
-  Status status;
-  int number;
+  public BuildType buildType;
+  public Status status;
+  public int number;
   
-  Date lastChange;
-  Date lastPlay;
+  public Date lastChange;
+  public Date lastPlay;
 }
