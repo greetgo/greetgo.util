@@ -140,11 +140,7 @@ public class CheckRunner {
     return new Date().after(cal.getTime());
   }
   
-  private void play(BuildType buildType, List<Joiner> joinerList) {
-    joinerList.add(SoundSenter.around(buildType).with(new PlayDateSaver()).go());
-  }
-  
-  private final class PlayDateSaver implements Finisher {
+  private final Finisher playDateSaver = new Finisher() {
     @Override
     public void finish(BuildType buildType) {
       System.out.println("Finish " + buildType);
@@ -152,5 +148,10 @@ public class CheckRunner {
       bts.lastPlay = new Date();
       stor.save(bts);
     }
+  };
+  
+  private void play(BuildType buildType, List<Joiner> joinerList) {
+    joinerList.add(SoundSenter.around(buildType).with(playDateSaver).go());
   }
+  
 }
