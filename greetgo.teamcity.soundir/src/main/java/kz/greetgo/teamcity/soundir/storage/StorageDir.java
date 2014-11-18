@@ -86,6 +86,7 @@ public class StorageDir implements Storage {
       
       out.println(" buildType  : " + bts.buildType.name());
       out.println(" status     : " + bts.status.name());
+      out.println(" number     : " + bts.number);
       out.println(" lastChange : " + dateToStr(bts.lastChange));
       out.println(" lastPlay   : " + dateToStr(bts.lastPlay));
       

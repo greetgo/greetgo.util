@@ -13,14 +13,29 @@ import kz.greetgo.teamcity.soundir.player.Play;
 public class SoundSenter implements Runnable {
   private final BuildType buildType;
   private Finisher finisher;
+  private final Thread myThread = new Thread(this);
+  
+  private static final CompSyncronizer COMP_SYNCRONIZER = new CompSyncronizer();
   
   public static SoundSenter around(BuildType buildType) {
     return new SoundSenter(buildType);
   }
   
-  public void go() {
-    new Thread(this).start();
+  public Joiner go() {
+    myThread.start();
+    return joiner;
   }
+  
+  public final Joiner joiner = new Joiner() {
+    @Override
+    public void join() {
+      try {
+        myThread.join();
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+    }
+  };
   
   private SoundSenter(BuildType buildType) {
     this.buildType = buildType;
@@ -40,7 +55,9 @@ public class SoundSenter implements Runnable {
     
     @Override
     public void run() {
-      Play.message(getMessageFor(buildType).text).to(comp.name());
+      synchronized (COMP_SYNCRONIZER.getSyncerFor(comp)) {
+        Play.message(getMessageFor(buildType).text).to(comp.name());
+      }
     }
   }
   

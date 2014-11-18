@@ -38,5 +38,7 @@ public class WaveCreator {
     int ret = p.waitFor();
     p.destroy();
     if (ret != 0) throw new RuntimeException("Exit code of text2wave = " + ret);
+    
+    System.out.println("Created file " + waveFile);
   }
 }

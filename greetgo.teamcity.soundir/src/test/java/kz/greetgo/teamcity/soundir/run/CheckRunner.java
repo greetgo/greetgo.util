@@ -1,13 +1,20 @@
 package kz.greetgo.teamcity.soundir.run;
 
+import java.io.File;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import kz.greetgo.teamcity.soundir.configs.BuildType;
 import kz.greetgo.teamcity.soundir.controller.Finisher;
+import kz.greetgo.teamcity.soundir.controller.Joiner;
 import kz.greetgo.teamcity.soundir.controller.SoundSenter;
 import kz.greetgo.teamcity.soundir.storage.BuildTypeStatus;
 import kz.greetgo.teamcity.soundir.storage.Storage;
@@ -18,6 +25,7 @@ import kz.greetgo.teamcity.soundir.teamcity.model.Status;
 import kz.greetgo.teamcity.soundir.teamcity.rhs.BuildTypeIdList;
 import kz.greetgo.teamcity.soundir.teamcity.rhs.LastBuildStatus;
 
+import org.testng.SkipException;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -50,6 +58,34 @@ public class CheckRunner {
   @Test
   public void check() throws Exception {
     
+    File file = new File("data/running.lock");
+    
+    file.getParentFile().mkdirs();
+    
+    RandomAccessFile raFile = new RandomAccessFile(file, "rw");
+    try {
+      FileChannel fileChannel = raFile.getChannel();
+      try {
+        FileLock lock = fileChannel.tryLock();
+        if (lock == null) throw new SkipException("The file " + file + " is already locked");
+        try {
+          checkReal();
+        } finally {
+          lock.release();
+        }
+        
+      } finally {
+        fileChannel.close();
+      }
+    } finally {
+      raFile.close();
+    }
+    
+  }
+  
+  private void checkReal() {
+    final List<Joiner> joiners = new LinkedList<>();
+    
     Map<BuildType, BuildTypeStatus> savedMap = stor.loadAll();
     
     for (BuildTypeStatus actual : requestTeamcity().values()) {
@@ -71,23 +107,27 @@ public class CheckRunner {
       if (saved == null) {
         actual.lastChange = new Date();
         stor.save(actual);
-        play(actual.buildType);
+        play(actual.buildType, joiners);
         continue;
       }
       
       if (saved.number != actual.number) {
         actual.lastChange = new Date();
         stor.save(actual);
-        play(actual.buildType);
+        play(actual.buildType, joiners);
         continue;
       }
       
       if (tooLongTimeAgo(saved.lastPlay)) {
-        play(saved.buildType);
+        play(saved.buildType, joiners);
         continue;
       }
       
       //default: nothing to do
+    }
+    
+    for (Joiner joiner : joiners) {
+      joiner.join();
     }
   }
   
@@ -100,13 +140,14 @@ public class CheckRunner {
     return new Date().after(cal.getTime());
   }
   
-  private void play(BuildType buildType) {
-    SoundSenter.around(buildType).with(new PlayDateSaver()).go();
+  private void play(BuildType buildType, List<Joiner> joinerList) {
+    joinerList.add(SoundSenter.around(buildType).with(new PlayDateSaver()).go());
   }
   
   private final class PlayDateSaver implements Finisher {
     @Override
     public void finish(BuildType buildType) {
+      System.out.println("Finish " + buildType);
       BuildTypeStatus bts = stor.load(buildType);
       bts.lastPlay = new Date();
       stor.save(bts);

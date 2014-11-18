@@ -8,7 +8,7 @@ import java.util.Map;
 public class BuildTypeComp {
   public static Map<BuildType, List<Comp>> data = new HashMap<>();
   static {
-    add(BuildType.Cc20_ServerTests, Comp.me, Comp.oleg);
+    add(BuildType.Cc20_ServerTests, Comp.oleg);
     add(BuildType.Scoring_Baf_ServerTest, Comp.oleg);
   }
   
