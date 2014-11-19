@@ -5,7 +5,7 @@ apply plugin: 'maven'
 group = 'kz.greetgo'
 
 sourceCompatibility = 1.6
-version = '1.13.0'
+version = '1.14.0'
 
 def nowDate = new Date()
 def nowFormattedDate = nowDate.format("yyyy-MM-dd/HH:mm:ss")
@@ -49,10 +49,10 @@ eclipse.classpath.file.whenMerged { cp ->
 }
 
 repositories {
-  mavenRepo (
-      name: 'Our repository',
-      url: 'http://192.168.0.1:8080/repository/internal/'
-      )
+  maven {
+    name 'Our repository'
+    url 'http://192.168.0.1:8080/repository/internal/'
+  }
   mavenCentral()
 }
 
