@@ -20,7 +20,7 @@ public class StorageDir implements Storage {
   
   public static Storage defaultSD() {
     if (defaultSD != null) return defaultSD;
-    return defaultSD = new StorageDir("data/storage1");
+    return defaultSD = new StorageDir("data/storage");
   }
   
   private final String dir;
