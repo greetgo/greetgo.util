@@ -67,6 +67,8 @@ repositories {
 dependencies {
   //compile 'org.slf4j:log4j-over-slf4j:1.7.5'
 
+  compile 'postgresql:postgresql:9.1-901.jdbc4'
+
   testCompile 'org.testng:testng:6.1.1'
   testCompile 'org.easytesting:fest-assert-core:2.0M10'
 }

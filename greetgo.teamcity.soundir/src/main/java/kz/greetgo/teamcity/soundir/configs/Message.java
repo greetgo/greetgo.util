@@ -15,3 +15,18 @@ public enum Message {
     this.text = text;
   }
 }
+/*
+prj           employee   
+------------  ---------  
+CC20-kaspi    kgorgulev  
+Collect-RBK   kgorgulev  
+Collect-RBK   pkokoshko  
+GCCenter-BAF  kgorgulev  
+GFrost-BAF    stursyn    
+GFrost-RBK    stursyn    
+GFrost-RBK    abolatov   
+KSA-kaspi     abolatov   
+KSA-kaspi     pkokoshko  
+VKB-kaspi     stursyn    
+VKB-kaspi     abolatov   
+*/
