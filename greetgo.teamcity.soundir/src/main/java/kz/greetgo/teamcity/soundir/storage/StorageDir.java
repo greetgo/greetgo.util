@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import kz.greetgo.teamcity.soundir.configs.BuildType;
 import kz.greetgo.teamcity.soundir.teamcity.model.Status;
 
 public class StorageDir implements Storage {
@@ -20,7 +19,7 @@ public class StorageDir implements Storage {
   
   public static Storage defaultSD() {
     if (defaultSD != null) return defaultSD;
-    return defaultSD = new StorageDir("data/storage");
+    return defaultSD = new StorageDir("data/storage_001");
   }
   
   private final String dir;
@@ -31,12 +30,12 @@ public class StorageDir implements Storage {
   
   private static final String EXT = "build_type";
   
-  private File fileFor(BuildType buildType) {
-    return new File(dir + '/' + buildType.name() + '.' + EXT);
+  private File fileFor(String buildType) {
+    return new File(dir + '/' + buildType + '.' + EXT);
   }
   
   @Override
-  public Map<BuildType, BuildTypeStatus> loadAll() {
+  public Map<String, BuildTypeStatus> loadAll() {
     File fdir = new File(dir);
     if (!fdir.exists()) return new HashMap<>();
     File[] files = fdir.listFiles(new FileFilter() {
@@ -46,7 +45,7 @@ public class StorageDir implements Storage {
       }
     });
     
-    Map<BuildType, BuildTypeStatus> ret = new HashMap<>();
+    Map<String, BuildTypeStatus> ret = new HashMap<>();
     
     for (File file : files) {
       BuildTypeStatus bts = loadFromFile(file);
@@ -63,11 +62,7 @@ public class StorageDir implements Storage {
     
     BuildTypeStatus ret = new BuildTypeStatus();
     
-    try {
-      ret.buildType = BuildType.valueOf(strMap.get("buildType"));
-    } catch (IllegalArgumentException | NullPointerException e) {
-      return null;
-    }
+    ret.buildType = strMap.get("buildType");
     
     ret.status = Status.valueOf(strMap.get("status"));
     ret.number = Integer.parseInt(strMap.get("number"));
@@ -84,7 +79,7 @@ public class StorageDir implements Storage {
     try {
       PrintStream out = new PrintStream(file, "UTF-8");
       
-      out.println(" buildType  : " + bts.buildType.name());
+      out.println(" buildType  : " + bts.buildType);
       out.println(" status     : " + bts.status.name());
       out.println(" number     : " + bts.number);
       out.println(" lastChange : " + dateToStr(bts.lastChange));
@@ -139,7 +134,7 @@ public class StorageDir implements Storage {
   }
   
   @Override
-  public BuildTypeStatus load(BuildType buildType) {
+  public BuildTypeStatus load(String buildType) {
     File file = fileFor(buildType);
     return loadFromFile(file);
   }

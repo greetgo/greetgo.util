@@ -1,6 +1,5 @@
 package kz.greetgo.teamcity.soundir.teamcity.model;
 
-import kz.greetgo.teamcity.soundir.configs.BuildType;
 import kz.greetgo.teamcity.soundir.storage.BuildTypeStatus;
 
 public class LastStatus {
@@ -21,13 +20,7 @@ public class LastStatus {
   
   public BuildTypeStatus toBTS() {
     BuildTypeStatus ret = new BuildTypeStatus();
-    
-    try {
-      ret.buildType = BuildType.valueOf(buildTypeId);
-    } catch (IllegalArgumentException | NullPointerException e) {
-      return null;
-    }
-    
+    ret.buildType = buildTypeId;
     ret.status = status;
     ret.number = number;
     return ret;

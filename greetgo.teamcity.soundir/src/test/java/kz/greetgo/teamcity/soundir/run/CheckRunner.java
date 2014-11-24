@@ -12,10 +12,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import kz.greetgo.teamcity.soundir.configs.BuildType;
 import kz.greetgo.teamcity.soundir.controller.Finisher;
 import kz.greetgo.teamcity.soundir.controller.Joiner;
-import kz.greetgo.teamcity.soundir.controller.SoundSenter;
+import kz.greetgo.teamcity.soundir.controller.SoundSender;
 import kz.greetgo.teamcity.soundir.storage.BuildTypeStatus;
 import kz.greetgo.teamcity.soundir.storage.Storage;
 import kz.greetgo.teamcity.soundir.storage.StorageDir;
@@ -43,8 +42,8 @@ public class CheckRunner {
     stor = StorageDir.defaultSD();
   }
   
-  private Map<BuildType, BuildTypeStatus> requestTeamcity() {
-    Map<BuildType, BuildTypeStatus> ret = new HashMap<>();
+  private Map<String, BuildTypeStatus> requestTeamcity() {
+    Map<String, BuildTypeStatus> ret = new HashMap<>();
     
     for (String buildTypeId : Api.get(new BuildTypeIdList())) {
       LastStatus ls = Api.get(new LastBuildStatus(buildTypeId));
@@ -57,8 +56,6 @@ public class CheckRunner {
   
   @Test
   public void check() throws Exception {
-    
-    if ("a".equals("a")) return;
     
     File file = new File("data/running.lock");
     
@@ -88,7 +85,7 @@ public class CheckRunner {
   private void checkReal() {
     final List<Joiner> joiners = new LinkedList<>();
     
-    Map<BuildType, BuildTypeStatus> savedMap = stor.loadAll();
+    Map<String, BuildTypeStatus> savedMap = stor.loadAll();
     
     for (BuildTypeStatus actual : requestTeamcity().values()) {
       BuildTypeStatus saved = savedMap.get(actual.buildType);
@@ -144,7 +141,7 @@ public class CheckRunner {
   
   private final Finisher playDateSaver = new Finisher() {
     @Override
-    public void finish(BuildType buildType) {
+    public void finish(String buildType) {
       System.out.println("Finish " + buildType);
       BuildTypeStatus bts = stor.load(buildType);
       bts.lastPlay = new Date();
@@ -152,8 +149,8 @@ public class CheckRunner {
     }
   };
   
-  private void play(BuildType buildType, List<Joiner> joinerList) {
-    joinerList.add(SoundSenter.around(buildType).with(playDateSaver).go());
+  private void play(String buildType, List<Joiner> joinerList) {
+    joinerList.add(SoundSender.around(buildType).with(playDateSaver).go());
   }
   
 }

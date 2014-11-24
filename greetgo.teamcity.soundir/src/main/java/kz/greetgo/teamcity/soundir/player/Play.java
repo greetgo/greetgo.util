@@ -23,6 +23,15 @@ public class Play {
   
   public static void playMessageTo(String message, String sshAlias) {
     try {
+      if ("a".equals("1a")) {
+        System.out.println("Playing message " + message + " to " + sshAlias + " ...");
+        
+        Thread.sleep(3000);
+        
+        System.out.println("   OK to " + sshAlias);
+        return;
+      }
+      
       File file = getWaveFile(message);
       
       WavePlayer.fileTo(file, sshAlias);

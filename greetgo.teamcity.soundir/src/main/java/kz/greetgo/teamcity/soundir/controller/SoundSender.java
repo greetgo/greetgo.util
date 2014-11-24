@@ -1,24 +1,22 @@
 package kz.greetgo.teamcity.soundir.controller;
 
-import static kz.greetgo.teamcity.soundir.configs.BuildTypeMessages.getMessageFor;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import kz.greetgo.teamcity.soundir.configs.BuildType;
-import kz.greetgo.teamcity.soundir.configs.BuildTypeComp;
-import kz.greetgo.teamcity.soundir.configs.Comp;
+import kz.greetgo.teamcity.soundir.configs.BuildTypeEmployeeMessage;
+import kz.greetgo.teamcity.soundir.configs.FromDb;
 import kz.greetgo.teamcity.soundir.player.Play;
 
-public class SoundSenter implements Runnable {
-  private final BuildType buildType;
+public class SoundSender implements Runnable {
+  private final String buildType;
   private Finisher finisher;
   private final Thread myThread = new Thread(this);
   
   private static final CompSyncronizer COMP_SYNCRONIZER = new CompSyncronizer();
   
-  public static SoundSenter around(BuildType buildType) {
-    return new SoundSenter(buildType);
+  public static SoundSender around(String buildType) {
+    return new SoundSender(buildType);
   }
   
   public Joiner go() {
@@ -37,35 +35,49 @@ public class SoundSenter implements Runnable {
     }
   };
   
-  private SoundSenter(BuildType buildType) {
+  private SoundSender(String buildType) {
     this.buildType = buildType;
   }
   
-  public SoundSenter with(Finisher finisher) {
+  public SoundSender with(Finisher finisher) {
     this.finisher = finisher;
     return this;
   }
   
   private class PlayRun implements Runnable {
-    private final Comp comp;
+    private final BuildTypeEmployeeMessage btem;
     
-    public PlayRun(Comp comp) {
-      this.comp = comp;
+    public PlayRun(BuildTypeEmployeeMessage btem) {
+      this.btem = btem;
     }
     
     @Override
     public void run() {
-      synchronized (COMP_SYNCRONIZER.getSyncerFor(comp)) {
-        Play.message(getMessageFor(buildType).text).to(comp.name());
+      synchronized (COMP_SYNCRONIZER.getSyncerFor(btem.employee)) {
+        Play.message(btem.message).to(btem.employee);
       }
     }
   }
   
+  private Map<String, List<BuildTypeEmployeeMessage>> messageMap = null;
+  
+  private Map<String, List<BuildTypeEmployeeMessage>> getMessageMap() {
+    if (messageMap == null) {
+      messageMap = FromDb.getAssignedMessageMap();
+    }
+    return messageMap;
+  }
+  
   @Override
   public void run() {
+    
+    List<BuildTypeEmployeeMessage> list = getMessageMap().get(buildType);
+    if (list == null) return;
+    
     List<Thread> threads = new ArrayList<>();
-    for (Comp comp : BuildTypeComp.data.get(buildType)) {
-      threads.add(new Thread(new PlayRun(comp)));
+    
+    for (BuildTypeEmployeeMessage btem : list) {
+      threads.add(new Thread(new PlayRun(btem)));
     }
     
     for (Thread t : threads) {
