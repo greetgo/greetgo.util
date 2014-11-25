@@ -72,10 +72,11 @@ public class FromDb {
     sql.append(" ,  ep  as (select employee, prj from v_employee_prj where act = 1)              ");
     sql.append(" ,  e   as (select * from employee where act = 1)                                ");
     sql.append(" ,  rp  as (select distinct prj, room from ep natural join e)                    ");
-    sql.append(" ,  re  as (select room, employee from employee where act = 1 and has_sound = 1) ");
-    sql.append(" ,  pe  as (select prj, employee from re natural join rp)                        ");
+    sql.append(" ,  re  as (select room, employee, email from employee                           ");
+    sql.append("              where act = 1 and has_sound = 1)                                   ");
+    sql.append(" ,  pe  as (select prj, employee, email from re natural join rp)                 ");
     sql.append("                                                                                 ");
-    sql.append(" select buildType, employee, message from btm natural join pe                    ");
+    sql.append(" select buildType, employee, email, message from btm natural join pe             ");
     sql.append("                                                                                 ");
     
     PreparedStatement ps = con.prepareStatement(sql.toString());
@@ -86,6 +87,7 @@ public class FromDb {
           BuildTypeEmployeeMessage x = new BuildTypeEmployeeMessage();
           x.buildType = rs.getString("buildType");
           x.employee = rs.getString("employee");
+          x.email = rs.getString("email");
           x.message = rs.getString("message");
           
           List<BuildTypeEmployeeMessage> list = ret.get(x.buildType);
@@ -114,10 +116,11 @@ public class FromDb {
     sql.append(" ,  e   as (select * from employee where act = 1)                                ");
     sql.append(" ,  rp  as (select prj.prj, room.room from prj, room                             ");
     sql.append("               where prj.act = 1 and room.act = 1)                               ");
-    sql.append(" ,  re  as (select room, employee from employee where act = 1 and has_sound = 1) ");
-    sql.append(" ,  pe  as (select prj, employee from re natural join rp)                        ");
+    sql.append(" ,  re  as (select room, employee, email from employee                           ");
+    sql.append("               where act = 1 and has_sound = 1)                                  ");
+    sql.append(" ,  pe  as (select prj, employee, email from re natural join rp)                 ");
     sql.append("                                                                                 ");
-    sql.append(" select buildType, employee, message from btm natural join pe                    ");
+    sql.append(" select buildType, employee, email, message from btm natural join pe             ");
     sql.append("                                                                                 ");
     
     PreparedStatement ps = con.prepareStatement(sql.toString());
@@ -128,6 +131,7 @@ public class FromDb {
           BuildTypeEmployeeMessage x = new BuildTypeEmployeeMessage();
           x.buildType = rs.getString("buildType");
           x.employee = rs.getString("employee");
+          x.email = rs.getString("email");
           x.message = rs.getString("message");
           
           List<BuildTypeEmployeeMessage> list = ret.get(x.buildType);

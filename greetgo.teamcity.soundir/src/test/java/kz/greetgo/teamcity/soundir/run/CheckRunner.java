@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -12,8 +13,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import kz.greetgo.teamcity.soundir.configs.BuildTypeEmployeeMessage;
 import kz.greetgo.teamcity.soundir.controller.Finisher;
+import kz.greetgo.teamcity.soundir.controller.Getter;
 import kz.greetgo.teamcity.soundir.controller.Joiner;
+import kz.greetgo.teamcity.soundir.controller.MessageMapGetter;
+import kz.greetgo.teamcity.soundir.controller.SendLettersController;
 import kz.greetgo.teamcity.soundir.controller.SoundSender;
 import kz.greetgo.teamcity.soundir.storage.BuildTypeStatus;
 import kz.greetgo.teamcity.soundir.storage.Storage;
@@ -31,6 +36,9 @@ import org.testng.annotations.Test;
 public class CheckRunner {
   
   private Storage stor;
+  private Getter<Map<String, List<BuildTypeEmployeeMessage>>> messageMap;
+  
+  private SendLettersController sendLettersController;
   
   @BeforeTest
   public void prepare() {
@@ -40,6 +48,12 @@ public class CheckRunner {
     Api.port = 8111;
     
     stor = StorageDir.defaultSD();
+    
+    messageMap = MessageMapGetter.messageMap;
+    
+    sendLettersController = new SendLettersController();
+    sendLettersController.storage = stor;
+    sendLettersController.messageMap = messageMap;
   }
   
   private Map<String, BuildTypeStatus> requestTeamcity() {
@@ -83,6 +97,8 @@ public class CheckRunner {
   }
   
   private void checkReal() {
+    List<String> buildTypeList = new ArrayList<>();
+    
     final List<Joiner> joiners = new LinkedList<>();
     
     Map<String, BuildTypeStatus> savedMap = stor.loadAll();
@@ -107,6 +123,7 @@ public class CheckRunner {
         actual.lastChange = new Date();
         stor.save(actual);
         play(actual.buildType, joiners);
+        buildTypeList.add(actual.buildType);
         continue;
       }
       
@@ -114,11 +131,13 @@ public class CheckRunner {
         actual.lastChange = new Date();
         stor.save(actual);
         play(actual.buildType, joiners);
+        buildTypeList.add(actual.buildType);
         continue;
       }
       
       if (tooLongTimeAgo(saved.lastPlay)) {
         play(saved.buildType, joiners);
+        buildTypeList.add(actual.buildType);
         continue;
       }
       
@@ -127,6 +146,10 @@ public class CheckRunner {
     
     for (Joiner joiner : joiners) {
       joiner.join();
+    }
+    
+    for (String buildType : buildTypeList) {
+      sendLettersController.checkSendLetters(buildType);
     }
   }
   
@@ -150,7 +173,7 @@ public class CheckRunner {
   };
   
   private void play(String buildType, List<Joiner> joinerList) {
-    joinerList.add(SoundSender.around(buildType).with(playDateSaver).go());
+    joinerList.add(SoundSender.around(buildType).with(playDateSaver).with(messageMap).go());
   }
   
 }

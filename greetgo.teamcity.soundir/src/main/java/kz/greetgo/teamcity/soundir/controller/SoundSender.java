@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import kz.greetgo.teamcity.soundir.configs.BuildTypeEmployeeMessage;
-import kz.greetgo.teamcity.soundir.configs.FromDb;
 import kz.greetgo.teamcity.soundir.player.Play;
 
 public class SoundSender implements Runnable {
@@ -59,13 +58,18 @@ public class SoundSender implements Runnable {
     }
   }
   
-  private Map<String, List<BuildTypeEmployeeMessage>> messageMap = null;
+  private Getter<Map<String, List<BuildTypeEmployeeMessage>>> messageMap = null;
   
   private Map<String, List<BuildTypeEmployeeMessage>> getMessageMap() {
     if (messageMap == null) {
-      messageMap = FromDb.getAssignedMessageMap();
+      messageMap = MessageMapGetter.messageMap;
     }
-    return messageMap;
+    return messageMap.get();
+  }
+  
+  public SoundSender with(Getter<Map<String, List<BuildTypeEmployeeMessage>>> messageMap) {
+    this.messageMap = messageMap;
+    return this;
   }
   
   @Override

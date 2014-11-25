@@ -69,6 +69,7 @@ public class StorageDir implements Storage {
     
     ret.lastChange = strToDate(strMap.get("lastChange"));
     ret.lastPlay = strToDate(strMap.get("lastPlay"));
+    ret.lastSendLetter = strToDate(strMap.get("lastSendLetter"));
     
     return ret;
   }
@@ -79,11 +80,12 @@ public class StorageDir implements Storage {
     try {
       PrintStream out = new PrintStream(file, "UTF-8");
       
-      out.println(" buildType  : " + bts.buildType);
-      out.println(" status     : " + bts.status.name());
-      out.println(" number     : " + bts.number);
-      out.println(" lastChange : " + dateToStr(bts.lastChange));
-      out.println(" lastPlay   : " + dateToStr(bts.lastPlay));
+      out.println(" buildType      : " + bts.buildType);
+      out.println(" status         : " + bts.status.name());
+      out.println(" number         : " + bts.number);
+      out.println(" lastChange     : " + dateToStr(bts.lastChange));
+      out.println(" lastPlay       : " + dateToStr(bts.lastPlay));
+      out.println(" lastSendLetter : " + dateToStr(bts.lastSendLetter));
       
       out.close();
     } catch (Exception e) {
@@ -136,6 +138,7 @@ public class StorageDir implements Storage {
   @Override
   public BuildTypeStatus load(String buildType) {
     File file = fileFor(buildType);
+    if (!file.exists()) return null;
     return loadFromFile(file);
   }
   

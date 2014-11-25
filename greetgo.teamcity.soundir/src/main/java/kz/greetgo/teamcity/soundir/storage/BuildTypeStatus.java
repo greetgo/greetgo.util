@@ -11,4 +11,5 @@ public class BuildTypeStatus {
   
   public Date lastChange;
   public Date lastPlay;
+  public Date lastSendLetter;
 }
