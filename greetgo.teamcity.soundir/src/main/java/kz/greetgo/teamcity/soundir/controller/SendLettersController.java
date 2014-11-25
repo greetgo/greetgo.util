@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import kz.greetgo.teamcity.soundir.configs.BuildTypeEmployeeMessage;
+import kz.greetgo.teamcity.soundir.configs.FromDb;
 import kz.greetgo.teamcity.soundir.email.BuildInfoToEmail;
 import kz.greetgo.teamcity.soundir.email.Email;
 import kz.greetgo.teamcity.soundir.email.EmailSender;
@@ -75,12 +76,8 @@ public class SendLettersController {
     List<String> emailList = new ArrayList<>();
     emailList.add("ekolpakov@greet-go.com");
     emailList.add("obersenev@greet-go.com");
-    List<BuildTypeEmployeeMessage> btemList = messageMap.get().get(buildType);
-    for (BuildTypeEmployeeMessage btem : btemList) {
-      if (btem.email != null) {
-        emailList.add(btem.email);
-      }
-    }
+    
+    emailList.addAll(FromDb.emailsForBuildType(buildType));
     
     for (String to : emailList) {
       email.to = to;

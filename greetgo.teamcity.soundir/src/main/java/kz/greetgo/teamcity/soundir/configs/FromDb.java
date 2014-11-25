@@ -161,4 +161,45 @@ public class FromDb {
     
     return small;
   }
+  
+  public static List<String> emailsForBuildType(String buildType) {
+    
+    StringBuilder sql = new StringBuilder();
+    sql.append("                                                              ");
+    sql.append(" select email from employee where employee in (               ");
+    sql.append("   select employee from v_employee_prj                        ");
+    sql.append("     where act = 1 and prj in (                               ");
+    sql.append("       select prj from buildType_message where buildType = ?  ");
+    sql.append("     )                                                        ");
+    sql.append(" )                                                            ");
+    sql.append("                                                              ");
+    
+    try {
+      Connection con = createCon();
+      try {
+        PreparedStatement ps = con.prepareStatement(sql.toString());
+        try {
+          ps.setString(1, buildType);
+          ResultSet rs = ps.executeQuery();
+          try {
+            List<String> ret = new ArrayList<>();
+            
+            while (rs.next()) {
+              ret.add(rs.getString(1));
+            }
+            
+            return ret;
+          } finally {
+            rs.close();
+          }
+        } finally {
+          ps.close();
+        }
+      } finally {
+        con.close();
+      }
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
 }
