@@ -2,6 +2,7 @@ package kz.greepto.gpen.editors.gpen.model
 
 import java.util.List
 import java.util.ArrayList
+import kz.greepto.gpen.editors.gpen.model.visitor.FigureVisitor
 
 class Combo extends RectFigure {
 
@@ -15,7 +16,7 @@ class Combo extends RectFigure {
   }
 
   override <T> visit(FigureVisitor<T> v) {
-    v.visitCombo(this);
+    return v.visitCombo(this);
   }
 
 }

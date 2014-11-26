@@ -1,5 +1,7 @@
 package kz.greepto.gpen.editors.gpen.model
 
+import kz.greepto.gpen.editors.gpen.model.visitor.FigureVisitor
+
 class Button extends RectFigure {
 
   public String caption
@@ -11,7 +13,7 @@ class Button extends RectFigure {
   }
 
   override <T> visit(FigureVisitor<T> v) {
-    v.visitButton(this);
+    return v.visitButton(this)
   }
 
 }

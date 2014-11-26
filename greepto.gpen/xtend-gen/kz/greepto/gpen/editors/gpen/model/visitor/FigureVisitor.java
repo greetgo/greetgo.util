@@ -1,4 +1,4 @@
-package kz.greepto.gpen.editors.gpen.model;
+package kz.greepto.gpen.editors.gpen.model.visitor;
 
 import kz.greepto.gpen.editors.gpen.model.Button;
 import kz.greepto.gpen.editors.gpen.model.Combo;

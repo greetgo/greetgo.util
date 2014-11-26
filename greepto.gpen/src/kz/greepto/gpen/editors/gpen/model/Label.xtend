@@ -1,5 +1,7 @@
 package kz.greepto.gpen.editors.gpen.model
 
+import kz.greepto.gpen.editors.gpen.model.visitor.FigureVisitor
+
 class Label extends PointFigure {
 
   public String text
@@ -9,7 +11,7 @@ class Label extends PointFigure {
   }
 
   override <T> visit(FigureVisitor<T> v) {
-    v.visitLabel(this);
+    return v.visitLabel(this);
   }
 
 }

@@ -9,8 +9,11 @@ import org.eclipse.swt.widgets.Composite
 import org.eclipse.swt.events.MouseListener
 import org.eclipse.swt.events.MouseEvent
 import org.eclipse.swt.graphics.GC
+import kz.greepto.gpen.editors.gpen.model.Scene
 
 class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, MouseTrackListener {
+
+  package final Scene scene = new Scene
 
   public new(Composite parent, int style) {
     super(parent, style);

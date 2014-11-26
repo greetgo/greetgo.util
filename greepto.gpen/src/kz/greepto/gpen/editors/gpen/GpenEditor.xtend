@@ -29,6 +29,8 @@ class GpenEditor extends EditorPart {
 
   override createPartControl(Composite parent) {
     contents = new GpenCanvas(parent, SWT.NONE);
+
+    //contents.scene.
   }
 
   override setFocus() {
