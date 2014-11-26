@@ -251,7 +251,7 @@ public class PropManager {
   public static PropManager.NameType getSetterNameType(final Method method) {
     Class<?>[] _parameterTypes = method.getParameterTypes();
     int _size = ((List<Class<?>>)Conversions.doWrapArray(_parameterTypes)).size();
-    boolean _notEquals = (_size != 0);
+    boolean _notEquals = (_size != 1);
     if (_notEquals) {
       return null;
     }

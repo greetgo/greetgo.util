@@ -96,7 +96,7 @@ class PropManager {
   }
 
   def static NameType getSetterNameType(Method method) {
-    if (method.parameterTypes.size != 0) return null
+    if (method.parameterTypes.size != 1) return null
     var type = method.parameterTypes.get(0)
     if(!method.name.startsWith("set")) return null
     var name = method.name.substring(3).toFirstLower

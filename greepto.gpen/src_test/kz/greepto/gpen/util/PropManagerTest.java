@@ -2,6 +2,8 @@ package kz.greepto.gpen.util;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
+import java.util.Map;
+
 import org.testng.annotations.Test;
 
 public class PropManagerTest {
@@ -10,6 +12,9 @@ public class PropManagerTest {
     public String strField;
     private String strProperty;
     
+    public int intField;
+    private int intProperty;
+    
     public String getStrProperty() {
       return strProperty;
     }
@@ -17,11 +22,19 @@ public class PropManagerTest {
     public void setStrProperty(String strProperty) {
       this.strProperty = strProperty;
     }
+    
+    public int getIntProperty() {
+      return intProperty;
+    }
+    
+    public void setIntProperty(int intProperty) {
+      this.intProperty = intProperty;
+    }
+    
   }
   
   @Test
   public void get_set_str() throws Exception {
-    
     Asd asd = new Asd();
     
     PropManager pm = new PropManager(asd);
@@ -33,6 +46,41 @@ public class PropManagerTest {
     pm.set("strProperty", s2);
     
     assertThat(pm.get("strField")).isEqualTo(s1);
+    assertThat(asd.strField).isEqualTo(s1);
     assertThat(pm.get("strProperty")).isEqualTo(s2);
+    assertThat(asd.getStrProperty()).isEqualTo(s2);
+  }
+  
+  @Test
+  public void get_set_int() throws Exception {
+    Asd asd = new Asd();
+    
+    PropManager pm = new PropManager(asd);
+    
+    int s1 = 56436;
+    int s2 = 98765;
+    
+    pm.set("intField", s1);
+    pm.set("intProperty", s2);
+    
+    assertThat(pm.get("intField")).isEqualTo(s1);
+    assertThat(asd.intField).isEqualTo(s1);
+    assertThat(pm.get("intProperty")).isEqualTo(s2);
+    assertThat(asd.getIntProperty()).isEqualTo(s2);
+  }
+  
+  @Test
+  public void meta() throws Exception {
+    Asd asd = new Asd();
+    
+    PropManager pm = new PropManager(asd);
+    
+    Map<String, Class<?>> meta = pm.meta();
+    
+    assertThat(meta.get("strField").getName()).isEqualTo(String.class.getName());
+    assertThat(meta.get("strProperty").getName()).isEqualTo(String.class.getName());
+    
+    assertThat(meta.get("intField").getName()).isEqualTo(Integer.TYPE.getName());
+    assertThat(meta.get("intProperty").getName()).isEqualTo(Integer.TYPE.getName());
   }
 }
