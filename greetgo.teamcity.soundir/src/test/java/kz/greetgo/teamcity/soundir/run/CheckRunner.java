@@ -115,6 +115,7 @@ public class CheckRunner {
         if (saved.number == actual.number) continue;
         
         actual.lastChange = new Date();
+        actual.lastSendLetter = saved.lastSendLetter;
         stor.save(actual);
         continue;
       }
@@ -129,6 +130,7 @@ public class CheckRunner {
       
       if (saved.number != actual.number) {
         actual.lastChange = new Date();
+        actual.lastSendLetter = saved.lastSendLetter;
         stor.save(actual);
         play(actual.buildType, joiners);
         buildTypeList.add(actual.buildType);
