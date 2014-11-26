@@ -64,8 +64,12 @@ public class StorageDir implements Storage {
     
     ret.buildType = strMap.get("buildType");
     
-    ret.status = Status.valueOf(strMap.get("status"));
-    ret.number = Integer.parseInt(strMap.get("number"));
+    ret.status = Status.fromStr(strMap.get("status"));
+    try {
+      ret.number = Integer.parseInt(strMap.get("number"));
+    } catch (NumberFormatException e) {
+      ret.number = 0;
+    }
     
     ret.lastChange = strToDate(strMap.get("lastChange"));
     ret.lastPlay = strToDate(strMap.get("lastPlay"));
@@ -81,7 +85,7 @@ public class StorageDir implements Storage {
       PrintStream out = new PrintStream(file, "UTF-8");
       
       out.println(" buildType      : " + bts.buildType);
-      out.println(" status         : " + bts.status.name());
+      out.println(" status         : " + bts.status == null ? "" :bts.status.name());
       out.println(" number         : " + bts.number);
       out.println(" lastChange     : " + dateToStr(bts.lastChange));
       out.println(" lastPlay       : " + dateToStr(bts.lastPlay));

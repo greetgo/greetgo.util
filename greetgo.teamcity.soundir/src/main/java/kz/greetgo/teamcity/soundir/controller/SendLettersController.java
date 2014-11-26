@@ -81,7 +81,8 @@ public class SendLettersController {
     
     for (String to : emailList) {
       email.to = to;
-      EmailSender.send(email);
+      //System.out.println("send to " + to);
+      if ("a".equals("a")) EmailSender.send(email);
     }
     
     {
