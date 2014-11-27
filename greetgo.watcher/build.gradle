@@ -5,14 +5,14 @@ apply plugin: 'maven'
 group = 'kz.greetgo'
 
 sourceCompatibility = 1.6
-version = '0.2.0'
+version = '0.2.1'
 
 def nowDate = new Date()
 def nowFormattedDate = nowDate.format("yyyy-MM-dd/HH:mm:ss")
 
 jar {
   manifest {
-    attributes 'Implementation-Title': project.name, 
+    attributes 'Implementation-Title': project.name,
       'Implementation-Version': version, 'Implementation-Vendor': 'greetgo!',
       'Built-By': System.getProperty("user.name"), 'Built-At': nowFormattedDate
   }
@@ -27,17 +27,17 @@ eclipse {
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
   }
-  
+
   pathVariables 'GRADLE_USER_HOME': gradle.gradleUserHomeDir
 }
 
 project.eclipse.classpath.file.whenMerged { cp ->
   if (project.hasProperty("sourceCompatibility")) {
     cp.entries.findAll { it.path.contains('JRE_CONTAINER') }.each {
-      
+
       it.path += "/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/" +
           "JavaSE-$project.sourceCompatibility"
-      
+
     }
   }
 }
@@ -49,10 +49,10 @@ eclipse.classpath.file.whenMerged { cp ->
 }
 
 repositories {
-  mavenRepo (
-      name: 'Our repository',
-      url: 'http://192.168.0.1:8080/repository/internal/'
-      )
+  maven {
+      name 'Our repository'
+      url 'http://192.168.0.1:8080/repository/internal/'
+      }
   mavenCentral()
 }
 
@@ -61,7 +61,7 @@ configurations { repoUpload }
 dependencies {
   testCompile 'org.testng:testng:6.1.1'
   testCompile 'org.easytesting:fest-assert-core:2.0M10'
-  
+
   // needed for DAV protocol on maven uploads
   repoUpload "org.apache.maven.wagon:wagon-webdav-jackrabbit:1.0-beta-6"
 }
@@ -90,7 +90,7 @@ uploadArchives {
     repository(
       url: 'http://192.168.0.1:8080/repository/internal/'
     )
-    
+
     pom.project {
       name project.name
       packaging 'jar'

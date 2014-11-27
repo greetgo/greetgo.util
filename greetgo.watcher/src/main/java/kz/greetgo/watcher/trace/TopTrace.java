@@ -25,7 +25,7 @@ public class TopTrace {
   public static final String RUN_ID;
   
   static {
-    RUN_ID = UUID.randomUUID().toString();
+    RUN_ID = UUID.randomUUID().toString().substring(0, 8);
     
     String name = ManagementFactory.getRuntimeMXBean().getName();
     
