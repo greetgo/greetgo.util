@@ -20,6 +20,7 @@ import kz.greetgo.teamcity.soundir.controller.Joiner;
 import kz.greetgo.teamcity.soundir.controller.MessageMapGetter;
 import kz.greetgo.teamcity.soundir.controller.SendLettersController;
 import kz.greetgo.teamcity.soundir.controller.SoundSender;
+import kz.greetgo.teamcity.soundir.storage.BuildTypeHiber;
 import kz.greetgo.teamcity.soundir.storage.BuildTypeStatus;
 import kz.greetgo.teamcity.soundir.storage.Storage;
 import kz.greetgo.teamcity.soundir.storage.StorageDir;
@@ -101,44 +102,50 @@ public class CheckRunner {
     
     final List<Joiner> joiners = new LinkedList<>();
     
-    Map<String, BuildTypeStatus> savedMap = stor.loadAll();
-    
     for (BuildTypeStatus actual : requestTeamcity().values()) {
-      BuildTypeStatus saved = savedMap.get(actual.buildType);
+      //BuildTypeStatus saved = savedMap.get(actual.buildType);
+      BuildTypeHiber actualBuildTypeHiber = stor.forBuildType(actual.buildType);
+      
+      int savedNumber = actualBuildTypeHiber.getNumber();
+      
       if (actual.status == Status.SUCCESS) {
-        if (saved == null) {
-          actual.lastChange = new Date();
-          stor.save(actual);
+        
+        if (savedNumber == 0) {
+          actualBuildTypeHiber.setLastChange(new Date());
+          actualBuildTypeHiber.setStatus(actual.status);
+          actualBuildTypeHiber.setNumber(actual.number);
           continue;
         }
         
-        if (saved.number == actual.number) continue;
+        if (savedNumber == actual.number) continue;
         
-        actual.lastChange = new Date();
-        actual.lastSendLetter = saved.lastSendLetter;
-        stor.save(actual);
+        actualBuildTypeHiber.setLastChange(new Date());
+        actualBuildTypeHiber.setStatus(actual.status);
+        actualBuildTypeHiber.setNumber(actual.number);
         continue;
       }
       
-      if (saved == null) {
-        actual.lastChange = new Date();
-        stor.save(actual);
+      if (savedNumber == 0) {
+        actualBuildTypeHiber.setLastChange(new Date());
+        actualBuildTypeHiber.setStatus(actual.status);
+        actualBuildTypeHiber.setNumber(actual.number);
         play(actual.buildType, joiners);
         buildTypeList.add(actual.buildType);
         continue;
       }
       
-      if (saved.number != actual.number) {
-        actual.lastChange = new Date();
-        actual.lastSendLetter = saved.lastSendLetter;
-        stor.save(actual);
+      if (savedNumber != actual.number) {
+        actualBuildTypeHiber.setLastChange(new Date());
+        actualBuildTypeHiber.setStatus(actual.status);
+        actualBuildTypeHiber.setNumber(actual.number);
+        
         play(actual.buildType, joiners);
         buildTypeList.add(actual.buildType);
         continue;
       }
       
-      if (tooLongTimeAgo(saved.lastPlay)) {
-        play(saved.buildType, joiners);
+      if (tooLongTimeAgo(actualBuildTypeHiber.getLastPlay())) {
+        play(actual.buildType, joiners);
         buildTypeList.add(actual.buildType);
         continue;
       }
@@ -168,9 +175,7 @@ public class CheckRunner {
     @Override
     public void finish(String buildType) {
       System.out.println("Finish " + buildType);
-      BuildTypeStatus bts = stor.load(buildType);
-      bts.lastPlay = new Date();
-      stor.save(bts);
+      stor.forBuildType(buildType).setLastPlay(new Date());
     }
   };
   

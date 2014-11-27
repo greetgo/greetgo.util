@@ -12,7 +12,6 @@ import kz.greetgo.teamcity.soundir.configs.FromDb;
 import kz.greetgo.teamcity.soundir.email.BuildInfoToEmail;
 import kz.greetgo.teamcity.soundir.email.Email;
 import kz.greetgo.teamcity.soundir.email.EmailSender;
-import kz.greetgo.teamcity.soundir.storage.BuildTypeStatus;
 import kz.greetgo.teamcity.soundir.storage.Storage;
 import kz.greetgo.teamcity.soundir.teamcity.Api;
 import kz.greetgo.teamcity.soundir.teamcity.Teamcity;
@@ -56,13 +55,7 @@ public class SendLettersController {
       }
     }
     
-    Date lastSendLetter = null;
-    {
-      BuildTypeStatus bts = storage.load(buildType);
-      if (bts != null) {
-        lastSendLetter = bts.lastSendLetter;
-      }
-    }
+    Date lastSendLetter = storage.forBuildType(buildType).getLastSendLetter();
     
     if (lastSendLetter != null) {
       Calendar cal = new GregorianCalendar();
@@ -86,13 +79,7 @@ public class SendLettersController {
     }
     
     {
-      BuildTypeStatus bts = storage.load(buildType);
-      if (bts == null) {
-        bts = new BuildTypeStatus();
-        bts.buildType = buildType;
-      }
-      bts.lastSendLetter = new Date();
-      storage.save(bts);
+      storage.forBuildType(buildType).setLastSendLetter(new Date());
     }
     
   }
