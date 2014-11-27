@@ -3,6 +3,7 @@ package kz.greetgo.watcher.trace;
 import java.lang.management.ManagementFactory;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TopTrace {
@@ -21,7 +22,11 @@ public class TopTrace {
   private static String processId = "unknown";
   private static String host = "unknown";
   
+  public static final String RUN_ID;
+  
   static {
+    RUN_ID = UUID.randomUUID().toString();
+    
     String name = ManagementFactory.getRuntimeMXBean().getName();
     
     if (name != null) {
@@ -86,6 +91,24 @@ public class TopTrace {
     s.append(traceID());
     tolen(traceIdLength, s);
     sb.append("TRACE").append(s);
+  }
+  
+  public void appendRunTraceIds(StringBuilder sb) {
+    if (sb.length() > 0) sb.append(' ');
+    {
+      sb.append("R").append(RUN_ID);
+    }
+    {
+      StringBuilder s = new StringBuilder(traceIdLength);
+      s.append(traceID());
+      tolen(traceIdLength, s);
+      sb.append("TRACE").append(s);
+    }
+  }
+  
+  public void appendRunID(StringBuilder sb) {
+    if (sb.length() > 0) sb.append(' ');
+    sb.append("R").append(RUN_ID);
   }
   
   public void appendThreadID(StringBuilder sb) {
