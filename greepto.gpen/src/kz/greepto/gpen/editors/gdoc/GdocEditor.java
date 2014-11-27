@@ -1,5 +1,7 @@
 package kz.greepto.gpen.editors.gdoc;
 
+import kz.greepto.gpen.util.ColorManager;
+
 import org.eclipse.ui.editors.text.TextEditor;
 
 public class GdocEditor extends TextEditor {

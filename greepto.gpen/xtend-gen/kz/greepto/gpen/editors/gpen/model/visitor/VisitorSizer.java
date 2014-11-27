@@ -15,8 +15,6 @@ import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 public class VisitorSizer implements FigureVisitor<Rect> {
   private final GC gc;
   
-  public final Rect rect = Rect.zero();
-  
   public VisitorSizer(final GC gc) {
     this.gc = gc;
   }
@@ -30,7 +28,7 @@ public class VisitorSizer implements FigureVisitor<Rect> {
         }
       };
       IterableExtensions.<IdFigure>forEach(scene.list, _function);
-      _xblockexpression = this.rect;
+      _xblockexpression = Rect.zero();
     }
     return _xblockexpression;
   }

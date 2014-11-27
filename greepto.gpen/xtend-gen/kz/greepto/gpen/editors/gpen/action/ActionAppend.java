@@ -15,4 +15,10 @@ public class ActionAppend extends Action {
   public void apply(final Scene scene) {
     scene.list.add(this.newFigure);
   }
+  
+  public void cancel(final Scene scene) {
+    int _size = scene.list.size();
+    int _minus = (_size - 1);
+    scene.list.remove(_minus);
+  }
 }

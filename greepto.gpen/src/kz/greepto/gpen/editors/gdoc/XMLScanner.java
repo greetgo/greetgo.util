@@ -1,12 +1,14 @@
 package kz.greepto.gpen.editors.gdoc;
 
+import kz.greepto.gpen.util.ColorManager;
+
 import org.eclipse.jface.text.rules.*;
 import org.eclipse.jface.text.*;
 
 public class XMLScanner extends RuleBasedScanner {
   
   public XMLScanner(ColorManager manager) {
-    IToken procInstr = new Token(new TextAttribute(manager.getColor(IXMLColorConstants.PROC_INSTR)));
+    IToken procInstr = new Token(new TextAttribute(manager.fromRGB(IXMLColorConstants.PROC_INSTR)));
     
     IRule[] rules = new IRule[2];
     //Add rule for processing instructions

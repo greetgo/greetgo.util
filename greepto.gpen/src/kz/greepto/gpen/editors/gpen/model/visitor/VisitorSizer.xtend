@@ -10,15 +10,14 @@ import kz.greepto.gpen.editors.gpen.model.Button
 class VisitorSizer implements FigureVisitor<Rect> {
   final GC gc
 
-  public final Rect rect = Rect.zero
-
   new(GC gc) {
     this.gc = gc
   }
 
   override visitScene(Scene scene) {
     scene.list.forEach[visit(this)]
-    rect
+
+    Rect.zero
   }
 
   override visitLabel(Label label) {

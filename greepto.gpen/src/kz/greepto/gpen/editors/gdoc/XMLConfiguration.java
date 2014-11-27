@@ -1,5 +1,7 @@
 package kz.greepto.gpen.editors.gdoc;
 
+import kz.greepto.gpen.util.ColorManager;
+
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.TextAttribute;
@@ -35,7 +37,7 @@ public class XMLConfiguration extends SourceViewerConfiguration {
     if (scanner == null) {
       scanner = new XMLScanner(colorManager);
       scanner.setDefaultReturnToken(new Token(new TextAttribute(colorManager
-          .getColor(IXMLColorConstants.DEFAULT))));
+          .fromRGB(IXMLColorConstants.DEFAULT))));
     }
     return scanner;
   }
@@ -44,7 +46,7 @@ public class XMLConfiguration extends SourceViewerConfiguration {
     if (tagScanner == null) {
       tagScanner = new XMLTagScanner(colorManager);
       tagScanner.setDefaultReturnToken(new Token(new TextAttribute(colorManager
-          .getColor(IXMLColorConstants.TAG))));
+          .fromRGB(IXMLColorConstants.TAG))));
     }
     return tagScanner;
   }
@@ -61,7 +63,7 @@ public class XMLConfiguration extends SourceViewerConfiguration {
     reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
     
     NonRuleBasedDamagerRepairer ndr = new NonRuleBasedDamagerRepairer(new TextAttribute(
-        colorManager.getColor(IXMLColorConstants.XML_COMMENT)));
+        colorManager.fromRGB(IXMLColorConstants.XML_COMMENT)));
     reconciler.setDamager(ndr, XMLPartitionScanner.XML_COMMENT);
     reconciler.setRepairer(ndr, XMLPartitionScanner.XML_COMMENT);
     

@@ -1,13 +1,23 @@
 package kz.greepto.gpen.util;
 
+import java.util.Map;
+
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.xtext.xbase.lib.Inline;
+import org.eclipse.xtext.xbase.lib.Pair;
 import org.eclipse.xtext.xbase.lib.Pure;
 
 import com.google.common.annotations.GwtCompatible;
 
 @GwtCompatible
-public class PointExtensions {
+public class Exts {
+  
+  //@Pure
+  //@Inline("$1.put($2.getKey(), $2.getValue())")
+  public static <K, V> Map<K, V> operator_doubleLessThan(Map<K, V> map, Pair<K, V> pair) {
+    map.put(pair.getKey(), pair.getValue());
+    return map;
+  }
   
   @Pure
   @Inline("new org.eclipse.swt.graphics.Point(-$1.x, -$1.y)")

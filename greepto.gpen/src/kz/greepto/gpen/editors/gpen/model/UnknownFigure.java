@@ -1,4 +1,4 @@
-package kz.greepto.gpen.editors.gpen.action;
+package kz.greepto.gpen.editors.gpen.model;
 
 public class UnknownFigure extends RuntimeException {
   public UnknownFigure(String fig) {

@@ -15,4 +15,8 @@ class ActionAppend extends Action {
     scene.list.add(newFigure)
   }
 
+  override cancel(Scene scene) {
+    scene.list.remove(scene.list.size - 1)
+  }
+
 }

@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import kz.greepto.gpen.util.CannotConvertToStr;
 import kz.greepto.gpen.util.NoProperty;
 import kz.greepto.gpen.util.PropGetter;
 import kz.greepto.gpen.util.PropSetter;
@@ -140,7 +141,7 @@ public class PropManager {
     setter.set(value);
   }
   
-  public void prepare() {
+  private void prepare() {
     boolean _equals = Objects.equal(this.object, null);
     if (_equals) {
       throw new NullPointerException("object == null");
@@ -189,7 +190,7 @@ public class PropManager {
     }
   }
   
-  public void comformMethod(final Method method) {
+  private void comformMethod(final Method method) {
     {
       PropManager.NameType nt = PropManager.getGetterNameType(method);
       boolean _notEquals = (!Objects.equal(nt, null));
@@ -228,7 +229,7 @@ public class PropManager {
     }
   }
   
-  public static PropManager.NameType getGetterNameType(final Method method) {
+  private static PropManager.NameType getGetterNameType(final Method method) {
     Class<?>[] _parameterTypes = method.getParameterTypes();
     int _size = ((List<Class<?>>)Conversions.doWrapArray(_parameterTypes)).size();
     boolean _greaterThan = (_size > 0);
@@ -248,7 +249,7 @@ public class PropManager {
     return new PropManager.NameType(name, _returnType);
   }
   
-  public static PropManager.NameType getSetterNameType(final Method method) {
+  private static PropManager.NameType getSetterNameType(final Method method) {
     Class<?>[] _parameterTypes = method.getParameterTypes();
     int _size = ((List<Class<?>>)Conversions.doWrapArray(_parameterTypes)).size();
     boolean _notEquals = (_size != 1);
@@ -267,5 +268,61 @@ public class PropManager {
     String _substring = _name_1.substring(3);
     String name = StringExtensions.toFirstLower(_substring);
     return new PropManager.NameType(name, type);
+  }
+  
+  public void setAsStr(final String name, final String strValue) {
+    boolean _equals = Objects.equal(this.classMap, null);
+    if (_equals) {
+      this.prepare();
+    }
+    Class<?> cl = this.classMap.get(name);
+    boolean _equals_1 = Objects.equal(cl, null);
+    if (_equals_1) {
+      throw new NoProperty(name);
+    }
+    boolean _equals_2 = Objects.equal(cl, String.class);
+    if (_equals_2) {
+      this.set(name, strValue);
+      return;
+    }
+    boolean _equals_3 = Objects.equal(cl, Integer.TYPE);
+    if (_equals_3) {
+      int _xifexpression = (int) 0;
+      boolean _isNullOrEmpty = StringExtensions.isNullOrEmpty(strValue);
+      if (_isNullOrEmpty) {
+        _xifexpression = 0;
+      } else {
+        _xifexpression = Integer.parseInt(strValue);
+      }
+      this.set(name, Integer.valueOf(_xifexpression));
+      return;
+    }
+    boolean _equals_4 = Objects.equal(cl, Integer.class);
+    if (_equals_4) {
+      Integer _xifexpression_1 = null;
+      boolean _isNullOrEmpty_1 = StringExtensions.isNullOrEmpty(strValue);
+      if (_isNullOrEmpty_1) {
+        _xifexpression_1 = null;
+      } else {
+        _xifexpression_1 = Integer.valueOf(strValue);
+      }
+      this.set(name, _xifexpression_1);
+      return;
+    }
+  }
+  
+  public String getAsStr(final String name) {
+    Object object = this.get(name);
+    boolean _equals = Objects.equal(object, null);
+    if (_equals) {
+      return null;
+    }
+    if ((object instanceof String)) {
+      return ((String) object);
+    }
+    if ((object instanceof Integer)) {
+      return ("" + object);
+    }
+    throw new CannotConvertToStr(name, object);
   }
 }

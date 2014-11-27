@@ -50,7 +50,7 @@ class PropManager {
     Class<?> type
   }
 
-  def prepare() {
+  private def prepare() {
     if(object == null) throw new NullPointerException('object == null')
 
     classMap = new HashMap
@@ -59,8 +59,8 @@ class PropManager {
 
     for (field : object.class.fields) {
       classMap.put(field.name, field.type)
-      getterMap.put(field.name) [field.get(object)]
-      setterMap.put(field.name) [field.set(object, it)]
+      getterMap.put(field.name)[field.get(object)]
+      setterMap.put(field.name)[field.set(object, it)]
     }
 
     for (method : object.class.methods) {
@@ -69,12 +69,12 @@ class PropManager {
 
   }
 
-  def comformMethod(Method method) {
+  private def comformMethod(Method method) {
     {
       var nt = getGetterNameType(method);
       if (nt != null) {
         classMap.put(nt.name, nt.type)
-        getterMap.put(nt.name) [method.invoke(object)]
+        getterMap.put(nt.name)[method.invoke(object)]
         return;
       }
     }
@@ -82,25 +82,51 @@ class PropManager {
       var nt = getSetterNameType(method);
       if (nt != null) {
         classMap.put(nt.name, nt.type)
-        setterMap.put(nt.name) [method.invoke(object, it)]
+        setterMap.put(nt.name)[method.invoke(object, it)]
         return;
       }
     }
   }
 
-  def static NameType getGetterNameType(Method method) {
-    if (method.parameterTypes.size > 0) return null
+  private def static NameType getGetterNameType(Method method) {
+    if(method.parameterTypes.size > 0) return null
     if(!method.name.startsWith("get")) return null
     var name = method.name.substring(3).toFirstLower
     return new NameType(name, method.returnType)
   }
 
-  def static NameType getSetterNameType(Method method) {
-    if (method.parameterTypes.size != 1) return null
+  private def static NameType getSetterNameType(Method method) {
+    if(method.parameterTypes.size != 1) return null
     var type = method.parameterTypes.get(0)
     if(!method.name.startsWith("set")) return null
     var name = method.name.substring(3).toFirstLower
     return new NameType(name, type)
+  }
+
+  public def void setAsStr(String name, String strValue) {
+    if(classMap == null) prepare
+    var cl = classMap.get(name)
+    if(cl == null) throw new NoProperty(name)
+    if (cl == String) {
+      set(name, strValue)
+      return;
+    }
+    if (cl == Integer.TYPE) {
+      set(name, if(strValue.isNullOrEmpty) 0 else Integer.parseInt(strValue))
+      return
+    }
+    if (cl == Integer) {
+      set(name, if(strValue.isNullOrEmpty) null else Integer.valueOf(strValue))
+      return;
+    }
+  }
+
+  public def String getAsStr(String name) {
+    var object = get(name)
+    if (object == null) return null
+    if (object instanceof String) return object as String
+    if (object instanceof Integer) return "" + object
+    throw new CannotConvertToStr(name, object)
   }
 
 }
