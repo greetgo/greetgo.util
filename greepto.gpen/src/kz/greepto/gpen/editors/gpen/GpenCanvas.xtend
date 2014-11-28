@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Composite
 import kz.greepto.gpen.util.FontManager
 import org.eclipse.swt.graphics.Point
 import kz.greepto.gpen.editors.gpen.model.visitor.VisitorPaint
-import kz.greepto.gpen.editors.gpen.model.visitor.VisitorSizer
+import kz.greepto.gpen.editors.gpen.model.visitor.VisitorPlacer
 import kz.greepto.gpen.editors.gpen.style.dev.DevStyleCalc
 
 class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, MouseTrackListener {
@@ -44,10 +44,10 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
   def paintCanvas(PaintEvent e) {
     paintTmp(e)
 
-    var sizer = new VisitorSizer(e.gc, styleCalc)
-    var vp = new VisitorPaint(sizer)
+    var placer = new VisitorPlacer(e.gc, styleCalc)
+    var vp = new VisitorPaint(placer)
     vp.mouse = mouse
-    scene ?: vp
+    scene => vp
   }
 
   override mouseDoubleClick(MouseEvent e) {
@@ -96,6 +96,8 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
   }
 
   def paintTmp(PaintEvent e) {
+    if ("a".equals("a")) return
+
     var rect = (e.widget as Canvas).bounds;
     e.gc.foreground = e.display.getSystemColor(SWT.COLOR_RED);
     e.gc.drawFocus(0, 0, rect.width - 1, rect.height - 1);

@@ -15,7 +15,7 @@ class Combo extends RectFigure {
     super(id)
   }
 
-  override <T> operator_elvis(FigureVisitor<T> v) {
+  override <T> operator_doubleArrow(FigureVisitor<T> v) {
     return v.visitCombo(this);
   }
 

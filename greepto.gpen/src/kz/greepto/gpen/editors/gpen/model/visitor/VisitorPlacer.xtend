@@ -7,8 +7,10 @@ import kz.greepto.gpen.editors.gpen.model.Label
 import kz.greepto.gpen.editors.gpen.model.Combo
 import kz.greepto.gpen.editors.gpen.model.Button
 import kz.greepto.gpen.editors.gpen.style.StyleCalc
+import kz.greepto.gpen.editors.gpen.model.paint.PaintLabel
+import kz.greepto.gpen.editors.gpen.model.paint.PaintButton
 
-class VisitorSizer implements FigureVisitor<Rect> {
+class VisitorPlacer implements FigureVisitor<Rect> {
   package val GC gc
   package val StyleCalc styleCalc
 
@@ -19,17 +21,16 @@ class VisitorSizer implements FigureVisitor<Rect> {
 
   override visitScene(Scene scene) {
     val ret = Rect.zero
-    scene.list.forEach[ret += it ?: this]
+    scene.list.forEach[ret += it => this]
     return ret
   }
 
   override visitLabel(Label label) {
-    var size = gc.textExtent(label.text)
-    return Rect.pointSize(label.point, size);
+    new PaintLabel(gc, styleCalc).placePaint(label, null)
   }
 
   override visitButton(Button button) {
-    throw new UnsupportedOperationException("TODO: auto-generated method stub")
+    new PaintButton(gc, styleCalc).placePaint(button, null)
   }
 
   override visitCombo(Combo combo) {

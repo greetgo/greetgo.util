@@ -4,33 +4,26 @@ import kz.greepto.gpen.editors.gpen.model.Button
 import kz.greepto.gpen.editors.gpen.model.Combo
 import kz.greepto.gpen.editors.gpen.model.Label
 import kz.greepto.gpen.editors.gpen.model.Scene
+import kz.greepto.gpen.editors.gpen.model.paint.PaintButton
+import kz.greepto.gpen.editors.gpen.model.paint.PaintLabel
 import org.eclipse.swt.graphics.Point
-import kz.greepto.gpen.editors.gpen.style.PaintStatus
 
 class VisitorPaint implements FigureVisitor<Void> {
 
-  final VisitorSizer sizer
+  final VisitorPlacer placer
   public Point mouse
 
-  new(VisitorSizer sizer) {
-    this.sizer = sizer
+  new(VisitorPlacer placer) {
+    this.placer = placer
   }
 
   override visitScene(Scene scene) {
-    scene.list.forEach[it ?: this]
+    scene.list.forEach[it => this]
     null
   }
 
   override visitLabel(Label label) {
-    var size = label ?: sizer
-    var ps = if (size.contains(mouse)) PaintStatus.hover else PaintStatus.normal
-    var calc = sizer.styleCalc.calcForLabel(label, ps)
-
-    sizer.gc.foreground = calc.color
-    sizer.gc.font = calc.font
-
-    sizer.gc.drawText(label.text, label.x, label.y, true)
-
+    new PaintLabel(placer.gc, placer.styleCalc).placePaint(label, mouse)
     null
   }
 
@@ -39,7 +32,8 @@ class VisitorPaint implements FigureVisitor<Void> {
   }
 
   override visitButton(Button button) {
-    throw new UnsupportedOperationException("TODO: auto-generated method stub")
+    new PaintButton(placer.gc, placer.styleCalc).placePaint(button, mouse)
+    null
   }
 
 }

@@ -8,7 +8,7 @@ class Scene extends Figure {
 
   public List<IdFigure> list = new ArrayList;
 
-  override <T> operator_elvis(FigureVisitor<T> v) {
+  override <T> operator_doubleArrow(FigureVisitor<T> v) {
     return v.visitScene(this);
   }
 

@@ -4,15 +4,15 @@ import kz.greepto.gpen.editors.gpen.model.visitor.FigureVisitor
 
 class Button extends RectFigure {
 
-  public String caption
-  public boolean autoWidth
-  public boolean autoHeight
+  public String text
+  public boolean autoWidth = true
+  public boolean autoHeight = true
 
   new(String id) {
     super(id)
   }
 
-  override <T> operator_elvis(FigureVisitor<T> v) {
+  override <T> operator_doubleArrow(FigureVisitor<T> v) {
     return v.visitButton(this)
   }
 
