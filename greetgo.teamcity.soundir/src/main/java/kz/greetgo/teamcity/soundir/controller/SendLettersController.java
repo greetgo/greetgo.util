@@ -41,7 +41,7 @@ public class SendLettersController {
       
       BuildInfo buildInfo = Api.get(new GetBuildInfo(firstLastFailed.id));
       
-      if (cal.after(buildInfo.finishDate)) return;
+      if (cal.getTime().before(buildInfo.finishDate)) return;
     }
     
     BuildInfo buildInfo = Api.get(new GetBuildInfo(list.get(0).id));
@@ -78,9 +78,7 @@ public class SendLettersController {
       if ("a".equals("a")) EmailSender.send(email);
     }
     
-    {
-      storage.forBuildType(buildType).setLastSendLetter(new Date());
-    }
+    storage.forBuildType(buildType).setLastSendLetter(new Date());
     
   }
 }

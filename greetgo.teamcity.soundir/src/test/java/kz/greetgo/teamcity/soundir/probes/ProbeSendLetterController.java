@@ -19,7 +19,7 @@ public class ProbeSendLetterController {
     sl.storage = storage;
     sl.messageMap = MessageMapGetter.messageMap;
     
-    sl.checkSendLetters("Scoring_Baf_ServerTest");
+    sl.checkSendLetters("Collect_Rbk_ServerTests");
     
   }
 }
