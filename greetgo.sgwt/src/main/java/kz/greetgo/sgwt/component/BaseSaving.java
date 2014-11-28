@@ -16,7 +16,7 @@ public abstract class BaseSaving<T> extends Snippet implements Async<T, T> {
   protected final IButton saveButton;
   protected final IButton cancelButton;
   protected final Window window = new Window();
-  protected final boolean needToDisable = true;
+  protected boolean needToDisable = true;
   
   public BaseSaving(final ServiceAsync<T, T> saveService) {
     saveButton = new IButton(SAVE, new ClickHandler() {
