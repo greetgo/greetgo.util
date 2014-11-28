@@ -6,16 +6,22 @@ import kz.greepto.gpen.editors.gpen.model.IdFigure;
 import kz.greepto.gpen.editors.gpen.model.Label;
 import kz.greepto.gpen.editors.gpen.model.Scene;
 import kz.greepto.gpen.editors.gpen.model.visitor.FigureVisitor;
-import org.eclipse.swt.graphics.GC;
+import kz.greepto.gpen.editors.gpen.model.visitor.VisitorSizer;
+import kz.greepto.gpen.editors.gpen.style.LabelStyle;
+import kz.greepto.gpen.editors.gpen.style.PaintStatus;
+import kz.greepto.gpen.util.Rect;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
 @SuppressWarnings("all")
 public class VisitorPaint implements FigureVisitor<Void> {
-  private final GC gc;
+  private final VisitorSizer sizer;
   
-  public VisitorPaint(final GC gc) {
-    this.gc = gc;
+  public Point mouse;
+  
+  public VisitorPaint(final VisitorSizer sizer) {
+    this.sizer = sizer;
   }
   
   public Void visitScene(final Scene scene) {
@@ -23,7 +29,7 @@ public class VisitorPaint implements FigureVisitor<Void> {
     {
       final Procedure1<IdFigure> _function = new Procedure1<IdFigure>() {
         public void apply(final IdFigure it) {
-          it.<Void>visit(VisitorPaint.this);
+          it.<Void>operator_elvis(VisitorPaint.this);
         }
       };
       IterableExtensions.<IdFigure>forEach(scene.list, _function);
@@ -33,7 +39,26 @@ public class VisitorPaint implements FigureVisitor<Void> {
   }
   
   public Void visitLabel(final Label label) {
-    throw new UnsupportedOperationException("TODO: auto-generated method stub");
+    Object _xblockexpression = null;
+    {
+      Rect size = label.<Rect>operator_elvis(this.sizer);
+      PaintStatus _xifexpression = null;
+      boolean _contains = size.contains(this.mouse);
+      if (_contains) {
+        _xifexpression = PaintStatus.hover();
+      } else {
+        _xifexpression = PaintStatus.normal();
+      }
+      PaintStatus ps = _xifexpression;
+      LabelStyle calc = this.sizer.styleCalc.calcForLabel(label, ps);
+      this.sizer.gc.setForeground(calc.color);
+      this.sizer.gc.setFont(calc.font);
+      int _x = label.getX();
+      int _y = label.getY();
+      this.sizer.gc.drawText(label.text, _x, _y, true);
+      _xblockexpression = null;
+    }
+    return ((Void)_xblockexpression);
   }
   
   public Void visitCombo(final Combo combo) {

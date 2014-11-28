@@ -12,7 +12,7 @@ class Button extends RectFigure {
     super(id)
   }
 
-  override <T> visit(FigureVisitor<T> v) {
+  override <T> operator_elvis(FigureVisitor<T> v) {
     return v.visitButton(this)
   }
 

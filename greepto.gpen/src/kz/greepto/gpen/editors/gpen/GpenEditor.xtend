@@ -31,7 +31,7 @@ class GpenEditor extends EditorPart {
   override createPartControl(Composite parent) {
     contents = new GpenCanvas(parent, SWT.NONE);
 
-    contents.scene.list += Fig.c('Label', 'asd', 'x 100 y 200')
+    contents.scene.list += Fig.c('Label', 'asd', 'x 100 y 200 text asd')
   }
 
   override setFocus() {

@@ -14,6 +14,8 @@ import org.eclipse.swt.widgets.Composite
 import kz.greepto.gpen.util.FontManager
 import org.eclipse.swt.graphics.Point
 import kz.greepto.gpen.editors.gpen.model.visitor.VisitorPaint
+import kz.greepto.gpen.editors.gpen.model.visitor.VisitorSizer
+import kz.greepto.gpen.editors.gpen.style.dev.DevStyleCalc
 
 class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, MouseTrackListener {
 
@@ -21,6 +23,9 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
 
   final ColorManager colors = new ColorManager
   final FontManager fonts = new FontManager
+  final DevStyleCalc styleCalc = new DevStyleCalc(fonts, colors)
+
+  private Point mouse = new Point(0, 0)
 
   public new(Composite parent, int style) {
     super(parent, style);
@@ -39,14 +44,18 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
   def paintCanvas(PaintEvent e) {
     paintTmp(e)
 
-    var vp = new VisitorPaint(e.gc)
-    vp.toString
+    var sizer = new VisitorSizer(e.gc, styleCalc)
+    var vp = new VisitorPaint(sizer)
+    vp.mouse = mouse
+    scene ?: vp
   }
 
   override mouseDoubleClick(MouseEvent e) {
+
     //println("double " + e);
     counter++
-    //redraw
+
+  //redraw
   }
 
   override mouseDown(MouseEvent e) {
@@ -56,10 +65,11 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
   }
 
   override mouseMove(MouseEvent e) {
-
+    mouse.x = e.x
+    mouse.y = e.y
     redraw
 
-    if ("a".equals("a")) return;
+    if("a".equals("a")) return;
 
     var gc = new GC(this)
     gc.foreground = colors.rgb(200, 0, 0)
@@ -110,11 +120,11 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
 
     e.gc.foreground = e.display.getSystemColor(SWT.COLOR_BLUE);
     e.gc.drawRectangle(p.x, p.y, r.x, r.y)
+
     //e.gc.drawLine(60, 60, 60 + r.x, 60);
     //e.gc.drawLine(60, 60 + r.y, 60 + r.x, 60 + r.y);
     //e.gc.drawLine(60, 60, 60, 60 + r.y);
     //e.gc.drawLine(60 + r.x, 60, 60 + r.x, 60 + r.y);
-
     e.gc.foreground = e.display.getSystemColor(SWT.COLOR_RED);
     e.gc.drawText('Начинается новый день', 60, 180);
   }
