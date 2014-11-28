@@ -16,16 +16,23 @@ public abstract class BaseSaving<T> extends Snippet implements Async<T, T> {
   protected final IButton saveButton;
   protected final IButton cancelButton;
   protected final Window window = new Window();
+  protected final boolean needToDisable = true;
   
   public BaseSaving(final ServiceAsync<T, T> saveService) {
     saveButton = new IButton(SAVE, new ClickHandler() {
       public void onClick(ClickEvent event) {
+        if (needToDisable) {
+          saveButton.disable();
+          cancelButton.disable();
+        }
         saveService.invoke(gather(), new BaseCallback<T>() {
           public void onSuccess(T t) {
             if (sync != null) {
               sync.invoke(t);
             }
             window.hide();
+            saveButton.enable();
+            cancelButton.enable();
           }
         });
       }
