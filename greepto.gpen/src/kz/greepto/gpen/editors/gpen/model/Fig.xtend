@@ -1,14 +1,14 @@
 package kz.greepto.gpen.editors.gpen.model
 
 import java.util.ArrayList
-import kz.greepto.gpen.util.PropManager
 import kz.greepto.gpen.util.UtilParam
+import kz.greepto.gpen.util.PropManagerObject
 
 class Fig {
 
   def static IdFigure c(String fig, String id, String... params) {
     var ret = createNewFigure(fig, id);
-    var pm = new PropManager(ret)
+    var pm = new PropManagerObject(ret)
 
     val list = new ArrayList<String>
 

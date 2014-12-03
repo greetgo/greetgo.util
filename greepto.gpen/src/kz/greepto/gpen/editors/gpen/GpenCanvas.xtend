@@ -1,7 +1,12 @@
 package kz.greepto.gpen.editors.gpen
 
 import kz.greepto.gpen.editors.gpen.model.Scene
+import kz.greepto.gpen.editors.gpen.model.visitor.Hit
+import kz.greepto.gpen.editors.gpen.model.visitor.VisitorPaint
+import kz.greepto.gpen.editors.gpen.model.visitor.VisitorPlacer
+import kz.greepto.gpen.editors.gpen.style.dev.DevStyleCalc
 import kz.greepto.gpen.util.ColorManager
+import kz.greepto.gpen.util.FontManager
 import org.eclipse.swt.SWT
 import org.eclipse.swt.events.MouseEvent
 import org.eclipse.swt.events.MouseListener
@@ -9,13 +14,9 @@ import org.eclipse.swt.events.MouseMoveListener
 import org.eclipse.swt.events.MouseTrackListener
 import org.eclipse.swt.events.PaintEvent
 import org.eclipse.swt.graphics.GC
+import org.eclipse.swt.graphics.Point
 import org.eclipse.swt.widgets.Canvas
 import org.eclipse.swt.widgets.Composite
-import kz.greepto.gpen.util.FontManager
-import org.eclipse.swt.graphics.Point
-import kz.greepto.gpen.editors.gpen.model.visitor.VisitorPaint
-import kz.greepto.gpen.editors.gpen.model.visitor.VisitorPlacer
-import kz.greepto.gpen.editors.gpen.style.dev.DevStyleCalc
 
 class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, MouseTrackListener {
 
@@ -24,6 +25,7 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
   final ColorManager colors = new ColorManager
   final FontManager fonts = new FontManager
   final DevStyleCalc styleCalc = new DevStyleCalc(fonts, colors)
+  package final SelectionProvider selectionProvider = new SelectionProvider(this)
 
   private Point mouse = new Point(0, 0)
 
@@ -59,6 +61,18 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
   }
 
   override mouseDown(MouseEvent e) {
+    mouse.x = e.x
+    mouse.y = e.y
+
+    var gc = new GC(this)
+    try {
+      var placer = new VisitorPlacer(gc, styleCalc)
+      var selected = Hit.on(scene).with(placer).to(mouse)
+      selectionProvider.selection = new Selection(selected)[redraw]
+    } finally {
+      gc.dispose
+    }
+
   }
 
   override mouseUp(MouseEvent e) {
@@ -96,7 +110,7 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
   }
 
   def paintTmp(PaintEvent e) {
-    if ("a".equals("a")) return
+    if("a".equals("a")) return
 
     var rect = (e.widget as Canvas).bounds;
     e.gc.foreground = e.display.getSystemColor(SWT.COLOR_RED);
@@ -130,5 +144,4 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     e.gc.foreground = e.display.getSystemColor(SWT.COLOR_RED);
     e.gc.drawText('Начинается новый день', 60, 180);
   }
-
 }

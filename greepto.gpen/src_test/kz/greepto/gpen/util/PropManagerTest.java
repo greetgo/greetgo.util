@@ -37,7 +37,7 @@ public class PropManagerTest {
   public void get_set_str() throws Exception {
     Asd asd = new Asd();
     
-    PropManager pm = new PropManager(asd);
+    PropManagerObject pm = new PropManagerObject(asd);
     
     String s1 = "fdsaffds786fa78ds56f876as5df85a";
     String s2 = "o4m3on54n657hv8fg78cx99f80d76f6";
@@ -55,7 +55,7 @@ public class PropManagerTest {
   public void get_set_asStr_str() throws Exception {
     Asd asd = new Asd();
     
-    PropManager pm = new PropManager(asd);
+    PropManagerObject pm = new PropManagerObject(asd);
     
     String s1 = "fdsaffds786fa78ds56f876as5df85a";
     String s2 = "o4m3on54n657hv8fg78cx99f80d76f6";
@@ -73,7 +73,7 @@ public class PropManagerTest {
   public void get_set_int() throws Exception {
     Asd asd = new Asd();
     
-    PropManager pm = new PropManager(asd);
+    PropManagerObject pm = new PropManagerObject(asd);
     
     int s1 = 56436;
     int s2 = 98765;
@@ -91,7 +91,7 @@ public class PropManagerTest {
   public void get_set_asStr_int() throws Exception {
     Asd asd = new Asd();
     
-    PropManager pm = new PropManager(asd);
+    PropManagerObject pm = new PropManagerObject(asd);
     
     int s1 = 56436;
     int s2 = 98765;
@@ -109,7 +109,7 @@ public class PropManagerTest {
   public void meta() throws Exception {
     Asd asd = new Asd();
     
-    PropManager pm = new PropManager(asd);
+    PropManagerObject pm = new PropManagerObject(asd);
     
     Map<String, Class<?>> meta = pm.meta();
     
