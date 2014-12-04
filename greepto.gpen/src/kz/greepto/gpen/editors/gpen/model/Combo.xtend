@@ -15,8 +15,19 @@ class Combo extends RectFigure {
     super(id)
   }
 
+  new(Combo a) {
+    super(a)
+    lines += a.lines
+    opened = a.opened
+    autoHeight = a.autoHeight
+  }
+
   override <T> operator_doubleArrow(FigureVisitor<T> v) {
     return v.visitCombo(this);
+  }
+
+  override copy() {
+    return new Combo(this)
   }
 
 }

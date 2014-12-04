@@ -9,4 +9,10 @@ abstract class RectFigure extends PointFigure {
     super(id)
   }
 
+  new(RectFigure a) {
+    super(a)
+    width = a.width
+    height = a.height
+  }
+
 }

@@ -12,8 +12,19 @@ class Button extends RectFigure {
     super(id)
   }
 
+  new(Button a) {
+    super(a)
+    text = a.text
+    autoHeight = a.autoHeight
+    autoWidth = a.autoWidth
+  }
+
   override <T> operator_doubleArrow(FigureVisitor<T> v) {
     return v.visitButton(this)
+  }
+
+  override copy() {
+    return new Button(this)
   }
 
 }

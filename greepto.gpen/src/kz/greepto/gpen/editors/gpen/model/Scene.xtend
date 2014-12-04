@@ -12,4 +12,14 @@ class Scene extends Figure {
     return v.visitScene(this);
   }
 
+  new() {}
+
+  new(Scene a) {
+    list += a.list.map[copy as IdFigure]
+  }
+
+  override copy() {
+    return new Scene(this)
+  }
+
 }

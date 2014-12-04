@@ -9,4 +9,8 @@ abstract class IdFigure extends Figure {
     this.id = id
   }
 
+  new(IdFigure a) {
+    id = a.id
+    sel = a.sel
+  }
 }

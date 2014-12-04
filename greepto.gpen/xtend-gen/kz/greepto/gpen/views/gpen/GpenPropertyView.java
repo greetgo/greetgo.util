@@ -9,6 +9,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -93,8 +94,11 @@ public class GpenPropertyView extends ViewPart {
       return;
     }
     PointFigure pfig = ((PointFigure) fig);
-    ScrolledComposite sc = new ScrolledComposite(this.parent, SWT.V_SCROLL);
-    Composite wall = new Composite(sc, SWT.NONE);
+    ScrolledComposite sc = new ScrolledComposite(this.parent, (SWT.V_SCROLL + SWT.H_SCROLL));
+    Composite wall = new Composite(sc, (SWT.NONE + SWT.BORDER));
+    sc.setContent(wall);
+    sc.setExpandHorizontal(true);
+    sc.setExpandVertical(true);
     GridLayout lay = new GridLayout();
     lay.numColumns = 3;
     wall.setLayout(lay);
@@ -117,8 +121,10 @@ public class GpenPropertyView extends ViewPart {
     {
       final Text txt = new Text(wall, (SWT.SINGLE + SWT.BORDER));
       GridData gd = new GridData();
-      gd.horizontalAlignment = GridData.FILL;
+      gd.horizontalAlignment = SWT.FILL;
       txt.setLayoutData(gd);
+      Point _point = new Point(300, 100);
+      txt.setSize(_point);
       int _x = pfig.getX();
       String _plus = ("" + Integer.valueOf(_x));
       txt.setText(_plus);
@@ -130,16 +136,18 @@ public class GpenPropertyView extends ViewPart {
       };
       txt.addModifyListener(_function_1);
     }
-    for (int i = 0; (i < 10); i++) {
+    for (int i = 0; (i < 1); i++) {
       {
         Label _label_2 = new Label(wall, SWT.NONE);
         _label_2.setText(("addi " + Integer.valueOf(i)));
         Label _label_3 = new Label(wall, SWT.NONE);
         _label_3.setText(":");
         Label _label_4 = new Label(wall, SWT.NONE);
-        _label_4.setText("adddi");
+        _label_4.setText("addwwwwwwwwwwwwdi");
       }
     }
+    Point _computeSize = wall.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+    sc.setMinSize(_computeSize);
     this.parent.layout(true);
   }
   

@@ -13,6 +13,7 @@ import org.eclipse.ui.ISelectionListener
 import org.eclipse.ui.IWorkbenchPart
 import org.eclipse.ui.part.ViewPart
 import org.eclipse.swt.custom.ScrolledComposite
+import org.eclipse.swt.graphics.Point
 
 public class GpenPropertyView extends ViewPart {
   Composite parent
@@ -63,8 +64,12 @@ public class GpenPropertyView extends ViewPart {
 
     var pfig = fig as PointFigure
 
-    var ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL);
-    var Composite wall = new Composite(sc, SWT.NONE)
+    var ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL + SWT.H_SCROLL)
+    var Composite wall = new Composite(sc, SWT.NONE + SWT.BORDER)
+
+    sc.content = wall
+    sc.expandHorizontal = true
+    sc.expandVertical = true
 
     var lay = new GridLayout
     lay.numColumns = 3
@@ -87,19 +92,22 @@ public class GpenPropertyView extends ViewPart {
     {
       val txt = new Text(wall, SWT.SINGLE + SWT.BORDER)
       var gd = new GridData()
-      gd.horizontalAlignment = GridData.FILL
+      gd.horizontalAlignment = SWT.FILL
       txt.layoutData = gd
+      txt.size = new Point(300, 100)
       txt.text = '' + pfig.x
       txt.addModifyListener [
         println(txt.text)
       ]
     }
 
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 1; i++) {
       new Label(wall, SWT.NONE).text = 'addi ' + i
       new Label(wall, SWT.NONE).text = ':'
-      new Label(wall, SWT.NONE).text = 'adddi'
+      new Label(wall, SWT.NONE).text = 'addwwwwwwwwwwwwdi'
     }
+
+    sc.minSize = wall.computeSize(SWT.DEFAULT, SWT.DEFAULT)
 
     parent.layout(true)
   }

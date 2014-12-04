@@ -10,8 +10,17 @@ class Label extends PointFigure {
     super(id)
   }
 
+  new(Label a) {
+    super(a)
+    text = a.text
+  }
+
   override <T> operator_doubleArrow(FigureVisitor<T> v) {
     return v.visitLabel(this);
+  }
+
+  override copy() {
+    return new Label(this)
   }
 
 }

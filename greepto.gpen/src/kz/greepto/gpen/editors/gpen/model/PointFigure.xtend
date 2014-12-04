@@ -27,4 +27,8 @@ abstract class PointFigure extends IdFigure {
     this.point = point
   }
 
+  new(PointFigure a) {
+    super(a)
+    if (a.point != null) point = new Point(a.point.x, a.point.x)
+  }
 }
