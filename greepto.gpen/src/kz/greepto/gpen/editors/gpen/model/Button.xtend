@@ -23,7 +23,7 @@ class Button extends RectFigure {
     return v.visitButton(this)
   }
 
-  override copy() {
+  override Button copy() {
     return new Button(this)
   }
 

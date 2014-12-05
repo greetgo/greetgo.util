@@ -26,7 +26,7 @@ class Combo extends RectFigure {
     return v.visitCombo(this);
   }
 
-  override copy() {
+  override Combo copy() {
     return new Combo(this)
   }
 

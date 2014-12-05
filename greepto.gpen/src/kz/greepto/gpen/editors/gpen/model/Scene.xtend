@@ -1,7 +1,7 @@
 package kz.greepto.gpen.editors.gpen.model
 
-import java.util.List
 import java.util.ArrayList
+import java.util.List
 import kz.greepto.gpen.editors.gpen.model.visitor.FigureVisitor
 
 class Scene extends Figure {
@@ -12,14 +12,23 @@ class Scene extends Figure {
     return v.visitScene(this);
   }
 
-  new() {}
+  new() {
+  }
 
   new(Scene a) {
     list += a.list.map[copy as IdFigure]
   }
 
-  override copy() {
+  override Scene copy() {
     return new Scene(this)
+  }
+
+  def IdFigure findById(String id) {
+    for (IdFigure x : list) {
+      if(id == x.id) return x
+    }
+
+    return null
   }
 
 }

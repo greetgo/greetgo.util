@@ -8,7 +8,7 @@ class ActionAppend extends Action {
   public final IdFigure newFigure;
 
   new(IdFigure newFigure) {
-    this.newFigure = newFigure
+    this.newFigure = newFigure.copy
   }
 
   override apply(Scene scene) {

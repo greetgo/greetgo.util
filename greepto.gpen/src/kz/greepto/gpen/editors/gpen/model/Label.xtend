@@ -19,7 +19,7 @@ class Label extends PointFigure {
     return v.visitLabel(this);
   }
 
-  override copy() {
+  override Label copy() {
     return new Label(this)
   }
 
