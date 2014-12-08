@@ -19,4 +19,8 @@ class ActionAppend extends Action {
     scene.list.remove(scene.list.size - 1)
   }
 
+  override getDisplayStr() {
+    return "Append"
+  }
+
 }

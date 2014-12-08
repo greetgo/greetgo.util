@@ -5,4 +5,5 @@ import kz.greepto.gpen.editors.gpen.model.Scene
 abstract class Action {
   def void apply(Scene scene)
   def void cancel(Scene scene)
+  def String getDisplayStr()
 }

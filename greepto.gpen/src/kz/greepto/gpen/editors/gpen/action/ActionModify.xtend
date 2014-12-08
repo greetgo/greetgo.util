@@ -26,4 +26,8 @@ class ActionModify extends Action {
     setter.setValue(object, oldValue)
   }
 
+  override getDisplayStr() {
+    return "modify"
+  }
+
 }

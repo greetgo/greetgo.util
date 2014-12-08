@@ -2,17 +2,21 @@ package kz.greepto.gpen.editors.gpen
 
 import kz.greepto.gpen.editors.gpen.action.Action
 import kz.greepto.gpen.editors.gpen.action.ActionManager
+import kz.greepto.gpen.editors.gpen.action.UndoableOperation
 import kz.greepto.gpen.editors.gpen.model.IdFigure
 import kz.greepto.gpen.editors.gpen.model.Scene
 import kz.greepto.gpen.editors.gpen.model.visitor.Hit
 import kz.greepto.gpen.editors.gpen.model.visitor.VisitorPaint
 import kz.greepto.gpen.editors.gpen.model.visitor.VisitorPlacer
+import kz.greepto.gpen.editors.gpen.prop.PropFactory
 import kz.greepto.gpen.editors.gpen.prop.SceneWorker
 import kz.greepto.gpen.editors.gpen.style.dev.DevStyleCalc
 import kz.greepto.gpen.util.ColorManager
 import kz.greepto.gpen.util.FontManager
 import kz.greepto.gpen.util.Handler
 import kz.greepto.gpen.util.HandlerList
+import org.eclipse.core.commands.operations.IUndoContext
+import org.eclipse.core.commands.operations.OperationHistoryFactory
 import org.eclipse.swt.SWT
 import org.eclipse.swt.events.MouseEvent
 import org.eclipse.swt.events.MouseListener
@@ -23,28 +27,36 @@ import org.eclipse.swt.graphics.GC
 import org.eclipse.swt.graphics.Point
 import org.eclipse.swt.widgets.Canvas
 import org.eclipse.swt.widgets.Composite
-import kz.greepto.gpen.editors.gpen.prop.PropFactory
 
 class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, MouseTrackListener {
 
-  private Scene originalScene = new Scene
-  private Scene scene = new Scene
+  Scene originalScene = new Scene
+  Scene scene = new Scene
 
-  final ColorManager colors = new ColorManager
-  final FontManager fonts = new FontManager
-  final DevStyleCalc styleCalc = new DevStyleCalc(fonts, colors)
-  package final SelectionProvider selectionProvider = new SelectionProvider(this)
-  final ActionManager actionManager = new ActionManager;
+  val ColorManager colors = new ColorManager
+  val FontManager fonts = new FontManager
+  val DevStyleCalc styleCalc = new DevStyleCalc(fonts, colors)
+  package val SelectionProvider selectionProvider = new SelectionProvider(this)
+  val ActionManager actionManager = new ActionManager;
 
-  final HandlerList changeSceneHandlerList = new HandlerList ;
+  val HandlerList changeSceneHandlerList = new HandlerList
 
-  final SceneWorker sceneWorker = new SceneWorker() {
+  val SceneWorker sceneWorker = new SceneWorker() {
     override takeId(Object object) {
       return (object as IdFigure).id;
     }
 
     override sendAction(Action action) {
-      actionManager.append(action)
+      var op = new UndoableOperation(action, scene) [
+        redraw
+        changeSceneHandlerList.fire
+      ]
+
+      //var ophist = PlatformUI.getWorkbench().operationSupport.operationHistory
+      var ophist = OperationHistoryFactory.getOperationHistory()
+      ophist.execute(op, null, null)
+
+      //actionManager.append(action)
       redraw
     }
 
@@ -61,10 +73,15 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     this.scene = originalScene.copy
 
     actionManager.scene = this.scene
+
   }
 
-  public new(Composite parent, int style) {
-    super(parent, style);
+  val IUndoContext undoContext
+
+  public new(Composite parent, IUndoContext undoContext) {
+    super(parent, SWT.NONE);
+
+    this.undoContext = undoContext
 
     addPaintListener [ PaintEvent e |
       paintCanvas(e);
@@ -75,11 +92,7 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     addMouseTrackListener(this);
   }
 
-  var counter = 1
-
   def paintCanvas(PaintEvent e) {
-    paintTmp(e)
-
     var placer = new VisitorPlacer(e.gc, styleCalc)
     var vp = new VisitorPaint(placer)
     vp.mouse = mouse
@@ -88,10 +101,8 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
 
   override mouseDoubleClick(MouseEvent e) {
 
-    //println("double " + e);
-    counter++
+    println("double " + e);
 
-  //redraw
   }
 
   override mouseDown(MouseEvent e) {
@@ -122,16 +133,6 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     mouse.x = e.x
     mouse.y = e.y
     redraw
-
-    if("a".equals("a")) return;
-
-    var gc = new GC(this)
-    gc.foreground = colors.rgb(200, 0, 0)
-    gc.background = gc.foreground
-
-    //gc.drawPoint(e.x, e.y)
-    gc.fillOval(e.x - 2, e.y - 2, 5, 5)
-    gc.dispose()
   }
 
   override mouseEnter(MouseEvent e) {
@@ -149,39 +150,4 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     super.dispose
   }
 
-  def paintTmp(PaintEvent e) {
-    if("a".equals("a")) return
-
-    var rect = (e.widget as Canvas).bounds;
-    e.gc.foreground = e.display.getSystemColor(SWT.COLOR_RED);
-    e.gc.drawFocus(0, 0, rect.width - 1, rect.height - 1);
-
-    var oldBG = e.gc.background
-
-    e.gc.background = e.display.getSystemColor(SWT.COLOR_CYAN);
-    e.gc.fillRectangle(50, 50, 600, 70);
-
-    e.gc.background = oldBG
-    e.gc.foreground = e.display.getSystemColor(SWT.COLOR_RED);
-
-    e.gc.font = fonts.arial.height(30)
-
-    var str = 'Отрисовка. Counter = ' + counter + (if(counter % 2 == 0) ", Чёт" else ", нечет")
-
-    var r = e.gc.textExtent(str, SWT.DRAW_TRANSPARENT)
-
-    var p = new Point(60, 60)
-
-    e.gc.drawText(str, p.x, p.x, true);
-
-    e.gc.foreground = e.display.getSystemColor(SWT.COLOR_BLUE);
-    e.gc.drawRectangle(p.x, p.y, r.x, r.y)
-
-    //e.gc.drawLine(60, 60, 60 + r.x, 60);
-    //e.gc.drawLine(60, 60 + r.y, 60 + r.x, 60 + r.y);
-    //e.gc.drawLine(60, 60, 60, 60 + r.y);
-    //e.gc.drawLine(60 + r.x, 60, 60 + r.x, 60 + r.y);
-    e.gc.foreground = e.display.getSystemColor(SWT.COLOR_RED);
-    e.gc.drawText('Начинается новый день', 60, 180);
-  }
 }

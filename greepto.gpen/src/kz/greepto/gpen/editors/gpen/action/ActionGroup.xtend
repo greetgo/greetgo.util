@@ -7,10 +7,12 @@ import java.util.Collection
 
 class ActionGroup extends Action {
 
-  public final List<Action> group = new ArrayList;
+  public val List<Action> group = new ArrayList;
+  val String displayStr
 
-  new(Collection<Action> group) {
+  new(Collection<Action> group, String displayStr) {
     this.group += group
+    this.displayStr = displayStr
   }
 
   override apply(Scene scene) {
@@ -19,6 +21,10 @@ class ActionGroup extends Action {
 
   override cancel(Scene scene) {
     group.reverseView.forEach[cancel(scene)]
+  }
+
+  override getDisplayStr() {
+    return displayStr
   }
 
 }
