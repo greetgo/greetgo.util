@@ -8,6 +8,7 @@ import org.eclipse.ui.IEditorInput
 import org.eclipse.ui.IEditorSite
 import org.eclipse.ui.PartInitException
 import org.eclipse.ui.part.EditorPart
+import kz.greepto.gpen.editors.gpen.model.Scene
 
 class GpenEditor extends EditorPart {
 
@@ -34,10 +35,14 @@ class GpenEditor extends EditorPart {
     contents = new GpenCanvas(parent, SWT.NONE);
     site.selectionProvider = contents.selectionProvider
 
-    contents.scene.list += Fig.c('Label', 'asd1', 'x 100 y 100 text asd')
-    contents.scene.list += Fig.c('Label', 'asd2', 'x 100 y 150 text привет')
+    var scene = new Scene
 
-    contents.scene.list += Fig.c('Button', 'but1', 'x 100 y 200 text "жми сюда"')
+    scene.list += Fig.c('Label', 'asd1', 'x 100 y 50 text asd')
+    scene.list += Fig.c('Label', 'asd2', 'x 100 y 150 text привет')
+
+    scene.list += Fig.c('Button', 'but1', 'x 200 y 200 text "жми сюда"')
+
+    contents.scene = scene
   }
 
   override setFocus() {

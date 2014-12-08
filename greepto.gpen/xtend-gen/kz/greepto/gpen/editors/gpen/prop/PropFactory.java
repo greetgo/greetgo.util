@@ -3,6 +3,7 @@ package kz.greepto.gpen.editors.gpen.prop;
 import com.google.common.base.Objects;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import kz.greepto.gpen.editors.gpen.action.Action;
 import kz.greepto.gpen.editors.gpen.action.ActionModify;
 import kz.greepto.gpen.editors.gpen.prop.NoGetter;
 import kz.greepto.gpen.editors.gpen.prop.PropAccessor;
+import kz.greepto.gpen.editors.gpen.prop.PropOptions;
 import kz.greepto.gpen.editors.gpen.prop.SceneWorker;
 import kz.greepto.gpen.editors.gpen.prop.Skip;
 import kz.greepto.gpen.editors.gpen.prop.ValueGetter;
@@ -34,6 +36,8 @@ public class PropFactory {
     
     private boolean skip = false;
     
+    private boolean fin = false;
+    
     public AccessorInfo(final String name, final Object object, final SceneWorker sceneWorker) {
       this.name = name;
       this.object = object;
@@ -44,6 +48,10 @@ public class PropFactory {
     
     public Class<?> getType() {
       return this.type;
+    }
+    
+    public String getName() {
+      return this.name;
     }
     
     private ValueGetter getter;
@@ -70,8 +78,18 @@ public class PropFactory {
       return this.getter.getValue(this.object);
     }
     
-    public boolean isReadOnly() {
-      return Objects.equal(this.setter, null);
+    private final PropOptions options = new PropOptions() {
+      public boolean isBig() {
+        return false;
+      }
+      
+      public boolean isReadonly() {
+        return Objects.equal(AccessorInfo.this.setter, null);
+      }
+    };
+    
+    public PropOptions getOptions() {
+      return this.options;
     }
     
     public void setValue(final Object value) {
@@ -109,6 +127,12 @@ public class PropFactory {
     public HandlerKiller addChangeHandler(final Handler handler) {
       return this.sceneWorker.addChangeHandler(handler);
     }
+    
+    public void postInit() {
+      if (this.fin) {
+        this.setter = null;
+      }
+    }
   }
   
   public static List<PropAccessor> parseObject(final Object object, final SceneWorker sceneWorker) {
@@ -133,7 +157,12 @@ public class PropFactory {
     List<PropFactory.AccessorInfo> _sort = IterableExtensions.<PropFactory.AccessorInfo>sort(_filter);
     final Function1<PropFactory.AccessorInfo, PropAccessor> _function_1 = new Function1<PropFactory.AccessorInfo, PropAccessor>() {
       public PropAccessor apply(final PropFactory.AccessorInfo it) {
-        return it;
+        PropFactory.AccessorInfo _xblockexpression = null;
+        {
+          it.postInit();
+          _xblockexpression = it;
+        }
+        return _xblockexpression;
       }
     };
     return ListExtensions.<PropFactory.AccessorInfo, PropAccessor>map(_sort, _function_1);
@@ -443,9 +472,16 @@ public class PropFactory {
   }
   
   private static boolean readFieldOptions(final PropFactory.AccessorInfo info, final Field field) {
-    Skip _annotation = field.<Skip>getAnnotation(Skip.class);
-    boolean _notEquals = (!Objects.equal(_annotation, null));
-    return info.skip = _notEquals;
+    boolean _xblockexpression = false;
+    {
+      Skip _annotation = field.<Skip>getAnnotation(Skip.class);
+      boolean _notEquals = (!Objects.equal(_annotation, null));
+      info.skip = _notEquals;
+      int _modifiers = field.getModifiers();
+      boolean _isFinal = Modifier.isFinal(_modifiers);
+      _xblockexpression = info.fin = _isFinal;
+    }
+    return _xblockexpression;
   }
   
   private static boolean readGetterOptions(final PropFactory.AccessorInfo info, final Method method) {

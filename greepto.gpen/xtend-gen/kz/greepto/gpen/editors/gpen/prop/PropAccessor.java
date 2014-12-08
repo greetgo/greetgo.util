@@ -1,6 +1,7 @@
 package kz.greepto.gpen.editors.gpen.prop;
 
 import kz.greepto.gpen.editors.gpen.action.Action;
+import kz.greepto.gpen.editors.gpen.prop.PropOptions;
 import kz.greepto.gpen.util.Handler;
 import kz.greepto.gpen.util.HandlerKiller;
 
@@ -8,9 +9,11 @@ import kz.greepto.gpen.util.HandlerKiller;
 public interface PropAccessor {
   public abstract Class<?> getType();
   
+  public abstract String getName();
+  
   public abstract Object getValue();
   
-  public abstract boolean isReadOnly();
+  public abstract PropOptions getOptions();
   
   public abstract void setValue(final Object value);
   

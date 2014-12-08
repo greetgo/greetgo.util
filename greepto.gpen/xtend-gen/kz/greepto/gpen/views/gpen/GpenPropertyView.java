@@ -1,9 +1,13 @@
 package kz.greepto.gpen.views.gpen;
 
 import com.google.common.base.Objects;
-import kz.greepto.gpen.editors.gpen.Selection;
-import kz.greepto.gpen.editors.gpen.model.IdFigure;
-import kz.greepto.gpen.editors.gpen.model.PointFigure;
+import java.util.LinkedList;
+import java.util.List;
+import kz.greepto.gpen.editors.gpen.PropSelection;
+import kz.greepto.gpen.editors.gpen.prop.PropAccessor;
+import kz.greepto.gpen.editors.gpen.prop.PropOptions;
+import kz.greepto.gpen.util.Handler;
+import kz.greepto.gpen.util.HandlerKiller;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -23,7 +27,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.xtext.xbase.lib.Conversions;
-import org.eclipse.xtext.xbase.lib.InputOutput;
+import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
@@ -35,12 +39,31 @@ public class GpenPropertyView extends ViewPart {
   
   private ISelectionListener listener;
   
+  private final List<HandlerKiller> killers = new LinkedList<HandlerKiller>();
+  
+  public void killAll() {
+    final Procedure1<HandlerKiller> _function = new Procedure1<HandlerKiller>() {
+      public void apply(final HandlerKiller it) {
+        it.kill();
+      }
+    };
+    IterableExtensions.<HandlerKiller>forEach(this.killers, _function);
+    this.killers.clear();
+  }
+  
+  public void setFocus() {
+    boolean _notEquals = (!Objects.equal(this.forFocus, null));
+    if (_notEquals) {
+      this.forFocus.setFocus();
+    }
+  }
+  
   public void createPartControl(final Composite parent) {
     this.parent = parent;
     final ISelectionListener _function = new ISelectionListener() {
       public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
-        if ((selection instanceof Selection)) {
-          GpenPropertyView.this.setSelection(((Selection) selection));
+        if ((selection instanceof PropSelection)) {
+          GpenPropertyView.this.setSelection(((PropSelection) selection));
         } else {
           GpenPropertyView.this.setSelection(null);
         }
@@ -60,13 +83,13 @@ public class GpenPropertyView extends ViewPart {
       IWorkbenchWindow _workbenchWindow = _site.getWorkbenchWindow();
       ISelectionService _selectionService = _workbenchWindow.getSelectionService();
       _selectionService.removeSelectionListener(this.listener);
-      InputOutput.<String>println("fdsafsdf DISPOSE");
       this.listener = null;
     }
+    this.killAll();
     super.dispose();
   }
   
-  public void setSelection(final Selection sel) {
+  public void setSelection(final PropSelection sel) {
     boolean _isDisposed = this.parent.isDisposed();
     if (_isDisposed) {
       return;
@@ -78,6 +101,7 @@ public class GpenPropertyView extends ViewPart {
       }
     };
     IterableExtensions.<Control>forEach(((Iterable<Control>)Conversions.doWrapArray(_children)), _function);
+    this.killAll();
     boolean _equals = Objects.equal(sel, null);
     if (_equals) {
       Label lab = new Label(this.parent, SWT.NONE);
@@ -85,15 +109,6 @@ public class GpenPropertyView extends ViewPart {
       this.parent.layout(true);
       return;
     }
-    boolean _isEmpty = sel.figureList.isEmpty();
-    if (_isEmpty) {
-      return;
-    }
-    IdFigure fig = sel.figureList.get(0);
-    if ((!(fig instanceof PointFigure))) {
-      return;
-    }
-    PointFigure pfig = ((PointFigure) fig);
     ScrolledComposite sc = new ScrolledComposite(this.parent, (SWT.V_SCROLL + SWT.H_SCROLL));
     Composite wall = new Composite(sc, (SWT.NONE + SWT.BORDER));
     sc.setContent(wall);
@@ -102,59 +117,183 @@ public class GpenPropertyView extends ViewPart {
     GridLayout lay = new GridLayout();
     lay.numColumns = 3;
     wall.setLayout(lay);
+    for (final PropAccessor prop : sel.list) {
+      this.appendPropWidgets(wall, prop);
+    }
     {
       Label lab_1 = new Label(wall, SWT.NONE);
-      lab_1.setText("id");
+      lab_1.setText("");
     }
     Label _label = new Label(wall, SWT.NONE);
-    _label.setText(":");
+    _label.setText("");
     {
-      Label lab_1 = new Label(wall, SWT.NONE);
-      lab_1.setText(fig.id);
-    }
-    {
-      Label lab_1 = new Label(wall, SWT.NONE);
-      lab_1.setText("x");
-    }
-    Label _label_1 = new Label(wall, SWT.NONE);
-    _label_1.setText(":");
-    {
-      final Text txt = new Text(wall, (SWT.SINGLE + SWT.BORDER));
-      GridData gd = new GridData();
-      gd.horizontalAlignment = SWT.FILL;
-      txt.setLayoutData(gd);
-      Point _point = new Point(300, 100);
-      txt.setSize(_point);
-      int _x = pfig.getX();
-      String _plus = ("" + Integer.valueOf(_x));
-      txt.setText(_plus);
-      final ModifyListener _function_1 = new ModifyListener() {
-        public void modifyText(final ModifyEvent it) {
-          String _text = txt.getText();
-          InputOutput.<String>println(_text);
-        }
-      };
-      txt.addModifyListener(_function_1);
-    }
-    for (int i = 0; (i < 1); i++) {
-      {
-        Label _label_2 = new Label(wall, SWT.NONE);
-        _label_2.setText(("addi " + Integer.valueOf(i)));
-        Label _label_3 = new Label(wall, SWT.NONE);
-        _label_3.setText(":");
-        Label _label_4 = new Label(wall, SWT.NONE);
-        _label_4.setText("addwwwwwwwwwwwwdi");
-      }
+      final Label lab_1 = new Label(wall, SWT.NONE);
+      lab_1.setText("                                             ");
     }
     Point _computeSize = wall.computeSize(SWT.DEFAULT, SWT.DEFAULT);
     sc.setMinSize(_computeSize);
     this.parent.layout(true);
   }
   
-  public void setFocus() {
-    boolean _notEquals = (!Objects.equal(this.forFocus, null));
-    if (_notEquals) {
-      this.forFocus.setFocus();
+  public void appendPropWidgets(final Composite wall, final PropAccessor prop) {
+    PropOptions _options = prop.getOptions();
+    boolean _isReadonly = _options.isReadonly();
+    if (_isReadonly) {
+      this.appendReadonlyWidget(wall, prop);
+      return;
     }
+    boolean _or = false;
+    Class<?> _type = prop.getType();
+    boolean _equals = Objects.equal(_type, Integer.class);
+    if (_equals) {
+      _or = true;
+    } else {
+      Class<?> _type_1 = prop.getType();
+      boolean _equals_1 = Objects.equal(_type_1, Integer.TYPE);
+      _or = _equals_1;
+    }
+    if (_or) {
+      this.appendIntWidget(wall, prop);
+      return;
+    }
+    Class<?> _type_2 = prop.getType();
+    boolean _equals_2 = Objects.equal(_type_2, String.class);
+    if (_equals_2) {
+      this.appendStrWidget(wall, prop);
+      return;
+    }
+  }
+  
+  public boolean appendReadonlyWidget(final Composite wall, final PropAccessor prop) {
+    boolean _xblockexpression = false;
+    {
+      {
+        Label lab = new Label(wall, SWT.NONE);
+        String _name = prop.getName();
+        lab.setText(_name);
+      }
+      Label _label = new Label(wall, SWT.NONE);
+      _label.setText(":");
+      boolean _xblockexpression_1 = false;
+      {
+        final Label lab = new Label(wall, SWT.NONE);
+        String _extractStr = this.extractStr(prop);
+        lab.setText(_extractStr);
+        final Handler _function = new Handler() {
+          public void handle() {
+            String _extractStr = GpenPropertyView.this.extractStr(prop);
+            lab.setText(_extractStr);
+          }
+        };
+        HandlerKiller _addChangeHandler = prop.addChangeHandler(_function);
+        _xblockexpression_1 = this.killers.add(_addChangeHandler);
+      }
+      _xblockexpression = _xblockexpression_1;
+    }
+    return _xblockexpression;
+  }
+  
+  public String extractStr(final PropAccessor prop) {
+    Object value = prop.getValue();
+    boolean _equals = Objects.equal(value, null);
+    if (_equals) {
+      return "";
+    }
+    if ((value instanceof Class<?>)) {
+      Class<?> klass = ((Class<?>) value);
+      return klass.getSimpleName();
+    }
+    if ((value instanceof String)) {
+      return ((String) value);
+    }
+    return value.toString();
+  }
+  
+  public boolean appendIntWidget(final Composite wall, final PropAccessor prop) {
+    boolean _xblockexpression = false;
+    {
+      {
+        Label lab = new Label(wall, SWT.NONE);
+        String _name = prop.getName();
+        lab.setText(_name);
+      }
+      Label _label = new Label(wall, SWT.NONE);
+      _label.setText(":");
+      boolean _xblockexpression_1 = false;
+      {
+        final Text txt = new Text(wall, (SWT.SINGLE + SWT.BORDER));
+        GridData gd = new GridData();
+        gd.horizontalAlignment = SWT.FILL;
+        txt.setLayoutData(gd);
+        final ModifyListener _function = new ModifyListener() {
+          public void modifyText(final ModifyEvent it) {
+            try {
+              String _text = txt.getText();
+              Integer _valueOf = Integer.valueOf(_text);
+              prop.setValue(_valueOf);
+            } catch (final Throwable _t) {
+              if (_t instanceof NumberFormatException) {
+                final NumberFormatException e = (NumberFormatException)_t;
+                prop.setValue(Integer.valueOf(0));
+              } else {
+                throw Exceptions.sneakyThrow(_t);
+              }
+            }
+          }
+        };
+        txt.addModifyListener(_function);
+        String _extractStr = this.extractStr(prop);
+        txt.setText(_extractStr);
+        final Handler _function_1 = new Handler() {
+          public void handle() {
+            String _extractStr = GpenPropertyView.this.extractStr(prop);
+            txt.setText(_extractStr);
+          }
+        };
+        HandlerKiller _addChangeHandler = prop.addChangeHandler(_function_1);
+        _xblockexpression_1 = this.killers.add(_addChangeHandler);
+      }
+      _xblockexpression = _xblockexpression_1;
+    }
+    return _xblockexpression;
+  }
+  
+  public boolean appendStrWidget(final Composite wall, final PropAccessor prop) {
+    boolean _xblockexpression = false;
+    {
+      {
+        Label lab = new Label(wall, SWT.NONE);
+        String _name = prop.getName();
+        lab.setText(_name);
+      }
+      Label _label = new Label(wall, SWT.NONE);
+      _label.setText(":");
+      boolean _xblockexpression_1 = false;
+      {
+        final Text txt = new Text(wall, (SWT.SINGLE + SWT.BORDER));
+        GridData gd = new GridData();
+        gd.horizontalAlignment = SWT.FILL;
+        txt.setLayoutData(gd);
+        final ModifyListener _function = new ModifyListener() {
+          public void modifyText(final ModifyEvent it) {
+            String _text = txt.getText();
+            prop.setValue(_text);
+          }
+        };
+        txt.addModifyListener(_function);
+        String _extractStr = this.extractStr(prop);
+        txt.setText(_extractStr);
+        final Handler _function_1 = new Handler() {
+          public void handle() {
+            String _extractStr = GpenPropertyView.this.extractStr(prop);
+            txt.setText(_extractStr);
+          }
+        };
+        HandlerKiller _addChangeHandler = prop.addChangeHandler(_function_1);
+        _xblockexpression_1 = this.killers.add(_addChangeHandler);
+      }
+      _xblockexpression = _xblockexpression_1;
+    }
+    return _xblockexpression;
   }
 }

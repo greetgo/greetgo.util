@@ -1,9 +1,13 @@
 package kz.greepto.gpen.views.gpen;
 
-import kz.greepto.gpen.editors.gpen.Selection
-import kz.greepto.gpen.editors.gpen.model.PointFigure
+import java.util.LinkedList
+import java.util.List
+import kz.greepto.gpen.editors.gpen.PropSelection
+import kz.greepto.gpen.editors.gpen.prop.PropAccessor
+import kz.greepto.gpen.util.HandlerKiller
 import org.eclipse.jface.viewers.ISelection
 import org.eclipse.swt.SWT
+import org.eclipse.swt.custom.ScrolledComposite
 import org.eclipse.swt.layout.GridData
 import org.eclipse.swt.layout.GridLayout
 import org.eclipse.swt.widgets.Composite
@@ -12,22 +16,29 @@ import org.eclipse.swt.widgets.Text
 import org.eclipse.ui.ISelectionListener
 import org.eclipse.ui.IWorkbenchPart
 import org.eclipse.ui.part.ViewPart
-import org.eclipse.swt.custom.ScrolledComposite
-import org.eclipse.swt.graphics.Point
 
 public class GpenPropertyView extends ViewPart {
   Composite parent
   Composite forFocus
 
   ISelectionListener listener
+  val List<HandlerKiller> killers = new LinkedList
+
+  def void killAll() {
+    killers.forEach[kill]
+    killers.clear
+  }
+
+  override void setFocus() {
+    if(forFocus != null) forFocus.setFocus
+  }
 
   override void createPartControl(Composite parent) {
     this.parent = parent
 
-    //site.workbenchWindow.selectionService.addSelectionListener
     listener = [ IWorkbenchPart part, ISelection selection |
-      if (selection instanceof Selection) {
-        setSelection(selection as Selection)
+      if (selection instanceof PropSelection) {
+        setSelection(selection as PropSelection)
       } else {
         setSelection(null)
       }
@@ -39,15 +50,16 @@ public class GpenPropertyView extends ViewPart {
   override dispose() {
     if (listener != null) {
       site.workbenchWindow.selectionService.removeSelectionListener(listener)
-      println('fdsafsdf DISPOSE')
       listener = null
     }
+    killAll
     super.dispose()
   }
 
-  def void setSelection(Selection sel) {
+  def void setSelection(PropSelection sel) {
     if(parent.disposed) return;
     parent.children.forEach[dispose]
+    killAll
 
     if (sel == null) {
       var lab = new Label(parent, SWT.NONE)
@@ -55,14 +67,6 @@ public class GpenPropertyView extends ViewPart {
       parent.layout(true)
       return;
     }
-
-    if(sel.figureList.empty) return;
-
-    var fig = sel.figureList.get(0)
-
-    if(!(fig instanceof PointFigure)) return;
-
-    var pfig = fig as PointFigure
 
     var ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL + SWT.H_SCROLL)
     var Composite wall = new Composite(sc, SWT.NONE + SWT.BORDER)
@@ -75,18 +79,71 @@ public class GpenPropertyView extends ViewPart {
     lay.numColumns = 3
     wall.layout = lay
 
+    for (prop : sel.list) {
+      appendPropWidgets(wall, prop)
+    }
+
     {
       var lab = new Label(wall, SWT.NONE)
-      lab.text = 'id'
+      lab.text = ''
+    }
+    new Label(wall, SWT.NONE).text = ''
+    {
+      val lab = new Label(wall, SWT.NONE)
+      lab.text = '                                             '
+    }
+
+    sc.minSize = wall.computeSize(SWT.DEFAULT, SWT.DEFAULT)
+    parent.layout(true)
+  }
+
+  def appendPropWidgets(Composite wall, PropAccessor prop) {
+    if (prop.options.readonly) {
+      appendReadonlyWidget(wall, prop)
+      return
+    }
+
+    if (prop.type == Integer || prop.type == Integer.TYPE) {
+      appendIntWidget(wall, prop)
+      return
+    }
+
+    if (prop.type == String) {
+      appendStrWidget(wall, prop)
+      return
+    }
+  }
+
+  def appendReadonlyWidget(Composite wall, PropAccessor prop) {
+    {
+      var lab = new Label(wall, SWT.NONE)
+      lab.text = prop.name
     }
     new Label(wall, SWT.NONE).text = ':'
     {
-      var lab = new Label(wall, SWT.NONE)
-      lab.text = fig.id
+      val lab = new Label(wall, SWT.NONE)
+      lab.text = extractStr(prop)
+      killers += prop.addChangeHandler[lab.text = extractStr(prop)]
     }
+  }
+
+  def String extractStr(PropAccessor prop) {
+    var value = prop.value
+    if(value == null) return ''
+    if (value instanceof Class<?>) {
+      var klass = value as Class<?>
+      return klass.simpleName
+    }
+    if (value instanceof String) {
+      return value as String
+    }
+    return value.toString
+  }
+
+  def appendIntWidget(Composite wall, PropAccessor prop) {
     {
       var lab = new Label(wall, SWT.NONE)
-      lab.text = 'x'
+      lab.text = prop.name
     }
     new Label(wall, SWT.NONE).text = ':'
     {
@@ -94,25 +151,34 @@ public class GpenPropertyView extends ViewPart {
       var gd = new GridData()
       gd.horizontalAlignment = SWT.FILL
       txt.layoutData = gd
-      txt.size = new Point(300, 100)
-      txt.text = '' + pfig.x
       txt.addModifyListener [
-        println(txt.text)
+        try {
+          prop.value = Integer.valueOf(txt.text)
+        } catch (NumberFormatException e) {
+          prop.value = 0
+        }
       ]
+      txt.text = extractStr(prop)
+      killers += prop.addChangeHandler[txt.text = extractStr(prop)]
     }
-
-    for (var i = 0; i < 1; i++) {
-      new Label(wall, SWT.NONE).text = 'addi ' + i
-      new Label(wall, SWT.NONE).text = ':'
-      new Label(wall, SWT.NONE).text = 'addwwwwwwwwwwwwdi'
-    }
-
-    sc.minSize = wall.computeSize(SWT.DEFAULT, SWT.DEFAULT)
-
-    parent.layout(true)
   }
 
-  override void setFocus() {
-    if(forFocus != null) forFocus.setFocus
+  def appendStrWidget(Composite wall, PropAccessor prop) {
+    {
+      var lab = new Label(wall, SWT.NONE)
+      lab.text = prop.name
+    }
+    new Label(wall, SWT.NONE).text = ':'
+    {
+      val txt = new Text(wall, SWT.SINGLE + SWT.BORDER)
+      var gd = new GridData()
+      gd.horizontalAlignment = SWT.FILL
+      txt.layoutData = gd
+      txt.addModifyListener [
+        prop.value = txt.text
+      ]
+      txt.text = extractStr(prop)
+      killers += prop.addChangeHandler[txt.text = extractStr(prop)]
+    }
   }
 }

@@ -2,6 +2,7 @@ package kz.greepto.gpen.editors.gpen.prop
 
 import java.lang.reflect.Field
 import java.lang.reflect.Method
+import java.lang.reflect.Modifier
 import java.util.HashMap
 import java.util.List
 import java.util.Map
@@ -16,6 +17,7 @@ class PropFactory {
     val SceneWorker sceneWorker
 
     boolean skip = false
+    boolean fin = false
 
     new(String name, Object object, SceneWorker sceneWorker) {
       this.name = name
@@ -27,6 +29,10 @@ class PropFactory {
 
     override getType() {
       return type
+    }
+
+    override getName() {
+      return name
     }
 
     ValueGetter getter
@@ -49,8 +55,18 @@ class PropFactory {
       return getter.getValue(object)
     }
 
-    override isReadOnly() {
-      return setter == null
+    val PropOptions options = new PropOptions() {
+      override isBig() {
+        false;
+      }
+
+      override isReadonly() {
+        return setter == null
+      }
+    }
+
+    override getOptions() {
+      return options
     }
 
     override setValue(Object value) {
@@ -75,6 +91,9 @@ class PropFactory {
       return sceneWorker.addChangeHandler(handler)
     }
 
+    def void postInit() {
+      if(fin) setter = null
+    }
   }
 
   def static List<PropAccessor> parseObject(Object object, SceneWorker sceneWorker) {
@@ -88,7 +107,7 @@ class PropFactory {
       appendMethod(infoMap, m, object, sceneWorker)
     }
 
-    return infoMap.values.filter[!skip].sort.map[it]
+    return infoMap.values.filter[!skip].sort.map[postInit; it]
   }
 
   private def static appendMethod(Map<String, AccessorInfo> infoMap, Method m, Object object, SceneWorker sceneWorker) {
@@ -270,6 +289,9 @@ class PropFactory {
 
   private def static readFieldOptions(AccessorInfo info, Field field) {
     info.skip = field.getAnnotation(Skip) != null
+
+    info.fin = Modifier.isFinal(field.modifiers)
+
   }
 
   private def static readGetterOptions(AccessorInfo info, Method method) {
