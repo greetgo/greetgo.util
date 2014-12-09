@@ -2,6 +2,8 @@ package kz.greepto.gpen.editors.gpen
 
 import kz.greepto.gpen.editors.gpen.model.Fig
 import kz.greepto.gpen.editors.gpen.model.Scene
+import org.eclipse.core.commands.operations.IUndoContext
+import org.eclipse.core.commands.operations.ObjectUndoContext
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.swt.widgets.Composite
 import org.eclipse.ui.IEditorInput
@@ -18,9 +20,13 @@ class GpenEditor extends EditorPart {
 
   override doSaveAs() {}
 
+  var IUndoContext undoContext
+
   override init(IEditorSite site, IEditorInput input) throws PartInitException {
     this.site = site
     this.input = input
+
+    undoContext = new ObjectUndoContext(this)
   }
 
   override isDirty() { false }
@@ -30,13 +36,6 @@ class GpenEditor extends EditorPart {
   var GpenCanvas contents = null
 
   override createPartControl(Composite parent) {
-
-    //var undoContext = ResourcesPlugin.getWorkspace.getAdapter(IUndoContext) as IUndoContext
-
-    var workbench = site.workbenchWindow.workbench
-    var undoContext = workbench.operationSupport.undoContext
-
-    println("undoContext = " + undoContext)
 
     contents = new GpenCanvas(parent, undoContext);
     site.selectionProvider = contents.selectionProvider
@@ -54,6 +53,7 @@ class GpenEditor extends EditorPart {
     urag.fillActionBars(editorSite.actionBars)
 
     editorSite.actionBars.updateActionBars
+
   }
 
   override setFocus() {
