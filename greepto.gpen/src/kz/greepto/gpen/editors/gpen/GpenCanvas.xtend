@@ -43,7 +43,7 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
 
   val SceneWorker sceneWorker = new SceneWorker() {
     override takeId(Object object) {
-      return (object as IdFigure).id;
+      return (object as IdFigure).id
     }
 
     override sendAction(Action action) {
@@ -63,7 +63,6 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     override addChangeHandler(Handler handler) {
       return changeSceneHandlerList.add(handler)
     }
-
   }
 
   private Point mouse = new Point(0, 0)
@@ -73,7 +72,6 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     this.scene = originalScene.copy
 
     actionManager.scene = this.scene
-
   }
 
   val IUndoContext undoContext
@@ -100,9 +98,7 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
   }
 
   override mouseDoubleClick(MouseEvent e) {
-
     println("double " + e);
-
   }
 
   override mouseDown(MouseEvent e) {
@@ -119,15 +115,13 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
         var sel = PropFactory.parseObject(selected.get(0), sceneWorker)
         selectionProvider.selection = new PropSelection(sel)
       }
-
     } finally {
       gc.dispose
     }
 
   }
 
-  override mouseUp(MouseEvent e) {
-  }
+  override mouseUp(MouseEvent e) {}
 
   override mouseMove(MouseEvent e) {
     mouse.x = e.x
@@ -135,19 +129,15 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     redraw
   }
 
-  override mouseEnter(MouseEvent e) {
-  }
+  override mouseEnter(MouseEvent e) {}
 
-  override mouseExit(MouseEvent e) {
-  }
+  override mouseExit(MouseEvent e) {}
 
-  override mouseHover(MouseEvent e) {
-  }
+  override mouseHover(MouseEvent e) {}
 
   override dispose() {
     colors.dispose
     fonts.dispose
     super.dispose
   }
-
 }
