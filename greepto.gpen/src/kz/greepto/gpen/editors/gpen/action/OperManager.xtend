@@ -4,9 +4,9 @@ import kz.greepto.gpen.editors.gpen.model.Scene
 import java.util.List
 import java.util.ArrayList
 
-class ActionManager {
+class OperManager {
 
-  final List<Action> actionList = new ArrayList
+  final List<Oper> actionList = new ArrayList
 
   int executedCount = 0
 
@@ -19,7 +19,7 @@ class ActionManager {
   }
 
 
-  def void append(Action action) {
+  def void append(Oper action) {
     action.apply(scene)
 
     if (executedCount < actionList.size) {
@@ -44,13 +44,13 @@ class ActionManager {
     return executedCount < actionList.size
   }
 
-  def Action undo() {
+  def Oper undo() {
     if (executedCount == 0) throw new UndoNothing;
     executedCount--
     return actionList.remove(executedCount)
   }
 
-  def Action redo() {
+  def Oper redo() {
     if (executedCount >= actionList.size) throw new RedoNothing;
     var ret = actionList.get(executedCount)
     executedCount++

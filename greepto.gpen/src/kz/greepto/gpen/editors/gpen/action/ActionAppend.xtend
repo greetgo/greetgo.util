@@ -3,7 +3,7 @@ package kz.greepto.gpen.editors.gpen.action
 import kz.greepto.gpen.editors.gpen.model.Scene
 import kz.greepto.gpen.editors.gpen.model.IdFigure
 
-class ActionAppend extends Action {
+class OperAppend extends Oper {
 
   public final IdFigure newFigure;
 

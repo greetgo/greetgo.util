@@ -5,12 +5,12 @@ import java.util.List
 import java.util.ArrayList
 import java.util.Collection
 
-class ActionGroup extends Action {
+class OperGroup extends Oper {
 
-  public val List<Action> group = new ArrayList;
+  public val List<Oper> group = new ArrayList;
   val String displayStr
 
-  new(Collection<Action> group, String displayStr) {
+  new(Collection<Oper> group, String displayStr) {
     this.group += group
     this.displayStr = displayStr
   }

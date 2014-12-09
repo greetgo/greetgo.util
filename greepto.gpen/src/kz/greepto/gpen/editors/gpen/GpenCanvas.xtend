@@ -1,7 +1,7 @@
 package kz.greepto.gpen.editors.gpen
 
-import kz.greepto.gpen.editors.gpen.action.Action
-import kz.greepto.gpen.editors.gpen.action.ActionManager
+import kz.greepto.gpen.editors.gpen.action.Oper
+import kz.greepto.gpen.editors.gpen.action.OperManager
 import kz.greepto.gpen.editors.gpen.action.UndoableOperation
 import kz.greepto.gpen.editors.gpen.model.IdFigure
 import kz.greepto.gpen.editors.gpen.model.Scene
@@ -37,7 +37,7 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
   val FontManager fonts = new FontManager
   val DevStyleCalc styleCalc = new DevStyleCalc(fonts, colors)
   package val SelectionProvider selectionProvider = new SelectionProvider(this)
-  val ActionManager actionManager = new ActionManager;
+  val OperManager actionManager = new OperManager;
 
   val HandlerList changeSceneHandlerList = new HandlerList
 
@@ -46,11 +46,12 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
       return (object as IdFigure).id
     }
 
-    override sendAction(Action action) {
-      var op = new UndoableOperation(action, scene) [
+    override applyOper(Oper oper) {
+      var op = new UndoableOperation(oper, scene) [
         redraw
         changeSceneHandlerList.fire
       ]
+      op.addContext(undoContext)
 
       //var ophist = PlatformUI.getWorkbench().operationSupport.operationHistory
       var ophist = OperationHistoryFactory.getOperationHistory()

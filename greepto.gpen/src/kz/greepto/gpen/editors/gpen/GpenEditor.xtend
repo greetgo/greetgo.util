@@ -2,8 +2,6 @@ package kz.greepto.gpen.editors.gpen
 
 import kz.greepto.gpen.editors.gpen.model.Fig
 import kz.greepto.gpen.editors.gpen.model.Scene
-import org.eclipse.core.commands.operations.IUndoContext
-import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.swt.widgets.Composite
 import org.eclipse.ui.IEditorInput
@@ -33,7 +31,10 @@ class GpenEditor extends EditorPart {
 
   override createPartControl(Composite parent) {
 
-    var undoContext = ResourcesPlugin.getWorkspace.getAdapter(IUndoContext) as IUndoContext
+    //var undoContext = ResourcesPlugin.getWorkspace.getAdapter(IUndoContext) as IUndoContext
+
+    var workbench = site.workbenchWindow.workbench
+    var undoContext = workbench.operationSupport.undoContext
 
     println("undoContext = " + undoContext)
 
@@ -49,7 +50,6 @@ class GpenEditor extends EditorPart {
 
     contents.scene = scene
 
-
     var urag = new UndoRedoActionGroup(site, undoContext, true)
     urag.fillActionBars(editorSite.actionBars)
 
@@ -59,5 +59,4 @@ class GpenEditor extends EditorPart {
   override setFocus() {
     if(contents != null) contents.setFocus()
   }
-
 }

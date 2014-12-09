@@ -8,8 +8,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import kz.greepto.gpen.editors.gpen.action.Action;
-import kz.greepto.gpen.editors.gpen.action.ActionModify;
+import kz.greepto.gpen.editors.gpen.action.Oper;
+import kz.greepto.gpen.editors.gpen.action.OperModify;
 import kz.greepto.gpen.editors.gpen.prop.NoGetter;
 import kz.greepto.gpen.editors.gpen.prop.PropAccessor;
 import kz.greepto.gpen.editors.gpen.prop.PropOptions;
@@ -93,15 +93,15 @@ public class PropFactory {
     }
     
     public void setValue(final Object value) {
-      Action action = this.getSettingAction(value);
-      boolean _equals = Objects.equal(action, null);
+      Oper oper = this.getSettingOper(value);
+      boolean _equals = Objects.equal(oper, null);
       if (_equals) {
         return;
       }
-      this.sceneWorker.sendAction(action);
+      this.sceneWorker.applyOper(oper);
     }
     
-    public Action getSettingAction(final Object newValue) {
+    public Oper getSettingOper(final Object newValue) {
       boolean _equals = Objects.equal(this.setter, null);
       if (_equals) {
         return null;
@@ -117,7 +117,7 @@ public class PropFactory {
         return null;
       }
       String _takeId = this.sceneWorker.takeId(this.object);
-      return new ActionModify(this.setter, newValue, _takeId);
+      return new OperModify(this.setter, newValue, _takeId);
     }
     
     public int compareTo(final PropFactory.AccessorInfo o) {

@@ -6,7 +6,7 @@ import java.lang.reflect.Modifier
 import java.util.HashMap
 import java.util.List
 import java.util.Map
-import kz.greepto.gpen.editors.gpen.action.ActionModify
+import kz.greepto.gpen.editors.gpen.action.OperModify
 import kz.greepto.gpen.util.Handler
 
 class PropFactory {
@@ -70,17 +70,17 @@ class PropFactory {
     }
 
     override setValue(Object value) {
-      var action = getSettingAction(value)
-      if(action == null) return;
-      sceneWorker.sendAction(action)
+      var oper = getSettingOper(value)
+      if(oper == null) return;
+      sceneWorker.applyOper(oper)
     }
 
-    override getSettingAction(Object newValue) {
+    override getSettingOper(Object newValue) {
       if(setter == null) return null
       if(getter == null) throw new NoGetter(name, object.class)
       var curValue = getter.getValue(object)
       if(newValue == curValue) return null
-      return new ActionModify(setter, newValue, sceneWorker.takeId(object))
+      return new OperModify(setter, newValue, sceneWorker.takeId(object))
     }
 
     override compareTo(AccessorInfo o) {

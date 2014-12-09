@@ -14,7 +14,6 @@
       </editor>
       <editor
             class="kz.greepto.gpen.editors.gdoc.GdocEditor"
-            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
             extensions="gdoc"
             icon="icons/gdoc16.png"
             id="kz.greepto.gpen.editors.GdocEditor"

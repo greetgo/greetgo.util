@@ -5,8 +5,8 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import kz.greepto.gpen.editors.gpen.action.Action;
-import kz.greepto.gpen.editors.gpen.action.ActionModify;
+import kz.greepto.gpen.editors.gpen.action.Oper;
+import kz.greepto.gpen.editors.gpen.action.OperModify;
 import kz.greepto.gpen.editors.gpen.model.Label;
 import kz.greepto.gpen.util.Handler;
 import kz.greepto.gpen.util.HandlerKiller;
@@ -25,7 +25,7 @@ public class PropFactoryTest {
     }
     
     @Override
-    public void sendAction(Action action) {
+    public void applyOper(Oper action) {
       try {
         sendActionInner(action);
       } catch (Exception e) {
@@ -35,9 +35,9 @@ public class PropFactoryTest {
     
     Object objectToSet;
     
-    private void sendActionInner(Action action) throws Exception {
-      if (action instanceof ActionModify) {
-        ActionModify am = (ActionModify)action;
+    private void sendActionInner(Oper action) throws Exception {
+      if (action instanceof OperModify) {
+        OperModify am = (OperModify)action;
         Field fNewValue = am.getClass().getDeclaredField("newValue");
         fNewValue.setAccessible(true);
         Field fSetter = am.getClass().getDeclaredField("setter");

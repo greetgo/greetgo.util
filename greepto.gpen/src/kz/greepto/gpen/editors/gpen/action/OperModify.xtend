@@ -3,7 +3,7 @@ package kz.greepto.gpen.editors.gpen.action
 import kz.greepto.gpen.editors.gpen.model.Scene
 import kz.greepto.gpen.editors.gpen.prop.ValueSetter
 
-class ActionModify extends Action {
+class OperModify extends Oper {
 
   val ValueSetter setter
   val Object newValue

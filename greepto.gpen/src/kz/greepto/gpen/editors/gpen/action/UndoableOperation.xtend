@@ -16,11 +16,11 @@ import static kz.greepto.gpen.Activator.PLUGIN_ID
 
 class UndoableOperation implements IUndoableOperation {
 
-  val Action action
+  val Oper action
   val Scene scene
   val Repainter repainter
 
-  new(Action action, Scene scene, Repainter repainter) {
+  new(Oper action, Scene scene, Repainter repainter) {
     this.action = action
     this.scene = scene
     this.repainter = repainter

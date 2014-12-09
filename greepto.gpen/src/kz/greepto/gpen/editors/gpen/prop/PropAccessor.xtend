@@ -1,6 +1,6 @@
 package kz.greepto.gpen.editors.gpen.prop
 
-import kz.greepto.gpen.editors.gpen.action.Action
+import kz.greepto.gpen.editors.gpen.action.Oper
 import kz.greepto.gpen.util.Handler
 import kz.greepto.gpen.util.HandlerKiller
 
@@ -15,7 +15,7 @@ interface PropAccessor {
 
   def void setValue(Object value)
 
-  def Action getSettingAction(Object newValue)
+  def Oper getSettingOper(Object newValue)
 
   def HandlerKiller addChangeHandler(Handler handler)
 }
