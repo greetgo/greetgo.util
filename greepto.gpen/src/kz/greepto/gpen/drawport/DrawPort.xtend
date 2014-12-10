@@ -9,5 +9,5 @@ interface DrawPort {
 
   def Geom from(int x, int y)
 
-  def Geom from(Vec2 point)
+  def Geom from(Vec2 from)
 }

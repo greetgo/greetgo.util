@@ -14,5 +14,5 @@ public interface DrawPort {
   
   public abstract Geom from(final int x, final int y);
   
-  public abstract Geom from(final Vec2 point);
+  public abstract Geom from(final Vec2 from);
 }

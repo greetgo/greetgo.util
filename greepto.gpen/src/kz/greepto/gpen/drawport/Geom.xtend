@@ -12,4 +12,6 @@ interface Geom {
   def Geom size(Size size)
 
   def RectGeom rect()
+
+  def StrGeom str(String str)
 }

@@ -7,8 +7,10 @@ import kz.greepto.gpen.drawport.DrawPort;
 import kz.greepto.gpen.drawport.FontDef;
 import kz.greepto.gpen.drawport.Geom;
 import kz.greepto.gpen.drawport.Vec2;
+import kz.greepto.gpen.drawport.swt.FontPreparator;
 import kz.greepto.gpen.drawport.swt.GcAlreadyDisposed;
 import kz.greepto.gpen.drawport.swt.GcSource;
+import kz.greepto.gpen.drawport.swt.SwtGeom;
 import kz.greepto.gpen.util.FontInfo;
 import kz.greepto.gpen.util.FontManager;
 import org.eclipse.swt.graphics.Color;
@@ -20,7 +22,7 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
 @SuppressWarnings("all")
-public class DrawPortSwt implements DrawPort {
+public class DrawPortSwt implements DrawPort, FontPreparator {
   private final GcSource gcSource;
   
   private final Set<GC> gcSet;
@@ -119,7 +121,7 @@ public class DrawPortSwt implements DrawPort {
     return this.from(_vec2);
   }
   
-  public Geom from(final Vec2 point) {
-    throw new UnsupportedOperationException("TODO: auto-generated method stub");
+  public Geom from(final Vec2 from) {
+    return new SwtGeom(this.gc, from, this);
   }
 }

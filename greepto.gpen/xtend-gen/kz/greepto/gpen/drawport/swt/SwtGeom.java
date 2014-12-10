@@ -4,18 +4,24 @@ import kz.greepto.gpen.drawport.AbstractGeom;
 import kz.greepto.gpen.drawport.NoToPoints;
 import kz.greepto.gpen.drawport.RectGeom;
 import kz.greepto.gpen.drawport.Size;
+import kz.greepto.gpen.drawport.StrGeom;
 import kz.greepto.gpen.drawport.TooManyToPoints;
 import kz.greepto.gpen.drawport.Vec2;
+import kz.greepto.gpen.drawport.swt.FontPreparator;
 import kz.greepto.gpen.drawport.swt.SwtRectGeom;
+import kz.greepto.gpen.drawport.swt.SwtStrGeom;
 import org.eclipse.swt.graphics.GC;
 
 @SuppressWarnings("all")
 public class SwtGeom extends AbstractGeom {
   private final GC gc;
   
-  public SwtGeom(final GC gc, final Vec2 from) {
+  private final FontPreparator fp;
+  
+  public SwtGeom(final GC gc, final Vec2 from, final FontPreparator fp) {
     this.gc = gc;
     this.from = from;
+    this.fp = fp;
   }
   
   public void drawLine(final Vec2 from, final Vec2 to) {
@@ -41,5 +47,9 @@ public class SwtGeom extends AbstractGeom {
       _size = _fromTo;
     }
     return new SwtRectGeom(this.gc, this.from, _size);
+  }
+  
+  public StrGeom str(final String str) {
+    return new SwtStrGeom(this.gc, str, this.fp);
   }
 }

@@ -9,10 +9,12 @@ import kz.greepto.gpen.drawport.TooManyToPoints
 
 class SwtGeom extends AbstractGeom {
   val GC gc
+  val FontPreparator fp
 
-  new(GC gc, Vec2 from) {
+  new(GC gc, Vec2 from, FontPreparator fp) {
     this.gc = gc
     this.from = from
+    this.fp = fp
   }
 
   override drawLine(Vec2 from, Vec2 to) {
@@ -27,6 +29,10 @@ class SwtGeom extends AbstractGeom {
       _size = Size.fromTo(from, toList.get(0));
     }
     return new SwtRectGeom(gc, from, _size)
+  }
+
+  override str(String str) {
+    return new SwtStrGeom(gc, str, fp)
   }
 
 }

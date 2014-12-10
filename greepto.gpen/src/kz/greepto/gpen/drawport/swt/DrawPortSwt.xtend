@@ -9,7 +9,7 @@ import org.eclipse.swt.graphics.GC
 import org.eclipse.swt.graphics.Rectangle
 import kz.greepto.gpen.drawport.Vec2
 
-class DrawPortSwt implements DrawPort {
+class DrawPortSwt implements DrawPort, FontPreparator {
   val GcSource gcSource
   val Set<GC> gcSet
   val boolean top
@@ -65,7 +65,7 @@ class DrawPortSwt implements DrawPort {
 
   override font() { font }
 
-  def void prepareFont() {
+  override void prepareFont() {
     if(font == appliedFont) return;
 
     appliedFont = font.copy
@@ -83,8 +83,7 @@ class DrawPortSwt implements DrawPort {
     from(new Vec2(x, y))
   }
 
-  override from(Vec2 point) {
-    throw new UnsupportedOperationException("TODO: auto-generated method stub")
+  override from(Vec2 from) {
+    return new SwtGeom(gc, from, this)
   }
-
 }
