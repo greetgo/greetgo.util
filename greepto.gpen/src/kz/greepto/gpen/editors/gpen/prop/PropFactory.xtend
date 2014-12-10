@@ -31,6 +31,24 @@ class PropFactory {
       return type
     }
 
+    override hashCode() {
+      val prime = 31;
+      var result = 1;
+      result = prime * result + name?.hashCode
+      result = prime * result + type?.hashCode
+      return result;
+    }
+
+    override equals(Object obj) {
+      if (this === obj) return true
+      if (obj === null) return false
+      if (!(obj instanceof AccessorInfo)) return false
+      var a = obj as AccessorInfo
+      if (name != a.name) return false
+      if (type != a.type) return false
+      return true
+    }
+
     override getName() {
       return name
     }

@@ -36,7 +36,7 @@ class DevStyleCalc implements StyleCalc {
   override calcForButton(Button button, PaintStatus ps) {
     val ret = new ButtonStyle
 
-    ret.backgroundColor = cm.rgb(255, 255, 255)
+    ret.backgroundColor = cm.rgb(100, 255, 100)
     ret.borderColor = cm.rgb(0, 0, 0)
     ret.color = cm.rgb(0, 0, 0)
 

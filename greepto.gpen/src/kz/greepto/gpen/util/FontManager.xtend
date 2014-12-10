@@ -16,7 +16,7 @@ class FontManager {
 
     if (ret == null) {
       ret = new Font(Display.current, fi.fontData)
-      data << (fi -> ret) << (fi -> ret)
+      data << (fi -> ret)
     }
 
     return ret

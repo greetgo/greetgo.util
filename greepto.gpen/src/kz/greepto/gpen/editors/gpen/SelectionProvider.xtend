@@ -34,6 +34,7 @@ class SelectionProvider implements ISelectionProvider {
   }
 
   override setSelection(ISelection selection) {
+    if (selection == sel) return;
     sel = selection
 
     val ev = new SelectionChangedEvent(this, selection);

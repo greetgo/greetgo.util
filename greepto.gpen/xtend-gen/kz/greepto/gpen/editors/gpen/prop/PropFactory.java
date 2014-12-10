@@ -50,6 +50,48 @@ public class PropFactory {
       return this.type;
     }
     
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      int _hashCode = 0;
+      if (this.name!=null) {
+        _hashCode=this.name.hashCode();
+      }
+      int _plus = ((prime * result) + _hashCode);
+      result = _plus;
+      int _hashCode_1 = 0;
+      if (this.type!=null) {
+        _hashCode_1=this.type.hashCode();
+      }
+      int _plus_1 = ((prime * result) + _hashCode_1);
+      result = _plus_1;
+      return result;
+    }
+    
+    public boolean equals(final Object obj) {
+      boolean _tripleEquals = (this == obj);
+      if (_tripleEquals) {
+        return true;
+      }
+      boolean _tripleEquals_1 = (obj == null);
+      if (_tripleEquals_1) {
+        return false;
+      }
+      if ((!(obj instanceof PropFactory.AccessorInfo))) {
+        return false;
+      }
+      PropFactory.AccessorInfo a = ((PropFactory.AccessorInfo) obj);
+      boolean _notEquals = (!Objects.equal(this.name, a.name));
+      if (_notEquals) {
+        return false;
+      }
+      boolean _notEquals_1 = (!Objects.equal(this.type, a.type));
+      if (_notEquals_1) {
+        return false;
+      }
+      return true;
+    }
+    
     public String getName() {
       return this.name;
     }

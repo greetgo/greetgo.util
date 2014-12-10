@@ -11,6 +11,9 @@ import org.eclipse.ui.IEditorSite
 import org.eclipse.ui.PartInitException
 import org.eclipse.ui.operations.UndoRedoActionGroup
 import org.eclipse.ui.part.EditorPart
+import org.eclipse.core.resources.IFile
+import java.io.ByteArrayOutputStream
+import kz.greepto.gpen.util.StreamUtil
 
 class GpenEditor extends EditorPart {
 
@@ -27,6 +30,12 @@ class GpenEditor extends EditorPart {
     this.input = input
 
     undoContext = new ObjectUndoContext(this)
+
+    var file = input.getAdapter(IFile) as IFile
+    var in = file.contents
+    var out = new ByteArrayOutputStream
+    StreamUtil.copyStreams(in, out)
+    println(out.toString("UTF-8"))
   }
 
   override isDirty() { false }
@@ -53,7 +62,6 @@ class GpenEditor extends EditorPart {
     urag.fillActionBars(editorSite.actionBars)
 
     editorSite.actionBars.updateActionBars
-
   }
 
   override setFocus() {

@@ -1,7 +1,6 @@
 package kz.greepto.gpen.editors.gpen
 
 import kz.greepto.gpen.editors.gpen.action.Oper
-import kz.greepto.gpen.editors.gpen.action.OperManager
 import kz.greepto.gpen.editors.gpen.action.UndoableOperation
 import kz.greepto.gpen.editors.gpen.model.IdFigure
 import kz.greepto.gpen.editors.gpen.model.Scene
@@ -37,7 +36,6 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
   val FontManager fonts = new FontManager
   val DevStyleCalc styleCalc = new DevStyleCalc(fonts, colors)
   package val SelectionProvider selectionProvider = new SelectionProvider(this)
-  val OperManager actionManager = new OperManager;
 
   val HandlerList changeSceneHandlerList = new HandlerList
 
@@ -71,8 +69,6 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
   def void setScene(Scene scene) {
     originalScene = scene
     this.scene = originalScene.copy
-
-    actionManager.scene = this.scene
   }
 
   val IUndoContext undoContext
@@ -106,20 +102,49 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     mouse.x = e.x
     mouse.y = e.y
 
-    var gc = new GC(this)
-    try {
-      var placer = new VisitorPlacer(gc, styleCalc)
-      var selected = Hit.on(scene).with(placer).to(mouse)
-      if (selected.size == 0) {
-        selectionProvider.selection = new EmptySelection
-      } else {
-        var sel = PropFactory.parseObject(selected.get(0), sceneWorker)
-        selectionProvider.selection = new PropSelection(sel)
+    if (Mouse.Ctrl_LMB(e)) {
+
+      var gc = new GC(this)
+      try {
+        var placer = new VisitorPlacer(gc, styleCalc)
+        Hit.on(scene).with(placer).to(mouse).forEach[sel = !sel]
+      } finally {
+        gc.dispose
       }
-    } finally {
-      gc.dispose
+
+      updateSelectionProvider
+      return
     }
 
+    if (Mouse.LMB(e)) {
+      var gc = new GC(this)
+      try {
+        var placer = new VisitorPlacer(gc, styleCalc)
+        scene.list.forEach[sel = false]
+        Hit.on(scene).with(placer).to(mouse).forEach[sel = true]
+      } finally {
+        gc.dispose
+      }
+
+      updateSelectionProvider
+    }
+  }
+
+  def IdFigure getTopSelected() {
+    for (f : scene.list.reverse.filter[sel]) {
+      return f
+    }
+    return null
+  }
+
+  def void updateSelectionProvider() {
+    var sel = topSelected
+    if (sel == null) {
+      selectionProvider.selection = new EmptySelection
+    } else {
+      var props = PropFactory.parseObject(sel, sceneWorker)
+      selectionProvider.selection = new PropSelection(props, sel.id)
+    }
   }
 
   override mouseUp(MouseEvent e) {}
