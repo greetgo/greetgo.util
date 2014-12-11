@@ -1,19 +1,23 @@
 package kz.greepto.gpen.editors.gpen.model.paint;
 
 import com.google.common.base.Objects;
+import kz.greepto.gpen.drawport.DrawPort;
+import kz.greepto.gpen.drawport.Rect;
+import kz.greepto.gpen.drawport.RectGeom;
+import kz.greepto.gpen.drawport.Size;
+import kz.greepto.gpen.drawport.StrGeom;
+import kz.greepto.gpen.drawport.Style;
 import kz.greepto.gpen.editors.gpen.model.Button;
 import kz.greepto.gpen.editors.gpen.model.paint.AbstractPaint;
 import kz.greepto.gpen.editors.gpen.style.ButtonStyle;
 import kz.greepto.gpen.editors.gpen.style.PaintStatus;
 import kz.greepto.gpen.editors.gpen.style.StyleCalc;
-import kz.greepto.gpen.util.Rect;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
 @SuppressWarnings("all")
 public class PaintButton extends AbstractPaint {
-  public PaintButton(final GC gc, final StyleCalc styleCalc) {
-    super(gc, styleCalc);
+  public PaintButton(final DrawPort dp, final StyleCalc styleCalc) {
+    super(dp, styleCalc);
   }
   
   public Rect placePaint(final Button b, final Point mouse) {
@@ -32,13 +36,14 @@ public class PaintButton extends AbstractPaint {
     if (_and) {
       return ret;
     }
-    this.gc.setFont(style.font);
-    Point size = this.gc.textExtent(b.text);
+    this.dp.setFont(style.font);
+    StrGeom _str = this.dp.str(b.text);
+    Size size = _str.size();
     if (b.autoWidth) {
-      ret.width = size.x;
+      ret.width = size.width;
     }
     if (b.autoHeight) {
-      ret.height = size.y;
+      ret.height = size.height;
     }
     boolean _equals_1 = Objects.equal(mouse, null);
     if (_equals_1) {
@@ -50,15 +55,21 @@ public class PaintButton extends AbstractPaint {
       ButtonStyle _calcForButton = this.styleCalc.calcForButton(b, _selHover);
       style = _calcForButton;
     }
-    this.gc.setFont(style.font);
-    this.gc.setBackground(style.backgroundColor);
-    this.gc.fillRectangle(ret.x, ret.y, ret.width, ret.height);
-    this.gc.setForeground(style.borderColor);
-    this.gc.drawRectangle(ret.x, ret.y, ret.width, ret.height);
-    this.gc.setForeground(style.color);
-    int dx = ((ret.width - size.x) / 2);
-    int dy = ((ret.height - size.y) / 2);
-    this.gc.drawText(b.text, (ret.x + dx), (ret.y + dy), true);
+    this.dp.setFont(style.font);
+    Style _style = this.dp.style();
+    _style.setBackground(style.backgroundColor);
+    RectGeom _from = this.dp.from(ret);
+    _from.fill();
+    Style _style_1 = this.dp.style();
+    _style_1.setForeground(style.borderColor);
+    RectGeom _from_1 = this.dp.from(ret);
+    _from_1.draw();
+    Style _style_2 = this.dp.style();
+    _style_2.setForeground(style.color);
+    int dx = ((ret.width - size.width) / 2);
+    int dy = ((ret.height - size.height) / 2);
+    StrGeom _str_1 = this.dp.str(b.text);
+    _str_1.draw((ret.x + dx), (ret.y + dy));
     return ret;
   }
 }

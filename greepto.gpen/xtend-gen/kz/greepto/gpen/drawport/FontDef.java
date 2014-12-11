@@ -160,4 +160,9 @@ public class FontDef {
     }
     return _xblockexpression;
   }
+  
+  public static FontDef arial() {
+    FontDef _fontDef = new FontDef();
+    return _fontDef.f("Arial");
+  }
 }

@@ -1,21 +1,21 @@
 package kz.greepto.gpen.editors.gpen.model.visitor
 
-import org.eclipse.swt.graphics.GC
-import kz.greepto.gpen.util.Rect
-import kz.greepto.gpen.editors.gpen.model.Scene
-import kz.greepto.gpen.editors.gpen.model.Label
-import kz.greepto.gpen.editors.gpen.model.Combo
+import kz.greepto.gpen.drawport.DrawPort
+import kz.greepto.gpen.drawport.Rect
 import kz.greepto.gpen.editors.gpen.model.Button
-import kz.greepto.gpen.editors.gpen.style.StyleCalc
-import kz.greepto.gpen.editors.gpen.model.paint.PaintLabel
+import kz.greepto.gpen.editors.gpen.model.Combo
+import kz.greepto.gpen.editors.gpen.model.Label
+import kz.greepto.gpen.editors.gpen.model.Scene
 import kz.greepto.gpen.editors.gpen.model.paint.PaintButton
+import kz.greepto.gpen.editors.gpen.model.paint.PaintLabel
+import kz.greepto.gpen.editors.gpen.style.StyleCalc
 
 class VisitorPlacer implements FigureVisitor<Rect> {
-  package val GC gc
+  package val DrawPort dp
   package val StyleCalc styleCalc
 
-  new(GC gc, StyleCalc styleCalc) {
-    this.gc = gc
+  new(DrawPort dp, StyleCalc styleCalc) {
+    this.dp = dp
     this.styleCalc = styleCalc
   }
 
@@ -26,11 +26,11 @@ class VisitorPlacer implements FigureVisitor<Rect> {
   }
 
   override visitLabel(Label label) {
-    new PaintLabel(gc, styleCalc).placePaint(label, null)
+    new PaintLabel(dp, styleCalc).placePaint(label, null)
   }
 
   override visitButton(Button button) {
-    new PaintButton(gc, styleCalc).placePaint(button, null)
+    new PaintButton(dp, styleCalc).placePaint(button, null)
   }
 
   override visitCombo(Combo combo) {

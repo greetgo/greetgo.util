@@ -5,6 +5,7 @@ import org.eclipse.swt.graphics.RGB
 import org.eclipse.swt.graphics.Color
 import java.util.HashMap
 import org.eclipse.swt.widgets.Display
+import kz.greepto.gpen.drawport.Kolor
 
 class ColorManager {
 
@@ -28,4 +29,7 @@ class ColorManager {
   public def Color rgb(int red, int green, int blue) {
     return fromRGB(new RGB(red, green, blue))
   }
+
+  def from(Kolor kolor) { rgb(kolor.red, kolor.green, kolor.blue) }
+
 }

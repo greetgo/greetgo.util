@@ -1,4 +1,4 @@
-package kz.greepto.gpen.util
+package kz.greepto.gpen.drawport
 
 import static java.lang.Math.min
 import static java.lang.Math.max
@@ -10,15 +10,30 @@ class Rect {
   public int width = 0
   public int height = 0
 
+  def Vec2 getPoint() { new Vec2(x, y) }
+
+  def void setPoint(Vec2 point) {
+    x = point?.x
+    y = point?.y
+  }
+
+  def Size getSize() { new Size(width, height) }
+
+  def void setSize(Size size) {
+    width = size?.width
+    height = size?.height
+  }
+
   public static def Rect zero() { new Rect }
+
   public static def Rect copy(Rect r) { new Rect(r) }
 
   public static def Rect from(int x, int y, int width, int height) {
     return new Rect(x, y, width, height)
   }
 
-  public static def Rect pointSize(Point point, Point size) {
-    return from(point.x, point.y, size.x, size.y)
+  public static def Rect pointSize(Vec2 point, Size size) {
+    return from(point?.x, point?.y, size?.width, size?.height)
   }
 
   private new() {
@@ -64,13 +79,13 @@ class Rect {
   }
 
   def boolean contains(Point p) {
-    if (p == null) return false
+    if(p == null) return false
 
-    if (p.x < x) return false
-    if (p.y < y) return false
+    if(p.x < x) return false
+    if(p.y < y) return false
 
-    if (p.x > x + width) return false
-    if (p.y > y + height) return false
+    if(p.x > x + width) return false
+    if(p.y > y + height) return false
 
     return true
   }

@@ -6,11 +6,19 @@ import java.util.Set;
 import kz.greepto.gpen.drawport.DrawPort;
 import kz.greepto.gpen.drawport.FontDef;
 import kz.greepto.gpen.drawport.Geom;
+import kz.greepto.gpen.drawport.Rect;
+import kz.greepto.gpen.drawport.RectGeom;
+import kz.greepto.gpen.drawport.Size;
+import kz.greepto.gpen.drawport.StrGeom;
+import kz.greepto.gpen.drawport.Style;
 import kz.greepto.gpen.drawport.Vec2;
 import kz.greepto.gpen.drawport.swt.FontPreparator;
 import kz.greepto.gpen.drawport.swt.GcAlreadyDisposed;
 import kz.greepto.gpen.drawport.swt.GcSource;
 import kz.greepto.gpen.drawport.swt.SwtGeom;
+import kz.greepto.gpen.drawport.swt.SwtRectGeom;
+import kz.greepto.gpen.drawport.swt.SwtStrGeom;
+import kz.greepto.gpen.drawport.swt.SwtStyle;
 import kz.greepto.gpen.util.FontInfo;
 import kz.greepto.gpen.util.FontManager;
 import org.eclipse.swt.graphics.Color;
@@ -31,6 +39,8 @@ public class DrawPortSwt implements DrawPort, FontPreparator {
   
   private final GC gc;
   
+  private final SwtStyle style;
+  
   public static DrawPort fromGcCreator(final GcSource gcSource) {
     HashSet<GC> gcSet = new HashSet<GC>();
     GC gc = gcSource.createGC();
@@ -42,6 +52,8 @@ public class DrawPortSwt implements DrawPort, FontPreparator {
     this.gcSet = gcSet;
     this.top = top;
     this.gc = gc;
+    SwtStyle _swtStyle = new SwtStyle(gc, gcSource);
+    this.style = _swtStyle;
   }
   
   public void dispose() {
@@ -122,6 +134,24 @@ public class DrawPortSwt implements DrawPort, FontPreparator {
   }
   
   public Geom from(final Vec2 from) {
-    return new SwtGeom(this.gc, from, this);
+    return new SwtGeom(this.gc, from);
+  }
+  
+  public RectGeom from(final Rect rect) {
+    Vec2 _point = rect.getPoint();
+    Size _size = rect.getSize();
+    return new SwtRectGeom(this.gc, _point, _size);
+  }
+  
+  public void setFont(final FontDef font) {
+    this.font.assign(font);
+  }
+  
+  public StrGeom str(final String str) {
+    return new SwtStrGeom(this.gc, str, this);
+  }
+  
+  public Style style() {
+    return this.style;
   }
 }

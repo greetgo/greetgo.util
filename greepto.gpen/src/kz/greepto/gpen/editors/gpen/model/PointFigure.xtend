@@ -1,14 +1,17 @@
 package kz.greepto.gpen.editors.gpen.model
 
-import org.eclipse.swt.graphics.Point
+import kz.greepto.gpen.drawport.Vec2
 
 abstract class PointFigure extends IdFigure {
 
-  private Point point
+  private Vec2 point
 
-  public def Point getPoint() { if (point == null) point = new Point(0, 0); point }
-  public def Point setPoint(Point point) {this.point = point}
+  public def Vec2 getPoint() {
+    if(point == null) point = new Vec2(0, 0);
+    point
+  }
 
+  public def void setPoint(Vec2 point) { this.point = point }
 
   public def int getX() { getPoint.x }
 
@@ -22,13 +25,13 @@ abstract class PointFigure extends IdFigure {
     super(id)
   }
 
-  new(String id, Point point) {
+  new(String id, Vec2 point) {
     this(id)
     this.point = point
   }
 
   new(PointFigure a) {
     super(a)
-    if (a.point != null) point = new Point(a.point.x, a.point.y)
+    if(a.point != null) point = new Vec2(a.point.x, a.point.y)
   }
 }

@@ -23,7 +23,7 @@ class VisitorPaint implements FigureVisitor<Void> {
   }
 
   override visitLabel(Label label) {
-    new PaintLabel(placer.gc, placer.styleCalc).placePaint(label, mouse)
+    new PaintLabel(placer.dp, placer.styleCalc).placePaint(label, mouse)
     null
   }
 
@@ -32,7 +32,7 @@ class VisitorPaint implements FigureVisitor<Void> {
   }
 
   override visitButton(Button button) {
-    new PaintButton(placer.gc, placer.styleCalc).placePaint(button, mouse)
+    new PaintButton(placer.dp, placer.styleCalc).placePaint(button, mouse)
     null
   }
 

@@ -3,37 +3,37 @@ package kz.greepto.gpen.editors.gpen.model.paint
 import org.eclipse.swt.graphics.Point
 import kz.greepto.gpen.editors.gpen.model.Label
 import kz.greepto.gpen.editors.gpen.style.StyleCalc
-import org.eclipse.swt.graphics.GC
 import kz.greepto.gpen.editors.gpen.style.PaintStatus
-import kz.greepto.gpen.util.Rect
+import kz.greepto.gpen.drawport.Rect
+import kz.greepto.gpen.drawport.DrawPort
 
 class PaintLabel extends AbstractPaint {
 
-  new(GC gc, StyleCalc styleCalc) {
-    super(gc, styleCalc)
+  new(DrawPort dp, StyleCalc styleCalc) {
+    super(dp, styleCalc)
   }
 
   def Rect placePaint(Label label, Point mouse) {
     var calc = styleCalc.calcForLabel(label, PaintStatus.sel(label.sel))
 
-    gc.foreground = calc.color
-    gc.font = calc.font
+    dp.style.foreground = calc.color
+    dp.font = calc.font
 
-    var size = Rect.pointSize(label.point, gc.textExtent(label.text));
+    var bounds = Rect.pointSize(label.point, dp.str(label.text).size);
 
-    if(mouse == null) return size
+    if(mouse == null) return bounds
 
-    var hover = size.contains(mouse)
+    var hover = bounds.contains(mouse)
 
     if (hover) {
       calc = styleCalc.calcForLabel(label, PaintStatus.selHover(label.sel))
 
-      gc.foreground = calc.color
-      gc.font = calc.font
+      dp.style.foreground = calc.color
+      dp.font = calc.font
     }
 
-    gc.drawText(label.text, label.x, label.y, true)
+    dp.str(label.text).draw(label.point)
 
-    return size
+    return bounds
   }
 }

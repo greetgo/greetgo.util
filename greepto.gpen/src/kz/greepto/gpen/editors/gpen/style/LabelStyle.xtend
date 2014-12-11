@@ -1,9 +1,9 @@
 package kz.greepto.gpen.editors.gpen.style
 
-import org.eclipse.swt.graphics.Color
-import org.eclipse.swt.graphics.Font
+import kz.greepto.gpen.drawport.FontDef
+import kz.greepto.gpen.drawport.Kolor
 
 class LabelStyle {
-  public Color color
-  public Font font
+  public Kolor color
+  public FontDef font
 }

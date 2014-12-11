@@ -13,5 +13,5 @@ interface Geom {
 
   def RectGeom rect()
 
-  def StrGeom str(String str)
+
 }

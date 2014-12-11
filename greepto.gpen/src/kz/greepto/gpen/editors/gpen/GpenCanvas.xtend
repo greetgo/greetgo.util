@@ -1,5 +1,8 @@
 package kz.greepto.gpen.editors.gpen
 
+import kz.greepto.gpen.drawport.DrawPort
+import kz.greepto.gpen.drawport.swt.DrawPortSwt
+import kz.greepto.gpen.drawport.swt.DrawableGcSource
 import kz.greepto.gpen.editors.gpen.action.Oper
 import kz.greepto.gpen.editors.gpen.action.UndoableOperation
 import kz.greepto.gpen.editors.gpen.model.IdFigure
@@ -22,7 +25,6 @@ import org.eclipse.swt.events.MouseListener
 import org.eclipse.swt.events.MouseMoveListener
 import org.eclipse.swt.events.MouseTrackListener
 import org.eclipse.swt.events.PaintEvent
-import org.eclipse.swt.graphics.GC
 import org.eclipse.swt.graphics.Point
 import org.eclipse.swt.widgets.Canvas
 import org.eclipse.swt.widgets.Composite
@@ -34,7 +36,7 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
 
   val ColorManager colors = new ColorManager
   val FontManager fonts = new FontManager
-  val DevStyleCalc styleCalc = new DevStyleCalc(fonts, colors)
+  val DevStyleCalc styleCalc = new DevStyleCalc()
   package val SelectionProvider selectionProvider = new SelectionProvider(this)
 
   val HandlerList changeSceneHandlerList = new HandlerList
@@ -87,11 +89,20 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     addMouseTrackListener(this);
   }
 
+  def DrawPort createDP() {
+    DrawPortSwt.fromGcCreator(new DrawableGcSource(fonts, colors, this))
+  }
+
   def paintCanvas(PaintEvent e) {
-    var placer = new VisitorPlacer(e.gc, styleCalc)
-    var vp = new VisitorPaint(placer)
-    vp.mouse = mouse
-    scene => vp
+    var dp = createDP
+    try {
+      var placer = new VisitorPlacer(dp, styleCalc)
+      var vp = new VisitorPaint(placer)
+      vp.mouse = mouse
+      scene => vp
+    } finally {
+      dp.dispose
+    }
   }
 
   override mouseDoubleClick(MouseEvent e) {
@@ -104,12 +115,12 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
 
     if (Mouse.Ctrl_LMB(e)) {
 
-      var gc = new GC(this)
+      var dp = createDP
       try {
-        var placer = new VisitorPlacer(gc, styleCalc)
+        var placer = new VisitorPlacer(dp, styleCalc)
         Hit.on(scene).with(placer).to(mouse).forEach[sel = !sel]
       } finally {
-        gc.dispose
+        dp.dispose
       }
 
       updateSelectionProvider
@@ -117,13 +128,13 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     }
 
     if (Mouse.LMB(e)) {
-      var gc = new GC(this)
+      var dp = createDP
       try {
-        var placer = new VisitorPlacer(gc, styleCalc)
+        var placer = new VisitorPlacer(dp, styleCalc)
         scene.list.forEach[sel = false]
         Hit.on(scene).with(placer).to(mouse).forEach[sel = true]
       } finally {
-        gc.dispose
+        dp.dispose
       }
 
       updateSelectionProvider

@@ -1,16 +1,16 @@
 package kz.greepto.gpen.editors.gpen.model.paint
 
+import kz.greepto.gpen.drawport.DrawPort
+import kz.greepto.gpen.drawport.Rect
 import kz.greepto.gpen.editors.gpen.model.Button
-import kz.greepto.gpen.editors.gpen.style.StyleCalc
-import kz.greepto.gpen.util.Rect
-import org.eclipse.swt.graphics.GC
-import org.eclipse.swt.graphics.Point
 import kz.greepto.gpen.editors.gpen.style.PaintStatus
+import kz.greepto.gpen.editors.gpen.style.StyleCalc
+import org.eclipse.swt.graphics.Point
 
 class PaintButton extends AbstractPaint {
 
-  new(GC gc, StyleCalc styleCalc) {
-    super(gc, styleCalc)
+  new(DrawPort dp, StyleCalc styleCalc) {
+    super(dp, styleCalc)
   }
 
   def Rect placePaint(Button b, Point mouse) {
@@ -22,12 +22,12 @@ class PaintButton extends AbstractPaint {
       return ret
     }
 
-    gc.font = style.font
+    dp.font = style.font
 
-    var size = gc.textExtent(b.text)
+    var size = dp.str(b.text).size
 
-    if(b.autoWidth) ret.width = size.x
-    if(b.autoHeight) ret.height = size.y
+    if(b.autoWidth) ret.width = size.width
+    if(b.autoHeight) ret.height = size.height
 
     if(mouse == null) return ret
 
@@ -35,20 +35,20 @@ class PaintButton extends AbstractPaint {
       style = styleCalc.calcForButton(b, PaintStatus.selHover(b.sel))
     }
 
-    gc.font = style.font
-    gc.background = style.backgroundColor
+    dp.font = style.font
+    dp.style.background = style.backgroundColor
 
-    gc.fillRectangle(ret.x, ret.y, ret.width, ret.height)
+    dp.from(ret).fill
 
-    gc.foreground = style.borderColor
-    gc.drawRectangle(ret.x, ret.y, ret.width, ret.height)
+    dp.style.foreground = style.borderColor
+    dp.from(ret).draw
 
-    gc.foreground = style.color
+    dp.style.foreground = style.color
 
-    var dx = (ret.width - size.x) / 2
-    var dy = (ret.height - size.y) / 2
+    var dx = (ret.width - size.width) / 2
+    var dy = (ret.height - size.height) / 2
 
-    gc.drawText(b.text, ret.x + dx, ret.y + dy, true)
+    dp.str(b.text).draw(ret.x + dx, ret.y + dy)
 
     return ret
   }

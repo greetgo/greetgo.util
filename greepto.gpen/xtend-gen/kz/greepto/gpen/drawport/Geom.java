@@ -2,7 +2,6 @@ package kz.greepto.gpen.drawport;
 
 import kz.greepto.gpen.drawport.RectGeom;
 import kz.greepto.gpen.drawport.Size;
-import kz.greepto.gpen.drawport.StrGeom;
 import kz.greepto.gpen.drawport.Vec2;
 
 @SuppressWarnings("all")
@@ -18,6 +17,4 @@ public interface Geom {
   public abstract Geom size(final Size size);
   
   public abstract RectGeom rect();
-  
-  public abstract StrGeom str(final String str);
 }

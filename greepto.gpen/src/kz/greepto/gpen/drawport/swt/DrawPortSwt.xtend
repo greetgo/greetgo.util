@@ -4,16 +4,18 @@ import java.util.HashSet
 import java.util.Set
 import kz.greepto.gpen.drawport.DrawPort
 import kz.greepto.gpen.drawport.FontDef
+import kz.greepto.gpen.drawport.Rect
+import kz.greepto.gpen.drawport.Vec2
 import kz.greepto.gpen.util.FontInfo
 import org.eclipse.swt.graphics.GC
 import org.eclipse.swt.graphics.Rectangle
-import kz.greepto.gpen.drawport.Vec2
 
 class DrawPortSwt implements DrawPort, FontPreparator {
   val GcSource gcSource
   val Set<GC> gcSet
   val boolean top
   val GC gc
+  val SwtStyle style
 
   def static DrawPort fromGcCreator(GcSource gcSource) {
     var gcSet = new HashSet<GC>
@@ -26,6 +28,8 @@ class DrawPortSwt implements DrawPort, FontPreparator {
     this.gcSet = gcSet
     this.top = top
     this.gc = gc
+
+    style = new SwtStyle(gc, gcSource)
   }
 
   override dispose() {
@@ -79,11 +83,16 @@ class DrawPortSwt implements DrawPort, FontPreparator {
       ))
   }
 
-  override from(int x, int y) {
-    from(new Vec2(x, y))
-  }
+  override from(int x, int y) { from(new Vec2(x, y)) }
 
-  override from(Vec2 from) {
-    return new SwtGeom(gc, from, this)
-  }
+  override from(Vec2 from) { new SwtGeom(gc, from) }
+
+  override from(Rect rect) { new SwtRectGeom(gc, rect.point, rect.size) }
+
+  override setFont(FontDef font) { this.font.assign(font) }
+
+  override str(String str) { new SwtStrGeom(gc, str, this) }
+
+  override style() { style }
+
 }

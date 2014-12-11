@@ -91,4 +91,8 @@ class FontDef {
     this.height = height
     this
   }
+
+  def static FontDef arial() {
+    (new FontDef).f('Arial')
+  }
 }

@@ -1,14 +1,14 @@
 package kz.greepto.gpen.editors.gpen.model.paint
 
-import org.eclipse.swt.graphics.GC
+import kz.greepto.gpen.drawport.DrawPort
 import kz.greepto.gpen.editors.gpen.style.StyleCalc
 
 abstract class AbstractPaint {
-  protected val GC gc
+  protected val DrawPort dp
   protected val StyleCalc styleCalc
 
-  new(GC gc, StyleCalc styleCalc) {
-    this.gc = gc
+  new(DrawPort dp, StyleCalc styleCalc) {
+    this.dp = dp
     this.styleCalc = styleCalc
   }
 }
