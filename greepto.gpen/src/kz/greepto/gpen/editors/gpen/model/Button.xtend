@@ -26,5 +26,4 @@ class Button extends RectFigure {
   override Button copy() {
     return new Button(this)
   }
-
 }

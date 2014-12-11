@@ -165,4 +165,9 @@ public class FontDef {
     FontDef _fontDef = new FontDef();
     return _fontDef.f("Arial");
   }
+  
+  public static FontDef timesNewRoman() {
+    FontDef _fontDef = new FontDef();
+    return _fontDef.f("Times New Roman");
+  }
 }

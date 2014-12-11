@@ -58,8 +58,8 @@ public abstract class AbstractGeom implements Geom {
   public abstract void drawLine(final Vec2 from, final Vec2 to);
   
   public Geom size(final int width, final int height) {
-    Size _size = new Size(width, height);
-    return this.size(_size);
+    Size _from = Size.from(width, height);
+    return this.size(_from);
   }
   
   public Geom size(final Size size) {

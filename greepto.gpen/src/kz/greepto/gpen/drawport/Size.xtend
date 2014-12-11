@@ -4,16 +4,20 @@ class Size {
   public int width
   public int height
 
-  new(int width, int height) {
+  def static from(int width, int height) { new Size(width, height) }
+  def static zero() { from(0, 0) }
+  def copy() { new Size(this) }
+
+  private new(int width, int height) {
     this.width = width
     this.height = height
   }
 
-  new() {
+  private new() {
     this(0, 0)
   }
 
-  new(Size a) {
+  private new(Size a) {
     this(a.width, a.height)
   }
 

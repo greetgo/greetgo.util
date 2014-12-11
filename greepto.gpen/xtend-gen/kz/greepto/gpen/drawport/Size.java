@@ -8,16 +8,28 @@ public class Size {
   
   public int height;
   
-  public Size(final int width, final int height) {
+  public static Size from(final int width, final int height) {
+    return new Size(width, height);
+  }
+  
+  public static Size zero() {
+    return Size.from(0, 0);
+  }
+  
+  public Size copy() {
+    return new Size(this);
+  }
+  
+  private Size(final int width, final int height) {
     this.width = width;
     this.height = height;
   }
   
-  public Size() {
+  private Size() {
     this(0, 0);
   }
   
-  public Size(final Size a) {
+  private Size(final Size a) {
     this(a.width, a.height);
   }
   

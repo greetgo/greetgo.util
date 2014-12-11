@@ -95,4 +95,8 @@ class FontDef {
   def static FontDef arial() {
     (new FontDef).f('Arial')
   }
+
+  def static FontDef timesNewRoman() {
+    (new FontDef).f('Times New Roman')
+  }
 }

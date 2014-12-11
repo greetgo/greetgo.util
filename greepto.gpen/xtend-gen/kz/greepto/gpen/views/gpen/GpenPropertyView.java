@@ -13,9 +13,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -162,6 +165,20 @@ public class GpenPropertyView extends ViewPart {
       this.appendStrWidget(wall, prop);
       return;
     }
+    boolean _or_1 = false;
+    Class<?> _type_3 = prop.getType();
+    boolean _equals_3 = Objects.equal(_type_3, Boolean.class);
+    if (_equals_3) {
+      _or_1 = true;
+    } else {
+      Class<?> _type_4 = prop.getType();
+      boolean _equals_4 = Objects.equal(_type_4, Boolean.TYPE);
+      _or_1 = _equals_4;
+    }
+    if (_or_1) {
+      this.appendBoolWidget(wall, prop);
+      return;
+    }
   }
   
   public boolean appendReadonlyWidget(final Composite wall, final PropAccessor prop) {
@@ -295,5 +312,32 @@ public class GpenPropertyView extends ViewPart {
       _xblockexpression = _xblockexpression_1;
     }
     return _xblockexpression;
+  }
+  
+  public void appendBoolWidget(final Composite wall, final PropAccessor prop) {
+    final Button btn = new Button(wall, SWT.CHECK);
+    String _name = prop.getName();
+    btn.setText(_name);
+    GridData gd = new GridData();
+    gd.horizontalSpan = 3;
+    gd.horizontalAlignment = SWT.FILL;
+    btn.setLayoutData(gd);
+    btn.addSelectionListener(
+      new SelectionAdapter() {
+        public void widgetSelected(final SelectionEvent e) {
+          boolean _selection = btn.getSelection();
+          prop.setValue(Boolean.valueOf(_selection));
+        }
+      });
+    Object _value = prop.getValue();
+    btn.setSelection((((Boolean) _value)).booleanValue());
+    final Handler _function = new Handler() {
+      public void handle() {
+        Object _value = prop.getValue();
+        btn.setSelection((((Boolean) _value)).booleanValue());
+      }
+    };
+    HandlerKiller _addChangeHandler = prop.addChangeHandler(_function);
+    this.killers.add(_addChangeHandler);
   }
 }

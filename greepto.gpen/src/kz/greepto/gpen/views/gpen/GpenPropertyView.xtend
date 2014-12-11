@@ -8,8 +8,11 @@ import kz.greepto.gpen.util.HandlerKiller
 import org.eclipse.jface.viewers.ISelection
 import org.eclipse.swt.SWT
 import org.eclipse.swt.custom.ScrolledComposite
+import org.eclipse.swt.events.SelectionAdapter
+import org.eclipse.swt.events.SelectionEvent
 import org.eclipse.swt.layout.GridData
 import org.eclipse.swt.layout.GridLayout
+import org.eclipse.swt.widgets.Button
 import org.eclipse.swt.widgets.Composite
 import org.eclipse.swt.widgets.Label
 import org.eclipse.swt.widgets.Text
@@ -112,6 +115,10 @@ public class GpenPropertyView extends ViewPart {
       appendStrWidget(wall, prop)
       return
     }
+    if (prop.type == Boolean || prop.type == Boolean.TYPE) {
+      appendBoolWidget(wall, prop)
+      return
+    }
   }
 
   def appendReadonlyWidget(Composite wall, PropAccessor prop) {
@@ -181,4 +188,23 @@ public class GpenPropertyView extends ViewPart {
       killers += prop.addChangeHandler[txt.text = extractStr(prop)]
     }
   }
+
+  def void appendBoolWidget(Composite wall, PropAccessor prop) {
+    val btn = new Button(wall, SWT.CHECK)
+    btn.text = prop.name
+    var gd = new GridData()
+    gd.horizontalSpan = 3
+    gd.horizontalAlignment = SWT.FILL
+    btn.layoutData = gd
+    btn.addSelectionListener(
+      new SelectionAdapter() {
+        override widgetSelected(SelectionEvent e) {
+          prop.value = btn.selection
+        }
+      })
+
+    btn.selection = prop.value as Boolean
+    killers += prop.addChangeHandler[btn.selection = prop.value as Boolean]
+  }
+
 }

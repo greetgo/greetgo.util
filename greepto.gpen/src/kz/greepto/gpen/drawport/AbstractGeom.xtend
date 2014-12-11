@@ -32,7 +32,7 @@ abstract class AbstractGeom implements Geom {
   def abstract void drawLine(Vec2 from, Vec2 to)
 
   override size(int width, int height) {
-    size(new Size(width, height))
+    size(Size.from(width, height))
   }
 
   override size(Size size) {

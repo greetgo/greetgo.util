@@ -39,12 +39,24 @@ public class PaintButton extends AbstractPaint {
     this.dp.setFont(style.font);
     StrGeom _str = this.dp.str(b.text);
     Size size = _str.size();
+    int paddingLeft = 0;
+    int paddingTop = 0;
+    boolean _notEquals = (!Objects.equal(style.padding, null));
+    if (_notEquals) {
+      paddingLeft = style.padding.left;
+      paddingTop = style.padding.top;
+      int _width = size.width;
+      size.width = (_width + (style.padding.left + style.padding.right));
+      int _height = size.height;
+      size.height = (_height + (style.padding.top + style.padding.bottom));
+    }
     if (b.autoWidth) {
       ret.width = size.width;
     }
     if (b.autoHeight) {
       ret.height = size.height;
     }
+    b.setSize(size);
     boolean _equals_1 = Objects.equal(mouse, null);
     if (_equals_1) {
       return ret;
@@ -66,8 +78,8 @@ public class PaintButton extends AbstractPaint {
     _from_1.draw();
     Style _style_2 = this.dp.style();
     _style_2.setForeground(style.color);
-    int dx = ((ret.width - size.width) / 2);
-    int dy = ((ret.height - size.height) / 2);
+    int dx = (((ret.width - size.width) / 2) + paddingLeft);
+    int dy = (((ret.height - size.height) / 2) + paddingTop);
     StrGeom _str_1 = this.dp.str(b.text);
     _str_1.draw((ret.x + dx), (ret.y + dy));
     return ret;

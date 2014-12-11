@@ -8,6 +8,8 @@ abstract class IdFigure extends Figure {
   @Skip
   public boolean sel = false
 
+  public boolean disabled = false
+
   new(String id) {
     this.id = id
   }

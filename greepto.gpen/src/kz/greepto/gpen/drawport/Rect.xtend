@@ -17,7 +17,7 @@ class Rect {
     y = point?.y
   }
 
-  def Size getSize() { new Size(width, height) }
+  def Size getSize() { Size.from(width, height) }
 
   def void setSize(Size size) {
     width = size?.width

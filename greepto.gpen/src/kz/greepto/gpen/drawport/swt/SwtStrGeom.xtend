@@ -28,7 +28,7 @@ class SwtStrGeom implements StrGeom {
   override size() {
     fp.prepareFont
     var s = gc.stringExtent(str)
-    return new Size(s.x, s.y)
+    return Size.from(s.x, s.y)
   }
 
 }
