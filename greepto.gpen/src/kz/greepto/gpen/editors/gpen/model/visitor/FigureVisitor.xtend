@@ -14,5 +14,4 @@ interface FigureVisitor<T> {
   def T visitCombo(Combo combo)
 
   def T visitButton(Button button)
-
 }

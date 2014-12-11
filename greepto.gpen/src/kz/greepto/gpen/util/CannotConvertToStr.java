@@ -10,5 +10,4 @@ public class CannotConvertToStr extends RuntimeException {
     this.fieldName = fieldName;
     this.object = object;
   }
-  
 }

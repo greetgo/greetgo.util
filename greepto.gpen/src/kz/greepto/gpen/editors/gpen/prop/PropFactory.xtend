@@ -309,7 +309,6 @@ class PropFactory {
     info.skip = field.getAnnotation(Skip) != null
 
     info.fin = Modifier.isFinal(field.modifiers)
-
   }
 
   private def static readGetterOptions(AccessorInfo info, Method method) {

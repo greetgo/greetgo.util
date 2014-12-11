@@ -6,7 +6,6 @@ import kz.greepto.gpen.drawport.Vec2
 import org.eclipse.swt.graphics.GC
 
 class SwtArcGeom implements ArcGeom {
-
   val GC gc
 
   package Vec2 point

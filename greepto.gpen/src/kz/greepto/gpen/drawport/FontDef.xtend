@@ -1,7 +1,6 @@
 package kz.greepto.gpen.drawport
 
 class FontDef {
-
   private boolean italic = false
   private boolean bold = false
   private String family = 'Arial'

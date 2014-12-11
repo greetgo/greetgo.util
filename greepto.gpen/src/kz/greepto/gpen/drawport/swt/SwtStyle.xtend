@@ -6,6 +6,7 @@ import org.eclipse.swt.graphics.GC
 
 class SwtStyle implements Style {
   val GC gc
+
   val GcSource gcSource
 
   package new(GC gc, GcSource gcSource) {
@@ -20,5 +21,4 @@ class SwtStyle implements Style {
   override setBackground(Kolor kolor) {
     gc.background = gcSource.cm.from(kolor)
   }
-
 }

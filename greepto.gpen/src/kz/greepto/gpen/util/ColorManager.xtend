@@ -31,5 +31,4 @@ class ColorManager {
   }
 
   def from(Kolor kolor) { rgb(kolor.red, kolor.green, kolor.blue) }
-
 }

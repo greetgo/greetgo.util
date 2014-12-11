@@ -7,5 +7,4 @@ class NoProperty extends RuntimeException {
   new(String message) {
     super(message)
   }
-
 }

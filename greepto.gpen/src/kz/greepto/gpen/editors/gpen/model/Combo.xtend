@@ -29,5 +29,4 @@ class Combo extends RectFigure {
   override Combo copy() {
     return new Combo(this)
   }
-
 }

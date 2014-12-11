@@ -11,7 +11,6 @@ import kz.greepto.gpen.editors.gpen.style.StyleCalc
 import kz.greepto.gpen.editors.gpen.style.Padding
 
 class DevStyleCalc implements StyleCalc {
-
   override LabelStyle calcForLabel(Label label, PaintStatus ps) {
     val ret = new LabelStyle
 
@@ -53,5 +52,4 @@ class DevStyleCalc implements StyleCalc {
 
     return ret
   }
-
 }

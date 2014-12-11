@@ -30,5 +30,4 @@ class Scene extends Figure {
 
     return null
   }
-
 }

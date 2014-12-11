@@ -7,5 +7,4 @@ interface StyleCalc {
   def LabelStyle calcForLabel(Label label, PaintStatus ps)
 
   def ButtonStyle calcForButton(Button button, PaintStatus status)
-
 }

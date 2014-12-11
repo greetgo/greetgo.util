@@ -7,7 +7,6 @@ import org.eclipse.swt.graphics.GC
 import org.eclipse.swt.graphics.Rectangle
 
 class SwtRectGeom implements RectGeom {
-
   val GC gc
   val Vec2 point
   val Size size
@@ -72,5 +71,4 @@ class SwtRectGeom implements RectGeom {
     swtRoundRectGeom.arcSize = arcSize
     return swtRoundRectGeom
   }
-
 }

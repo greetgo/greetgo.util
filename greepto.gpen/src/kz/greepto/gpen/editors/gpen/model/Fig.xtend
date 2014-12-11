@@ -29,5 +29,4 @@ class Fig {
       default: throw new UnknownFigure(fig)
     }
   }
-
 }

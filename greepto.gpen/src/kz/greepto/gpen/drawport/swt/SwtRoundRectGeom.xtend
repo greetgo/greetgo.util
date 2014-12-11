@@ -6,8 +6,8 @@ import kz.greepto.gpen.drawport.Vec2
 import kz.greepto.gpen.drawport.Size
 
 class SwtRoundRectGeom implements RoundRectGeom {
-
   val GC gc
+
   package var Vec2 point
   package var Size size
   package var Size arcSize
@@ -25,5 +25,4 @@ class SwtRoundRectGeom implements RoundRectGeom {
     gc.fillRoundRectangle(point.x, point.y, size.width, size.height, arcSize.width, arcSize.height)
     this
   }
-
 }

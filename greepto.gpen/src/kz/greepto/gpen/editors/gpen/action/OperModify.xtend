@@ -29,5 +29,4 @@ class OperModify extends Oper {
   override getDisplayStr() {
     return "modify"
   }
-
 }

@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Canvas
 import org.eclipse.swt.widgets.Composite
 
 class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, MouseTrackListener {
-
   Scene originalScene = new Scene
   Scene scene = new Scene
 

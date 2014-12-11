@@ -26,5 +26,4 @@ class OperGroup extends Oper {
   override getDisplayStr() {
     return displayStr
   }
-
 }

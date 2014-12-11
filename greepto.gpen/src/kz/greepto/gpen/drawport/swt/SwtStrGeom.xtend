@@ -7,6 +7,7 @@ import kz.greepto.gpen.drawport.Size
 
 class SwtStrGeom implements StrGeom {
   val GC gc
+
   val String str
   val FontPreparator fp
 
@@ -30,5 +31,4 @@ class SwtStrGeom implements StrGeom {
     var s = gc.stringExtent(str)
     return Size.from(s.x, s.y)
   }
-
 }

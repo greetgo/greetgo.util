@@ -34,7 +34,6 @@ class UndoableOperation extends AbstractOperation {
     return action.displayStr
   }
 
-
   override redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
     doit[action.apply(scene); repainter.repaint]
   }
@@ -57,5 +56,4 @@ class UndoableOperation extends AbstractOperation {
   override undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
     doit[action.cancel(scene); repainter.repaint]
   }
-
 }

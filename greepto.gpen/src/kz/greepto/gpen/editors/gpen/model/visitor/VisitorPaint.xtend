@@ -35,5 +35,4 @@ class VisitorPaint implements FigureVisitor<Void> {
     new PaintButton(placer.dp, placer.styleCalc).placePaint(button, mouse)
     null
   }
-
 }

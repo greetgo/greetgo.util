@@ -4,7 +4,6 @@ import java.util.List
 import java.util.ArrayList
 
 abstract class AbstractGeom implements Geom {
-
   protected Vec2 from
 
   protected Size size

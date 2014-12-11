@@ -10,7 +10,6 @@ import org.eclipse.core.runtime.SafeRunner
 import org.eclipse.core.runtime.ISafeRunnable
 
 class SelectionProvider implements ISelectionProvider {
-
   val GpenCanvas owner
 
   new(GpenCanvas owner) {
@@ -52,5 +51,4 @@ class SelectionProvider implements ISelectionProvider {
         })
     }
   }
-
 }

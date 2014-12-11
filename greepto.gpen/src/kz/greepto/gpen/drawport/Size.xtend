@@ -5,7 +5,9 @@ class Size {
   public int height
 
   def static from(int width, int height) { new Size(width, height) }
+
   def static zero() { from(0, 0) }
+
   def copy() { new Size(this) }
 
   private new(int width, int height) {
@@ -30,5 +32,4 @@ class Size {
     if(h < 0) h = -h
     return new Size(w, h)
   }
-
 }

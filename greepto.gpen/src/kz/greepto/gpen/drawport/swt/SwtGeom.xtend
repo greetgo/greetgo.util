@@ -28,5 +28,4 @@ class SwtGeom extends AbstractGeom {
     }
     return new SwtRectGeom(gc, from, _size)
   }
-
 }

@@ -16,7 +16,6 @@ import java.io.ByteArrayOutputStream
 import kz.greepto.gpen.util.StreamUtil
 
 class GpenEditor extends EditorPart {
-
   override doSave(IProgressMonitor monitor) {
     println('doSave monitor = ' + monitor);
   }

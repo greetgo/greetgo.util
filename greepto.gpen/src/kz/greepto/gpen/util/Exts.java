@@ -54,5 +54,4 @@ public class Exts {
   public static Point operator_multiply(Point a, int b) {
     return new Point(a.x * b, a.y * b);
   }
-  
 }

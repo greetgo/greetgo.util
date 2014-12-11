@@ -22,5 +22,4 @@ class Label extends PointFigure {
   override Label copy() {
     return new Label(this)
   }
-
 }

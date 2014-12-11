@@ -10,5 +10,4 @@ class NoGetter extends RuntimeException {
     this.propertyName = propertyName
     this.klass = klass
   }
-
 }

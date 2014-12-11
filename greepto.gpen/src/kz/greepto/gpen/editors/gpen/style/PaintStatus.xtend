@@ -31,6 +31,4 @@ class PaintStatus {
     ret.selected = selected
     return ret
   }
-
-
 }

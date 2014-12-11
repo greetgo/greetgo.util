@@ -12,6 +12,4 @@ interface Geom {
   def Geom size(Size size)
 
   def RectGeom rect()
-
-
 }

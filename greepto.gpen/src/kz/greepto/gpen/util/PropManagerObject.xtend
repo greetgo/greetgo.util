@@ -128,5 +128,4 @@ class PropManagerObject implements PropManager {
     if (object instanceof Integer) return "" + object
     throw new CannotConvertToStr(name, object)
   }
-
 }

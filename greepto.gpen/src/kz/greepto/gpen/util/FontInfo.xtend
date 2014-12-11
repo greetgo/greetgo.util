@@ -37,5 +37,4 @@ class FontInfo {
     if (italic) style += SWT.ITALIC
     return new FontData(name, height, style)
   }
-
 }

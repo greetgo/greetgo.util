@@ -22,5 +22,4 @@ class OperAppend extends Oper {
   override getDisplayStr() {
     return "Append"
   }
-
 }

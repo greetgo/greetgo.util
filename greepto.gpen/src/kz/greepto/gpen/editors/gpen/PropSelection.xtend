@@ -7,7 +7,6 @@ import java.util.ArrayList
 import java.util.Collection
 
 class PropSelection implements ISelection {
-
   public val List<PropAccessor> list = new ArrayList
 
   val String figureId

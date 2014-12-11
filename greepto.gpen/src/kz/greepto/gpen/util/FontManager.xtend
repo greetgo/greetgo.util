@@ -72,5 +72,4 @@ class FontManager {
     data.values.forEach[dispose]
     data.clear
   }
-
 }

@@ -35,6 +35,5 @@ class Hit {
       ret += hit.scene.list.filter[(it => placer).contains(point)]
       return ret
     }
-
   }
 }
