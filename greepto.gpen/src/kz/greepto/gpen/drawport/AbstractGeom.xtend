@@ -21,10 +21,33 @@ abstract class AbstractGeom implements Geom {
   }
 
   override line() {
+    if (size != null) {
+      drawLine(from, from + size)
+
+      move
+      return this
+    }
+
     drawLine(from, toList.get(0))
-    for(var i = 1, var C = toList.size; i < C; i++) {
+    for (var i = 1, var C = toList.size; i < C; i++) {
       drawLine(toList.get(i - 1), toList.get(i))
     }
+
+    move
+    this
+  }
+
+  override move() {
+    if (size != null) {
+      from = from + size
+      size = null
+      toList.clear
+      return this
+    }
+
+    from = toList.get(toList.size - 1)
+    toList.clear
+
     this
   }
 
@@ -37,5 +60,22 @@ abstract class AbstractGeom implements Geom {
   override size(Size size) {
     this.size = size
     this
+  }
+
+  override shift(Vec2 offset) {
+    if (toList.size === 0) {
+      toList.add(from + offset)
+    } else {
+      toList.add(toList.last + offset)
+    }
+    this
+  }
+
+  override shift(int dx, int dy) { shift(Vec2.from(dx, dy)) }
+
+  override last() {
+    if (size == null && toList.size == 0) return from
+    if (size != null) return from + size
+    return toList.last
   }
 }

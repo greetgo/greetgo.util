@@ -6,6 +6,7 @@ import java.util.List;
 import kz.greepto.gpen.drawport.Geom;
 import kz.greepto.gpen.drawport.Size;
 import kz.greepto.gpen.drawport.Vec2;
+import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 @SuppressWarnings("all")
 public abstract class AbstractGeom implements Geom {
@@ -36,6 +37,13 @@ public abstract class AbstractGeom implements Geom {
   public Geom line() {
     AbstractGeom _xblockexpression = null;
     {
+      boolean _notEquals = (!Objects.equal(this.size, null));
+      if (_notEquals) {
+        Vec2 _plus = this.from.operator_plus(this.size);
+        this.drawLine(this.from, _plus);
+        this.move();
+        return this;
+      }
       Vec2 _get = this.toList.get(0);
       this.drawLine(this.from, _get);
       {
@@ -50,6 +58,28 @@ public abstract class AbstractGeom implements Geom {
           _while = (i < C);
         }
       }
+      this.move();
+      _xblockexpression = this;
+    }
+    return _xblockexpression;
+  }
+  
+  public Geom move() {
+    AbstractGeom _xblockexpression = null;
+    {
+      boolean _notEquals = (!Objects.equal(this.size, null));
+      if (_notEquals) {
+        Vec2 _plus = this.from.operator_plus(this.size);
+        this.from = _plus;
+        this.size = null;
+        this.toList.clear();
+        return this;
+      }
+      int _size = this.toList.size();
+      int _minus = (_size - 1);
+      Vec2 _get = this.toList.get(_minus);
+      this.from = _get;
+      this.toList.clear();
       _xblockexpression = this;
     }
     return _xblockexpression;
@@ -69,5 +99,48 @@ public abstract class AbstractGeom implements Geom {
       _xblockexpression = this;
     }
     return _xblockexpression;
+  }
+  
+  public Geom shift(final Vec2 offset) {
+    AbstractGeom _xblockexpression = null;
+    {
+      int _size = this.toList.size();
+      boolean _tripleEquals = (_size == 0);
+      if (_tripleEquals) {
+        Vec2 _plus = this.from.operator_plus(offset);
+        this.toList.add(_plus);
+      } else {
+        Vec2 _last = IterableExtensions.<Vec2>last(this.toList);
+        Vec2 _plus_1 = _last.operator_plus(offset);
+        this.toList.add(_plus_1);
+      }
+      _xblockexpression = this;
+    }
+    return _xblockexpression;
+  }
+  
+  public Geom shift(final int dx, final int dy) {
+    Vec2 _from = Vec2.from(dx, dy);
+    return this.shift(_from);
+  }
+  
+  public Vec2 last() {
+    boolean _and = false;
+    boolean _equals = Objects.equal(this.size, null);
+    if (!_equals) {
+      _and = false;
+    } else {
+      int _size = this.toList.size();
+      boolean _equals_1 = (_size == 0);
+      _and = _equals_1;
+    }
+    if (_and) {
+      return this.from;
+    }
+    boolean _notEquals = (!Objects.equal(this.size, null));
+    if (_notEquals) {
+      return this.from.operator_plus(this.size);
+    }
+    return IterableExtensions.<Vec2>last(this.toList);
   }
 }

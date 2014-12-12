@@ -32,9 +32,10 @@ public class SwtGeom extends AbstractGeom {
         throw new NoToPoints();
       }
       int _size_2 = this.toList.size();
-      boolean _greaterEqualsThan = (_size_2 >= 1);
-      if (_greaterEqualsThan) {
-        throw new TooManyToPoints();
+      boolean _greaterThan = (_size_2 > 1);
+      if (_greaterThan) {
+        int _size_3 = this.toList.size();
+        throw new TooManyToPoints(_size_3);
       }
       Vec2 _get = this.toList.get(0);
       Size _fromTo = Size.fromTo(this.from, _get);

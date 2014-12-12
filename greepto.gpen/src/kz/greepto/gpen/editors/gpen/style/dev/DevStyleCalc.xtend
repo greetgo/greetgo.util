@@ -15,12 +15,20 @@ class DevStyleCalc implements StyleCalc {
     val ret = new LabelStyle
 
     if (ps.hover) {
-      ret.color = Kolor.from(250, 0, 0)
+      ret.color = Kolor.from(0, 0, 0)
     } else {
       ret.color = Kolor.from(50, 50, 50)
     }
 
     ret.font = FontDef.arial.h(30)
+
+    if (ps.selected) {
+      if (ps.hover) {
+        ret.color = Kolor.from(0, 0, 200)
+      } else {
+        ret.color = Kolor.from(0, 0, 255)
+      }
+    }
 
     return ret
   }
@@ -34,17 +42,19 @@ class DevStyleCalc implements StyleCalc {
     ret.padding.top = 3
     ret.padding.bottom = 7
 
-    ret.backgroundColor = Kolor.from(200, 200, 200)
-
-    ret.borderColor = Kolor.from(100, 100, 100)
-
-    if (ps.selected) {
-      ret.color = Kolor.from(0, 0, 150)
-    } else {
-      ret.color = Kolor.from(50, 50, 50)
-    }
+    ret.backgroundColor = Kolor.from(200, 200, 230)
 
     ret.font = FontDef.timesNewRoman.h(30)
+
+    if (ps.selected) {
+      ret.color = Kolor.from(0, 0, 255)
+      ret.borderColor = Kolor.from(100, 100, 100).darker
+
+    //ret.font.b
+    } else {
+      ret.color = Kolor.from(50, 50, 50)
+      ret.borderColor = Kolor.from(100, 100, 100)
+    }
 
     if (ps.hover) {
       ret.borderColor = Kolor.from(0, 0, 0)

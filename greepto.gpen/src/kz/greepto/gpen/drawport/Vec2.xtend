@@ -16,4 +16,18 @@ class Vec2 {
   new(Vec2 a) {
     this(a.x, a.y)
   }
+
+  def static from(int x, int y) { new Vec2(x, y) }
+
+  def Vec2 operator_plus(Vec2 a) { from(x + a.x, y + a.y) }
+
+  def Vec2 operator_plus(int[] a) { from(x + a.get(0), y + a.get(1)) }
+
+  def Vec2 operator_plus(Size s) { from(x + s.width, y + s.height) }
+
+  def Vec2 operator_minus(Vec2 a) { from(x - a.x, y - a.y) }
+
+  def Vec2 operator_minus(int[] a) { from(x - a.get(0), y - a.get(1)) }
+
+  def Vec2 operator_minus(Size s) { from(x - s.width, y - s.height) }
 }

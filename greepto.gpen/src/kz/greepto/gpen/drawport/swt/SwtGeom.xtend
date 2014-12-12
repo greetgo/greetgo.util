@@ -23,7 +23,7 @@ class SwtGeom extends AbstractGeom {
     var _size = size
     if (_size === null) {
       if (toList.size == 0) throw new NoToPoints
-      if (toList.size >= 1) throw new TooManyToPoints
+      if (toList.size > 1) throw new TooManyToPoints(toList.size)
       _size = Size.fromTo(from, toList.get(0));
     }
     return new SwtRectGeom(gc, from, _size)

@@ -10,7 +10,7 @@ import org.eclipse.swt.graphics.Point
 class PaintButton extends AbstractPaint {
 
   new(DrawPort dp, StyleCalc styleCalc) {
-    super(dp, styleCalc)
+    super(dp.copy, styleCalc)
   }
 
   def Rect placePaint(Button b, Point mouse) {
@@ -48,10 +48,31 @@ class PaintButton extends AbstractPaint {
     dp.font = style.font
     dp.style.background = style.backgroundColor
 
-    dp.from(ret).fill
+    var r = 5
 
-    dp.style.foreground = style.borderColor
-    dp.from(ret).draw
+    dp.from(ret).round(r).fill
+
+    dp.style.foreground = style.borderColor.brighter
+
+    dp.from(ret.point).size(r, r).rect.arc(90, 90).draw
+    dp.from(ret.point + #[ret.size.width, 0] - #[r, 0]).size(r, r).rect.arc(45, 45).draw
+
+    dp.from(ret.point + #[r / 2, 0]).shift(ret.size.width - r, 0).line
+
+    dp.from(ret.point + #[0, r / 2]).shift(0, ret.size.height - r).line
+
+    dp.style.foreground = style.borderColor.darker
+
+    dp.from(ret.point + #[ret.size.width, 0] - #[r, 0]).size(r, r).rect.arc(0, 45).draw
+    dp.from(ret.point + ret.size - #[r, r]).size(r, r).rect.arc(3 * 90, 90).draw
+    dp.from(ret.point + #[0, ret.height] + #[0, -r]).size(r, r).rect.arc(2 * 90 + 45, 45).draw
+
+    dp.from(ret.point + #[ret.size.width, r / 2]).shift(0, ret.size.height - r).line
+    dp.from(ret.point + ret.size - #[r / 2, 0]).shift(-ret.size.width + r, 0).line
+
+    dp.style.foreground = style.borderColor.brighter
+
+    dp.from(ret.point + #[0, ret.height] + #[0, -r]).size(r, r).rect.arc(2 * 90, 45).draw
 
     dp.style.foreground = style.color
 

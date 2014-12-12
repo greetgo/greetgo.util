@@ -10,11 +10,19 @@ public interface Geom {
   
   public abstract Geom to(final Vec2 point);
   
+  public abstract Geom shift(final Vec2 offset);
+  
+  public abstract Geom shift(final int dx, final int dy);
+  
   public abstract Geom line();
+  
+  public abstract Geom move();
   
   public abstract Geom size(final int width, final int height);
   
   public abstract Geom size(final Size size);
   
   public abstract RectGeom rect();
+  
+  public abstract Vec2 last();
 }
