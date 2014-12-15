@@ -34,6 +34,11 @@ class PaintLabel extends AbstractPaint {
 
     dp.str(label.text).draw(label.point)
 
+    if (label.sel && calc.focusColor !== null){
+      dp.style.foreground = calc.focusColor
+      drawAroundFocus(bounds)
+    }
+
     return bounds
   }
 }

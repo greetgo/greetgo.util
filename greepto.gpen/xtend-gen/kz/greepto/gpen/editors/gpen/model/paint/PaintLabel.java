@@ -46,6 +46,18 @@ public class PaintLabel extends AbstractPaint {
     StrGeom _str_1 = this.dp.str(label.text);
     Vec2 _point_1 = label.getPoint();
     _str_1.draw(_point_1);
+    boolean _and = false;
+    if (!label.sel) {
+      _and = false;
+    } else {
+      boolean _tripleNotEquals = (calc.focusColor != null);
+      _and = _tripleNotEquals;
+    }
+    if (_and) {
+      Style _style_2 = this.dp.style();
+      _style_2.setForeground(calc.focusColor);
+      this.drawAroundFocus(bounds);
+    }
     return bounds;
   }
 }

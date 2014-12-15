@@ -94,4 +94,7 @@ class DrawPortSwt implements DrawPort, FontPreparator {
   override str(String str) { new SwtStrGeom(gc, str, this) }
 
   override style() { style }
+
+  override clearClipping() { gc.clipping = null as Rectangle }
+
 }

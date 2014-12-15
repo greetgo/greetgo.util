@@ -32,4 +32,24 @@ class Size {
     if(h < 0) h = -h
     return new Size(w, h)
   }
+
+  def Size operator_plus(Vec2 a) { Size.from(width + a.x, height + a.y) }
+
+  def Size operator_minus(Vec2 a) { Size.from(width - a.x, height - a.y) }
+
+  def Size operator_plus(int[] a) { Size.from(width + a.get(0), height + a.get(1)) }
+
+  def Size operator_minus(int[] a) { Size.from(width - a.get(0), height - a.get(1)) }
+
+  def Size operator_add(int[] a) {
+    width += a.get(0)
+    height += a.get(1)
+    this
+  }
+
+  def Size operator_substract(int[] a) {
+    width -= a.get(0)
+    height -= a.get(1)
+    this
+  }
 }

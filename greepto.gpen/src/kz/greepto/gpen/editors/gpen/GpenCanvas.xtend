@@ -20,6 +20,8 @@ import kz.greepto.gpen.util.HandlerList
 import org.eclipse.core.commands.operations.IUndoContext
 import org.eclipse.core.commands.operations.OperationHistoryFactory
 import org.eclipse.swt.SWT
+import org.eclipse.swt.events.FocusEvent
+import org.eclipse.swt.events.FocusListener
 import org.eclipse.swt.events.MouseEvent
 import org.eclipse.swt.events.MouseListener
 import org.eclipse.swt.events.MouseMoveListener
@@ -74,6 +76,8 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
 
   val IUndoContext undoContext
 
+  var hasFocus = false
+
   public new(Composite parent, IUndoContext undoContext) {
     super(parent, SWT.NONE);
 
@@ -86,6 +90,28 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     addMouseListener(this);
     addMouseMoveListener(this);
     addMouseTrackListener(this);
+
+    new Thread(
+      [
+        while (!disposed) {
+          Thread.sleep(1000 / 24)
+          display.syncExec [
+            if(!disposed && hasFocus) redraw
+          ]
+        }
+      ]).start
+
+    addFocusListener(
+      new FocusListener() {
+        override focusGained(FocusEvent e) {
+          hasFocus = true
+        }
+
+        override focusLost(FocusEvent e) {
+          hasFocus = false
+        }
+
+      })
   }
 
   def DrawPort createDP() {

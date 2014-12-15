@@ -7,6 +7,8 @@ import kz.greepto.gpen.editors.gpen.model.Scene
 import kz.greepto.gpen.editors.gpen.model.paint.PaintButton
 import kz.greepto.gpen.editors.gpen.model.paint.PaintLabel
 import org.eclipse.swt.graphics.Point
+import kz.greepto.gpen.editors.gpen.model.Table
+import kz.greepto.gpen.editors.gpen.model.paint.PaintTable
 
 class VisitorPaint implements FigureVisitor<Void> {
 
@@ -35,4 +37,10 @@ class VisitorPaint implements FigureVisitor<Void> {
     new PaintButton(placer.dp, placer.styleCalc).placePaint(button, mouse)
     null
   }
+
+  override visitTable(Table table) {
+    new PaintTable(placer.dp, placer.styleCalc).placePaint(table, mouse)
+    null
+  }
+
 }

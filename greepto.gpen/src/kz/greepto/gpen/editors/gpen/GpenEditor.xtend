@@ -14,6 +14,9 @@ import org.eclipse.ui.part.EditorPart
 import org.eclipse.core.resources.IFile
 import java.io.ByteArrayOutputStream
 import kz.greepto.gpen.util.StreamUtil
+import kz.greepto.gpen.editors.gpen.model.Table
+import kz.greepto.gpen.drawport.Vec2
+import kz.greepto.gpen.drawport.Size
 
 class GpenEditor extends EditorPart {
   override doSave(IProgressMonitor monitor) {
@@ -54,6 +57,19 @@ class GpenEditor extends EditorPart {
     scene.list += Fig.c('Label', 'asd2', 'x 100 y 150 text привет')
 
     scene.list += Fig.c('Button', 'but1', 'x 200 y 200 text "жми сюда"')
+
+    var tab = new Table('tab_0001')
+    tab.point = Vec2.from(400, 10)
+    tab.size = Size.from(500, 350)
+    tab.colWidths = '100|200|100'
+
+    tab.line('#col1|col2 ~| col3')
+    tab.line('content1 | content2 | cont 3')
+    tab.line('*content4 ~| content5 ')
+    tab.line('content6 | content7 | content 8 ')
+    tab.line('content9 |~ content10 | content 11 ')
+
+    scene.list += tab
 
     contents.scene = scene
 

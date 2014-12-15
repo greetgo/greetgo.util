@@ -1,8 +1,9 @@
 package kz.greepto.gpen.drawport
 
-import static java.lang.Math.min
-import static java.lang.Math.max
 import org.eclipse.swt.graphics.Point
+
+import static java.lang.Math.max
+import static java.lang.Math.min
 
 class Rect {
   public int x = 0
@@ -24,7 +25,9 @@ class Rect {
     height = size?.height
   }
 
-  public static def Rect zero() { new Rect }
+  public static val Rect ZERO = from(0, 0, 0, 0)
+
+  public static def Rect zero() { ZERO }
 
   public static def Rect copy(Rect r) { new Rect(r) }
 
@@ -90,4 +93,13 @@ class Rect {
     return true
   }
 
+  def Rect operator_and(Rect r) {
+    var left = Math.max(x, r.x)
+    var right = Math.min(x + width, r.x + r.width)
+    if (left >= right) return ZERO
+    var top = Math.max(y, r.y)
+    var bottom = Math.min(y + height, r.y + r.height)
+    if (top >= bottom) return ZERO
+    from(left, top, right - left, bottom - top)
+  }
 }

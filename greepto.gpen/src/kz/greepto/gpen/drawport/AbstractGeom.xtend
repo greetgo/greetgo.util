@@ -74,8 +74,68 @@ abstract class AbstractGeom implements Geom {
   override shift(int dx, int dy) { shift(Vec2.from(dx, dy)) }
 
   override last() {
-    if (size == null && toList.size == 0) return from
-    if (size != null) return from + size
+    if(size == null && toList.size == 0) return from
+    if(size != null) return from + size
     return toList.last
   }
+
+  override dashLine(double offset, double skvaj, double length) {
+    var nx = toList.get(0).x as double
+    var ny = toList.get(0).y as double
+    var px = from.x as double
+    var py = from.y as double
+
+    var step = Math.sqrt(nx * nx + ny * ny)
+    if(step < 0.1) throw new IllegalArgumentException('step < 0.1')
+    nx /= step
+    ny /= step
+
+    var lineLen = step * skvaj
+
+    var double left = length //осталось дорисовать
+    var ofs = offset
+    while (ofs < 0) {
+      ofs += step
+    }
+
+    while (true) {
+      while (ofs >= step) {
+        ofs -= step
+      }
+
+      if(left <= 0) return ofs
+
+      if (lineLen > ofs) {
+        var drawLen = lineLen - ofs
+        if(drawLen > left) drawLen = left
+        var tox = px + drawLen * nx
+        var toy = py + drawLen * ny
+        drawLineWith(px, py, tox, toy)
+        px = tox
+        py = toy
+        left -= drawLen
+        ofs += drawLen
+      }
+
+      if(left <= 0) return ofs
+
+      {
+        var moveLen = step - ofs
+        if (moveLen > left) moveLen = left
+        px += moveLen * nx
+        py += moveLen * ny
+        left -= moveLen
+        ofs += moveLen
+      }
+
+    }
+
+  }
+
+  def void drawLineWith(double x1, double y1, double x2, double y2) {
+    var from = Vec2.from(x1 as int, y1 as int)
+    var to = Vec2.from(x2 as int, y2 as int)
+    drawLine(from, to)
+  }
+
 }

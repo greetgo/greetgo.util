@@ -143,4 +143,77 @@ public abstract class AbstractGeom implements Geom {
     }
     return IterableExtensions.<Vec2>last(this.toList);
   }
+  
+  public double dashLine(final double offset, final double skvaj, final double length) {
+    Vec2 _get = this.toList.get(0);
+    double nx = ((double) _get.x);
+    Vec2 _get_1 = this.toList.get(0);
+    double ny = ((double) _get_1.y);
+    double px = ((double) this.from.x);
+    double py = ((double) this.from.y);
+    double step = Math.sqrt(((nx * nx) + (ny * ny)));
+    if ((step < 0.1)) {
+      throw new IllegalArgumentException("step < 0.1");
+    }
+    double _nx = nx;
+    nx = (_nx / step);
+    double _ny = ny;
+    ny = (_ny / step);
+    double lineLen = (step * skvaj);
+    double left = length;
+    double ofs = offset;
+    while ((ofs < 0)) {
+      double _ofs = ofs;
+      ofs = (_ofs + step);
+    }
+    while (true) {
+      {
+        while ((ofs >= step)) {
+          double _ofs = ofs;
+          ofs = (_ofs - step);
+        }
+        if ((left <= 0)) {
+          return ofs;
+        }
+        if ((lineLen > ofs)) {
+          double drawLen = (lineLen - ofs);
+          if ((drawLen > left)) {
+            drawLen = left;
+          }
+          double tox = (px + (drawLen * nx));
+          double toy = (py + (drawLen * ny));
+          this.drawLineWith(px, py, tox, toy);
+          px = tox;
+          py = toy;
+          double _left = left;
+          left = (_left - drawLen);
+          double _ofs = ofs;
+          ofs = (_ofs + drawLen);
+        }
+        if ((left <= 0)) {
+          return ofs;
+        }
+        {
+          double moveLen = (step - ofs);
+          if ((moveLen > left)) {
+            moveLen = left;
+          }
+          double _px = px;
+          px = (_px + (moveLen * nx));
+          double _py = py;
+          py = (_py + (moveLen * ny));
+          double _left_1 = left;
+          left = (_left_1 - moveLen);
+          double _ofs_1 = ofs;
+          ofs = (_ofs_1 + moveLen);
+        }
+      }
+    }
+  }
+  
+  public void drawLineWith(final double x1, final double y1, final double x2, final double y2) {
+    Vec2 from = Vec2.from(((int) x1), ((int) y1));
+    Vec2 to = Vec2.from(((int) x2), ((int) y2));
+    this.drawLine(from, to);
+  }
 }

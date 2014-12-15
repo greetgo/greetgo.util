@@ -20,4 +20,6 @@ interface Geom {
   def RectGeom rect()
 
   def Vec2 last()
+
+  def double dashLine(double offset, double sjvaj, double length)
 }

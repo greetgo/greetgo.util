@@ -31,4 +31,12 @@ class PaintStatus {
     ret.selected = selected
     return ret
   }
+
+  def static from(boolean hover, boolean selected) {
+    var ret = new PaintStatus
+    ret.hover = hover
+    ret.selected = selected
+    return ret
+  }
+
 }

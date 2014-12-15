@@ -18,4 +18,7 @@ interface DrawPort {
   def Style style()
 
   def StrGeom str(String str)
+
+  def void clearClipping()
+
 }

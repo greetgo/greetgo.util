@@ -5,7 +5,7 @@ class Kolor {
   public int green
   public int blue
 
-  def static Kolor from(int red, int green, int blue) { new Kolor(red, green, blue) }
+  def static Kolor rgb(int red, int green, int blue) { new Kolor(red, green, blue) }
 
   def static Kolor copy(Kolor k) { new Kolor(k) }
 
@@ -23,72 +23,74 @@ class Kolor {
     this(k?.red, k?.green, k?.blue)
   }
 
+  override toString() { "Kolor#RGB(" + red + ", " + green + ", " + blue + ")" }
+
   /**
      * The color white.  In the default sRGB space.
      */
-  public final static Kolor WHITE = from(255, 255, 255);
+  public final static Kolor WHITE = rgb(255, 255, 255);
 
   /**
      * The color light gray.  In the default sRGB space.
      */
-  public final static Kolor LIGHT_GRAY = from(192, 192, 192);
+  public final static Kolor LIGHT_GRAY = rgb(192, 192, 192);
 
   /**
      * The color gray.  In the default sRGB space.
      */
-  public final static Kolor GRAY = from(128, 128, 128);
+  public final static Kolor GRAY = rgb(128, 128, 128);
 
   /**
      * The color dark gray.  In the default sRGB space.
      */
-  public final static Kolor DARK_GRAY = from(64, 64, 64);
+  public final static Kolor DARK_GRAY = rgb(64, 64, 64);
 
   /**
      * The color black.  In the default sRGB space.
      */
-  public final static Kolor BLACK = from(0, 0, 0);
+  public final static Kolor BLACK = rgb(0, 0, 0);
 
   /**
      * The color red.  In the default sRGB space.
      */
-  public final static Kolor RED = from(255, 0, 0);
+  public final static Kolor RED = rgb(255, 0, 0);
 
   /**
      * The color pink.  In the default sRGB space.
      */
-  public final static Kolor PINK = from(255, 175, 175);
+  public final static Kolor PINK = rgb(255, 175, 175);
 
   /**
      * The color orange.  In the default sRGB space.
      */
-  public final static Kolor ORANGE = from(255, 200, 0);
+  public final static Kolor ORANGE = rgb(255, 200, 0);
 
   /**
      * The color yellow.  In the default sRGB space.
      */
-  public final static Kolor YELLOW = from(255, 255, 0);
+  public final static Kolor YELLOW = rgb(255, 255, 0);
 
   /**
      * The color green.  In the default sRGB space.
      */
-  public final static Kolor GREEN = from(0, 255, 0);
+  public final static Kolor GREEN = rgb(0, 255, 0);
 
   /**
      * The color magenta.  In the default sRGB space.
      */
-  public final static Kolor MAGENTA = from(255, 0, 255);
+  public final static Kolor MAGENTA = rgb(255, 0, 255);
 
   /**
      * The color cyan.  In the default sRGB space.
      */
-  public final static Kolor CYAN = from(0, 255, 255);
+  public final static Kolor CYAN = rgb(0, 255, 255);
 
   val static FACTOR = 0.7f
 
   /**
      * The color blue.  In the default sRGB space.
      */
-  public final static Kolor BLUE = from(0, 0, 255);
+  public final static Kolor BLUE = rgb(0, 0, 255);
 
   def Kolor brighter() {
     var r = red;

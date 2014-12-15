@@ -21,6 +21,14 @@ public class Vec2 {
     this(a.x, a.y);
   }
   
+  public String toString() {
+    return (((("Vec2(" + Integer.valueOf(this.x)) + ", ") + Integer.valueOf(this.y)) + ")");
+  }
+  
+  public Vec2 copy() {
+    return new Vec2(this);
+  }
+  
   public static Vec2 from(final int x, final int y) {
     return new Vec2(x, y);
   }

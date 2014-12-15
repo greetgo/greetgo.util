@@ -25,4 +25,6 @@ public interface Geom {
   public abstract RectGeom rect();
   
   public abstract Vec2 last();
+  
+  public abstract double dashLine(final double offset, final double sjvaj, final double length);
 }

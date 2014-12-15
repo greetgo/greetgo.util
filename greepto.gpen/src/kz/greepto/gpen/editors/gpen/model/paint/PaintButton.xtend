@@ -81,6 +81,11 @@ class PaintButton extends AbstractPaint {
 
     dp.str(b.text).draw(ret.x + dx, ret.y + dy)
 
+    if (b.sel && style.focusColor !== null) {
+      dp.style.foreground = style.focusColor
+      drawAroundFocus(ret)
+    }
+
     return ret
   }
 }

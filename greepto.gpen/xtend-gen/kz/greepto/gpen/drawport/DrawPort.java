@@ -27,4 +27,6 @@ public interface DrawPort {
   public abstract Style style();
   
   public abstract StrGeom str(final String str);
+  
+  public abstract void clearClipping();
 }

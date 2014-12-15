@@ -154,4 +154,8 @@ public class DrawPortSwt implements DrawPort, FontPreparator {
   public Style style() {
     return this.style;
   }
+  
+  public void clearClipping() {
+    this.gc.setClipping(((Rectangle) null));
+  }
 }

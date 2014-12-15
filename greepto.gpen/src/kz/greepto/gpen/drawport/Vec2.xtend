@@ -17,6 +17,10 @@ class Vec2 {
     this(a.x, a.y)
   }
 
+  override toString() { "Vec2(" + x + ", " + y + ")" }
+
+  def Vec2 copy() { new Vec2(this) }
+
   def static from(int x, int y) { new Vec2(x, y) }
 
   def Vec2 operator_plus(Vec2 a) { from(x + a.x, y + a.y) }

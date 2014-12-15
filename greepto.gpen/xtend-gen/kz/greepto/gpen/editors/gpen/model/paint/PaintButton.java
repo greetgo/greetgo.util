@@ -166,6 +166,18 @@ public class PaintButton extends AbstractPaint {
     int dy = (((ret.height - size.height) / 2) + paddingTop);
     StrGeom _str_1 = this.dp.str(b.text);
     _str_1.draw((ret.x + dx), (ret.y + dy));
+    boolean _and_1 = false;
+    if (!b.sel) {
+      _and_1 = false;
+    } else {
+      boolean _tripleNotEquals = (style.focusColor != null);
+      _and_1 = _tripleNotEquals;
+    }
+    if (_and_1) {
+      Style _style_5 = this.dp.style();
+      _style_5.setForeground(style.focusColor);
+      this.drawAroundFocus(ret);
+    }
     return ret;
   }
 }
