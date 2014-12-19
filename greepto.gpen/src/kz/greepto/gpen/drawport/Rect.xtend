@@ -29,6 +29,8 @@ class Rect {
 
   public static def Rect copy(Rect r) { new Rect(r) }
 
+  public def Rect copy() { new Rect(this) }
+
   public static def Rect from(int x, int y, int width, int height) {
     return new Rect(x, y, width, height)
   }

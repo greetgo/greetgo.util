@@ -130,6 +130,15 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
 
   def paintCanvas(PaintEvent e) {
     paintScene()
+
+    if (draggingPaintResult !== null) {
+      var dp = createDP
+      try {
+        draggingPaintResult.paintDrag(dp, mouse)
+      } finally {
+        dp.dispose
+      }
+    }
   }
 
   private def PaintResult paintScene() {
@@ -156,7 +165,11 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
   private def displayCursor(Kursor kursor) {
     var cc = display.cursorControl
     if(cc === null) return;
-    cc.cursor = cursors.getCursor(kursor)
+    if (kursor === null) {
+      cc.cursor = cursors.getCursor(Kursor.ARROW)
+    } else {
+      cc.cursor = cursors.getCursor(kursor)
+    }
   }
 
   override mouseDoubleClick(MouseEvent e) {
@@ -214,7 +227,6 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     if (mouseDownedAt !== null) {
       if (!dragging && (mouse - mouseDownedAt).len >= MOVE_OFFSET) {
         dragging = true
-        println('Start dragging')
         redraw
         return
       }

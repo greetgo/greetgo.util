@@ -1,5 +1,6 @@
 package kz.greepto.gpen.editors.gpen.model.paint;
 
+import kz.greepto.gpen.drawport.DrawPort;
 import kz.greepto.gpen.drawport.Kursor;
 import kz.greepto.gpen.drawport.Rect;
 import kz.greepto.gpen.drawport.Vec2;
@@ -43,4 +44,14 @@ public interface PaintResult {
    *         изменения не нужно
    */
   Oper createOper(Vec2 mouseMovedTo);
+  
+  /**
+   * Прорисовывает то, что должно отображаться при драгинге
+   * 
+   * @param dp
+   *          куда рисуем
+   * @param mouseMovedTo
+   *          куда сдвинулась мышь
+   */
+  void paintDrag(DrawPort dp, Vec2 mouseMovedTo);
 }

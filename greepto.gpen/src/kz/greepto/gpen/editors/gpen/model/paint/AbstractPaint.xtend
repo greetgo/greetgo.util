@@ -17,10 +17,12 @@ import kz.greepto.gpen.editors.gpen.prop.ValueSetter
 import kz.greepto.gpen.editors.gpen.style.StyleCalc
 
 import static kz.greepto.gpen.editors.gpen.model.paint.AbstractPaint.*
+import kz.greepto.gpen.drawport.Kolor
 
 abstract class AbstractPaint implements PaintFigure {
   protected var DrawPort dp
   protected var StyleCalc styleCalc
+  protected Kolor dragingKolor = Kolor.GRAY
 
   new() {
   }
@@ -72,6 +74,10 @@ abstract class AbstractPaint implements PaintFigure {
       override isHasOper() { false }
 
       override toString() { "simpleRect" }
+
+      override paintDrag(DrawPort dp, Vec2 mouseMovedTo) {
+        throw new UnsupportedOperationException("No paintDrag")
+      }
     }
   }
 
@@ -118,6 +124,15 @@ abstract class AbstractPaint implements PaintFigure {
       }
 
       override toString() { "modiPosition" }
+
+      override paintDrag(DrawPort dp, Vec2 mouseMovedTo) {
+        var r = rect.copy
+        r.point = r.point + (mouseMovedTo - mouseDownedAt)
+
+        dp.style.foreground = dragingKolor
+        dp.from(r).draw
+      }
+
     }
   }
 
@@ -266,6 +281,14 @@ abstract class AbstractPaint implements PaintFigure {
 
         return group(opers, "Corner Left Top")
       }
+
+      override paintDrag(DrawPort dp, Vec2 mouseMovedTo) {
+        var d = mouseMovedTo - mouseDownedAt
+
+        dp.style.foreground = dragingKolor
+        dp.from(rect.point + d).size(rect.size - d).rect.draw
+      }
+
     }
   }
 
@@ -293,6 +316,14 @@ abstract class AbstractPaint implements PaintFigure {
         }
 
         return group(opers, "Corner Left Bottom")
+      }
+
+      override paintDrag(DrawPort dp, Vec2 mouseMovedTo) {
+        dp.style.foreground = dragingKolor
+
+        var d = mouseMovedTo - mouseDownedAt
+
+        dp.from(rect.x + d.x, rect.y).size(rect.width - d.x, rect.height + d.y).rect.draw
       }
     }
   }
@@ -322,6 +353,14 @@ abstract class AbstractPaint implements PaintFigure {
 
         return group(opers, "Corner Right Top")
       }
+
+      override paintDrag(DrawPort dp, Vec2 mouseMovedTo) {
+        dp.style.foreground = dragingKolor
+
+        var d = mouseMovedTo - mouseDownedAt
+
+        dp.from(rect.x, rect.y + d.y).size(rect.width + d.x, rect.height - d.y).rect.draw
+      }
     }
 
   }
@@ -350,6 +389,14 @@ abstract class AbstractPaint implements PaintFigure {
 
         return group(opers, "Corner Right Bottom")
       }
+
+      override paintDrag(DrawPort dp, Vec2 mouseMovedTo) {
+        dp.style.foreground = dragingKolor
+
+        var d = mouseMovedTo - mouseDownedAt
+
+        dp.from(rect.point).size(rect.size + d).rect.draw
+      }
     }
   }
 
@@ -372,6 +419,14 @@ abstract class AbstractPaint implements PaintFigure {
         opers += new OperModify(SETTER_Y, rect.y + dy, figure.id)
         opers += new OperModify(SETTER_HEIGHT, rect.height - dy, figure.id)
         return group(opers, "Side Top")
+      }
+
+      override paintDrag(DrawPort dp, Vec2 mouseMovedTo) {
+        dp.style.foreground = dragingKolor
+
+        var d = mouseMovedTo - mouseDownedAt
+
+        dp.from(rect.x, rect.y + d.y).size(rect.width, rect.height - d.y).rect.draw
       }
     }
   }
@@ -396,6 +451,14 @@ abstract class AbstractPaint implements PaintFigure {
         opers += new OperModify(SETTER_WIDTH, rect.width - dx, figure.id)
         return group(opers, "Side Left")
       }
+
+      override paintDrag(DrawPort dp, Vec2 mouseMovedTo) {
+        dp.style.foreground = dragingKolor
+
+        var d = mouseMovedTo - mouseDownedAt
+
+        dp.from(rect.x + d.x, rect.y).size(rect.width - d.x, rect.height).rect.draw
+      }
     }
 
   }
@@ -417,6 +480,14 @@ abstract class AbstractPaint implements PaintFigure {
 
         return new OperModify(SETTER_WIDTH, rect.width + dx, figure.id)
       }
+
+      override paintDrag(DrawPort dp, Vec2 mouseMovedTo) {
+        dp.style.foreground = dragingKolor
+
+        var d = mouseMovedTo - mouseDownedAt
+
+        dp.from(rect.point).size(rect.width + d.x, rect.height).rect.draw
+      }
     }
   }
 
@@ -436,6 +507,14 @@ abstract class AbstractPaint implements PaintFigure {
         if(dy === 0) return null
 
         return new OperModify(SETTER_HEIGHT, rect.height + dy, figure.id)
+      }
+
+      override paintDrag(DrawPort dp, Vec2 mouseMovedTo) {
+        dp.style.foreground = dragingKolor
+
+        var d = mouseMovedTo - mouseDownedAt
+
+        dp.from(rect.point).size(rect.width, rect.height + d.y).rect.draw
       }
     }
   }
