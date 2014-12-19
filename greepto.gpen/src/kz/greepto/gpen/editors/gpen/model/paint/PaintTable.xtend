@@ -90,8 +90,8 @@ class PaintTable extends AbstractPaint {
 
   }
 
-  override PlaceInfo work(Vec2 mouse) {
-    if(mouse === null) return new PlaceInfo(table.rect, rectMouseInfo(mouse, table.rect, true))
+  override PaintResult work(Vec2 mouse) {
+    if(mouse === null) return simpleRect(table.rect)
 
     var ps = PaintStatus.from(table.rect.contains(mouse), table.sel)
     var calc = styleCalc.calcForTable(table, ps)
@@ -133,7 +133,7 @@ class PaintTable extends AbstractPaint {
       drawAroundFocus(table.rect)
     }
 
-    return new PlaceInfo(table.rect, rectMouseInfo(mouse, table.rect, true))
+    return modiBounds(mouse, table.rect, table)
   }
 
   def static List<Line> extractLines(Table table) {

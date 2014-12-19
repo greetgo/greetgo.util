@@ -30,7 +30,7 @@ class VisitorPlacer implements FigureVisitor<Rect> {
 
   private def Rect visit(PaintFigure paint) {
     paint.setEnvironment(dp, styleCalc)
-    paint.place
+    return paint.place
   }
 
   override visitLabel(Label label) { visit(new PaintLabel(label)) }

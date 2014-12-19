@@ -14,7 +14,7 @@ class PaintLabel extends AbstractPaint {
 
   override getFigureId() { label.id }
 
-  override PlaceInfo work(Vec2 mouse) {
+  override PaintResult work(Vec2 mouse) {
     var calc = styleCalc.calcForLabel(label, PaintStatus.sel(label.sel))
 
     dp.style.foreground = calc.color
@@ -22,7 +22,7 @@ class PaintLabel extends AbstractPaint {
 
     var place = Rect.pointSize(label.point, dp.str(label.text).size);
 
-    if(mouse == null) return new PlaceInfo(place, rectMouseInfo(mouse, place, false))
+    if(mouse == null) return simpleRect(place)
 
     var hover = place.contains(mouse)
 
@@ -40,6 +40,6 @@ class PaintLabel extends AbstractPaint {
       drawAroundFocus(place)
     }
 
-    return new PlaceInfo(place, rectMouseInfo(mouse, place, false))
+    return modiPosition(mouse, place, label)
   }
 }

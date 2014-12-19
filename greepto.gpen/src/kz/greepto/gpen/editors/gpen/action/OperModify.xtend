@@ -16,6 +16,11 @@ class OperModify extends Oper {
     this.id = id
   }
 
+  new(ValueSetter setter, Object newValue, String id, String displayStr) {
+    this(setter, newValue, id)
+    this.displayStr = displayStr
+  }
+
   override apply(Scene scene) {
     var object = scene.findById(id)
     oldValue = setter.setValue(object, newValue)
@@ -26,7 +31,10 @@ class OperModify extends Oper {
     setter.setValue(object, oldValue)
   }
 
+  public String displayStr = null
+
   override getDisplayStr() {
-    return "modify"
+    if(displayStr == null) return "Modify " + setter.name + " = " + newValue;
+    return displayStr
   }
 }

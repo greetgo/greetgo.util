@@ -10,7 +10,7 @@ interface PaintFigure {
 
   def Rect getPlace()
 
-  def MouseInfo paint(Vec2 mouse)
+  def PaintResult paint(Vec2 mouse)
 
   def String getFigureId()
 }

@@ -18,7 +18,7 @@ class UndoableOperation extends AbstractOperation {
   val Repainter repainter
 
   new(Oper action, Scene scene, Repainter repainter) {
-    super(action.displayStr)
+    super(action.displayStr ?: action.class.simpleName)
     this.action = action
     this.scene = scene
     this.repainter = repainter
