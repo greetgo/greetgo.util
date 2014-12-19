@@ -34,4 +34,11 @@ class Vec2 {
   def Vec2 operator_minus(int[] a) { from(x - a.get(0), y - a.get(1)) }
 
   def Vec2 operator_minus(Size s) { from(x - s.width, y - s.height) }
+
+  def double getLen() {
+    var X = x as double
+    var Y = y as double
+    Math.sqrt(X * X + Y * Y)
+  }
+
 }

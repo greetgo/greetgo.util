@@ -1,10 +1,10 @@
 package kz.greepto.gpen.editors.gpen.model.visitor
 
-import kz.greepto.gpen.editors.gpen.model.Scene
-import java.util.List
-import org.eclipse.swt.graphics.Point
-import kz.greepto.gpen.editors.gpen.model.IdFigure
 import java.util.ArrayList
+import java.util.List
+import kz.greepto.gpen.drawport.Vec2
+import kz.greepto.gpen.editors.gpen.model.IdFigure
+import kz.greepto.gpen.editors.gpen.model.Scene
 
 class Hit {
   val Scene scene
@@ -30,9 +30,9 @@ class Hit {
       this.placer = placer
     }
 
-    def List<IdFigure> to(Point point) {
+    def List<IdFigure> to(Vec2 point) {
       val ret = new ArrayList<IdFigure>
-      ret += hit.scene.list.filter[(it => placer).contains(point)]
+      ret += hit.scene.list.filter[visit(placer).contains(point)]
       return ret
     }
   }

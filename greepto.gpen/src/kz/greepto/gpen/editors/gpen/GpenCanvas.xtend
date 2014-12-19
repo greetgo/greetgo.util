@@ -1,12 +1,14 @@
 package kz.greepto.gpen.editors.gpen
 
 import kz.greepto.gpen.drawport.DrawPort
+import kz.greepto.gpen.drawport.Vec2
 import kz.greepto.gpen.drawport.swt.DrawPortSwt
 import kz.greepto.gpen.drawport.swt.DrawableGcSource
 import kz.greepto.gpen.editors.gpen.action.Oper
 import kz.greepto.gpen.editors.gpen.action.UndoableOperation
 import kz.greepto.gpen.editors.gpen.model.IdFigure
 import kz.greepto.gpen.editors.gpen.model.Scene
+import kz.greepto.gpen.editors.gpen.model.paint.MouseInfo
 import kz.greepto.gpen.editors.gpen.model.visitor.Hit
 import kz.greepto.gpen.editors.gpen.model.visitor.VisitorPaint
 import kz.greepto.gpen.editors.gpen.model.visitor.VisitorPlacer
@@ -14,6 +16,7 @@ import kz.greepto.gpen.editors.gpen.prop.PropFactory
 import kz.greepto.gpen.editors.gpen.prop.SceneWorker
 import kz.greepto.gpen.editors.gpen.style.dev.DevStyleCalc
 import kz.greepto.gpen.util.ColorManager
+import kz.greepto.gpen.util.CursorManager
 import kz.greepto.gpen.util.FontManager
 import kz.greepto.gpen.util.Handler
 import kz.greepto.gpen.util.HandlerList
@@ -27,17 +30,21 @@ import org.eclipse.swt.events.MouseListener
 import org.eclipse.swt.events.MouseMoveListener
 import org.eclipse.swt.events.MouseTrackListener
 import org.eclipse.swt.events.PaintEvent
-import org.eclipse.swt.graphics.Point
+import org.eclipse.swt.graphics.Cursor
 import org.eclipse.swt.widgets.Canvas
 import org.eclipse.swt.widgets.Composite
 
 class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, MouseTrackListener {
+  val MOVE_OFFSET = 3.0
+
   Scene originalScene = new Scene
   Scene scene = new Scene
 
-  val ColorManager colors = new ColorManager
-  val FontManager fonts = new FontManager
-  val DevStyleCalc styleCalc = new DevStyleCalc()
+  val colors = new ColorManager
+  val fonts = new FontManager
+  val styleCalc = new DevStyleCalc
+  val cursors = new CursorManager
+
   package val SelectionProvider selectionProvider = new SelectionProvider(this)
 
   val HandlerList changeSceneHandlerList = new HandlerList
@@ -67,7 +74,7 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     }
   }
 
-  private Point mouse = new Point(0, 0)
+  private Vec2 mouse = Vec2.from(0, 0)
 
   def void setScene(Scene scene) {
     originalScene = scene
@@ -110,7 +117,6 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
         override focusLost(FocusEvent e) {
           hasFocus = false
         }
-
       })
   }
 
@@ -119,24 +125,75 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
   }
 
   def paintCanvas(PaintEvent e) {
+    paintScene()
+  }
+
+  private def VisitorPaint paintScene() {
     var dp = createDP
     try {
       var placer = new VisitorPlacer(dp, styleCalc)
       var vp = new VisitorPaint(placer)
       vp.mouse = mouse
-      scene => vp
+
+      if (dragging) {
+        vp.draggingFigureId = draggingFigureId
+        vp.mouseDownedAt = mouseDownedAt
+        vp.draggingChangeType = draggingChangeType
+      }
+
+      scene.visit(vp)
+
+      displayCursor(vp.mouseInfo)
+
+      return vp
     } finally {
       dp.dispose
     }
   }
 
-  override mouseDoubleClick(MouseEvent e) {
-    println("double " + e);
+  private def displayCursor(MouseInfo mouseInfo) {
+    var cc = display.cursorControl
+    if(cc === null) return;
+    if (mouseInfo === null) {
+      cc.cursor = null
+    } else {
+      cc.cursor = cursors.getCursor(mouseInfo.kursor)
+    }
   }
+
+  override mouseDoubleClick(MouseEvent e) {
+
+    display.cursorControl.cursor = new Cursor(display, SWT.CURSOR_SIZEWE)
+
+    println('--=-- DOUBLE <<' + e + '>> --=--')
+  }
+
+  Vec2 mouseDownedAt = null
+  boolean dragging = false
+  String draggingFigureId = null
+  Object draggingChangeType = null
 
   override mouseDown(MouseEvent e) {
     mouse.x = e.x
     mouse.y = e.y
+
+    if (Mouse.LMB(e)) {
+
+      var vp = paintScene()
+
+      if (vp.mouseFigureId === null) {
+        return
+      }
+
+      draggingFigureId = vp.mouseFigureId
+      draggingChangeType = vp.mouseInfo.changeType
+
+      mouseDownedAt = mouse.copy
+
+      dragging = false
+
+      return
+    }
 
     if (Mouse.Ctrl_LMB(e)) {
 
@@ -152,18 +209,53 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
       return
     }
 
-    if (Mouse.LMB(e)) {
-      var dp = createDP
-      try {
-        var placer = new VisitorPlacer(dp, styleCalc)
-        scene.list.forEach[sel = false]
-        Hit.on(scene).with(placer).to(mouse).forEach[sel = true]
-      } finally {
-        dp.dispose
+  }
+
+  override mouseMove(MouseEvent e) {
+    mouse.x = e.x
+    mouse.y = e.y
+
+    if (mouseDownedAt !== null) {
+      if (!dragging && (mouse - mouseDownedAt).len >= MOVE_OFFSET) {
+        dragging = true
+        println('Start dragging')
+        redraw
+        return
       }
 
-      updateSelectionProvider
+      return
     }
+  }
+
+  override mouseUp(MouseEvent e) {
+    if (e.button === 1 && mouseDownedAt !== null) {
+      if (!dragging) {
+
+        mouseDownedAt = null
+
+        var dp = createDP
+        try {
+          var placer = new VisitorPlacer(dp, styleCalc)
+          scene.list.forEach[sel = false]
+          Hit.on(scene).with(placer).to(mouse).forEach[sel = true]
+        } finally {
+          dp.dispose
+        }
+
+        updateSelectionProvider
+
+        return
+      }
+
+      applyDragging()
+
+      mouseDownedAt = null
+      return
+    }
+  }
+
+  private def applyDragging() {
+    throw new UnsupportedOperationException("TODO: auto-generated method stub")
   }
 
   def IdFigure getTopSelected() {
@@ -181,14 +273,6 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
       var props = PropFactory.parseObject(sel, sceneWorker)
       selectionProvider.selection = new PropSelection(props, sel.id)
     }
-    redraw
-  }
-
-  override mouseUp(MouseEvent e) {}
-
-  override mouseMove(MouseEvent e) {
-    mouse.x = e.x
-    mouse.y = e.y
     redraw
   }
 

@@ -22,7 +22,7 @@ class Combo extends RectFigure {
     autoHeight = a.autoHeight
   }
 
-  override <T> operator_doubleArrow(FigureVisitor<T> v) {
+  override <T> visit(FigureVisitor<T> v) {
     return v.visitCombo(this);
   }
 

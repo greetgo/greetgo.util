@@ -2,7 +2,6 @@ package kz.greepto.gpen.editors.gpen.model.paint
 
 import java.util.ArrayList
 import java.util.List
-import kz.greepto.gpen.drawport.DrawPort
 import kz.greepto.gpen.drawport.FontDef
 import kz.greepto.gpen.drawport.Kolor
 import kz.greepto.gpen.drawport.Rect
@@ -10,15 +9,16 @@ import kz.greepto.gpen.drawport.Size
 import kz.greepto.gpen.drawport.Vec2
 import kz.greepto.gpen.editors.gpen.model.Table
 import kz.greepto.gpen.editors.gpen.style.PaintStatus
-import kz.greepto.gpen.editors.gpen.style.StyleCalc
 import kz.greepto.gpen.editors.gpen.style.TableStyle
-import org.eclipse.swt.graphics.Point
 
 class PaintTable extends AbstractPaint {
+  Table table
 
-  new(DrawPort dp, StyleCalc styleCalc) {
-    super(dp.copy, styleCalc)
+  new(Table table) {
+    this.table = table
   }
+
+  override getFigureId() { table.id }
 
   static class Cell {
     int width
@@ -90,8 +90,8 @@ class PaintTable extends AbstractPaint {
 
   }
 
-  def Rect placePaint(Table table, Point mouse) {
-    if(mouse === null) return table.rect
+  override PlaceInfo work(Vec2 mouse) {
+    if(mouse === null) return new PlaceInfo(table.rect, rectMouseInfo(mouse, table.rect, true))
 
     var ps = PaintStatus.from(table.rect.contains(mouse), table.sel)
     var calc = styleCalc.calcForTable(table, ps)
@@ -133,7 +133,7 @@ class PaintTable extends AbstractPaint {
       drawAroundFocus(table.rect)
     }
 
-    return Rect.pointSize(table.point, table.size)
+    return new PlaceInfo(table.rect, rectMouseInfo(mouse, table.rect, true))
   }
 
   def static List<Line> extractLines(Table table) {
@@ -261,5 +261,4 @@ class PaintTable extends AbstractPaint {
 
     dp.clearClipping
   }
-
 }

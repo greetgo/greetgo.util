@@ -64,4 +64,14 @@ public class Vec2 {
   public Vec2 operator_minus(final Size s) {
     return Vec2.from((this.x - s.width), (this.y - s.height));
   }
+  
+  public double getLen() {
+    double _xblockexpression = (double) 0;
+    {
+      double X = ((double) this.x);
+      double Y = ((double) this.y);
+      _xblockexpression = Math.sqrt(((X * X) + (Y * Y)));
+    }
+    return _xblockexpression;
+  }
 }

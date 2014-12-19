@@ -11,6 +11,7 @@ import kz.greepto.gpen.editors.gpen.model.paint.PaintLabel
 import kz.greepto.gpen.editors.gpen.style.StyleCalc
 import kz.greepto.gpen.editors.gpen.model.Table
 import kz.greepto.gpen.editors.gpen.model.paint.PaintTable
+import kz.greepto.gpen.editors.gpen.model.paint.PaintFigure
 
 class VisitorPlacer implements FigureVisitor<Rect> {
   package val DrawPort dp
@@ -23,23 +24,22 @@ class VisitorPlacer implements FigureVisitor<Rect> {
 
   override visitScene(Scene scene) {
     val ret = Rect.zero
-    scene.list.forEach[ret += it => this]
+    scene.list.forEach[ret += visit(this)]
     return ret
   }
 
-  override visitLabel(Label label) {
-    new PaintLabel(dp, styleCalc).placePaint(label, null)
+  private def Rect visit(PaintFigure paint) {
+    paint.setEnvironment(dp, styleCalc)
+    paint.place
   }
 
-  override visitButton(Button button) {
-    new PaintButton(dp, styleCalc).placePaint(button, null)
-  }
+  override visitLabel(Label label) { visit(new PaintLabel(label)) }
+
+  override visitButton(Button button) { visit(new PaintButton(button)) }
 
   override visitCombo(Combo combo) {
     throw new UnsupportedOperationException("TODO: auto-generated method stub")
   }
 
-  override visitTable(Table table) {
-    new PaintTable(dp, styleCalc).placePaint(table, null)
-  }
+  override visitTable(Table table) { visit(new PaintTable(table)) }
 }

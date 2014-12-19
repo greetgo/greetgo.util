@@ -15,7 +15,7 @@ class Label extends PointFigure {
     text = a.text
   }
 
-  override <T> operator_doubleArrow(FigureVisitor<T> v) {
+  override <T> visit(FigureVisitor<T> v) {
     return v.visitLabel(this);
   }
 

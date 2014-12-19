@@ -19,7 +19,7 @@ class Table extends RectFigure {
     content = a.content
   }
 
-  override <T> operator_doubleArrow(FigureVisitor<T> v) {
+  override <T> visit(FigureVisitor<T> v) {
     return v.visitTable(this);
   }
 

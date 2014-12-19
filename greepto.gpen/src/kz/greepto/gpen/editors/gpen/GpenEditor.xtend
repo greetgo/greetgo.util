@@ -67,7 +67,7 @@ class GpenEditor extends EditorPart {
     tab.line('content1 | content2 | cont 3')
     tab.line('*content4 ~| content5 ')
     tab.line('content6 | content7 | content 8 ')
-    tab.line('content9 |~ content10 | content 11 ')
+    tab.line('content9 |~ content10 | content 11 |asd')
 
     scene.list += tab
 

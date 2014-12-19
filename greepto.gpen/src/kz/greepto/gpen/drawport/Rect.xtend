@@ -1,7 +1,5 @@
 package kz.greepto.gpen.drawport
 
-import org.eclipse.swt.graphics.Point
-
 import static java.lang.Math.max
 import static java.lang.Math.min
 
@@ -81,7 +79,7 @@ class Rect {
     return copy(this) += r
   }
 
-  def boolean contains(Point p) {
+  def boolean contains(Vec2 p) {
     if(p == null) return false
 
     if(p.x < x) return false

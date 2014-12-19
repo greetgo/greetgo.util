@@ -19,7 +19,7 @@ class Button extends RectFigure {
     autoWidth = a.autoWidth
   }
 
-  override <T> operator_doubleArrow(FigureVisitor<T> v) {
+  override <T> visit(FigureVisitor<T> v) {
     return v.visitButton(this)
   }
 
