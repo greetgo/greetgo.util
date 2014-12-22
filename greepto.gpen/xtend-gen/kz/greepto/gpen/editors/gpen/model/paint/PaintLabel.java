@@ -8,8 +8,7 @@ import kz.greepto.gpen.drawport.Style;
 import kz.greepto.gpen.drawport.Vec2;
 import kz.greepto.gpen.editors.gpen.model.Label;
 import kz.greepto.gpen.editors.gpen.model.paint.AbstractPaint;
-import kz.greepto.gpen.editors.gpen.model.paint.MouseInfo;
-import kz.greepto.gpen.editors.gpen.model.paint.PlaceInfo;
+import kz.greepto.gpen.editors.gpen.model.paint.PaintResult;
 import kz.greepto.gpen.editors.gpen.style.LabelStyle;
 import kz.greepto.gpen.editors.gpen.style.PaintStatus;
 
@@ -25,8 +24,9 @@ public class PaintLabel extends AbstractPaint {
     return this.label.id;
   }
   
-  public PlaceInfo work(final Vec2 mouse) {
-    PaintStatus _sel = PaintStatus.sel(this.label.sel);
+  public PaintResult work(final Vec2 mouse) {
+    boolean _isSel = this.isSel(this.label);
+    PaintStatus _sel = PaintStatus.sel(_isSel);
     LabelStyle calc = this.styleCalc.calcForLabel(this.label, _sel);
     Style _style = this.dp.style();
     _style.setForeground(calc.color);
@@ -37,12 +37,12 @@ public class PaintLabel extends AbstractPaint {
     Rect place = Rect.pointSize(_point, _size);
     boolean _equals = Objects.equal(mouse, null);
     if (_equals) {
-      MouseInfo _rectMouseInfo = this.rectMouseInfo(mouse, place, false);
-      return new PlaceInfo(place, _rectMouseInfo);
+      return this.simpleRect(place);
     }
     boolean hover = place.contains(mouse);
     if (hover) {
-      PaintStatus _selHover = PaintStatus.selHover(this.label.sel);
+      boolean _isSel_1 = this.isSel(this.label);
+      PaintStatus _selHover = PaintStatus.selHover(_isSel_1);
       LabelStyle _calcForLabel = this.styleCalc.calcForLabel(this.label, _selHover);
       calc = _calcForLabel;
       Style _style_1 = this.dp.style();
@@ -53,7 +53,8 @@ public class PaintLabel extends AbstractPaint {
     Vec2 _point_1 = this.label.getPoint();
     _str_1.draw(_point_1);
     boolean _and = false;
-    if (!this.label.sel) {
+    boolean _isSel_2 = this.isSel(this.label);
+    if (!_isSel_2) {
       _and = false;
     } else {
       boolean _tripleNotEquals = (calc.focusColor != null);
@@ -64,7 +65,6 @@ public class PaintLabel extends AbstractPaint {
       _style_2.setForeground(calc.focusColor);
       this.drawAroundFocus(place);
     }
-    MouseInfo _rectMouseInfo_1 = this.rectMouseInfo(mouse, place, false);
-    return new PlaceInfo(place, _rectMouseInfo_1);
+    return this.modiPosition(mouse, place, this.label);
   }
 }

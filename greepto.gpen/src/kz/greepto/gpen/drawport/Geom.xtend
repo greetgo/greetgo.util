@@ -21,5 +21,5 @@ interface Geom {
 
   def Vec2 last()
 
-  def double dashLine(double offset, double sjvaj, double length)
+  def double dashLine(double offset, double sjvaj, double step)
 }

@@ -1,12 +1,8 @@
 package kz.greepto.gpen.editors.gpen.model
 
-import kz.greepto.gpen.editors.gpen.prop.Skip
-
 abstract class IdFigure extends Figure {
 
   public final String id
-  @Skip
-  public boolean sel = false
 
   public boolean disabled = false
 
@@ -16,6 +12,5 @@ abstract class IdFigure extends Figure {
 
   new(IdFigure a) {
     id = a.id
-    sel = a.sel
   }
 }

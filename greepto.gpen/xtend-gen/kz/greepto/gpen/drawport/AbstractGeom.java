@@ -144,21 +144,33 @@ public abstract class AbstractGeom implements Geom {
     return IterableExtensions.<Vec2>last(this.toList);
   }
   
-  public double dashLine(final double offset, final double skvaj, final double length) {
-    Vec2 _get = this.toList.get(0);
-    double nx = ((double) _get.x);
-    Vec2 _get_1 = this.toList.get(0);
-    double ny = ((double) _get_1.y);
-    double px = ((double) this.from.x);
-    double py = ((double) this.from.y);
-    double step = Math.sqrt(((nx * nx) + (ny * ny)));
+  public double dashLine(final double offset, final double skvaj, final double step) {
     if ((step < 0.1)) {
       throw new IllegalArgumentException("step < 0.1");
     }
+    double px = ((double) this.from.x);
+    double py = ((double) this.from.y);
+    double TOx = 0;
+    double TOy = 0;
+    boolean _tripleEquals = (this.size == null);
+    if (_tripleEquals) {
+      Vec2 _get = this.toList.get(0);
+      TOx = _get.x;
+      Vec2 _get_1 = this.toList.get(0);
+      TOy = _get_1.y;
+    } else {
+      Vec2 end = this.from.operator_plus(this.size);
+      TOx = end.x;
+      TOy = end.y;
+    }
+    this.move();
+    double nx = (TOx - px);
+    double ny = (TOy - py);
+    double length = Math.sqrt(((nx * nx) + (ny * ny)));
     double _nx = nx;
-    nx = (_nx / step);
+    nx = (_nx / length);
     double _ny = ny;
-    ny = (_ny / step);
+    ny = (_ny / length);
     double lineLen = (step * skvaj);
     double left = length;
     double ofs = offset;

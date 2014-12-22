@@ -13,8 +13,7 @@ import kz.greepto.gpen.drawport.Style;
 import kz.greepto.gpen.drawport.Vec2;
 import kz.greepto.gpen.editors.gpen.model.Button;
 import kz.greepto.gpen.editors.gpen.model.paint.AbstractPaint;
-import kz.greepto.gpen.editors.gpen.model.paint.MouseInfo;
-import kz.greepto.gpen.editors.gpen.model.paint.PlaceInfo;
+import kz.greepto.gpen.editors.gpen.model.paint.PaintResult;
 import kz.greepto.gpen.editors.gpen.style.ButtonStyle;
 import kz.greepto.gpen.editors.gpen.style.PaintStatus;
 
@@ -30,12 +29,15 @@ public class PaintButton extends AbstractPaint {
     return this.b.id;
   }
   
-  public PlaceInfo work(final Vec2 mouse) {
-    PaintStatus _sel = PaintStatus.sel(this.b.sel);
+  public PaintResult work(final Vec2 mouse) {
+    boolean _isSel = this.isSel(this.b);
+    PaintStatus _sel = PaintStatus.sel(_isSel);
     ButtonStyle style = this.styleCalc.calcForButton(this.b, _sel);
     int _x = this.b.getX();
     int _y = this.b.getY();
-    Rect place = Rect.from(_x, _y, this.b.width, this.b.height);
+    int _width = this.b.getWidth();
+    int _height = this.b.getHeight();
+    Rect place = Rect.from(_x, _y, _width, _height);
     boolean _and = false;
     if (!((!this.b.autoWidth) && (!this.b.autoHeight))) {
       _and = false;
@@ -44,8 +46,7 @@ public class PaintButton extends AbstractPaint {
       _and = _tripleEquals;
     }
     if (_and) {
-      MouseInfo _rectMouseInfo = this.rectMouseInfo(mouse, place, true);
-      return new PlaceInfo(place, _rectMouseInfo);
+      return this.modiBounds(mouse, place, this.b);
     }
     this.dp.setFont(style.font);
     StrGeom _str = this.dp.str(this.b.text);
@@ -56,10 +57,10 @@ public class PaintButton extends AbstractPaint {
     if (_notEquals) {
       paddingLeft = style.padding.left;
       paddingTop = style.padding.top;
-      int _width = size.width;
-      size.width = (_width + (style.padding.left + style.padding.right));
-      int _height = size.height;
-      size.height = (_height + (style.padding.top + style.padding.bottom));
+      int _width_1 = size.width;
+      size.width = (_width_1 + (style.padding.left + style.padding.right));
+      int _height_1 = size.height;
+      size.height = (_height_1 + (style.padding.top + style.padding.bottom));
     }
     if (this.b.autoWidth) {
       place.width = size.width;
@@ -70,12 +71,12 @@ public class PaintButton extends AbstractPaint {
     this.b.setSize(size);
     boolean _equals = Objects.equal(mouse, null);
     if (_equals) {
-      MouseInfo _rectMouseInfo_1 = this.rectMouseInfo(mouse, place, true);
-      return new PlaceInfo(place, _rectMouseInfo_1);
+      return this.modiBounds(mouse, place, this.b);
     }
     boolean _contains = place.contains(mouse);
     if (_contains) {
-      PaintStatus _selHover = PaintStatus.selHover(this.b.sel);
+      boolean _isSel_1 = this.isSel(this.b);
+      PaintStatus _selHover = PaintStatus.selHover(_isSel_1);
       ButtonStyle _calcForButton = this.styleCalc.calcForButton(this.b, _selHover);
       style = _calcForButton;
     }
@@ -174,7 +175,8 @@ public class PaintButton extends AbstractPaint {
     StrGeom _str_1 = this.dp.str(this.b.text);
     _str_1.draw((place.x + dx), (place.y + dy));
     boolean _and_1 = false;
-    if (!this.b.sel) {
+    boolean _isSel_2 = this.isSel(this.b);
+    if (!_isSel_2) {
       _and_1 = false;
     } else {
       boolean _tripleNotEquals = (style.focusColor != null);
@@ -185,7 +187,6 @@ public class PaintButton extends AbstractPaint {
       _style_5.setForeground(style.focusColor);
       this.drawAroundFocus(place);
     }
-    MouseInfo _rectMouseInfo_2 = this.rectMouseInfo(mouse, place, true);
-    return new PlaceInfo(place, _rectMouseInfo_2);
+    return this.modiBounds(mouse, place, this.b);
   }
 }

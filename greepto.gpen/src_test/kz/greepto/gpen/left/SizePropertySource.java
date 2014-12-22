@@ -38,10 +38,10 @@ public class SizePropertySource implements IPropertySource {
   
   public Object getPropertyValue(Object propName) {
     if (ID_WIDTH.equals(propName)) {
-      return "" + element.width;
+      return "" + element.getWidth();
     }
     if (ID_HEIGHT.equals(propName)) {
-      return "" + element.height;
+      return "" + element.getHeight();
     }
     return null;
   }
@@ -59,13 +59,13 @@ public class SizePropertySource implements IPropertySource {
   public void setPropertyValue(Object propName, Object value) {
     if (ID_WIDTH.equals(propName)) {
       Integer newInt = new Integer((String)value);
-      element.width = newInt.intValue();
+      element.setWidth(newInt.intValue());
       repainter.repaint();
       return;
     }
     if (ID_HEIGHT.equals(propName)) {
       Integer newInt = new Integer((String)value);
-      element.height = newInt.intValue();
+      element.setHeight(newInt.intValue());
       repainter.repaint();
       return;
     }

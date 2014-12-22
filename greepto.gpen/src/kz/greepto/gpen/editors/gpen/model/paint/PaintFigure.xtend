@@ -6,7 +6,7 @@ import kz.greepto.gpen.drawport.Vec2
 import kz.greepto.gpen.editors.gpen.style.StyleCalc
 
 interface PaintFigure {
-  def void setEnvironment(DrawPort dp, StyleCalc styleCalc)
+  def void setEnvironment(DrawPort dp, StyleCalc styleCalc, SelChecker selChecker)
 
   def Rect getPlace()
 

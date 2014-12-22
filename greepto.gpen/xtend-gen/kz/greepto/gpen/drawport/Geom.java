@@ -26,5 +26,5 @@ public interface Geom {
   
   public abstract Vec2 last();
   
-  public abstract double dashLine(final double offset, final double sjvaj, final double length);
+  public abstract double dashLine(final double offset, final double sjvaj, final double step);
 }

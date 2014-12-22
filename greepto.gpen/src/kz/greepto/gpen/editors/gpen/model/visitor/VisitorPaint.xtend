@@ -31,7 +31,7 @@ class VisitorPaint implements FigureVisitor<PaintResult> {
   }
 
   private def PaintResult visit(PaintFigure paint) {
-    paint.setEnvironment(placer.dp, placer.styleCalc)
+    paint.setEnvironment(placer.dp, placer.styleCalc, placer.selChecker)
     return paint.paint(mouse)
   }
 

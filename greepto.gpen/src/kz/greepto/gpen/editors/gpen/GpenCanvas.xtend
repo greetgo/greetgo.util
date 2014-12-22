@@ -1,7 +1,11 @@
 package kz.greepto.gpen.editors.gpen
 
+import java.util.ArrayList
+import java.util.List
 import kz.greepto.gpen.drawport.DrawPort
+import kz.greepto.gpen.drawport.Kolor
 import kz.greepto.gpen.drawport.Kursor
+import kz.greepto.gpen.drawport.Rect
 import kz.greepto.gpen.drawport.Vec2
 import kz.greepto.gpen.drawport.swt.DrawPortSwt
 import kz.greepto.gpen.drawport.swt.DrawableGcSource
@@ -10,6 +14,7 @@ import kz.greepto.gpen.editors.gpen.action.UndoableOperation
 import kz.greepto.gpen.editors.gpen.model.IdFigure
 import kz.greepto.gpen.editors.gpen.model.Scene
 import kz.greepto.gpen.editors.gpen.model.paint.PaintResult
+import kz.greepto.gpen.editors.gpen.model.paint.SelChecker
 import kz.greepto.gpen.editors.gpen.model.visitor.Hit
 import kz.greepto.gpen.editors.gpen.model.visitor.VisitorPaint
 import kz.greepto.gpen.editors.gpen.model.visitor.VisitorPlacer
@@ -44,6 +49,12 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
   val fonts = new FontManager
   val styleCalc = new DevStyleCalc
   val cursors = new CursorManager
+  val List<String> selIdList = new ArrayList
+
+  val SelChecker selChecker = [ IdFigure figure |
+    if(selIdList.contains(figure.id)) return true
+    return figureIdsAtSelRect.contains(figure.id)
+  ]
 
   package val SelectionProvider selectionProvider = new SelectionProvider(this)
 
@@ -63,11 +74,9 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
       ]
       op.addContext(undoContext)
 
-      //var ophist = PlatformUI.getWorkbench().operationSupport.operationHistory
       var ophist = OperationHistoryFactory.getOperationHistory()
       ophist.execute(op, null, null)
 
-      //actionManager.append(action)
       redraw
     }
 
@@ -124,9 +133,7 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
       })
   }
 
-  def DrawPort createDP() {
-    DrawPortSwt.fromGcCreator(new DrawableGcSource(fonts, colors, this))
-  }
+  def DrawPort createDP() { DrawPortSwt.fromGcCreator(new DrawableGcSource(fonts, colors, this)) }
 
   def paintCanvas(PaintEvent e) {
     paintScene()
@@ -139,12 +146,54 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
         dp.dispose
       }
     }
+
+    if(selectorFrom !== null) paintSelector
+  }
+
+  private def paintSelector() {
+    if(selectorFrom === null) return
+    var dp = createDP
+    try {
+      var r = Rect.fromTo(selectorFrom, mouse)
+
+      if (selectorFrom.x < mouse.x) {
+        dp.style.foreground = Kolor.GREEN
+
+        val int step = 20
+        val int period = 600
+        var ofs = -((System.currentTimeMillis % period) as double / period ) * step
+        var skvaj = 0.5
+
+        var x = dp.from(r.rightBottom)
+        ofs = x.to(r.leftBottom).dashLine(ofs, skvaj, step)
+        ofs = x.to(r.leftTop).dashLine(ofs, skvaj, step)
+        ofs = x.to(r.rightTop).dashLine(ofs, skvaj, step)
+        ofs = x.to(r.rightBottom).dashLine(ofs, skvaj, step)
+
+      } else {
+        dp.style.foreground = Kolor.BLUE
+
+        val int step = 20
+        val int period = 600
+        var ofs = -((System.currentTimeMillis % period) as double / period ) * step
+        var skvaj = 0.5
+
+        var x = dp.from(r.rightBottom)
+        ofs = x.to(r.leftBottom).dashLine(ofs, skvaj, step)
+        ofs = x.to(r.leftTop).dashLine(ofs, skvaj, step)
+        ofs = x.to(r.rightTop).dashLine(ofs, skvaj, step)
+        ofs = x.to(r.rightBottom).dashLine(ofs, skvaj, step)
+      }
+
+    } finally {
+      dp.dispose
+    }
   }
 
   private def PaintResult paintScene() {
     var dp = createDP
     try {
-      var placer = new VisitorPlacer(dp, styleCalc)
+      var placer = new VisitorPlacer(dp, styleCalc, selChecker)
       var vp = new VisitorPaint(placer)
       vp.mouse = mouse.copy
 
@@ -173,15 +222,15 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
   }
 
   override mouseDoubleClick(MouseEvent e) {
-
     display.cursorControl.cursor = null //new Cursor(display, SWT.CURSOR_SIZEWE)
-
     println('--=-- DOUBLE <<' + e + '>> --=--')
   }
 
   Vec2 mouseDownedAt = null
   boolean dragging = false
   PaintResult draggingPaintResult = null
+
+  Vec2 selectorFrom = null
 
   override mouseDown(MouseEvent e) {
     mouse.x = e.x
@@ -191,8 +240,11 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
 
       var pr = paintScene()
 
-      if(pr == null) return;
-      if(!pr.hasOper) return;
+      if (pr == null || !pr.hasOper) {
+        selectorFrom = mouse.copy
+        redraw
+        return
+      }
 
       draggingPaintResult = pr
 
@@ -207,8 +259,21 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
 
       var dp = createDP
       try {
-        var placer = new VisitorPlacer(dp, styleCalc)
-        Hit.on(scene).with(placer).to(mouse).forEach[sel = !sel]
+        var placer = new VisitorPlacer(dp, styleCalc, selChecker)
+        var hitted = Hit.on(scene).with(placer).to(mouse)
+        if (hitted.size === 0) {
+          selectorFrom = mouse.copy
+          redraw
+          return
+        } else {
+          hitted.forEach [
+            if (selIdList.contains(id)) {
+              selIdList.remove(id)
+            } else {
+              selIdList += id
+            }
+          ]
+        }
       } finally {
         dp.dispose
       }
@@ -241,8 +306,28 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
 
     if (e.button === 1) {
       if (draggingPaintResult === null) {
-        selectOne
-        return
+        if (selectorFrom === null) {
+          if(!Mouse.hasCtrl(e)) selectOne
+          return
+        }
+        {
+          var rectIds = figureIdsAtSelRect
+          if (Mouse.hasCtrl(e)) {
+            rectIds.forEach [
+              if (selIdList.contains(it)) {
+                selIdList.remove(it)
+              } else {
+                selIdList += it
+              }
+            ]
+          } else {
+            selIdList.clear
+            selIdList += rectIds
+          }
+          selectorFrom = null
+          updateSelectionProvider
+          return
+        }
       }
       {
         if (!dragging) {
@@ -262,12 +347,24 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     }
   }
 
+  def List<String> getFigureIdsAtSelRect() {
+    if(selectorFrom === null) return #[]
+    val selRect = SelRect.from(selectorFrom, mouse)
+    var dp = createDP
+    try {
+      val placer = new VisitorPlacer(dp, styleCalc, null)
+      return scene.list.filter[selRect.at(visit(placer))].map[id].toList
+    } finally {
+      dp.dispose
+    }
+  }
+
   private def selectOne() {
     var dp = createDP
     try {
-      var placer = new VisitorPlacer(dp, styleCalc)
-      scene.list.forEach[sel = false]
-      Hit.on(scene).with(placer).to(mouse).forEach[sel = true]
+      var placer = new VisitorPlacer(dp, styleCalc, selChecker)
+      selIdList.clear
+      Hit.on(scene).with(placer).to(mouse).forEach[selIdList += id]
     } finally {
       dp.dispose
     }
@@ -276,10 +373,9 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
   }
 
   def IdFigure getTopSelected() {
-    for (f : scene.list.reverse.filter[sel]) {
-      return f
-    }
-    return null
+    var lastId = selIdList.last
+    if(lastId === null) return null
+    return scene.findById(lastId)
   }
 
   def void updateSelectionProvider() {

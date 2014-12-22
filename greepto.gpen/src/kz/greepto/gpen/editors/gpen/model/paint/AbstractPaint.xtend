@@ -23,14 +23,18 @@ abstract class AbstractPaint implements PaintFigure {
   protected var DrawPort dp
   protected var StyleCalc styleCalc
   protected Kolor dragingKolor = Kolor.GRAY
+  protected SelChecker selChecker
 
   new() {
   }
 
-  override void setEnvironment(DrawPort dp, StyleCalc styleCalc) {
+  override void setEnvironment(DrawPort dp, StyleCalc styleCalc, SelChecker selChecker) {
     this.dp = dp
     this.styleCalc = styleCalc
+    this.selChecker = selChecker
   }
+
+  protected def boolean isSel(IdFigure figure) { selChecker?.isSelected(figure) }
 
   override Rect getPlace() { work(null).place }
 
@@ -39,26 +43,18 @@ abstract class AbstractPaint implements PaintFigure {
   abstract def PaintResult work(Vec2 mouse)
 
   protected def void drawAroundFocus(Rect rect) {
-    val int step = 10
-    val int period = 300
-    var offset = -((System.currentTimeMillis % period) as double / period ) * step
+    val int step = 20
+    val int period = 600
+    var ofs = -((System.currentTimeMillis % period) as double / period ) * step
     var skvaj = 0.5
 
-    offset = dp.from(rect.point + rect.size + #[2, 2])//
-    .to(Vec2.from(-step, 0))//
-    .dashLine(offset, skvaj, rect.width + 4)
+    var d = 2
 
-    offset = dp.from(rect.point + #[-2, rect.height + 2])//
-    .to(Vec2.from(0, -step))//
-    .dashLine(offset, skvaj, rect.height + 4)
-
-    offset = dp.from(rect.point - #[2, 2])//
-    .to(Vec2.from(step, 0))//
-    .dashLine(offset, skvaj, rect.width + 4)
-
-    offset = dp.from(rect.point + #[rect.width + 3, -2])//
-    .to(Vec2.from(0, step))//
-    .dashLine(offset, skvaj, rect.height + 4)
+    var x = dp.from(rect.rightBottom + #[d, d])
+    ofs = x.to(rect.leftBottom + #[-d, d]).dashLine(ofs, skvaj, step)
+    ofs = x.to(rect.leftTop + #[-d, -d]).dashLine(ofs, skvaj, step)
+    ofs = x.to(rect.rightTop + #[d, -d]).dashLine(ofs, skvaj, step)
+    ofs = x.to(rect.rightBottom + #[d, d]).dashLine(ofs, skvaj, step)
   }
 
   protected def PaintResult simpleRect(Rect rect) {

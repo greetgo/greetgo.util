@@ -12,14 +12,17 @@ import kz.greepto.gpen.editors.gpen.style.StyleCalc
 import kz.greepto.gpen.editors.gpen.model.Table
 import kz.greepto.gpen.editors.gpen.model.paint.PaintTable
 import kz.greepto.gpen.editors.gpen.model.paint.PaintFigure
+import kz.greepto.gpen.editors.gpen.model.paint.SelChecker
 
 class VisitorPlacer implements FigureVisitor<Rect> {
   package val DrawPort dp
   package val StyleCalc styleCalc
+  package val SelChecker selChecker
 
-  new(DrawPort dp, StyleCalc styleCalc) {
+  new(DrawPort dp, StyleCalc styleCalc, SelChecker selChecker) {
     this.dp = dp
     this.styleCalc = styleCalc
+    this.selChecker = selChecker
   }
 
   override visitScene(Scene scene) {
@@ -29,7 +32,7 @@ class VisitorPlacer implements FigureVisitor<Rect> {
   }
 
   private def Rect visit(PaintFigure paint) {
-    paint.setEnvironment(dp, styleCalc)
+    paint.setEnvironment(dp, styleCalc, selChecker)
     return paint.place
   }
 

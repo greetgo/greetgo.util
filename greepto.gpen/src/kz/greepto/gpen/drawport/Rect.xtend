@@ -9,6 +9,8 @@ class Rect {
   public int width = 0
   public int height = 0
 
+  override toString() { 'Rect.point(' + x + ',' + y + '), size(' + width + ',' + height + ')' }
+
   def Vec2 getPoint() { new Vec2(x, y) }
 
   def void setPoint(Vec2 point) {
@@ -21,6 +23,30 @@ class Rect {
   def void setSize(Size size) {
     width = size?.width
     height = size?.height
+  }
+
+  def Vec2 getLeftTop() {
+    var X = if(width < 0) x + width else x
+    var Y = if(height < 0) y + height else y
+    return Vec2.from(X, Y)
+  }
+
+  def Vec2 getRightBottom() {
+    var X = if(width < 0) x else x + width
+    var Y = if(height < 0) y else y + height
+    return Vec2.from(X, Y)
+  }
+
+  def Vec2 getLeftBottom() {
+    var X = if(width < 0) x + width else x
+    var Y = if(height < 0) y else y + height
+    return Vec2.from(X, Y)
+  }
+
+  def Vec2 getRightTop() {
+    var X = if(width < 0) x else x + width
+    var Y = if(height < 0) y + height else y
+    return Vec2.from(X, Y)
   }
 
   public static val Rect ZERO = from(0, 0, 0, 0)
@@ -37,6 +63,10 @@ class Rect {
 
   public static def Rect pointSize(Vec2 point, Size size) {
     return from(point?.x, point?.y, size?.width, size?.height)
+  }
+
+  public static def Rect fromTo(Vec2 from, Vec2 to) {
+    return from(from?.x, from?.y, to?.x - from?.x, to?.y - from?.y)
   }
 
   private new() {
@@ -96,10 +126,10 @@ class Rect {
   def Rect operator_and(Rect r) {
     var left = Math.max(x, r.x)
     var right = Math.min(x + width, r.x + r.width)
-    if (left >= right) return ZERO
+    if(left >= right) return ZERO
     var top = Math.max(y, r.y)
     var bottom = Math.min(y + height, r.y + r.height)
-    if (top >= bottom) return ZERO
+    if(top >= bottom) return ZERO
     from(left, top, right - left, bottom - top)
   }
 }

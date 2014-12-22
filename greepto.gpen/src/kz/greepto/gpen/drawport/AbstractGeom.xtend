@@ -79,16 +79,29 @@ abstract class AbstractGeom implements Geom {
     return toList.last
   }
 
-  override dashLine(double offset, double skvaj, double length) {
-    var nx = toList.get(0).x as double
-    var ny = toList.get(0).y as double
+  override dashLine(double offset, double skvaj, double step) {
+    if(step < 0.1) throw new IllegalArgumentException('step < 0.1')
+
     var px = from.x as double
     var py = from.y as double
+    var double TOx
+    var double TOy
+    if (size === null) {
+      TOx = toList.get(0).x
+      TOy = toList.get(0).y
+    } else {
+      var end = from + size
+      TOx = end.x
+      TOy = end.y
+    }
 
-    var step = Math.sqrt(nx * nx + ny * ny)
-    if(step < 0.1) throw new IllegalArgumentException('step < 0.1')
-    nx /= step
-    ny /= step
+    move
+
+    var nx = TOx - px
+    var ny = TOy - py
+    var length = Math.sqrt(nx * nx + ny * ny)
+    nx /= length
+    ny /= length
 
     var lineLen = step * skvaj
 
@@ -121,15 +134,13 @@ abstract class AbstractGeom implements Geom {
 
       {
         var moveLen = step - ofs
-        if (moveLen > left) moveLen = left
+        if(moveLen > left) moveLen = left
         px += moveLen * nx
         py += moveLen * ny
         left -= moveLen
         ofs += moveLen
       }
-
     }
-
   }
 
   def void drawLineWith(double x1, double y1, double x2, double y2) {

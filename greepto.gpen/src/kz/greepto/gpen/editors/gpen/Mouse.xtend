@@ -1,7 +1,7 @@
 package kz.greepto.gpen.editors.gpen
 
-import org.eclipse.swt.events.MouseEvent
 import org.eclipse.swt.SWT
+import org.eclipse.swt.events.MouseEvent
 
 class Mouse {
   def static boolean noshift(MouseEvent ev) {
@@ -23,8 +23,13 @@ class Mouse {
    * Is left mouse button with crtl (no other modifier keys)
    */
   def static boolean Ctrl_LMB(MouseEvent ev) {
-    if (ev.stateMask.bitwiseAnd(SWT.CTRL) == 0) return false
+    if(ev.stateMask.bitwiseAnd(SWT.CTRL) === 0) return false
     var noCtrlStateMask = ev.stateMask.bitwiseAnd(SWT.CTRL.bitwiseNot)
     return ev.button == 1 && noCtrlStateMask.bitwiseAnd(SWT.MODIFIER_MASK) == 0
   }
+
+  def static hasCtrl(MouseEvent ev) {
+    return ev.stateMask.bitwiseAnd(SWT.CTRL) > 0
+  }
+
 }
