@@ -1,8 +1,8 @@
 package kz.greepto.gpen.editors.gpen.prop
 
+import kz.greepto.gpen.editors.gpen.PropSelection
 import org.eclipse.ui.views.properties.IPropertySource
 import org.eclipse.ui.views.properties.PropertyDescriptor
-import kz.greepto.gpen.editors.gpen.PropSelectionList
 
 class PropertySourceRoot implements IPropertySource {
 
@@ -10,9 +10,9 @@ class PropertySourceRoot implements IPropertySource {
     return this
   }
 
-  PropSelectionList selection
+  PropSelection selection
 
-  new(PropSelectionList selection) {
+  new(PropSelection selection) {
     this.selection = selection
     var list = newArrayList()
     for (pa : selection.list) {
@@ -27,7 +27,7 @@ class PropertySourceRoot implements IPropertySource {
 
   override getPropertyValue(Object id) {
     var pa = selection.list.findFirst[name == id]
-    if (pa === null) return null
+    if(pa === null) return null
     return pa.value
   }
 

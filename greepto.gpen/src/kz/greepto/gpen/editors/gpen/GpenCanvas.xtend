@@ -388,7 +388,7 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
       selectionProvider.selection = new EmptySelection
     } else {
       var props = PropFactory.parseObject(sel, sceneWorker)
-      selectionProvider.selection = new PropSelectionList(props, sel.id)
+      selectionProvider.selection = new PropSelection(props, sel.id)
     }
     redraw
   }

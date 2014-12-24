@@ -104,8 +104,8 @@ class GpenEditor extends EditorPart {
       propertySheetPage = new GpenPropertySheetPage
       propertySheetPage.propertySourceProvider = [ Object object |
         println('trewtrewr object' + object);
-        if (object instanceof PropSelectionList) {
-          return new PropertySourceRoot(object as PropSelectionList)
+        if (object instanceof PropSelection) {
+          return new PropertySourceRoot(object as PropSelection)
         }
         if (object instanceof PropAccessor) {
           return new PropertySourceRo(object as PropAccessor)
