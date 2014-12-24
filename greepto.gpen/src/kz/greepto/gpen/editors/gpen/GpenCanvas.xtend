@@ -74,7 +74,11 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
       ]
       op.addContext(undoContext)
 
+      //var ophist = PlatformUI.getWorkbench().operationSupport.operationHistory
       var ophist = OperationHistoryFactory.getOperationHistory()
+      if (ophist.getLimit(undoContext) < 2000) {
+        ophist.setLimit(undoContext, 2000)
+      }
       ophist.execute(op, null, null)
 
       redraw
@@ -380,11 +384,11 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
 
   def void updateSelectionProvider() {
     var sel = topSelected
-    if (sel == null) {
+    if (sel === null) {
       selectionProvider.selection = new EmptySelection
     } else {
       var props = PropFactory.parseObject(sel, sceneWorker)
-      selectionProvider.selection = new PropSelection(props, sel.id)
+      selectionProvider.selection = new PropSelectionList(props, sel.id)
     }
     redraw
   }

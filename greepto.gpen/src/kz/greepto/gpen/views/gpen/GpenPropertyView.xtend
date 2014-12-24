@@ -2,7 +2,7 @@ package kz.greepto.gpen.views.gpen;
 
 import java.util.LinkedList
 import java.util.List
-import kz.greepto.gpen.editors.gpen.PropSelection
+import kz.greepto.gpen.editors.gpen.PropSelectionList
 import kz.greepto.gpen.editors.gpen.prop.PropAccessor
 import kz.greepto.gpen.util.HandlerKiller
 import org.eclipse.jface.viewers.ISelection
@@ -40,8 +40,8 @@ public class GpenPropertyView extends ViewPart {
     this.parent = parent
 
     listener = [ IWorkbenchPart part, ISelection selection |
-      if (selection instanceof PropSelection) {
-        setSelection(selection as PropSelection)
+      if (selection instanceof PropSelectionList) {
+        setSelection(selection as PropSelectionList)
       } else {
         setSelection(null)
       }
@@ -59,7 +59,7 @@ public class GpenPropertyView extends ViewPart {
     super.dispose()
   }
 
-  def void setSelection(PropSelection sel) {
+  def void setSelection(PropSelectionList sel) {
     if(parent.disposed) return;
     parent.children.forEach[dispose]
     killAll

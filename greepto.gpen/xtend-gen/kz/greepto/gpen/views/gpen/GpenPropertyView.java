@@ -3,7 +3,7 @@ package kz.greepto.gpen.views.gpen;
 import com.google.common.base.Objects;
 import java.util.LinkedList;
 import java.util.List;
-import kz.greepto.gpen.editors.gpen.PropSelection;
+import kz.greepto.gpen.editors.gpen.PropSelectionList;
 import kz.greepto.gpen.editors.gpen.prop.PropAccessor;
 import kz.greepto.gpen.editors.gpen.prop.PropOptions;
 import kz.greepto.gpen.util.Handler;
@@ -65,8 +65,8 @@ public class GpenPropertyView extends ViewPart {
     this.parent = parent;
     final ISelectionListener _function = new ISelectionListener() {
       public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
-        if ((selection instanceof PropSelection)) {
-          GpenPropertyView.this.setSelection(((PropSelection) selection));
+        if ((selection instanceof PropSelectionList)) {
+          GpenPropertyView.this.setSelection(((PropSelectionList) selection));
         } else {
           GpenPropertyView.this.setSelection(null);
         }
@@ -92,7 +92,7 @@ public class GpenPropertyView extends ViewPart {
     super.dispose();
   }
   
-  public void setSelection(final PropSelection sel) {
+  public void setSelection(final PropSelectionList sel) {
     boolean _isDisposed = this.parent.isDisposed();
     if (_isDisposed) {
       return;

@@ -52,5 +52,18 @@
             file="contexts.xml">
       </contexts>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="kz.greepto.gpen.editors.gpen.GpenEditor"
+            class="kz.greepto.gpen.editors.gpen.GpenEditorAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.views.properties.IPropertySheetPage">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.views.contentoutline.IContentOutlinePage">
+         </adapter>
+      </factory>
+   </extension>
 
 </plugin>

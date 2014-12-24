@@ -1,9 +1,18 @@
 package kz.greepto.gpen.editors.gpen
 
+import java.io.ByteArrayOutputStream
+import kz.greepto.gpen.drawport.Size
+import kz.greepto.gpen.drawport.Vec2
 import kz.greepto.gpen.editors.gpen.model.Fig
 import kz.greepto.gpen.editors.gpen.model.Scene
+import kz.greepto.gpen.editors.gpen.model.Table
+import kz.greepto.gpen.editors.gpen.outline.GpenContentOutlinePage
+import kz.greepto.gpen.editors.gpen.prop.GpenPropertySheetPage
+import kz.greepto.gpen.editors.gpen.prop.PropertySourceRoot
+import kz.greepto.gpen.util.StreamUtil
 import org.eclipse.core.commands.operations.IUndoContext
 import org.eclipse.core.commands.operations.ObjectUndoContext
+import org.eclipse.core.resources.IFile
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.swt.widgets.Composite
 import org.eclipse.ui.IEditorInput
@@ -11,12 +20,10 @@ import org.eclipse.ui.IEditorSite
 import org.eclipse.ui.PartInitException
 import org.eclipse.ui.operations.UndoRedoActionGroup
 import org.eclipse.ui.part.EditorPart
-import org.eclipse.core.resources.IFile
-import java.io.ByteArrayOutputStream
-import kz.greepto.gpen.util.StreamUtil
-import kz.greepto.gpen.editors.gpen.model.Table
-import kz.greepto.gpen.drawport.Vec2
-import kz.greepto.gpen.drawport.Size
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage
+import org.eclipse.ui.views.properties.IPropertySheetPage
+import kz.greepto.gpen.editors.gpen.prop.PropAccessor
+import kz.greepto.gpen.editors.gpen.prop.PropertySourceRo
 
 class GpenEditor extends EditorPart {
   override doSave(IProgressMonitor monitor) {
@@ -82,4 +89,40 @@ class GpenEditor extends EditorPart {
   override setFocus() {
     if(contents != null) contents.setFocus()
   }
+
+  override getAdapter(Class adapter) {
+    var ret = super.getAdapter(adapter)
+
+    //println('GpenEditor getAdapter for ' + adapter + ' ret = ' + ret)
+    return ret
+  }
+
+  GpenPropertySheetPage propertySheetPage = null
+
+  def IPropertySheetPage getPropertySheetPage() {
+    if (propertySheetPage === null) {
+      propertySheetPage = new GpenPropertySheetPage
+      propertySheetPage.propertySourceProvider = [ Object object |
+        println('trewtrewr object' + object);
+        if (object instanceof PropSelectionList) {
+          return new PropertySourceRoot(object as PropSelectionList)
+        }
+        if (object instanceof PropAccessor) {
+          return new PropertySourceRo(object as PropAccessor)
+        }
+        return null
+      ];
+    }
+    return propertySheetPage
+  }
+
+  GpenContentOutlinePage contentOutlinePage = null
+
+  def IContentOutlinePage getContentOutlinePage() {
+    if (contentOutlinePage === null) {
+      contentOutlinePage = new GpenContentOutlinePage
+    }
+    return contentOutlinePage
+  }
+
 }

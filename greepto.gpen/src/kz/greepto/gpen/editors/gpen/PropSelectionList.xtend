@@ -4,10 +4,9 @@ import java.util.ArrayList
 import java.util.Collection
 import java.util.List
 import kz.greepto.gpen.editors.gpen.prop.PropAccessor
-import org.eclipse.core.runtime.PlatformObject
-import org.eclipse.jface.viewers.ISelection
+import org.eclipse.jface.viewers.IStructuredSelection
 
-class PropSelection extends PlatformObject implements ISelection {
+class PropSelectionList implements IStructuredSelection {
   public val List<PropAccessor> list = new ArrayList
 
   val String figureId
@@ -22,9 +21,9 @@ class PropSelection extends PlatformObject implements ISelection {
   }
 
   override equals(Object a) {
-    if (a == null) return false;
-    if (!(a instanceof PropSelection)) return false;
-    var b = a as PropSelection
+    if(a == null) return false;
+    if(!(a instanceof PropSelection)) return false;
+    var b = a as PropSelectionList
     return figureId == b.figureId
   }
 
@@ -32,9 +31,15 @@ class PropSelection extends PlatformObject implements ISelection {
     return figureId?.hashCode
   }
 
-  override Object getAdapter(Class adapter) {
-    var ret = super.getAdapter(adapter)
-    println('PropSelection getAdapter for ' + adapter + ' ret = ' + ret)
-    return ret
-  }
+  val oneList = #[this]
+
+  override getFirstElement() { oneList.get(0) }
+
+  override iterator() { oneList.iterator }
+
+  override size() { 1 }
+
+  override toArray() { oneList.toArray }
+
+  override toList() { oneList }
 }
