@@ -104,4 +104,8 @@ public class Size {
     }
     return _xblockexpression;
   }
+  
+  public String toString() {
+    return (((("Size(" + Integer.valueOf(this.width)) + ", ") + Integer.valueOf(this.height)) + ")");
+  }
 }

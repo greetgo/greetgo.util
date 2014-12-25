@@ -52,4 +52,6 @@ class Size {
     height -= a.get(1)
     this
   }
+
+  override toString() { 'Size(' + width + ', ' + height + ')' }
 }

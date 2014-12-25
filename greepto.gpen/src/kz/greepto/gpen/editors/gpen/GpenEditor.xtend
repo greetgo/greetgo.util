@@ -1,6 +1,7 @@
 package kz.greepto.gpen.editors.gpen
 
 import java.io.ByteArrayOutputStream
+import java.util.List
 import kz.greepto.gpen.drawport.Size
 import kz.greepto.gpen.drawport.Vec2
 import kz.greepto.gpen.editors.gpen.model.Fig
@@ -9,6 +10,7 @@ import kz.greepto.gpen.editors.gpen.model.Table
 import kz.greepto.gpen.editors.gpen.outline.GpenContentOutlinePage
 import kz.greepto.gpen.editors.gpen.prop.sheet.GpenPropertySheetPage
 import kz.greepto.gpen.editors.gpen.prop.sheet.GpenPropertySheetSourceProvider
+import kz.greepto.gpen.util.HandlerKiller
 import kz.greepto.gpen.util.StreamUtil
 import org.eclipse.core.commands.operations.IUndoContext
 import org.eclipse.core.commands.operations.ObjectUndoContext
@@ -50,11 +52,13 @@ class GpenEditor extends EditorPart {
   override isSaveAsAllowed() { false }
 
   var GpenCanvas contents = null
+  val List<HandlerKiller> killers = newArrayList
 
   override createPartControl(Composite parent) {
 
     contents = new GpenCanvas(parent, undoContext);
     site.selectionProvider = contents.selectionProvider
+    killers += contents.addChangeSceneHandler[sceneChanged]
 
     var scene = new Scene
 
@@ -82,6 +86,16 @@ class GpenEditor extends EditorPart {
     urag.fillActionBars(editorSite.actionBars)
 
     editorSite.actionBars.updateActionBars
+  }
+
+  override dispose() {
+    killers.forEach[kill]
+    killers.clear
+    super.dispose()
+  }
+
+  def sceneChanged() {
+    if(propertySheetPage !== null) propertySheetPage.refresh
   }
 
   override setFocus() {

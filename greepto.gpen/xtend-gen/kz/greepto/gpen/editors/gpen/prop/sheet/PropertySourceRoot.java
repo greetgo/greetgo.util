@@ -32,7 +32,7 @@ public class PropertySourceRoot implements IPropertySource {
   }
   
   public void calcDescriptors() {
-    String id = IterableExtensions.<String>head(this.selection.ids);
+    String id = IterableExtensions.<String>last(this.selection.ids);
     boolean _tripleEquals = (id == null);
     if (_tripleEquals) {
       return;
@@ -42,9 +42,7 @@ public class PropertySourceRoot implements IPropertySource {
     this.propList = _parseObject;
     ArrayList<DescriptorRo> list = CollectionLiterals.<DescriptorRo>newArrayList();
     for (final PropAccessor pa : this.propList) {
-      String _name = pa.getName();
-      String _name_1 = pa.getName();
-      DescriptorRo _descriptorRo = new DescriptorRo(_name, _name_1);
+      DescriptorRo _descriptorRo = new DescriptorRo(pa);
       list.add(_descriptorRo);
     }
     final ArrayList<DescriptorRo> _converted_list = (ArrayList<DescriptorRo>)list;

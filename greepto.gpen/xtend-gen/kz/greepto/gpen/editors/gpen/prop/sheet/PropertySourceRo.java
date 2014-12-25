@@ -13,17 +13,15 @@ public class PropertySourceRo implements IPropertySource {
     return this;
   }
   
+  private final PropertyDescriptor[] propertyDescriptors;
+  
   private PropAccessor prop;
   
   public PropertySourceRo(final PropAccessor prop) {
     this.prop = prop;
-    String _name = prop.getName();
-    String _name_1 = prop.getName();
-    DescriptorRo _descriptorRo = new DescriptorRo(_name, _name_1);
+    DescriptorRo _descriptorRo = new DescriptorRo(prop);
     this.propertyDescriptors = new PropertyDescriptor[] { _descriptorRo };
   }
-  
-  private final PropertyDescriptor[] propertyDescriptors;
   
   public IPropertyDescriptor[] getPropertyDescriptors() {
     return this.propertyDescriptors;

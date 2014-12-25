@@ -9,7 +9,7 @@ class Rect {
   public int width = 0
   public int height = 0
 
-  override toString() { 'Rect.point(' + x + ',' + y + '), size(' + width + ',' + height + ')' }
+  override toString() { 'Rect.point(' + x + ', ' + y + '), size(' + width + ',' + height + ')' }
 
   def Vec2 getPoint() { new Vec2(x, y) }
 

@@ -8,14 +8,13 @@ class PropertySourceRo implements IPropertySource {
 
   override getEditableValue() { this }
 
+  val PropertyDescriptor[] propertyDescriptors
   PropAccessor prop
 
   new(PropAccessor prop) {
     this.prop = prop
-    propertyDescriptors = #[new DescriptorRo(prop.name, prop.name)]
+    propertyDescriptors = #[new DescriptorRo(prop)]
   }
-
-  val PropertyDescriptor[] propertyDescriptors
 
   override getPropertyDescriptors() { propertyDescriptors }
 

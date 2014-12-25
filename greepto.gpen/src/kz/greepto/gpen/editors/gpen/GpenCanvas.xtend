@@ -24,6 +24,7 @@ import kz.greepto.gpen.util.ColorManager
 import kz.greepto.gpen.util.CursorManager
 import kz.greepto.gpen.util.FontManager
 import kz.greepto.gpen.util.Handler
+import kz.greepto.gpen.util.HandlerKiller
 import kz.greepto.gpen.util.HandlerList
 import org.eclipse.core.commands.operations.IUndoContext
 import org.eclipse.core.commands.operations.OperationHistoryFactory
@@ -71,6 +72,10 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
 
   val HandlerList changeSceneHandlerList = new HandlerList
 
+  def HandlerKiller addChangeSceneHandler(Handler handler) {
+    return changeSceneHandlerList.add(handler)
+  }
+
   val SceneWorker sceneWorker = new SceneWorker() {
     override takeId(Object object) {
       return (object as IdFigure).id
@@ -96,7 +101,7 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     }
 
     override addChangeHandler(Handler handler) {
-      return changeSceneHandlerList.add(handler)
+      return addChangeSceneHandler(handler)
     }
   }
 

@@ -22,7 +22,7 @@ class PropertySourceRoot implements IPropertySource {
   }
 
   def void calcDescriptors() {
-    var id = selection.ids.head
+    var id = selection.ids.last
     if(id === null) return
 
     var figure = selection.scene.findByIdOrDie(id)
@@ -30,7 +30,7 @@ class PropertySourceRoot implements IPropertySource {
 
     var list = newArrayList()
     for (pa : propList) {
-      list += new DescriptorRo(pa.name, pa.name)
+      list += new DescriptorRo(pa)
     }
 
     propertyDescriptors = list
@@ -45,5 +45,4 @@ class PropertySourceRoot implements IPropertySource {
   override resetPropertyValue(Object id) {}
 
   override setPropertyValue(Object id, Object value) {}
-
 }
