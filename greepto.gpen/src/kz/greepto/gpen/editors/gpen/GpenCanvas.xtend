@@ -18,7 +18,6 @@ import kz.greepto.gpen.editors.gpen.model.paint.SelChecker
 import kz.greepto.gpen.editors.gpen.model.visitor.Hit
 import kz.greepto.gpen.editors.gpen.model.visitor.VisitorPaint
 import kz.greepto.gpen.editors.gpen.model.visitor.VisitorPlacer
-import kz.greepto.gpen.editors.gpen.prop.PropFactory
 import kz.greepto.gpen.editors.gpen.prop.SceneWorker
 import kz.greepto.gpen.editors.gpen.style.dev.DevStyleCalc
 import kz.greepto.gpen.util.ColorManager
@@ -56,6 +55,18 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     return figureIdsAtSelRect.contains(figure.id)
   ]
 
+  def GpenSelection getSelection() {
+    var ret = new GpenSelection(scene, sceneWorker)
+    ret.ids += selIdList
+    return ret
+  }
+
+  def void select(List<String> ids) {
+    selIdList.clear
+    selIdList += ids
+    afterSelChangeWork
+  }
+
   package val SelectionProvider selectionProvider = new SelectionProvider(this)
 
   val HandlerList changeSceneHandlerList = new HandlerList
@@ -89,7 +100,7 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     }
   }
 
-  private Vec2 mouse = Vec2.from(0, 0)
+  private val Vec2 mouse = Vec2.from(0, 0)
 
   def void setScene(Scene scene) {
     originalScene = scene
@@ -105,9 +116,7 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
 
     this.undoContext = undoContext
 
-    addPaintListener [ PaintEvent e |
-      paintCanvas(e);
-    ];
+    addPaintListener [e|paintCanvas(e)]
 
     addMouseListener(this);
     addMouseMoveListener(this);
@@ -241,21 +250,15 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     mouse.y = e.y
 
     if (Mouse.LMB(e)) {
-
       var pr = paintScene()
-
       if (pr == null || !pr.hasOper) {
         selectorFrom = mouse.copy
         redraw
         return
       }
-
       draggingPaintResult = pr
-
       mouseDownedAt = mouse.copy
-
       dragging = false
-
       return
     }
 
@@ -269,20 +272,21 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
           selectorFrom = mouse.copy
           redraw
           return
-        } else {
-          hitted.forEach [
-            if (selIdList.contains(id)) {
-              selIdList.remove(id)
-            } else {
-              selIdList += id
-            }
-          ]
         }
+
+        for (it : hitted) {
+          if (selIdList.contains(id)) {
+            selIdList.remove(id)
+          } else {
+            selIdList += id
+          }
+        }
+
       } finally {
         dp.dispose
       }
 
-      updateSelectionProvider
+      afterSelChangeWork
       return
     }
 
@@ -296,7 +300,6 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     if (mouseDownedAt !== null) {
       if (!dragging && (mouse - mouseDownedAt).len >= MOVE_OFFSET) {
         dragging = true
-        redraw
         return
       }
 
@@ -317,19 +320,19 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
         {
           var rectIds = figureIdsAtSelRect
           if (Mouse.hasCtrl(e)) {
-            rectIds.forEach [
-              if (selIdList.contains(it)) {
-                selIdList.remove(it)
+            for (id : rectIds) {
+              if (selIdList.contains(id)) {
+                selIdList.remove(id)
               } else {
-                selIdList += it
+                selIdList += id
               }
-            ]
+            }
           } else {
             selIdList.clear
             selIdList += rectIds
           }
           selectorFrom = null
-          updateSelectionProvider
+          afterSelChangeWork
           return
         }
       }
@@ -373,23 +376,11 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
       dp.dispose
     }
 
-    updateSelectionProvider
+    afterSelChangeWork
   }
 
-  def IdFigure getTopSelected() {
-    var lastId = selIdList.last
-    if(lastId === null) return null
-    return scene.findById(lastId)
-  }
-
-  def void updateSelectionProvider() {
-    var sel = topSelected
-    if (sel === null) {
-      selectionProvider.selection = new EmptySelection
-    } else {
-      var props = PropFactory.parseObject(sel, sceneWorker)
-      selectionProvider.selection = new PropSelection(props, sel.id)
-    }
+  def void afterSelChangeWork() {
+    selectionProvider.selection = selection
     redraw
   }
 

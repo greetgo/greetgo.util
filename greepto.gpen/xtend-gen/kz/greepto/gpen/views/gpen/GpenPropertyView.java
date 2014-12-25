@@ -3,8 +3,11 @@ package kz.greepto.gpen.views.gpen;
 import com.google.common.base.Objects;
 import java.util.LinkedList;
 import java.util.List;
-import kz.greepto.gpen.editors.gpen.PropSelection;
+import kz.greepto.gpen.editors.gpen.GpenSelection;
+import kz.greepto.gpen.editors.gpen.model.IdFigure;
 import kz.greepto.gpen.editors.gpen.prop.PropAccessor;
+import kz.greepto.gpen.editors.gpen.prop.PropFactory;
+import kz.greepto.gpen.editors.gpen.prop.PropList;
 import kz.greepto.gpen.editors.gpen.prop.PropOptions;
 import kz.greepto.gpen.util.Handler;
 import kz.greepto.gpen.util.HandlerKiller;
@@ -65,8 +68,8 @@ public class GpenPropertyView extends ViewPart {
     this.parent = parent;
     final ISelectionListener _function = new ISelectionListener() {
       public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
-        if ((selection instanceof PropSelection)) {
-          GpenPropertyView.this.setSelection(((PropSelection) selection));
+        if ((selection instanceof GpenSelection)) {
+          GpenPropertyView.this.setSelection(((GpenSelection) selection));
         } else {
           GpenPropertyView.this.setSelection(null);
         }
@@ -92,7 +95,7 @@ public class GpenPropertyView extends ViewPart {
     super.dispose();
   }
   
-  public void setSelection(final PropSelection sel) {
+  public void setSelection(final GpenSelection sel) {
     boolean _isDisposed = this.parent.isDisposed();
     if (_isDisposed) {
       return;
@@ -105,8 +108,16 @@ public class GpenPropertyView extends ViewPart {
     };
     IterableExtensions.<Control>forEach(((Iterable<Control>)Conversions.doWrapArray(_children)), _function);
     this.killAll();
-    boolean _equals = Objects.equal(sel, null);
-    if (_equals) {
+    boolean _or = false;
+    boolean _tripleEquals = (sel == null);
+    if (_tripleEquals) {
+      _or = true;
+    } else {
+      int _size = sel.ids.size();
+      boolean _equals = (_size == 0);
+      _or = _equals;
+    }
+    if (_or) {
       Label lab = new Label(this.parent, SWT.NONE);
       lab.setText("Выделите элементы в Gpen Editor-е");
       this.parent.layout(true);
@@ -120,7 +131,10 @@ public class GpenPropertyView extends ViewPart {
     GridLayout lay = new GridLayout();
     lay.numColumns = 3;
     wall.setLayout(lay);
-    for (final PropAccessor prop : sel.list) {
+    String _head = IterableExtensions.<String>head(sel.ids);
+    IdFigure figure = sel.scene.findByIdOrDie(_head);
+    PropList propList = PropFactory.parseObject(figure, sel.sceneWorker);
+    for (final PropAccessor prop : propList) {
       this.appendPropWidgets(wall, prop);
     }
     {

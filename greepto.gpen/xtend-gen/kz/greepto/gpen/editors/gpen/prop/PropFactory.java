@@ -12,6 +12,7 @@ import kz.greepto.gpen.editors.gpen.action.Oper;
 import kz.greepto.gpen.editors.gpen.action.OperModify;
 import kz.greepto.gpen.editors.gpen.prop.NoGetter;
 import kz.greepto.gpen.editors.gpen.prop.PropAccessor;
+import kz.greepto.gpen.editors.gpen.prop.PropList;
 import kz.greepto.gpen.editors.gpen.prop.PropOptions;
 import kz.greepto.gpen.editors.gpen.prop.SceneWorker;
 import kz.greepto.gpen.editors.gpen.prop.Skip;
@@ -177,7 +178,7 @@ public class PropFactory {
     }
   }
   
-  public static List<PropAccessor> parseObject(final Object object, final SceneWorker sceneWorker) {
+  public static PropList parseObject(final Object object, final SceneWorker sceneWorker) {
     final HashMap<String, PropFactory.AccessorInfo> infoMap = new HashMap<String, PropFactory.AccessorInfo>();
     Class<?> _class = object.getClass();
     Field[] _fields = _class.getFields();
@@ -207,7 +208,8 @@ public class PropFactory {
         return _xblockexpression;
       }
     };
-    return ListExtensions.<PropFactory.AccessorInfo, PropAccessor>map(_sort, _function_1);
+    List<PropAccessor> _map = ListExtensions.<PropFactory.AccessorInfo, PropAccessor>map(_sort, _function_1);
+    return PropList.from(_map);
   }
   
   private static void appendMethod(final Map<String, PropFactory.AccessorInfo> infoMap, final Method m, final Object object, final SceneWorker sceneWorker) {

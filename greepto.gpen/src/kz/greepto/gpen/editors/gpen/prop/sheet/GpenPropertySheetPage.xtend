@@ -1,4 +1,4 @@
-package kz.greepto.gpen.editors.gpen.prop
+package kz.greepto.gpen.editors.gpen.prop.sheet
 
 import org.eclipse.ui.views.properties.PropertySheetPage
 import org.eclipse.ui.IWorkbenchPart
@@ -13,6 +13,7 @@ class GpenPropertySheetPage extends PropertySheetPage {
     var f = class.superclass.declaredFields.findFirst[name == 'viewer']
     f.accessible = true
     var viewer = f.get(this) as Viewer
+    if (viewer === null) return;
     viewer.input = #[selection].toArray
   }
 

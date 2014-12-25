@@ -1,4 +1,4 @@
-package kz.greepto.gpen.editors.gpen.prop
+package kz.greepto.gpen.editors.gpen.prop.sheet
 
 import org.eclipse.ui.views.properties.PropertyDescriptor
 

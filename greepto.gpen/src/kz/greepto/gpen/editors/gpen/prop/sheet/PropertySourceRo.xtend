@@ -1,20 +1,18 @@
-package kz.greepto.gpen.editors.gpen.prop
+package kz.greepto.gpen.editors.gpen.prop.sheet
 
 import org.eclipse.ui.views.properties.IPropertySource
 import org.eclipse.ui.views.properties.PropertyDescriptor
+import kz.greepto.gpen.editors.gpen.prop.PropAccessor
 
 class PropertySourceRo implements IPropertySource {
 
-  override getEditableValue() {
-    println('~~~~ getEditableValue')
-    return this
-  }
+  override getEditableValue() { this }
 
-  PropAccessor propAccessor
+  PropAccessor prop
 
-  new(PropAccessor propAccessor) {
-    this.propAccessor = propAccessor
-    propertyDescriptors = #[new DescriptorRo(propAccessor.name, propAccessor.name)]
+  new(PropAccessor prop) {
+    this.prop = prop
+    propertyDescriptors = #[new DescriptorRo(prop.name, prop.name)]
   }
 
   val PropertyDescriptor[] propertyDescriptors
@@ -23,7 +21,7 @@ class PropertySourceRo implements IPropertySource {
 
   override getPropertyValue(Object id) {
     println('-- getPropertyValue id = ' + id)
-    return '' + propAccessor.value
+    return '' + prop.value
   }
 
   override isPropertySet(Object id) { true }
@@ -31,5 +29,4 @@ class PropertySourceRo implements IPropertySource {
   override resetPropertyValue(Object id) {}
 
   override setPropertyValue(Object id, Object value) {}
-
 }

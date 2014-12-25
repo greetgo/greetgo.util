@@ -3,7 +3,6 @@ package kz.greepto.gpen.editors.gpen.prop;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 import java.lang.reflect.Field;
-import java.util.List;
 
 import kz.greepto.gpen.editors.gpen.action.Oper;
 import kz.greepto.gpen.editors.gpen.action.OperModify;
@@ -73,7 +72,7 @@ public class PropFactoryTest {
     
     TestSceneWorker sceneWorker = new TestSceneWorker();
     
-    List<PropAccessor> list = PropFactory.parseObject(asd, sceneWorker);
+    PropList list = PropFactory.parseObject(asd, sceneWorker);
     
     System.out.println("---------------------------------------------");
     for (PropAccessor pa : list) {
@@ -81,7 +80,7 @@ public class PropFactoryTest {
     }
     System.out.println("---------------------------------------------");
     
-    Object value = list.get(1).getValue();
+    Object value = list.byName("nomer").getValue();
     System.out.println("value = " + value);
     
     assertThat(1);
@@ -93,7 +92,7 @@ public class PropFactoryTest {
     
     TestSceneWorker sceneWorker = new TestSceneWorker();
     
-    List<PropAccessor> list = PropFactory.parseObject(asd, sceneWorker);
+    PropList list = PropFactory.parseObject(asd, sceneWorker);
     
     System.out.println("---------------------------------------------");
     for (PropAccessor pa : list) {
@@ -107,7 +106,7 @@ public class PropFactoryTest {
     }
     System.out.println("---------------------------------------------");
     
-    Object value = list.get(1).getValue();
+    Object value = list.byName("text").getValue();
     System.out.println("value = " + value);
     
     assertThat(1);

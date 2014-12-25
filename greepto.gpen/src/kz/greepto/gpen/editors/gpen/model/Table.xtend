@@ -25,7 +25,7 @@ class Table extends RectFigure {
 
   override Table copy() { new Table(this) }
 
-  def void line(String line) {
+  def void addLine(String line) {
     if (content?.length == 0) {
       content = line
     } else {

@@ -30,4 +30,10 @@ class Scene extends Figure {
 
     return null
   }
+
+  def IdFigure findByIdOrDie(String id) {
+    var ret = findById(id)
+    if (ret === null) throw new RuntimeException('No IdFigure with id = ' + id)
+    return ret
+  }
 }

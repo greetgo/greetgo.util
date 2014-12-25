@@ -4,7 +4,6 @@ import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.util.HashMap
-import java.util.List
 import java.util.Map
 import kz.greepto.gpen.editors.gpen.action.OperModify
 import kz.greepto.gpen.util.Handler
@@ -114,7 +113,7 @@ class PropFactory {
     }
   }
 
-  def static List<PropAccessor> parseObject(Object object, SceneWorker sceneWorker) {
+  def static PropList parseObject(Object object, SceneWorker sceneWorker) {
     val infoMap = new HashMap<String, AccessorInfo>
 
     for (f : object.class.fields) {
@@ -125,7 +124,7 @@ class PropFactory {
       appendMethod(infoMap, m, object, sceneWorker)
     }
 
-    return infoMap.values.filter[!skip].sort.map[postInit; it]
+    return PropList.from(infoMap.values.filter[!skip].sort.map[postInit; it])
   }
 
   private def static appendMethod(Map<String, AccessorInfo> infoMap, Method m, Object object, SceneWorker sceneWorker) {
