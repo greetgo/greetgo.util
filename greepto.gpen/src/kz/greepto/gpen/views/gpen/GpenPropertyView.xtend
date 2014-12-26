@@ -1,5 +1,6 @@
 package kz.greepto.gpen.views.gpen;
 
+import java.util.ArrayList
 import java.util.LinkedList
 import java.util.List
 import kz.greepto.gpen.editors.gpen.GpenSelection
@@ -19,7 +20,6 @@ import org.eclipse.swt.widgets.Text
 import org.eclipse.ui.ISelectionListener
 import org.eclipse.ui.IWorkbenchPart
 import org.eclipse.ui.part.ViewPart
-import kz.greepto.gpen.editors.gpen.prop.PropFactory
 
 public class GpenPropertyView extends ViewPart {
   Composite parent
@@ -83,10 +83,7 @@ public class GpenPropertyView extends ViewPart {
     lay.numColumns = 3
     wall.layout = lay
 
-    var figure = sel.scene.findByIdOrDie(sel.ids.head)
-    var propList = PropFactory.parseObject(figure, sel.sceneWorker)
-
-    for (prop : propList) {
+    for (prop : sel.propList) {
       appendPropWidgets(wall, prop)
     }
 
@@ -162,15 +159,23 @@ public class GpenPropertyView extends ViewPart {
       var gd = new GridData()
       gd.horizontalAlignment = SWT.FILL
       txt.layoutData = gd
+      val saved = new ArrayList<String>
+      txt.text = extractStr(prop)
+      saved += txt.text
       txt.addModifyListener [
-        try {
-          prop.value = Integer.valueOf(txt.text)
-        } catch (NumberFormatException e) {
-          prop.value = 0
+        if (txt.text != saved.get(0)) {
+          try {
+            prop.value = Integer.valueOf(txt.text)
+          } catch (NumberFormatException e) {
+            prop.value = 0
+          }
         }
       ]
-      txt.text = extractStr(prop)
-      killers += prop.addChangeHandler[txt.text = extractStr(prop)]
+
+      killers += prop.addChangeHandler [
+        txt.text = extractStr(prop)
+        saved.set(0, txt.text)
+      ]
     }
   }
 
@@ -185,11 +190,19 @@ public class GpenPropertyView extends ViewPart {
       var gd = new GridData()
       gd.horizontalAlignment = SWT.FILL
       txt.layoutData = gd
-      txt.addModifyListener [
-        prop.value = txt.text
-      ]
+      val saved = new ArrayList<String>
       txt.text = extractStr(prop)
-      killers += prop.addChangeHandler[txt.text = extractStr(prop)]
+      saved += txt.text
+      txt.addModifyListener [
+        if (saved.get(0) != txt.text) {
+          prop.value = txt.text
+        }
+      ]
+
+      killers += prop.addChangeHandler [
+        txt.text = extractStr(prop)
+        saved.set(0, txt.text)
+      ]
     }
   }
 
@@ -200,14 +213,23 @@ public class GpenPropertyView extends ViewPart {
     gd.horizontalSpan = 3
     gd.horizontalAlignment = SWT.FILL
     btn.layoutData = gd
+
+    if (prop.value instanceof Boolean) {
+      btn.grayed = false
+      btn.selection = prop.value as Boolean
+    } else {
+      btn.selection = true
+      btn.grayed = true
+    }
+
     btn.addSelectionListener(
       new SelectionAdapter() {
         override widgetSelected(SelectionEvent e) {
           prop.value = btn.selection
+          btn.grayed = false
         }
       })
 
-    btn.selection = prop.value as Boolean
     killers += prop.addChangeHandler[btn.selection = prop.value as Boolean]
   }
 

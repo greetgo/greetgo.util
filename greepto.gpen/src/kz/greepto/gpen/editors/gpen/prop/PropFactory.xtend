@@ -3,8 +3,10 @@ package kz.greepto.gpen.editors.gpen.prop
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
+import java.util.Collection
 import java.util.HashMap
 import java.util.Map
+import kz.greepto.gpen.editors.gpen.action.OperGroup
 import kz.greepto.gpen.editors.gpen.action.OperModify
 import kz.greepto.gpen.util.Handler
 
@@ -30,6 +32,34 @@ class PropFactory {
       return type
     }
 
+    override compatibleWith(PropAccessor with) {
+      if(name != with.name) return false
+      return compatibles(type, with.type)
+    }
+
+    def static boolean compatibles(Class<?> class1, Class<?> class2) {
+      var c1 = class1
+      var c2 = class2
+
+      if(c1.primitive) c1 = wrap(c1)
+      if(c2.primitive) c2 = wrap(c2)
+
+      return c1 === c2
+    }
+
+    def static Class<?> wrap(Class<?> c) {
+      if(!c.primitive) throw new RuntimeException('Wrapping can be only for primitive class: ' + c)
+      if(c === Byte.TYPE) return Byte
+      if(c === Short.TYPE) return Short
+      if(c === Integer.TYPE) return Integer
+      if(c === Long.TYPE) return Long
+      if(c === Float.TYPE) return Float
+      if(c === Double.TYPE) return Double
+      if(c === Character.TYPE) return Character
+      if(c === Boolean.TYPE) return Boolean
+      throw new RuntimeException('Unknown primitive class: ' + c)
+    }
+
     override hashCode() {
       val prime = 31;
       var result = 1;
@@ -39,12 +69,12 @@ class PropFactory {
     }
 
     override equals(Object obj) {
-      if (this === obj) return true
-      if (obj === null) return false
-      if (!(obj instanceof AccessorInfo)) return false
+      if(this === obj) return true
+      if(obj === null) return false
+      if(!(obj instanceof AccessorInfo)) return false
       var a = obj as AccessorInfo
-      if (name != a.name) return false
-      if (type != a.type) return false
+      if(name != a.name) return false
+      if(type != a.type) return false
       return true
     }
 
@@ -80,6 +110,11 @@ class PropFactory {
       override isReadonly() {
         return setter == null
       }
+
+      override operator_add(PropOptions a) { this + a }
+
+      override operator_plus(PropOptions a) { plusOptions(this, a) }
+
     }
 
     override getOptions() {
@@ -108,9 +143,55 @@ class PropFactory {
       return sceneWorker.addChangeHandler(handler)
     }
 
-    def void postInit() {
-      if(fin) setter = null
+    def void postInit() { if(fin) setter = null }
+
+    override operator_add(PropAccessor a) { this + a }
+
+    override operator_plus(PropAccessor a) { plusPropAccessor(this, a) }
+
+    def PropAccessor plusPropAccessor(PropAccessor x, PropAccessor y) {
+      if (!x.compatibleWith(y)) {
+        throw new IllegalArgumentException('Plusing of uncompatible AccessorInfo')
+      }
+      return new PropAccessor() {
+        override getType() { x.type }
+
+        override getName() { x.name }
+
+        override getValue() {
+          var v = x.value
+          if(v == y.value) v else DIFF_VALUES
+        }
+
+        override getOptions() { x.options + y.options }
+
+        override setValue(Object value) {
+          if(DIFF_VALUES === value) return
+          var oper = getSettingOper(value)
+          if(oper === null) return;
+          sceneWorker.applyOper(oper)
+        }
+
+        override getSettingOper(Object newValue) {
+          var xsetter = x.getSettingOper(newValue)
+          var ysetter = y.getSettingOper(newValue)
+          if(xsetter === null) return ysetter
+          if(ysetter === null) return xsetter
+          return new OperGroup(#[xsetter, ysetter], 'Group2')
+        }
+
+        override addChangeHandler(Handler handler) {
+          sceneWorker.addChangeHandler(handler)
+        }
+
+        override compatibleWith(PropAccessor with) { x.compatibleWith(with) && y.compatibleWith(with) }
+
+        override operator_add(PropAccessor a) { this + a }
+
+        override operator_plus(PropAccessor a) { plusPropAccessor(this, a) }
+      }
     }
+
   }
 
   def static PropList parseObject(Object object, SceneWorker sceneWorker) {
@@ -125,6 +206,21 @@ class PropFactory {
     }
 
     return PropList.from(infoMap.values.filter[!skip].sort.map[postInit; it])
+  }
+
+  def static PropList parseObjectList(Collection<Object> list, SceneWorker sceneWorker) {
+    var PropList ret = null
+
+    for (o : list) {
+      var u = parseObject(o, sceneWorker)
+      if (ret === null) {
+        ret = u
+      } else {
+        ret += u
+      }
+    }
+
+    return if(ret === null) PropList.empty else ret
   }
 
   private def static appendMethod(Map<String, AccessorInfo> infoMap, Method m, Object object, SceneWorker sceneWorker) {
@@ -312,5 +408,17 @@ class PropFactory {
 
   private def static readGetterOptions(AccessorInfo info, Method method) {
     info.skip = method.getAnnotation(Skip) != null
+  }
+
+  private def static PropOptions plusOptions(PropOptions x, PropOptions y) {
+    return new PropOptions() {
+      override isBig() { x.big || y.big }
+
+      override isReadonly() { x.readonly || y.readonly }
+
+      override operator_add(PropOptions a) { this + a }
+
+      override operator_plus(PropOptions a) { plusOptions(this, a) }
+    }
   }
 }

@@ -1,10 +1,10 @@
 package kz.greepto.gpen.editors.gpen.prop.sheet
 
 import kz.greepto.gpen.editors.gpen.GpenSelection
-import kz.greepto.gpen.editors.gpen.prop.PropFactory
 import kz.greepto.gpen.editors.gpen.prop.PropList
 import org.eclipse.ui.views.properties.IPropertySource
 import org.eclipse.ui.views.properties.PropertyDescriptor
+import kz.greepto.gpen.editors.gpen.prop.PropAccessor
 
 class PropertySourceRoot implements IPropertySource {
 
@@ -22,23 +22,24 @@ class PropertySourceRoot implements IPropertySource {
   }
 
   def void calcDescriptors() {
-    var id = selection.ids.last
-    if(id === null) return
+    if(selection.ids.size == 0) return;
 
-    var figure = selection.scene.findByIdOrDie(id)
-    propList = PropFactory.parseObject(figure, selection.sceneWorker)
+    propList = selection.propList
 
-    var list = newArrayList()
-    for (pa : propList) {
-      list += new DescriptorRo(pa)
-    }
+    propertyDescriptors = propList.map[descriptorFor]
+  }
 
-    propertyDescriptors = list
+  private def static PropertyDescriptor descriptorFor(PropAccessor pa) {
+    return new DescriptorRo(pa)
   }
 
   override getPropertyDescriptors() { propertyDescriptors }
 
-  override getPropertyValue(Object id) { propList.byName(id as String).value }
+  override getPropertyValue(Object id) {
+    var prop = propList.byName(id as String)
+    if (prop === null) throw new IllegalArgumentException('No property for ' + id)
+    return prop.value
+  }
 
   override isPropertySet(Object id) { false }
 
