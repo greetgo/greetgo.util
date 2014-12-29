@@ -5,10 +5,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import kz.greepto.gpen.editors.gpen.action.Oper;
+import kz.greepto.gpen.editors.gpen.action.OperGroup;
 import kz.greepto.gpen.editors.gpen.action.OperModify;
 import kz.greepto.gpen.editors.gpen.prop.NoGetter;
 import kz.greepto.gpen.editors.gpen.prop.PropAccessor;
@@ -20,6 +22,7 @@ import kz.greepto.gpen.editors.gpen.prop.ValueGetter;
 import kz.greepto.gpen.editors.gpen.prop.ValueSetter;
 import kz.greepto.gpen.util.Handler;
 import kz.greepto.gpen.util.HandlerKiller;
+import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
@@ -49,6 +52,73 @@ public class PropFactory {
     
     public Class<?> getType() {
       return this.type;
+    }
+    
+    public boolean compatibleWith(final PropAccessor with) {
+      String _name = with.getName();
+      boolean _notEquals = (!Objects.equal(this.name, _name));
+      if (_notEquals) {
+        return false;
+      }
+      Class<?> _type = with.getType();
+      return PropFactory.AccessorInfo.compatibles(this.type, _type);
+    }
+    
+    public static boolean compatibles(final Class<?> class1, final Class<?> class2) {
+      Class<?> c1 = class1;
+      Class<?> c2 = class2;
+      boolean _isPrimitive = c1.isPrimitive();
+      if (_isPrimitive) {
+        Class<?> _wrap = PropFactory.AccessorInfo.wrap(c1);
+        c1 = _wrap;
+      }
+      boolean _isPrimitive_1 = c2.isPrimitive();
+      if (_isPrimitive_1) {
+        Class<?> _wrap_1 = PropFactory.AccessorInfo.wrap(c2);
+        c2 = _wrap_1;
+      }
+      return (c1 == c2);
+    }
+    
+    public static Class<?> wrap(final Class<?> c) {
+      boolean _isPrimitive = c.isPrimitive();
+      boolean _not = (!_isPrimitive);
+      if (_not) {
+        throw new RuntimeException(("Wrapping can be only for primitive class: " + c));
+      }
+      boolean _tripleEquals = (c == Byte.TYPE);
+      if (_tripleEquals) {
+        return Byte.class;
+      }
+      boolean _tripleEquals_1 = (c == Short.TYPE);
+      if (_tripleEquals_1) {
+        return Short.class;
+      }
+      boolean _tripleEquals_2 = (c == Integer.TYPE);
+      if (_tripleEquals_2) {
+        return Integer.class;
+      }
+      boolean _tripleEquals_3 = (c == Long.TYPE);
+      if (_tripleEquals_3) {
+        return Long.class;
+      }
+      boolean _tripleEquals_4 = (c == Float.TYPE);
+      if (_tripleEquals_4) {
+        return Float.class;
+      }
+      boolean _tripleEquals_5 = (c == Double.TYPE);
+      if (_tripleEquals_5) {
+        return Double.class;
+      }
+      boolean _tripleEquals_6 = (c == Character.TYPE);
+      if (_tripleEquals_6) {
+        return Character.class;
+      }
+      boolean _tripleEquals_7 = (c == Boolean.TYPE);
+      if (_tripleEquals_7) {
+        return Boolean.class;
+      }
+      throw new RuntimeException(("Unknown primitive class: " + c));
     }
     
     public int hashCode() {
@@ -129,6 +199,14 @@ public class PropFactory {
       public boolean isReadonly() {
         return Objects.equal(AccessorInfo.this.setter, null);
       }
+      
+      public PropOptions operator_add(final PropOptions a) {
+        return this.operator_plus(a);
+      }
+      
+      public PropOptions operator_plus(final PropOptions a) {
+        return PropFactory.plusOptions(this, a);
+      }
     };
     
     public PropOptions getOptions() {
@@ -176,6 +254,105 @@ public class PropFactory {
         this.setter = null;
       }
     }
+    
+    public PropAccessor operator_add(final PropAccessor a) {
+      return this.operator_plus(a);
+    }
+    
+    public PropAccessor operator_plus(final PropAccessor a) {
+      return this.plusPropAccessor(this, a);
+    }
+    
+    public PropAccessor plusPropAccessor(final PropAccessor x, final PropAccessor y) {
+      boolean _compatibleWith = x.compatibleWith(y);
+      boolean _not = (!_compatibleWith);
+      if (_not) {
+        throw new IllegalArgumentException("Plusing of uncompatible AccessorInfo");
+      }
+      return new PropAccessor() {
+        public Class<?> getType() {
+          return x.getType();
+        }
+        
+        public String getName() {
+          return x.getName();
+        }
+        
+        public Object getValue() {
+          Object _xblockexpression = null;
+          {
+            Object v = x.getValue();
+            Object _xifexpression = null;
+            Object _value = y.getValue();
+            boolean _equals = Objects.equal(v, _value);
+            if (_equals) {
+              _xifexpression = v;
+            } else {
+              _xifexpression = PropAccessor.DIFF_VALUES;
+            }
+            _xblockexpression = _xifexpression;
+          }
+          return _xblockexpression;
+        }
+        
+        public PropOptions getOptions() {
+          PropOptions _options = x.getOptions();
+          PropOptions _options_1 = y.getOptions();
+          return _options.operator_plus(_options_1);
+        }
+        
+        public void setValue(final Object value) {
+          boolean _tripleEquals = (PropAccessor.DIFF_VALUES == value);
+          if (_tripleEquals) {
+            return;
+          }
+          Oper oper = this.getSettingOper(value);
+          boolean _tripleEquals_1 = (oper == null);
+          if (_tripleEquals_1) {
+            return;
+          }
+          AccessorInfo.this.sceneWorker.applyOper(oper);
+        }
+        
+        public Oper getSettingOper(final Object newValue) {
+          Oper xsetter = x.getSettingOper(newValue);
+          Oper ysetter = y.getSettingOper(newValue);
+          boolean _tripleEquals = (xsetter == null);
+          if (_tripleEquals) {
+            return ysetter;
+          }
+          boolean _tripleEquals_1 = (ysetter == null);
+          if (_tripleEquals_1) {
+            return xsetter;
+          }
+          return new OperGroup(Collections.<Oper>unmodifiableList(CollectionLiterals.<Oper>newArrayList(xsetter, ysetter)), "Group2");
+        }
+        
+        public HandlerKiller addChangeHandler(final Handler handler) {
+          return AccessorInfo.this.sceneWorker.addChangeHandler(handler);
+        }
+        
+        public boolean compatibleWith(final PropAccessor with) {
+          boolean _and = false;
+          boolean _compatibleWith = x.compatibleWith(with);
+          if (!_compatibleWith) {
+            _and = false;
+          } else {
+            boolean _compatibleWith_1 = y.compatibleWith(with);
+            _and = _compatibleWith_1;
+          }
+          return _and;
+        }
+        
+        public PropAccessor operator_add(final PropAccessor a) {
+          return this.operator_plus(a);
+        }
+        
+        public PropAccessor operator_plus(final PropAccessor a) {
+          return AccessorInfo.this.plusPropAccessor(this, a);
+        }
+      };
+    }
   }
   
   public static PropList parseObject(final Object object, final SceneWorker sceneWorker) {
@@ -210,6 +387,29 @@ public class PropFactory {
     };
     List<PropAccessor> _map = ListExtensions.<PropFactory.AccessorInfo, PropAccessor>map(_sort, _function_1);
     return PropList.from(_map);
+  }
+  
+  public static PropList parseObjectList(final Collection<Object> list, final SceneWorker sceneWorker) {
+    PropList ret = null;
+    for (final Object o : list) {
+      {
+        PropList u = PropFactory.parseObject(o, sceneWorker);
+        boolean _tripleEquals = (ret == null);
+        if (_tripleEquals) {
+          ret = u;
+        } else {
+          ret.operator_add(u);
+        }
+      }
+    }
+    PropList _xifexpression = null;
+    boolean _tripleEquals = (ret == null);
+    if (_tripleEquals) {
+      _xifexpression = PropList.empty();
+    } else {
+      _xifexpression = ret;
+    }
+    return _xifexpression;
   }
   
   private static void appendMethod(final Map<String, PropFactory.AccessorInfo> infoMap, final Method m, final Object object, final SceneWorker sceneWorker) {
@@ -532,5 +732,41 @@ public class PropFactory {
     Skip _annotation = method.<Skip>getAnnotation(Skip.class);
     boolean _notEquals = (!Objects.equal(_annotation, null));
     return info.skip = _notEquals;
+  }
+  
+  private static PropOptions plusOptions(final PropOptions x, final PropOptions y) {
+    return new PropOptions() {
+      public boolean isBig() {
+        boolean _or = false;
+        boolean _isBig = x.isBig();
+        if (_isBig) {
+          _or = true;
+        } else {
+          boolean _isBig_1 = y.isBig();
+          _or = _isBig_1;
+        }
+        return _or;
+      }
+      
+      public boolean isReadonly() {
+        boolean _or = false;
+        boolean _isReadonly = x.isReadonly();
+        if (_isReadonly) {
+          _or = true;
+        } else {
+          boolean _isReadonly_1 = y.isReadonly();
+          _or = _isReadonly_1;
+        }
+        return _or;
+      }
+      
+      public PropOptions operator_add(final PropOptions a) {
+        return this.operator_plus(a);
+      }
+      
+      public PropOptions operator_plus(final PropOptions a) {
+        return PropFactory.plusOptions(this, a);
+      }
+    };
   }
 }

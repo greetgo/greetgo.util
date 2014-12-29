@@ -1,17 +1,14 @@
 package kz.greepto.gpen.editors.gpen.prop.sheet;
 
-import java.util.ArrayList;
 import kz.greepto.gpen.editors.gpen.GpenSelection;
-import kz.greepto.gpen.editors.gpen.model.IdFigure;
 import kz.greepto.gpen.editors.gpen.prop.PropAccessor;
-import kz.greepto.gpen.editors.gpen.prop.PropFactory;
 import kz.greepto.gpen.editors.gpen.prop.PropList;
 import kz.greepto.gpen.editors.gpen.prop.sheet.DescriptorRo;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
-import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
+import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 @SuppressWarnings("all")
@@ -32,21 +29,24 @@ public class PropertySourceRoot implements IPropertySource {
   }
   
   public void calcDescriptors() {
-    String id = IterableExtensions.<String>last(this.selection.ids);
-    boolean _tripleEquals = (id == null);
-    if (_tripleEquals) {
+    int _size = this.selection.ids.size();
+    boolean _equals = (_size == 0);
+    if (_equals) {
       return;
     }
-    IdFigure figure = this.selection.scene.findByIdOrDie(id);
-    PropList _parseObject = PropFactory.parseObject(figure, this.selection.sceneWorker);
-    this.propList = _parseObject;
-    ArrayList<DescriptorRo> list = CollectionLiterals.<DescriptorRo>newArrayList();
-    for (final PropAccessor pa : this.propList) {
-      DescriptorRo _descriptorRo = new DescriptorRo(pa);
-      list.add(_descriptorRo);
-    }
-    final ArrayList<DescriptorRo> _converted_list = (ArrayList<DescriptorRo>)list;
-    this.propertyDescriptors = ((PropertyDescriptor[])Conversions.unwrapArray(_converted_list, PropertyDescriptor.class));
+    PropList _propList = this.selection.getPropList();
+    this.propList = _propList;
+    final Function1<PropAccessor, PropertyDescriptor> _function = new Function1<PropAccessor, PropertyDescriptor>() {
+      public PropertyDescriptor apply(final PropAccessor it) {
+        return PropertySourceRoot.descriptorFor(it);
+      }
+    };
+    Iterable<PropertyDescriptor> _map = IterableExtensions.<PropAccessor, PropertyDescriptor>map(this.propList, _function);
+    this.propertyDescriptors = ((PropertyDescriptor[])Conversions.unwrapArray(_map, PropertyDescriptor.class));
+  }
+  
+  private static PropertyDescriptor descriptorFor(final PropAccessor pa) {
+    return new DescriptorRo(pa);
   }
   
   public IPropertyDescriptor[] getPropertyDescriptors() {
@@ -54,8 +54,12 @@ public class PropertySourceRoot implements IPropertySource {
   }
   
   public Object getPropertyValue(final Object id) {
-    PropAccessor _byName = this.propList.byName(((String) id));
-    return _byName.getValue();
+    PropAccessor prop = this.propList.byName(((String) id));
+    boolean _tripleEquals = (prop == null);
+    if (_tripleEquals) {
+      throw new IllegalArgumentException(("No property for " + id));
+    }
+    return prop.getValue();
   }
   
   public boolean isPropertySet(final Object id) {

@@ -1,12 +1,11 @@
 package kz.greepto.gpen.views.gpen;
 
 import com.google.common.base.Objects;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import kz.greepto.gpen.editors.gpen.GpenSelection;
-import kz.greepto.gpen.editors.gpen.model.IdFigure;
 import kz.greepto.gpen.editors.gpen.prop.PropAccessor;
-import kz.greepto.gpen.editors.gpen.prop.PropFactory;
 import kz.greepto.gpen.editors.gpen.prop.PropList;
 import kz.greepto.gpen.editors.gpen.prop.PropOptions;
 import kz.greepto.gpen.util.Handler;
@@ -131,10 +130,8 @@ public class GpenPropertyView extends ViewPart {
     GridLayout lay = new GridLayout();
     lay.numColumns = 3;
     wall.setLayout(lay);
-    String _head = IterableExtensions.<String>head(sel.ids);
-    IdFigure figure = sel.scene.findByIdOrDie(_head);
-    PropList propList = PropFactory.parseObject(figure, sel.sceneWorker);
-    for (final PropAccessor prop : propList) {
+    PropList _propList = sel.getPropList();
+    for (final PropAccessor prop : _propList) {
       this.appendPropWidgets(wall, prop);
     }
     {
@@ -256,29 +253,39 @@ public class GpenPropertyView extends ViewPart {
         GridData gd = new GridData();
         gd.horizontalAlignment = SWT.FILL;
         txt.setLayoutData(gd);
+        final ArrayList<String> saved = new ArrayList<String>();
+        String _extractStr = this.extractStr(prop);
+        txt.setText(_extractStr);
+        String _text = txt.getText();
+        saved.add(_text);
         final ModifyListener _function = new ModifyListener() {
           public void modifyText(final ModifyEvent it) {
-            try {
-              String _text = txt.getText();
-              Integer _valueOf = Integer.valueOf(_text);
-              prop.setValue(_valueOf);
-            } catch (final Throwable _t) {
-              if (_t instanceof NumberFormatException) {
-                final NumberFormatException e = (NumberFormatException)_t;
-                prop.setValue(Integer.valueOf(0));
-              } else {
-                throw Exceptions.sneakyThrow(_t);
+            String _text = txt.getText();
+            String _get = saved.get(0);
+            boolean _notEquals = (!Objects.equal(_text, _get));
+            if (_notEquals) {
+              try {
+                String _text_1 = txt.getText();
+                Integer _valueOf = Integer.valueOf(_text_1);
+                prop.setValue(_valueOf);
+              } catch (final Throwable _t) {
+                if (_t instanceof NumberFormatException) {
+                  final NumberFormatException e = (NumberFormatException)_t;
+                  prop.setValue(Integer.valueOf(0));
+                } else {
+                  throw Exceptions.sneakyThrow(_t);
+                }
               }
             }
           }
         };
         txt.addModifyListener(_function);
-        String _extractStr = this.extractStr(prop);
-        txt.setText(_extractStr);
         final Handler _function_1 = new Handler() {
           public void handle() {
             String _extractStr = GpenPropertyView.this.extractStr(prop);
             txt.setText(_extractStr);
+            String _text = txt.getText();
+            saved.set(0, _text);
           }
         };
         HandlerKiller _addChangeHandler = prop.addChangeHandler(_function_1);
@@ -305,19 +312,29 @@ public class GpenPropertyView extends ViewPart {
         GridData gd = new GridData();
         gd.horizontalAlignment = SWT.FILL;
         txt.setLayoutData(gd);
+        final ArrayList<String> saved = new ArrayList<String>();
+        String _extractStr = this.extractStr(prop);
+        txt.setText(_extractStr);
+        String _text = txt.getText();
+        saved.add(_text);
         final ModifyListener _function = new ModifyListener() {
           public void modifyText(final ModifyEvent it) {
+            String _get = saved.get(0);
             String _text = txt.getText();
-            prop.setValue(_text);
+            boolean _notEquals = (!Objects.equal(_get, _text));
+            if (_notEquals) {
+              String _text_1 = txt.getText();
+              prop.setValue(_text_1);
+            }
           }
         };
         txt.addModifyListener(_function);
-        String _extractStr = this.extractStr(prop);
-        txt.setText(_extractStr);
         final Handler _function_1 = new Handler() {
           public void handle() {
             String _extractStr = GpenPropertyView.this.extractStr(prop);
             txt.setText(_extractStr);
+            String _text = txt.getText();
+            saved.set(0, _text);
           }
         };
         HandlerKiller _addChangeHandler = prop.addChangeHandler(_function_1);
@@ -336,15 +353,23 @@ public class GpenPropertyView extends ViewPart {
     gd.horizontalSpan = 3;
     gd.horizontalAlignment = SWT.FILL;
     btn.setLayoutData(gd);
+    Object _value = prop.getValue();
+    if ((_value instanceof Boolean)) {
+      btn.setGrayed(false);
+      Object _value_1 = prop.getValue();
+      btn.setSelection((((Boolean) _value_1)).booleanValue());
+    } else {
+      btn.setSelection(true);
+      btn.setGrayed(true);
+    }
     btn.addSelectionListener(
       new SelectionAdapter() {
         public void widgetSelected(final SelectionEvent e) {
           boolean _selection = btn.getSelection();
           prop.setValue(Boolean.valueOf(_selection));
+          btn.setGrayed(false);
         }
       });
-    Object _value = prop.getValue();
-    btn.setSelection((((Boolean) _value)).booleanValue());
     final Handler _function = new Handler() {
       public void handle() {
         Object _value = prop.getValue();

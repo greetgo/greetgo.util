@@ -22,12 +22,12 @@ class OperModify extends Oper {
   }
 
   override apply(Scene scene) {
-    var object = scene.findById(id)
+    var object = scene.findByIdOrDie(id)
     oldValue = setter.setValue(object, newValue)
   }
 
   override cancel(Scene scene) {
-    var object = scene.findById(id)
+    var object = scene.findByIdOrDie(id)
     setter.setValue(object, oldValue)
   }
 

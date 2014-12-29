@@ -7,6 +7,12 @@ import kz.greepto.gpen.util.HandlerKiller;
 
 @SuppressWarnings("all")
 public interface PropAccessor {
+  public final static Object DIFF_VALUES = new Object() {
+    public String toString() {
+      return "Разные значения";
+    }
+  };
+  
   public abstract Class<?> getType();
   
   public abstract String getName();
@@ -20,4 +26,10 @@ public interface PropAccessor {
   public abstract Oper getSettingOper(final Object newValue);
   
   public abstract HandlerKiller addChangeHandler(final Handler handler);
+  
+  public abstract boolean compatibleWith(final PropAccessor with);
+  
+  public abstract PropAccessor operator_add(final PropAccessor a);
+  
+  public abstract PropAccessor operator_plus(final PropAccessor a);
 }
