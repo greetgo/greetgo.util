@@ -1,11 +1,11 @@
 package kz.greepto.gpen.editors.gpen.prop.sheet;
 
-import com.google.common.base.Objects;
 import java.util.Map;
 import kz.greepto.gpen.editors.gpen.GpenSelection;
 import kz.greepto.gpen.editors.gpen.prop.PropAccessor;
 import kz.greepto.gpen.editors.gpen.prop.PropList;
 import kz.greepto.gpen.editors.gpen.prop.PropOptions;
+import kz.greepto.gpen.editors.gpen.prop.sheet.DescriptorInt;
 import kz.greepto.gpen.editors.gpen.prop.sheet.DescriptorPolilies;
 import kz.greepto.gpen.editors.gpen.prop.sheet.DescriptorRo;
 import kz.greepto.gpen.editors.gpen.prop.sheet.DescriptorStr;
@@ -84,23 +84,49 @@ public class PropertySourceRoot implements IPropertySource {
   private static GpenPropertyDescriptor descriptorFor(final PropAccessor pa) {
     PropOptions _options = pa.getOptions();
     boolean _isReadonly = _options.isReadonly();
-    boolean _not = (!_isReadonly);
-    if (_not) {
-      Class<?> _type = pa.getType();
-      boolean _equals = Objects.equal(_type, String.class);
-      if (_equals) {
-        PropOptions _options_1 = pa.getOptions();
-        boolean _isPolilines = _options_1.isPolilines();
-        if (_isPolilines) {
-          return new DescriptorPolilies(pa);
-        }
-        return new DescriptorStr(pa);
+    if (_isReadonly) {
+      return new DescriptorRo(pa);
+    }
+    Class<?> _type = pa.getType();
+    boolean _tripleEquals = (_type == String.class);
+    if (_tripleEquals) {
+      PropOptions _options_1 = pa.getOptions();
+      boolean _isPolilines = _options_1.isPolilines();
+      if (_isPolilines) {
+        return new DescriptorPolilies(pa);
       }
-      PropOptions _options_2 = pa.getOptions();
-      boolean _isPolilines_1 = _options_2.isPolilines();
-      if (_isPolilines_1) {
-        throw new RuntimeException("Polilines may be only for string field");
-      }
+      return new DescriptorStr(pa);
+    }
+    PropOptions _options_2 = pa.getOptions();
+    boolean _isPolilines_1 = _options_2.isPolilines();
+    if (_isPolilines_1) {
+      throw new RuntimeException("Polilines may be only for string field");
+    }
+    boolean _or = false;
+    Class<?> _type_1 = pa.getType();
+    boolean _tripleEquals_1 = (_type_1 == Integer.class);
+    if (_tripleEquals_1) {
+      _or = true;
+    } else {
+      Class<?> _type_2 = pa.getType();
+      boolean _tripleEquals_2 = (_type_2 == Integer.TYPE);
+      _or = _tripleEquals_2;
+    }
+    if (_or) {
+      return new DescriptorInt(pa, false);
+    }
+    boolean _or_1 = false;
+    Class<?> _type_3 = pa.getType();
+    boolean _tripleEquals_3 = (_type_3 == Long.class);
+    if (_tripleEquals_3) {
+      _or_1 = true;
+    } else {
+      Class<?> _type_4 = pa.getType();
+      boolean _tripleEquals_4 = (_type_4 == Long.TYPE);
+      _or_1 = _tripleEquals_4;
+    }
+    if (_or_1) {
+      return new DescriptorInt(pa, true);
     }
     return new DescriptorRo(pa);
   }

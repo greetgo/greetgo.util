@@ -45,14 +45,22 @@ class PropertySourceRoot implements IPropertySource {
   override setPropertyValue(Object id, Object value) { descriptorMap.get(id).value = value }
 
   private def static GpenPropertyDescriptor descriptorFor(PropAccessor pa) {
-    if (!pa.options.readonly) {
-      if (pa.type == String) {
-        if (pa.options.polilines) return new DescriptorPolilies(pa)
-        return new DescriptorStr(pa)
-      }
-      if (pa.options.polilines) throw new RuntimeException('Polilines may be only for string field')
+    if(pa.options.readonly) return new DescriptorRo(pa)
+
+    if (pa.type === String) {
+      if(pa.options.polilines) return new DescriptorPolilies(pa)
+      return new DescriptorStr(pa)
     }
-    
+
+    if(pa.options.polilines) throw new RuntimeException('Polilines may be only for string field')
+
+    if (pa.type === Integer || pa.type === Integer.TYPE) {
+      return new DescriptorInt(pa, false)
+    }
+    if (pa.type === Long || pa.type === Long.TYPE) {
+      return new DescriptorInt(pa, true)
+    }
+
     return new DescriptorRo(pa)
   }
 }
