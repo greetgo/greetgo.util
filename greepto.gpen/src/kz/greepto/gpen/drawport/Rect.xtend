@@ -111,6 +111,13 @@ class Rect {
     return copy(this) += r
   }
 
+  def Rect operator_plus(Vec2 step) {
+    var ret = copy(this)
+    ret.x += step.x
+    ret.y += step.y
+    return ret
+  }
+
   def boolean contains(Vec2 p) {
     if(p == null) return false
 

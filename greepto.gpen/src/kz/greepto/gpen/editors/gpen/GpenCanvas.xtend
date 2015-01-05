@@ -38,6 +38,8 @@ import org.eclipse.swt.events.MouseTrackListener
 import org.eclipse.swt.events.PaintEvent
 import org.eclipse.swt.widgets.Canvas
 import org.eclipse.swt.widgets.Composite
+import kz.greepto.gpen.editors.gpen.model.paint.DraggingThing
+import kz.greepto.gpen.editors.gpen.model.paint.MoveDragging
 
 class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, MouseTrackListener {
   val MOVE_OFFSET = 3.0
@@ -156,10 +158,10 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
   def paintCanvas(PaintEvent e) {
     paintScene()
 
-    if (draggingPaintResult !== null) {
+    if (draggingThing !== null && dragging) {
       var dp = createDP
       try {
-        draggingPaintResult.paintDrag(dp, mouse)
+        draggingThing.paintDrag(dp, mouse)
       } finally {
         dp.dispose
       }
@@ -217,10 +219,10 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
 
       var ret = scene.visit(vp)
 
-      if (draggingPaintResult === null) {
+      if (draggingThing === null) {
         displayCursor(ret?.kursor)
       } else {
-        displayCursor(draggingPaintResult.kursor)
+        displayCursor(draggingThing.kursor)
       }
 
       return ret
@@ -246,7 +248,7 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
 
   Vec2 mouseDownedAt = null
   boolean dragging = false
-  PaintResult draggingPaintResult = null
+  DraggingThing draggingThing = null
 
   Vec2 selectorFrom = null
 
@@ -255,13 +257,35 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     mouse.y = e.y
 
     if (Mouse.LMB(e)) {
+
+      //TODO multi move
+      if (selIdList.size > 1) {
+        var dp = createDP
+        try {
+          var placer = new VisitorPlacer(dp, styleCalc, selChecker)
+          var md = new MoveDragging(mouse.copy)
+
+          for (id : selIdList) {
+            var figure = scene.findByIdOrDie(id)
+            var place = figure.visit(placer)
+            md.add(figure, place);
+          }
+
+          draggingThing = md
+          mouseDownedAt = mouse.copy
+          dragging = false
+          return
+        } finally {
+          dp.dispose
+        }
+      }
       var pr = paintScene()
       if (pr == null || !pr.hasOper) {
         selectorFrom = mouse.copy
         redraw
         return
       }
-      draggingPaintResult = pr
+      draggingThing = pr
       mouseDownedAt = mouse.copy
       dragging = false
       return
@@ -317,7 +341,7 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     mouse.y = e.y
 
     if (e.button === 1) {
-      if (draggingPaintResult === null) {
+      if (draggingThing === null) {
         if (selectorFrom === null) {
           if(!Mouse.hasCtrl(e)) selectOne
           return
@@ -344,15 +368,15 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
       {
         if (!dragging) {
           mouseDownedAt = null
-          draggingPaintResult = null
+          draggingThing = null
           selectOne
           return
         }
 
-        sceneWorker.applyOper(draggingPaintResult.createOper(mouse))
+        sceneWorker.applyOper(draggingThing.createOper(mouse))
 
         mouseDownedAt = null
-        draggingPaintResult = null
+        draggingThing = null
         dragging = false
         return
       }
