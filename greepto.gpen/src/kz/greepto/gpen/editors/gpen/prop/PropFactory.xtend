@@ -9,6 +9,8 @@ import java.util.Map
 import kz.greepto.gpen.editors.gpen.action.OperGroup
 import kz.greepto.gpen.editors.gpen.action.OperModify
 import kz.greepto.gpen.util.Handler
+import kz.greepto.gpen.editors.gpen.prop.PropFactory.AccessorInfo
+import java.lang.reflect.AccessibleObject
 
 class PropFactory {
 
@@ -94,6 +96,9 @@ class PropFactory {
       if (skip) {
         sb.append(' SKIPPED')
       }
+      if (polilines) {
+        sb.append(' POLILINES')
+      }
       sb.append(' : ' + type.simpleName)
       return sb.toString
     }
@@ -102,10 +107,10 @@ class PropFactory {
       return getter.getValue(object)
     }
 
+    boolean polilines = false
+
     val PropOptions options = new PropOptions() {
-      override isBig() {
-        false;
-      }
+      override isPolilines() { polilines }
 
       override isReadonly() {
         return setter == null
@@ -398,21 +403,34 @@ class PropFactory {
 
   private def static readSetterOptions(AccessorInfo info, Method method) {
     info.skip = method.getAnnotation(Skip) != null
+
+    readPolilines(info, method, false)
   }
 
   private def static readFieldOptions(AccessorInfo info, Field field) {
     info.skip = field.getAnnotation(Skip) != null
 
     info.fin = Modifier.isFinal(field.modifiers)
+
+    readPolilines(info, field, true)
   }
 
   private def static readGetterOptions(AccessorInfo info, Method method) {
     info.skip = method.getAnnotation(Skip) != null
+
+    readPolilines(info, method, true)
+  }
+
+  def static readPolilines(AccessorInfo info, AccessibleObject ao, boolean force) {
+    if(info.options.polilines && !force) return;
+    if (ao.getAnnotation(Polilines) !== null) {
+      info.polilines = true
+    }
   }
 
   private def static PropOptions plusOptions(PropOptions x, PropOptions y) {
     return new PropOptions() {
-      override isBig() { x.big || y.big }
+      override isPolilines() { x.polilines || y.polilines }
 
       override isReadonly() { x.readonly || y.readonly }
 

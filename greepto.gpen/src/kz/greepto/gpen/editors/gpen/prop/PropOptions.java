@@ -3,7 +3,7 @@ package kz.greepto.gpen.editors.gpen.prop;
 public interface PropOptions {
   boolean isReadonly();
   
-  boolean isBig();
+  boolean isPolilines();
   
   PropOptions operator_plus(PropOptions a);
   

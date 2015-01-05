@@ -1,10 +1,10 @@
 package kz.greepto.gpen.editors.gpen.prop.sheet
 
+import java.util.Map
 import kz.greepto.gpen.editors.gpen.GpenSelection
+import kz.greepto.gpen.editors.gpen.prop.PropAccessor
 import kz.greepto.gpen.editors.gpen.prop.PropList
 import org.eclipse.ui.views.properties.IPropertySource
-import org.eclipse.ui.views.properties.PropertyDescriptor
-import kz.greepto.gpen.editors.gpen.prop.PropAccessor
 
 class PropertySourceRoot implements IPropertySource {
 
@@ -13,8 +13,9 @@ class PropertySourceRoot implements IPropertySource {
   }
 
   val GpenSelection selection
-  var PropertyDescriptor[] propertyDescriptors = #[]
+  var GpenPropertyDescriptor[] propertyDescriptors = #[]
   var PropList propList = PropList.empty
+  val Map<Object, GpenPropertyDescriptor> descriptorMap = newHashMap
 
   new(GpenSelection selection) {
     this.selection = selection
@@ -27,23 +28,31 @@ class PropertySourceRoot implements IPropertySource {
     propList = selection.propList
 
     propertyDescriptors = propList.map[descriptorFor]
-  }
 
-  private def static PropertyDescriptor descriptorFor(PropAccessor pa) {
-    return new DescriptorRo(pa)
+    for (gpd : propertyDescriptors) {
+      descriptorMap.put(gpd.id, gpd)
+    }
   }
 
   override getPropertyDescriptors() { propertyDescriptors }
 
-  override getPropertyValue(Object id) {
-    var prop = propList.byName(id as String)
-    if (prop === null) throw new IllegalArgumentException('No property for ' + id)
-    return prop.value
+  override getPropertyValue(Object id) { descriptorMap.get(id).value }
+
+  override isPropertySet(Object id) { descriptorMap.get(id).propertySet }
+
+  override resetPropertyValue(Object id) { descriptorMap.get(id).resetPropertyValue }
+
+  override setPropertyValue(Object id, Object value) { descriptorMap.get(id).value = value }
+
+  private def static GpenPropertyDescriptor descriptorFor(PropAccessor pa) {
+    if (!pa.options.readonly) {
+      if (pa.type == String) {
+        if (pa.options.polilines) return new DescriptorPolilies(pa)
+        return new DescriptorStr(pa)
+      }
+      if (pa.options.polilines) throw new RuntimeException('Polilines may be only for string field')
+    }
+    
+    return new DescriptorRo(pa)
   }
-
-  override isPropertySet(Object id) { false }
-
-  override resetPropertyValue(Object id) {}
-
-  override setPropertyValue(Object id, Object value) {}
 }

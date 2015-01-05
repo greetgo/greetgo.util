@@ -1,16 +1,16 @@
 package kz.greepto.gpen.editors.gpen.prop.sheet
 
-import org.eclipse.ui.views.properties.PropertyDescriptor
 import kz.greepto.gpen.editors.gpen.prop.PropAccessor
+import org.eclipse.ui.views.properties.TextPropertyDescriptor
 
-class DescriptorRo extends PropertyDescriptor implements GpenPropertyDescriptor {
+class DescriptorStr extends TextPropertyDescriptor implements GpenPropertyDescriptor {
 
   val PropAccessor pa
 
   new(PropAccessor pa) {
     super(pa.name, pa.name)
     this.pa = pa
-    category = 'RO'
+    category = 'Basic'
   }
 
   override getValue() { pa.value }
@@ -19,5 +19,5 @@ class DescriptorRo extends PropertyDescriptor implements GpenPropertyDescriptor 
 
   override resetPropertyValue() {}
 
-  override setValue(Object value) {}
+  override setValue(Object value) { pa.value = value }
 }

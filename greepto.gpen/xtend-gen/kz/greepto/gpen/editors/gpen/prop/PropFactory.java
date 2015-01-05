@@ -1,6 +1,7 @@
 package kz.greepto.gpen.editors.gpen.prop;
 
 import com.google.common.base.Objects;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -13,6 +14,7 @@ import kz.greepto.gpen.editors.gpen.action.Oper;
 import kz.greepto.gpen.editors.gpen.action.OperGroup;
 import kz.greepto.gpen.editors.gpen.action.OperModify;
 import kz.greepto.gpen.editors.gpen.prop.NoGetter;
+import kz.greepto.gpen.editors.gpen.prop.Polilines;
 import kz.greepto.gpen.editors.gpen.prop.PropAccessor;
 import kz.greepto.gpen.editors.gpen.prop.PropList;
 import kz.greepto.gpen.editors.gpen.prop.PropOptions;
@@ -181,6 +183,9 @@ public class PropFactory {
       if (this.skip) {
         sb.append(" SKIPPED");
       }
+      if (this.polilines) {
+        sb.append(" POLILINES");
+      }
       String _simpleName = this.type.getSimpleName();
       String _plus = (" : " + _simpleName);
       sb.append(_plus);
@@ -191,9 +196,11 @@ public class PropFactory {
       return this.getter.getValue(this.object);
     }
     
+    private boolean polilines = false;
+    
     private final PropOptions options = new PropOptions() {
-      public boolean isBig() {
-        return false;
+      public boolean isPolilines() {
+        return AccessorInfo.this.polilines;
       }
       
       public boolean isReadonly() {
@@ -709,41 +716,58 @@ public class PropFactory {
     };
   }
   
-  private static boolean readSetterOptions(final PropFactory.AccessorInfo info, final Method method) {
+  private static void readSetterOptions(final PropFactory.AccessorInfo info, final Method method) {
     Skip _annotation = method.<Skip>getAnnotation(Skip.class);
     boolean _notEquals = (!Objects.equal(_annotation, null));
-    return info.skip = _notEquals;
+    info.skip = _notEquals;
+    PropFactory.readPolilines(info, method, false);
   }
   
-  private static boolean readFieldOptions(final PropFactory.AccessorInfo info, final Field field) {
-    boolean _xblockexpression = false;
-    {
-      Skip _annotation = field.<Skip>getAnnotation(Skip.class);
-      boolean _notEquals = (!Objects.equal(_annotation, null));
-      info.skip = _notEquals;
-      int _modifiers = field.getModifiers();
-      boolean _isFinal = Modifier.isFinal(_modifiers);
-      _xblockexpression = info.fin = _isFinal;
+  private static void readFieldOptions(final PropFactory.AccessorInfo info, final Field field) {
+    Skip _annotation = field.<Skip>getAnnotation(Skip.class);
+    boolean _notEquals = (!Objects.equal(_annotation, null));
+    info.skip = _notEquals;
+    int _modifiers = field.getModifiers();
+    boolean _isFinal = Modifier.isFinal(_modifiers);
+    info.fin = _isFinal;
+    PropFactory.readPolilines(info, field, true);
+  }
+  
+  private static void readGetterOptions(final PropFactory.AccessorInfo info, final Method method) {
+    Skip _annotation = method.<Skip>getAnnotation(Skip.class);
+    boolean _notEquals = (!Objects.equal(_annotation, null));
+    info.skip = _notEquals;
+    PropFactory.readPolilines(info, method, true);
+  }
+  
+  public static void readPolilines(final PropFactory.AccessorInfo info, final AccessibleObject ao, final boolean force) {
+    boolean _and = false;
+    boolean _isPolilines = info.options.isPolilines();
+    if (!_isPolilines) {
+      _and = false;
+    } else {
+      _and = (!force);
     }
-    return _xblockexpression;
-  }
-  
-  private static boolean readGetterOptions(final PropFactory.AccessorInfo info, final Method method) {
-    Skip _annotation = method.<Skip>getAnnotation(Skip.class);
-    boolean _notEquals = (!Objects.equal(_annotation, null));
-    return info.skip = _notEquals;
+    if (_and) {
+      return;
+    }
+    Polilines _annotation = ao.<Polilines>getAnnotation(Polilines.class);
+    boolean _tripleNotEquals = (_annotation != null);
+    if (_tripleNotEquals) {
+      info.polilines = true;
+    }
   }
   
   private static PropOptions plusOptions(final PropOptions x, final PropOptions y) {
     return new PropOptions() {
-      public boolean isBig() {
+      public boolean isPolilines() {
         boolean _or = false;
-        boolean _isBig = x.isBig();
-        if (_isBig) {
+        boolean _isPolilines = x.isPolilines();
+        if (_isPolilines) {
           _or = true;
         } else {
-          boolean _isBig_1 = y.isBig();
-          _or = _isBig_1;
+          boolean _isPolilines_1 = y.isPolilines();
+          _or = _isPolilines_1;
         }
         return _or;
       }
