@@ -8,4 +8,6 @@ abstract class Oper {
   def void cancel(Scene scene)
 
   def String getDisplayStr()
+
+  def Oper insteed(Oper oper) { null }
 }

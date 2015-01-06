@@ -9,10 +9,12 @@ import kz.greepto.gpen.drawport.Rect
 import kz.greepto.gpen.drawport.Vec2
 import kz.greepto.gpen.drawport.swt.DrawPortSwt
 import kz.greepto.gpen.drawport.swt.DrawableGcSource
+import kz.greepto.gpen.editors.gpen.action.GpenOperation
 import kz.greepto.gpen.editors.gpen.action.Oper
-import kz.greepto.gpen.editors.gpen.action.UndoableOperation
 import kz.greepto.gpen.editors.gpen.model.IdFigure
 import kz.greepto.gpen.editors.gpen.model.Scene
+import kz.greepto.gpen.editors.gpen.model.paint.DraggingThing
+import kz.greepto.gpen.editors.gpen.model.paint.MoveDragging
 import kz.greepto.gpen.editors.gpen.model.paint.PaintResult
 import kz.greepto.gpen.editors.gpen.model.paint.SelChecker
 import kz.greepto.gpen.editors.gpen.model.visitor.Hit
@@ -38,8 +40,6 @@ import org.eclipse.swt.events.MouseTrackListener
 import org.eclipse.swt.events.PaintEvent
 import org.eclipse.swt.widgets.Canvas
 import org.eclipse.swt.widgets.Composite
-import kz.greepto.gpen.editors.gpen.model.paint.DraggingThing
-import kz.greepto.gpen.editors.gpen.model.paint.MoveDragging
 
 class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, MouseTrackListener {
   val MOVE_OFFSET = 3.0
@@ -86,20 +86,37 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     override applyOper(Oper oper) {
       if(oper === null) return;
 
-      var op = new UndoableOperation(oper, scene) [
-        redraw
-        changeSceneHandlerList.fire
-      ]
-      op.addContext(undoContext)
-
       //var ophist = PlatformUI.getWorkbench().operationSupport.operationHistory
       var ophist = OperationHistoryFactory.getOperationHistory()
       if (ophist.getLimit(undoContext) < 2000) {
         ophist.setLimit(undoContext, 2000)
       }
-      ophist.execute(op, null, null)
+
+      var lastUndoOp = ophist.getUndoOperation(undoContext)
+      if (lastUndoOp instanceof GpenOperation) {
+        var op = lastUndoOp as GpenOperation
+        var insteedOper = op.oper.insteed(oper)
+        if (insteedOper !== null) {
+          op.simpleUndo
+          ophist.replaceOperation(lastUndoOp, #[])
+          ophist.execute(gpenOper(insteedOper), null, null)
+          redraw
+          return
+        }
+      }
+
+      ophist.execute(gpenOper(oper), null, null)
 
       redraw
+    }
+
+    def GpenOperation gpenOper(Oper oper) {
+      var ret = new GpenOperation(oper, scene) [
+        redraw
+        changeSceneHandlerList.fire
+      ]
+      ret.addContext(undoContext)
+      return ret
     }
 
     override addChangeHandler(Handler handler) {

@@ -11,15 +11,15 @@ import org.eclipse.core.runtime.IStatus
 
 import static kz.greepto.gpen.Activator.PLUGIN_ID
 
-class UndoableOperation extends AbstractOperation {
+class GpenOperation extends AbstractOperation {
 
-  val Oper action
+  public val Oper oper
   val Scene scene
   val Repainter repainter
 
-  new(Oper action, Scene scene, Repainter repainter) {
-    super(action.displayStr ?: action.class.simpleName)
-    this.action = action
+  new(Oper oper, Scene scene, Repainter repainter) {
+    super(oper.displayStr ?: oper.class.simpleName)
+    this.oper = oper
     this.scene = scene
     this.repainter = repainter
   }
@@ -27,15 +27,15 @@ class UndoableOperation extends AbstractOperation {
   override dispose() {}
 
   override execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
-    doit[action.apply(scene); repainter.repaint]
+    doit[oper.apply(scene); repainter.repaint]
   }
 
   override getLabel() {
-    return action.displayStr
+    return oper.displayStr
   }
 
   override redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
-    doit[action.apply(scene); repainter.repaint]
+    doit[oper.apply(scene); repainter.repaint]
   }
 
   private def IStatus doit(Runnable runnable) {
@@ -54,6 +54,10 @@ class UndoableOperation extends AbstractOperation {
   }
 
   override undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
-    doit[action.cancel(scene); repainter.repaint]
+    doit[oper.cancel(scene); repainter.repaint]
+  }
+
+  def void simpleUndo() {
+    oper.cancel(scene)
   }
 }

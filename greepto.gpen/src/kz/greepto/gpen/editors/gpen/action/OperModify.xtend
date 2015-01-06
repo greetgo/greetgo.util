@@ -37,4 +37,15 @@ class OperModify extends Oper {
     if(displayStr == null) return "Modify " + setter.name + " = " + newValue;
     return displayStr
   }
+
+  override insteed(Oper oper) {
+    if (!(oper instanceof OperModify)) return null
+    var a = oper as OperModify
+
+    if (setter != a.setter) return null
+    if (id != a.id) return null
+
+    return a
+  }
+
 }

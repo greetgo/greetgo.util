@@ -26,4 +26,21 @@ class OperGroup extends Oper {
   override getDisplayStr() {
     return displayStr
   }
+
+  override insteed(Oper oper) {
+    if (!(oper instanceof OperGroup)) {
+      if(group.size !== 1) return null
+      return group.get(0).insteed(oper)
+    }
+    var a = oper as OperGroup
+    if(group.size != a.group.size) return null
+    if(group.size == 0) return null
+    val List<Oper> newList = new ArrayList
+    for (var i = 0, var C = group.size; i < C; i++) {
+      var newOp = group.get(i).insteed(a.group.get(i))
+      if (newOp === null) return null
+      newList += newOp
+    }
+    return new OperGroup(newList, displayStr)
+  }
 }
