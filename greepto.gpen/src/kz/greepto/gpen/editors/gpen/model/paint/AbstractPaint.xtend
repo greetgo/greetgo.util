@@ -94,7 +94,7 @@ abstract class AbstractPaint implements PaintFigure {
 
   protected def PaintResult modiPosition(Vec2 mouseDownedAt, Rect rect, PointFigure figure) {
     new PaintResult() {
-      override getKursor() { Kursor.SIZEALL }
+      override getKursor() { Kursor.ARROW }
 
       override getPlace() { rect }
 

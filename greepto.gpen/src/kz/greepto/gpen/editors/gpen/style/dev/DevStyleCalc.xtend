@@ -70,6 +70,7 @@ class DevStyleCalc implements StyleCalc {
   override calcForTable(Table table, PaintStatus ps) {
     val ret = new TableStyle
     ret.focusColor = Kolor.GRAY
+    ret.bgColor = Kolor.WHITE
 
     ret.headerFont = FontDef.arial.h(14).b
     ret.contentFont = FontDef.arial.h(14)

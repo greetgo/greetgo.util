@@ -161,7 +161,7 @@ public abstract class AbstractPaint implements PaintFigure {
     
     return new __AbstractPaint_2() {
       public Kursor getKursor() {
-        return Kursor.SIZEALL;
+        return Kursor.ARROW;
       }
       
       public Rect getPlace() {

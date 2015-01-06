@@ -30,5 +30,5 @@ class ColorManager {
     return fromRGB(new RGB(red, green, blue))
   }
 
-  def from(Kolor kolor) { rgb(kolor.red, kolor.green, kolor.blue) }
+  def from(Kolor kolor) { rgb(kolor?.red, kolor?.green, kolor?.blue) }
 }

@@ -2,16 +2,24 @@ package kz.greepto.gpen.editors.gpen.model.paint
 
 import java.util.ArrayList
 import java.util.List
+import kz.greepto.gpen.drawport.DrawPort
 import kz.greepto.gpen.drawport.FontDef
 import kz.greepto.gpen.drawport.Kolor
+import kz.greepto.gpen.drawport.Kursor
 import kz.greepto.gpen.drawport.Rect
 import kz.greepto.gpen.drawport.Size
 import kz.greepto.gpen.drawport.Vec2
 import kz.greepto.gpen.editors.gpen.model.Table
+import kz.greepto.gpen.editors.gpen.prop.ValueSetter
 import kz.greepto.gpen.editors.gpen.style.PaintStatus
 import kz.greepto.gpen.editors.gpen.style.TableStyle
 
+import static kz.greepto.gpen.editors.gpen.model.paint.PaintTable.*
+import kz.greepto.gpen.editors.gpen.action.OperModify
+
 class PaintTable extends AbstractPaint {
+  private static val SEP_WIDTH = 2
+  private static val MIN_COL_WIDTH = 50
   Table table
 
   new(Table table) {
@@ -98,11 +106,17 @@ class PaintTable extends AbstractPaint {
 
     dp.font = calc.contentFont
 
+    dp.style.background = calc.bgColor
+
+    dp.from(table.rect).fill
+
     dp.style.foreground = calc.borderColor
 
     var p = table.point.copy
 
     var lines = extractLines(table)
+
+    var tableHeight = 0
 
     for (line : lines) {
       var max = 0
@@ -110,6 +124,7 @@ class PaintTable extends AbstractPaint {
         var h = calcCellHeight(cell, line, calc)
         if(max < h) max = h
       }
+      tableHeight += max
       for (cell : line.cellList) {
         cell.height = max
       }
@@ -133,10 +148,82 @@ class PaintTable extends AbstractPaint {
       drawAroundFocus(table.rect)
     }
 
+    if (tableHeight > 0) {
+      var line = lines.get(0)
+      var left = 0
+      var colIndex = -1
+      for (cell : line.cellList) {
+        left += cell.width
+        colIndex++
+        var x = table.x + left - 1
+        var y = table.y - 1
+        dp.style.foreground = Kolor.CYAN
+        dp.style.background = Kolor.CYAN
+        var r = Rect.from(x - SEP_WIDTH, y, 2 * SEP_WIDTH + 1, tableHeight + 1)
+        if (r.contains(mouse)) {
+          dp.from(r).draw
+          return modiColWidth(colIndex, Vec2.from(x, y), tableHeight, table.rect, mouse)
+        }
+      }
+    }
+
     return modiBounds(mouse, table.rect, table)
   }
 
-  def static List<Line> extractLines(Table table) {
+  private def PaintResult modiColWidth(int colIndex, Vec2 from, int height, Rect placeArg, Vec2 mouseDownedAt) {
+    return new PaintResult() {
+      override getPlace() { placeArg }
+
+      override isHasOper() { true }
+
+      override createOper(Vec2 mouseMovedTo) {
+        var d = mouseMovedTo - mouseDownedAt
+        if(d.x == 0) return null
+        var nowWidths = new ArrayList<Integer>
+        if (table.colWidths != null) {
+          for (str : table.colWidths.split('\\|')) {
+            try {
+              nowWidths += Integer.valueOf(str)
+            } catch (NumberFormatException e) {
+              nowWidths += MIN_COL_WIDTH
+            }
+          }
+        }
+        while (nowWidths.size <= colIndex) {
+          nowWidths += MIN_COL_WIDTH
+        }
+        var width = nowWidths.get(colIndex)
+        width = width + d.x
+        if(width < MIN_COL_WIDTH) width = MIN_COL_WIDTH
+        nowWidths.set(colIndex, width)
+
+        return new OperModify(COL_WIDTHS_SETTER, nowWidths.join('|'), table.id)
+      }
+
+      override getKursor() { Kursor.SIZEWE }
+
+      override paintDrag(DrawPort dp, Vec2 mouseMovedTo) {
+        var d = mouseMovedTo - mouseDownedAt
+        dp.style.foreground = Kolor.GRAY
+        dp.from(from + #[d.x, 0]).shift(0, height).line
+      }
+    }
+  }
+
+  static val COL_WIDTHS_SETTER = new ValueSetter() {
+    override setValue(Object object, Object value) {
+      var t = object as Table
+      var ret = t.colWidths
+      t.colWidths = value as String
+      return ret
+    }
+
+    override getType() { String }
+
+    override getName() { 'colWidths' }
+  }
+
+  private def static List<Line> extractLines(Table table) {
 
     var ret = newArrayList()
 
@@ -157,7 +244,6 @@ class PaintTable extends AbstractPaint {
         var cell = new Cell
         line.cellList += cell
         cell.applyText(cellStr)
-
       }
     }
 
@@ -179,20 +265,18 @@ class PaintTable extends AbstractPaint {
       }
     }
 
-    val defWidth = 50
-
     val List<Integer> widths = new ArrayList
     for (str : (table.colWidths ?: '').split('\\|')) {
       try {
         widths += Integer.valueOf(str)
       } catch (NumberFormatException e) {
-        widths += defWidth
+        widths += PaintTable.MIN_COL_WIDTH
       }
     }
 
     if (widths.size < colCount) {
       for (var i = 0, var C = colCount - widths.size; i < C; i++) {
-        widths += defWidth
+        widths += PaintTable.MIN_COL_WIDTH
       }
     }
 
@@ -205,7 +289,7 @@ class PaintTable extends AbstractPaint {
     return ret
   }
 
-  def int calcCellHeight(Cell cell, Line line, TableStyle ts) {
+  private def int calcCellHeight(Cell cell, Line line, TableStyle ts) {
     dp.font = line.extractFont(ts)
     var textSize = dp.str(cell.text).size
 
@@ -214,7 +298,7 @@ class PaintTable extends AbstractPaint {
     return drawSize.height
   }
 
-  def void drawCell(TableStyle ts, Rect tableRect, Vec2 p, Cell cell, Line line) {
+  private def void drawCell(TableStyle ts, Rect tableRect, Vec2 p, Cell cell, Line line) {
 
     dp.font = line.extractFont(ts)
     var textSize = dp.str(cell.text).size
