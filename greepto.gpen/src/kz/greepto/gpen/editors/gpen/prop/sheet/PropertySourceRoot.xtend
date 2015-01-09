@@ -1,7 +1,6 @@
 package kz.greepto.gpen.editors.gpen.prop.sheet
 
 import java.util.Map
-import kz.greepto.gpen.editors.gpen.GpenSelection
 import kz.greepto.gpen.editors.gpen.prop.PropAccessor
 import kz.greepto.gpen.editors.gpen.prop.PropList
 import org.eclipse.ui.views.properties.IPropertySource
@@ -12,21 +11,16 @@ class PropertySourceRoot implements IPropertySource {
     return this
   }
 
-  val GpenSelection selection
   var GpenPropertyDescriptor[] propertyDescriptors = #[]
-  var PropList propList = PropList.empty
+  val PropList propList
   val Map<Object, GpenPropertyDescriptor> descriptorMap = newHashMap
 
-  new(GpenSelection selection) {
-    this.selection = selection
+  new(PropList propList) {
+    this.propList=propList
     calcDescriptors
   }
 
   def void calcDescriptors() {
-    if(selection.ids.size == 0) return;
-
-    propList = selection.propList
-
     propertyDescriptors = propList.map[descriptorFor]
 
     for (gpd : propertyDescriptors) {

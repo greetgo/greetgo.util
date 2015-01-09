@@ -1,7 +1,6 @@
 package kz.greepto.gpen.editors.gpen.prop.sheet;
 
 import java.util.Map;
-import kz.greepto.gpen.editors.gpen.GpenSelection;
 import kz.greepto.gpen.editors.gpen.prop.PropAccessor;
 import kz.greepto.gpen.editors.gpen.prop.PropList;
 import kz.greepto.gpen.editors.gpen.prop.PropOptions;
@@ -23,27 +22,18 @@ public class PropertySourceRoot implements IPropertySource {
     return this;
   }
   
-  private final GpenSelection selection;
-  
   private GpenPropertyDescriptor[] propertyDescriptors = {};
   
-  private PropList propList = PropList.empty();
+  private final PropList propList;
   
   private final Map<Object, GpenPropertyDescriptor> descriptorMap = CollectionLiterals.<Object, GpenPropertyDescriptor>newHashMap();
   
-  public PropertySourceRoot(final GpenSelection selection) {
-    this.selection = selection;
+  public PropertySourceRoot(final PropList propList) {
+    this.propList = propList;
     this.calcDescriptors();
   }
   
   public void calcDescriptors() {
-    int _size = this.selection.ids.size();
-    boolean _equals = (_size == 0);
-    if (_equals) {
-      return;
-    }
-    PropList _propList = this.selection.getPropList();
-    this.propList = _propList;
     final Function1<PropAccessor, GpenPropertyDescriptor> _function = new Function1<PropAccessor, GpenPropertyDescriptor>() {
       public GpenPropertyDescriptor apply(final PropAccessor it) {
         return PropertySourceRoot.descriptorFor(it);

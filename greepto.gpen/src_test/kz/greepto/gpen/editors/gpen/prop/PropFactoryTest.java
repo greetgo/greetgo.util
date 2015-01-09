@@ -3,9 +3,11 @@ package kz.greepto.gpen.editors.gpen.prop;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 import kz.greepto.gpen.editors.gpen.action.Oper;
 import kz.greepto.gpen.editors.gpen.action.OperModify;
+import kz.greepto.gpen.editors.gpen.model.IdFigure;
 import kz.greepto.gpen.editors.gpen.model.Label;
 import kz.greepto.gpen.editors.gpen.model.Table;
 import kz.greepto.gpen.util.Handler;
@@ -56,6 +58,16 @@ public class PropFactoryTest {
     @Override
     public HandlerKiller addChangeHandler(Handler handler) {
       return handlerList.add(handler);
+    }
+    
+    @Override
+    public IdFigure findByIdOrDie(String id) {
+      throw new UnsupportedOperationException("findByIdOrDie");
+    }
+    
+    @Override
+    public List<String> all() {
+      throw new UnsupportedOperationException("all");
     }
     
   }

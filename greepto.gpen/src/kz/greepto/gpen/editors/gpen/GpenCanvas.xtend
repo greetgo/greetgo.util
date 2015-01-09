@@ -30,6 +30,8 @@ import kz.greepto.gpen.util.HandlerKiller
 import kz.greepto.gpen.util.HandlerList
 import org.eclipse.core.commands.operations.IUndoContext
 import org.eclipse.core.commands.operations.OperationHistoryFactory
+import org.eclipse.jface.viewers.IStructuredSelection
+import org.eclipse.jface.viewers.StructuredSelection
 import org.eclipse.swt.SWT
 import org.eclipse.swt.events.FocusEvent
 import org.eclipse.swt.events.FocusListener
@@ -58,11 +60,7 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     return figureIdsAtSelRect.contains(figure.id)
   ]
 
-  def GpenSelection getSelection() {
-    var ret = new GpenSelection(scene, sceneWorker)
-    ret.ids += selIdList
-    return ret
-  }
+  def IStructuredSelection getSelection() { new StructuredSelection(selIdList) }
 
   def void select(List<String> ids) {
     selIdList.clear
@@ -78,10 +76,14 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     return changeSceneHandlerList.add(handler)
   }
 
-  val SceneWorker sceneWorker = new SceneWorker() {
+  public val SceneWorker sceneWorker = new SceneWorker() {
     override takeId(Object object) {
       return (object as IdFigure).id
     }
+
+    override findByIdOrDie(String id) { scene.findByIdOrDie(id) }
+
+    override all() { scene.list.map[id] }
 
     override applyOper(Oper oper) {
       if(oper === null) return;
@@ -275,7 +277,6 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
 
     if (Mouse.LMB(e)) {
 
-      //TODO multi move
       if (selIdList.size > 1) {
         var dp = createDP
         try {

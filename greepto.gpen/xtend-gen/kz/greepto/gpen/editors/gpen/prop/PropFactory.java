@@ -396,9 +396,9 @@ public class PropFactory {
     return PropList.from(_map);
   }
   
-  public static PropList parseObjectList(final Collection<Object> list, final SceneWorker sceneWorker) {
+  public static <T extends Object> PropList parseObjectList(final Collection<T> list, final SceneWorker sceneWorker) {
     PropList ret = null;
-    for (final Object o : list) {
+    for (final T o : list) {
       {
         PropList u = PropFactory.parseObject(o, sceneWorker);
         boolean _tripleEquals = (ret == null);

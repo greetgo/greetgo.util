@@ -1,25 +1,101 @@
 package kz.greepto.gpen.editors.gpen.outline
 
-import org.eclipse.swt.SWT
+import kz.greepto.gpen.editors.gpen.GpenEditor
+import kz.greepto.gpen.editors.gpen.model.IdFigure
+import kz.greepto.gpen.editors.gpen.model.PointFigure
+import kz.greepto.gpen.editors.gpen.prop.SceneWorker
+import org.eclipse.jface.viewers.ISelection
+import org.eclipse.jface.viewers.ITreeContentProvider
+import org.eclipse.jface.viewers.LabelProvider
+import org.eclipse.jface.viewers.SelectionChangedEvent
+import org.eclipse.jface.viewers.Viewer
 import org.eclipse.swt.widgets.Composite
-import org.eclipse.swt.widgets.Label
+import org.eclipse.ui.ISelectionListener
+import org.eclipse.ui.IWorkbenchPart
+import org.eclipse.ui.views.contentoutline.ContentOutline
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage
 
 class GpenContentOutlinePage extends ContentOutlinePage {
+  public SceneWorker sceneWorker
 
-  override createControl(Composite parent) {
+  new(SceneWorker sceneWorker) {
+    this.sceneWorker = sceneWorker
+  }
 
-    println('++++++++++++++++asd')
+  val contentProvider = new ITreeContentProvider() {
+    override getChildren(Object parentElement) { #[] }
 
-    if ("1a".equals("a")) {
-      new Label(parent, SWT.NONE).text = 'dsadsadad'
-      return;
+    override getElements(Object inputElement) {
+      if(sceneWorker === null) return #[]
+      return sceneWorker.all
     }
 
+    override getParent(Object element) { null }
+
+    override hasChildren(Object element) { false }
+
+    override dispose() {}
+
+    override inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+  }
+
+  val labelProvider = new LabelProvider() {
+
+    override getText(Object element) {
+      if(sceneWorker === null) return '' + element
+      if(!(element instanceof String)) return ''
+      var id = element as String
+      return getLabel(sceneWorker.findByIdOrDie(id))
+    }
+
+  }
+
+  boolean quietSelectionChange = false
+
+  val ISelectionListener listener = [ IWorkbenchPart part, ISelection selection |
+    if (part instanceof GpenEditor) {
+      sceneWorker = (part as GpenEditor).sceneWorker
+    }
+    if(part instanceof ContentOutline) return;
+    quietSelectionChange = true
+    try {
+      treeViewer.setSelection(selection, true)
+    } finally {
+      quietSelectionChange = false
+    }
+  ]
+
+  override createControl(Composite parent) {
     super.createControl(parent)
-    treeViewer.contentProvider = new GpenOutlineContentProvider
-    treeViewer.labelProvider = new GpenOutlineLabelProvider
-    treeViewer.input = 'dsadsadad'
+    treeViewer.contentProvider = contentProvider
+    treeViewer.labelProvider = labelProvider
+
+    site.workbenchWindow.selectionService.addSelectionListener(listener)
+
+    refresh
+  }
+
+  override selectionChanged(SelectionChangedEvent event) {
+    if(quietSelectionChange) return;
+    super.selectionChanged(event)
+  }
+
+  override dispose() {
+    site.workbenchWindow.selectionService.removeSelectionListener(listener)
+    super.dispose()
+  }
+
+  def refresh() {
+    treeViewer.input = 'abra kadabra'
+  }
+
+  def String getLabel(IdFigure fig) {
+    if (fig instanceof PointFigure) {
+      var pfig = fig as PointFigure
+      return pfig.class.simpleName + ' ' + pfig.id + ' ' + pfig.point
+    }
+
+    return fig.class.simpleName + ' ' + fig.id
   }
 
 }

@@ -8,20 +8,25 @@ import kz.greepto.gpen.editors.gpen.model.Fig
 import kz.greepto.gpen.editors.gpen.model.Scene
 import kz.greepto.gpen.editors.gpen.model.Table
 import kz.greepto.gpen.editors.gpen.outline.GpenContentOutlinePage
+import kz.greepto.gpen.editors.gpen.prop.SceneWorker
 import kz.greepto.gpen.editors.gpen.prop.sheet.GpenPropertySheetPage
-import kz.greepto.gpen.editors.gpen.prop.sheet.GpenPropertySheetSourceProvider
 import kz.greepto.gpen.util.HandlerKiller
 import kz.greepto.gpen.util.StreamUtil
 import org.eclipse.core.commands.operations.IUndoContext
 import org.eclipse.core.commands.operations.ObjectUndoContext
 import org.eclipse.core.resources.IFile
 import org.eclipse.core.runtime.IProgressMonitor
+import org.eclipse.jface.viewers.ISelection
+import org.eclipse.jface.viewers.TreeSelection
 import org.eclipse.swt.widgets.Composite
 import org.eclipse.ui.IEditorInput
 import org.eclipse.ui.IEditorSite
+import org.eclipse.ui.ISelectionListener
+import org.eclipse.ui.IWorkbenchPart
 import org.eclipse.ui.PartInitException
 import org.eclipse.ui.operations.UndoRedoActionGroup
 import org.eclipse.ui.part.EditorPart
+import org.eclipse.ui.views.contentoutline.ContentOutline
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage
 import org.eclipse.ui.views.properties.IPropertySheetPage
 
@@ -34,9 +39,22 @@ class GpenEditor extends EditorPart {
 
   var IUndoContext undoContext
 
+  val ISelectionListener listener = [ IWorkbenchPart part, ISelection selection |
+    if (contents !== null && part instanceof ContentOutline && selection instanceof TreeSelection) {
+      val sel = selection as TreeSelection
+      val outline = part as ContentOutline
+      if (outline.currentPage === contentOutlinePage) {
+        contents.select(sel.iterator.toList)
+      }
+    }
+  ];
+
   override init(IEditorSite site, IEditorInput input) throws PartInitException {
     this.site = site
     this.input = input
+
+    site.workbenchWindow.selectionService.addSelectionListener(listener)
+    killers += [site.workbenchWindow.selectionService.removeSelectionListener(listener)]
 
     undoContext = new ObjectUndoContext(this)
 
@@ -96,6 +114,7 @@ class GpenEditor extends EditorPart {
 
   def sceneChanged() {
     if(propertySheetPage !== null) propertySheetPage.refresh
+    if(contentOutlinePage !== null) contentOutlinePage.refresh
   }
 
   override setFocus() {
@@ -107,7 +126,6 @@ class GpenEditor extends EditorPart {
   def IPropertySheetPage getPropertySheetPage() {
     if (propertySheetPage === null) {
       propertySheetPage = new GpenPropertySheetPage
-      propertySheetPage.propertySourceProvider = new GpenPropertySheetSourceProvider
     }
     return propertySheetPage
   }
@@ -116,9 +134,10 @@ class GpenEditor extends EditorPart {
 
   def IContentOutlinePage getContentOutlinePage() {
     if (contentOutlinePage === null) {
-      contentOutlinePage = new GpenContentOutlinePage
+      contentOutlinePage = new GpenContentOutlinePage(contents?.sceneWorker)
     }
     return contentOutlinePage
   }
 
+  def SceneWorker getSceneWorker() { contents?.sceneWorker }
 }

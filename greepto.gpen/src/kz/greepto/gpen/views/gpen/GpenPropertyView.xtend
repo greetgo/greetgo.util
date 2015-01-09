@@ -3,7 +3,6 @@ package kz.greepto.gpen.views.gpen;
 import java.util.ArrayList
 import java.util.LinkedList
 import java.util.List
-import kz.greepto.gpen.editors.gpen.GpenSelection
 import kz.greepto.gpen.editors.gpen.prop.PropAccessor
 import kz.greepto.gpen.util.HandlerKiller
 import org.eclipse.jface.viewers.ISelection
@@ -20,6 +19,10 @@ import org.eclipse.swt.widgets.Text
 import org.eclipse.ui.ISelectionListener
 import org.eclipse.ui.IWorkbenchPart
 import org.eclipse.ui.part.ViewPart
+import kz.greepto.gpen.editors.gpen.prop.SceneWorker
+import kz.greepto.gpen.editors.gpen.GpenEditor
+import kz.greepto.gpen.editors.gpen.prop.PropFactory
+import org.eclipse.jface.viewers.IStructuredSelection
 
 public class GpenPropertyView extends ViewPart {
   Composite parent
@@ -37,12 +40,17 @@ public class GpenPropertyView extends ViewPart {
     if(forFocus != null) forFocus.setFocus
   }
 
+  SceneWorker sceneWorker = null
+
   override void createPartControl(Composite parent) {
     this.parent = parent
 
     listener = [ IWorkbenchPart part, ISelection selection |
-      if (selection instanceof GpenSelection) {
-        setSelection(selection as GpenSelection)
+      if (part instanceof GpenEditor) {
+        sceneWorker = (part as GpenEditor).sceneWorker
+      }
+      if (sceneWorker !== null && selection instanceof IStructuredSelection) {
+        setSelection(selection as IStructuredSelection)
       } else {
         setSelection(null)
       }
@@ -60,12 +68,12 @@ public class GpenPropertyView extends ViewPart {
     super.dispose()
   }
 
-  def void setSelection(GpenSelection sel) {
+  def void setSelection(IStructuredSelection sel) {
     if(parent.disposed) return;
     parent.children.forEach[dispose]
     killAll
 
-    if (sel === null || sel.ids.size == 0) {
+    if (sceneWorker === null || sel === null || sel.empty) {
       var lab = new Label(parent, SWT.NONE)
       lab.text = 'Выделите элементы в Gpen Editor-е'
       parent.layout(true)
@@ -83,7 +91,11 @@ public class GpenPropertyView extends ViewPart {
     lay.numColumns = 3
     wall.layout = lay
 
-    for (prop : sel.propList) {
+
+    val list = sel.iterator.map[sceneWorker.findByIdOrDie(it)].toList
+    var propList = PropFactory.parseObjectList(list, sceneWorker)
+
+    for (prop : propList) {
       appendPropWidgets(wall, prop)
     }
 

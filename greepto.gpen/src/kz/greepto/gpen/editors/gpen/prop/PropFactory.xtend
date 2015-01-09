@@ -213,7 +213,7 @@ class PropFactory {
     return PropList.from(infoMap.values.filter[!skip].sort.map[postInit; it])
   }
 
-  def static PropList parseObjectList(Collection<Object> list, SceneWorker sceneWorker) {
+  def static <T> PropList parseObjectList(Collection<T> list, SceneWorker sceneWorker) {
     var PropList ret = null
 
     for (o : list) {

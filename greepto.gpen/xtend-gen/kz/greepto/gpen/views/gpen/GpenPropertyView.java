@@ -2,15 +2,20 @@ package kz.greepto.gpen.views.gpen;
 
 import com.google.common.base.Objects;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import kz.greepto.gpen.editors.gpen.GpenSelection;
+import kz.greepto.gpen.editors.gpen.GpenEditor;
+import kz.greepto.gpen.editors.gpen.model.IdFigure;
 import kz.greepto.gpen.editors.gpen.prop.PropAccessor;
+import kz.greepto.gpen.editors.gpen.prop.PropFactory;
 import kz.greepto.gpen.editors.gpen.prop.PropList;
 import kz.greepto.gpen.editors.gpen.prop.PropOptions;
+import kz.greepto.gpen.editors.gpen.prop.SceneWorker;
 import kz.greepto.gpen.util.Handler;
 import kz.greepto.gpen.util.HandlerKiller;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
@@ -33,7 +38,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
+import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
+import org.eclipse.xtext.xbase.lib.IteratorExtensions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
 @SuppressWarnings("all")
@@ -63,12 +70,25 @@ public class GpenPropertyView extends ViewPart {
     }
   }
   
+  private SceneWorker sceneWorker = null;
+  
   public void createPartControl(final Composite parent) {
     this.parent = parent;
     final ISelectionListener _function = new ISelectionListener() {
       public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
-        if ((selection instanceof GpenSelection)) {
-          GpenPropertyView.this.setSelection(((GpenSelection) selection));
+        if ((part instanceof GpenEditor)) {
+          SceneWorker _sceneWorker = ((GpenEditor) part).getSceneWorker();
+          GpenPropertyView.this.sceneWorker = _sceneWorker;
+        }
+        boolean _and = false;
+        boolean _tripleNotEquals = (GpenPropertyView.this.sceneWorker != null);
+        if (!_tripleNotEquals) {
+          _and = false;
+        } else {
+          _and = (selection instanceof IStructuredSelection);
+        }
+        if (_and) {
+          GpenPropertyView.this.setSelection(((IStructuredSelection) selection));
         } else {
           GpenPropertyView.this.setSelection(null);
         }
@@ -94,7 +114,7 @@ public class GpenPropertyView extends ViewPart {
     super.dispose();
   }
   
-  public void setSelection(final GpenSelection sel) {
+  public void setSelection(final IStructuredSelection sel) {
     boolean _isDisposed = this.parent.isDisposed();
     if (_isDisposed) {
       return;
@@ -108,13 +128,19 @@ public class GpenPropertyView extends ViewPart {
     IterableExtensions.<Control>forEach(((Iterable<Control>)Conversions.doWrapArray(_children)), _function);
     this.killAll();
     boolean _or = false;
-    boolean _tripleEquals = (sel == null);
+    boolean _or_1 = false;
+    boolean _tripleEquals = (this.sceneWorker == null);
     if (_tripleEquals) {
+      _or_1 = true;
+    } else {
+      boolean _tripleEquals_1 = (sel == null);
+      _or_1 = _tripleEquals_1;
+    }
+    if (_or_1) {
       _or = true;
     } else {
-      int _size = sel.ids.size();
-      boolean _equals = (_size == 0);
-      _or = _equals;
+      boolean _isEmpty = sel.isEmpty();
+      _or = _isEmpty;
     }
     if (_or) {
       Label lab = new Label(this.parent, SWT.NONE);
@@ -130,8 +156,16 @@ public class GpenPropertyView extends ViewPart {
     GridLayout lay = new GridLayout();
     lay.numColumns = 3;
     wall.setLayout(lay);
-    PropList _propList = sel.getPropList();
-    for (final PropAccessor prop : _propList) {
+    Iterator _iterator = sel.iterator();
+    final Function1<String, IdFigure> _function_1 = new Function1<String, IdFigure>() {
+      public IdFigure apply(final String it) {
+        return GpenPropertyView.this.sceneWorker.findByIdOrDie(it);
+      }
+    };
+    Iterator<IdFigure> _map = IteratorExtensions.<String, IdFigure>map(_iterator, _function_1);
+    final List<IdFigure> list = IteratorExtensions.<IdFigure>toList(_map);
+    PropList propList = PropFactory.<IdFigure>parseObjectList(list, this.sceneWorker);
+    for (final PropAccessor prop : propList) {
       this.appendPropWidgets(wall, prop);
     }
     {
