@@ -1,12 +1,9 @@
 package kz.greepto.gpen.editors.gpen.outline
 
 import kz.greepto.gpen.editors.gpen.GpenEditor
-import kz.greepto.gpen.editors.gpen.model.IdFigure
-import kz.greepto.gpen.editors.gpen.model.PointFigure
 import kz.greepto.gpen.editors.gpen.prop.SceneWorker
 import org.eclipse.jface.viewers.ISelection
 import org.eclipse.jface.viewers.ITreeContentProvider
-import org.eclipse.jface.viewers.LabelProvider
 import org.eclipse.jface.viewers.SelectionChangedEvent
 import org.eclipse.jface.viewers.Viewer
 import org.eclipse.swt.widgets.Composite
@@ -39,16 +36,7 @@ class GpenContentOutlinePage extends ContentOutlinePage {
     override inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
   }
 
-  val labelProvider = new LabelProvider() {
-
-    override getText(Object element) {
-      if(sceneWorker === null) return '' + element
-      if(!(element instanceof String)) return ''
-      var id = element as String
-      return getLabel(sceneWorker.findByIdOrDie(id))
-    }
-
-  }
+  val labelProvider = new GpenContentOutlineLabelProvider(this)
 
   boolean quietSelectionChange = false
 
@@ -87,15 +75,6 @@ class GpenContentOutlinePage extends ContentOutlinePage {
 
   def refresh() {
     treeViewer.input = 'abra kadabra'
-  }
-
-  def String getLabel(IdFigure fig) {
-    if (fig instanceof PointFigure) {
-      var pfig = fig as PointFigure
-      return pfig.class.simpleName + ' ' + pfig.id + ' ' + pfig.point
-    }
-
-    return fig.class.simpleName + ' ' + fig.id
   }
 
 }

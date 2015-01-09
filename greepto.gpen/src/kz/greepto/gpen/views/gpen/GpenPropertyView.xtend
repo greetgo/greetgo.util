@@ -23,6 +23,8 @@ import kz.greepto.gpen.editors.gpen.prop.SceneWorker
 import kz.greepto.gpen.editors.gpen.GpenEditor
 import kz.greepto.gpen.editors.gpen.prop.PropFactory
 import org.eclipse.jface.viewers.IStructuredSelection
+import org.eclipse.ui.views.contentoutline.ContentOutline
+import kz.greepto.gpen.editors.gpen.outline.GpenContentOutlinePage
 
 public class GpenPropertyView extends ViewPart {
   Composite parent
@@ -46,10 +48,20 @@ public class GpenPropertyView extends ViewPart {
     this.parent = parent
 
     listener = [ IWorkbenchPart part, ISelection selection |
+      var ok = false
       if (part instanceof GpenEditor) {
         sceneWorker = (part as GpenEditor).sceneWorker
+        ok = sceneWorker !== null
       }
-      if (sceneWorker !== null && selection instanceof IStructuredSelection) {
+      if (part instanceof ContentOutline) {
+        var out = part as ContentOutline
+        if (out.currentPage instanceof GpenContentOutlinePage) {
+          var page = out.currentPage as GpenContentOutlinePage
+          sceneWorker = page.sceneWorker
+          ok = sceneWorker !== null
+        }
+      }
+      if (ok && selection instanceof IStructuredSelection) {
         setSelection(selection as IStructuredSelection)
       } else {
         setSelection(null)
@@ -90,7 +102,6 @@ public class GpenPropertyView extends ViewPart {
     var lay = new GridLayout
     lay.numColumns = 3
     wall.layout = lay
-
 
     val list = sel.iterator.map[sceneWorker.findByIdOrDie(it)].toList
     var propList = PropFactory.parseObjectList(list, sceneWorker)

@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import kz.greepto.gpen.editors.gpen.GpenEditor;
 import kz.greepto.gpen.editors.gpen.model.IdFigure;
+import kz.greepto.gpen.editors.gpen.outline.GpenContentOutlinePage;
 import kz.greepto.gpen.editors.gpen.prop.PropAccessor;
 import kz.greepto.gpen.editors.gpen.prop.PropFactory;
 import kz.greepto.gpen.editors.gpen.prop.PropList;
@@ -35,7 +36,9 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.contentoutline.ContentOutline;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
@@ -76,13 +79,26 @@ public class GpenPropertyView extends ViewPart {
     this.parent = parent;
     final ISelectionListener _function = new ISelectionListener() {
       public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
+        boolean ok = false;
         if ((part instanceof GpenEditor)) {
           SceneWorker _sceneWorker = ((GpenEditor) part).getSceneWorker();
           GpenPropertyView.this.sceneWorker = _sceneWorker;
+          boolean _tripleNotEquals = (GpenPropertyView.this.sceneWorker != null);
+          ok = _tripleNotEquals;
+        }
+        if ((part instanceof ContentOutline)) {
+          ContentOutline out = ((ContentOutline) part);
+          IPage _currentPage = out.getCurrentPage();
+          if ((_currentPage instanceof GpenContentOutlinePage)) {
+            IPage _currentPage_1 = out.getCurrentPage();
+            GpenContentOutlinePage page = ((GpenContentOutlinePage) _currentPage_1);
+            GpenPropertyView.this.sceneWorker = page.sceneWorker;
+            boolean _tripleNotEquals_1 = (GpenPropertyView.this.sceneWorker != null);
+            ok = _tripleNotEquals_1;
+          }
         }
         boolean _and = false;
-        boolean _tripleNotEquals = (GpenPropertyView.this.sceneWorker != null);
-        if (!_tripleNotEquals) {
+        if (!ok) {
           _and = false;
         } else {
           _and = (selection instanceof IStructuredSelection);
