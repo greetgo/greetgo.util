@@ -9,7 +9,7 @@ import kz.greepto.gpen.editors.gpen.model.Scene
 class Hit {
   val Scene scene
 
-  new(Scene scene) {
+  private new(Scene scene) {
     this.scene = scene
   }
 

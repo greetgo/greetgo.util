@@ -18,7 +18,7 @@ class GpenContentOutlineLabelProvider extends LabelProvider implements IColorPro
     if(page.sceneWorker === null) return '' + element
     if(!(element instanceof String)) return ''
     var id = element as String
-    return page.sceneWorker.findByIdOrDie(id).visit(new OutlineDisplayStrVisitor)
+    return page.sceneWorker.findByIdOrDie(id).visit(OutlineDisplayStrVisitor.INST)
   }
 
   override getBackground(Object element) {

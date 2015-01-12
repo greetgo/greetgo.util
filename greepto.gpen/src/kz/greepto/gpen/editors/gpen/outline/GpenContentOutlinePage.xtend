@@ -11,6 +11,7 @@ import org.eclipse.ui.ISelectionListener
 import org.eclipse.ui.IWorkbenchPart
 import org.eclipse.ui.views.contentoutline.ContentOutline
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage
+import org.eclipse.ui.views.properties.PropertySheet
 
 class GpenContentOutlinePage extends ContentOutlinePage {
   public SceneWorker sceneWorker
@@ -45,6 +46,7 @@ class GpenContentOutlinePage extends ContentOutlinePage {
       sceneWorker = (part as GpenEditor).sceneWorker
     }
     if(part instanceof ContentOutline) return;
+    if(part instanceof PropertySheet) return;
     quietSelectionChange = true
     try {
       treeViewer.setSelection(selection, true)

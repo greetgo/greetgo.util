@@ -5,6 +5,7 @@ abstract class IdFigure extends Figure {
   public final String id
 
   public boolean disabled = false
+  public boolean freeze = false
 
   new(String id) {
     this.id = id

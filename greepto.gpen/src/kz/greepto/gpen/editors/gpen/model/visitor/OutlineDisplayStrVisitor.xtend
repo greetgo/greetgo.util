@@ -11,6 +11,10 @@ import kz.greepto.gpen.editors.gpen.model.PointFigure
 
 class OutlineDisplayStrVisitor  implements FigureVisitor<String> {
 
+  private new() {}
+
+  public static val OutlineDisplayStrVisitor INST = new OutlineDisplayStrVisitor
+
   override visitScene(Scene scene) {
     '' + scene
   }
