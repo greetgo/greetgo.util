@@ -4,6 +4,7 @@ import kz.greepto.gpen.editors.gpen.model.visitor.OutlineDisplayStrVisitor
 import kz.greepto.gpen.util.ColorManager
 import org.eclipse.jface.viewers.IColorProvider
 import org.eclipse.jface.viewers.LabelProvider
+import kz.greepto.gpen.drawport.Kolor
 
 class GpenContentOutlineLabelProvider extends LabelProvider implements IColorProvider {
   val GpenContentOutlinePage page
@@ -22,11 +23,15 @@ class GpenContentOutlineLabelProvider extends LabelProvider implements IColorPro
   }
 
   override getBackground(Object element) {
-    null
+    null//colors.from(Kolor.GRAY)
   }
 
   override getForeground(Object element) {
-    null //colors.from(Kolor.GRAY)
+    if(page.sceneWorker === null) return null
+    if(!(element instanceof String)) return null
+    var id = element as String
+    var fig = page.sceneWorker.findByIdOrDie(id)
+    if(fig.freeze) colors.from(Kolor.GRAY) else null
   }
 
   override dispose() {

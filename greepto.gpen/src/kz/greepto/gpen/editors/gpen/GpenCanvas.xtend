@@ -314,7 +314,7 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
       var dp = createDP
       try {
         var placer = new VisitorPlacer(dp, styleCalc, selChecker)
-        var hitted = Hit.on(scene).with(placer).to(mouse)
+        var hitted = Hit.on(scene).with(placer).to(mouse).filter[!freeze]
         if (hitted.size === 0) {
           selectorFrom = mouse.copy
           redraw
@@ -407,7 +407,7 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     var dp = createDP
     try {
       val placer = new VisitorPlacer(dp, styleCalc, null)
-      return scene.list.filter[selRect.at(visit(placer))].map[id].toList
+      return scene.list.filter[!freeze && selRect.at(visit(placer))].map[id].toList
     } finally {
       dp.dispose
     }
@@ -418,7 +418,7 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     try {
       var placer = new VisitorPlacer(dp, styleCalc, selChecker)
       selIdList.clear
-      Hit.on(scene).with(placer).to(mouse).forEach[selIdList += id]
+      Hit.on(scene).with(placer).to(mouse).filter[!freeze].forEach[selIdList += id]
     } finally {
       dp.dispose
     }

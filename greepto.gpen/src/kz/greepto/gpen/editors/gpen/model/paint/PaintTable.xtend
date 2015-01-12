@@ -101,7 +101,10 @@ class PaintTable extends AbstractPaint {
   override PaintResult work(Vec2 mouse) {
     if(mouse === null) return simpleRect(table.rect)
 
-    var ps = PaintStatus.from(table.rect.contains(mouse), table.sel)
+    var ps = new PaintStatus
+    ps.selected = isSel(table)
+    ps.hover = !table.freeze && table.rect.contains(mouse)
+    ps.disabled = table.disabled
     var calc = styleCalc.calcForTable(table, ps)
 
     dp.font = calc.contentFont
@@ -147,6 +150,8 @@ class PaintTable extends AbstractPaint {
       dp.style.foreground = calc.focusColor
       drawAroundFocus(table.rect)
     }
+
+    if (table.freeze) return simpleRect(table.rect)
 
     if (tableHeight > 0) {
       var line = lines.get(0)

@@ -30,9 +30,11 @@ public class PaintButton extends AbstractPaint {
   }
   
   public PaintResult work(final Vec2 mouse) {
+    PaintStatus ps = new PaintStatus();
     boolean _isSel = this.isSel(this.b);
-    PaintStatus _sel = PaintStatus.sel(_isSel);
-    ButtonStyle style = this.styleCalc.calcForButton(this.b, _sel);
+    ps.selected = _isSel;
+    ps.disabled = this.b.disabled;
+    ButtonStyle style = this.styleCalc.calcForButton(this.b, ps);
     int _x = this.b.getX();
     int _y = this.b.getY();
     int _width = this.b.getWidth();
@@ -75,9 +77,12 @@ public class PaintButton extends AbstractPaint {
     }
     boolean _contains = place.contains(mouse);
     if (_contains) {
+      PaintStatus ps2 = new PaintStatus();
       boolean _isSel_1 = this.isSel(this.b);
-      PaintStatus _selHover = PaintStatus.selHover(_isSel_1);
-      ButtonStyle _calcForButton = this.styleCalc.calcForButton(this.b, _selHover);
+      ps2.selected = _isSel_1;
+      ps2.disabled = this.b.disabled;
+      ps2.hover = true;
+      ButtonStyle _calcForButton = this.styleCalc.calcForButton(this.b, ps2);
       style = _calcForButton;
     }
     this.dp.setFont(style.font);

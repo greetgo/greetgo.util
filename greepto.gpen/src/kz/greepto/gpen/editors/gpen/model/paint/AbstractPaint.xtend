@@ -79,6 +79,7 @@ abstract class AbstractPaint implements PaintFigure {
 
   protected def PaintResult modiBounds(Vec2 mouseDownedAt, Rect rect, IdFigure figure) {
     if(!rect.contains(mouseDownedAt)) return simpleRect(rect)
+    if (figure.freeze) return simpleRect(rect)
 
     if (figure instanceof RectFigure) {
       var res = modiBoundsRect(mouseDownedAt, rect, figure)
@@ -93,6 +94,7 @@ abstract class AbstractPaint implements PaintFigure {
   }
 
   protected def PaintResult modiPosition(Vec2 mouseDownedAt, Rect rect, PointFigure figure) {
+    if (figure.freeze) return simpleRect(rect)
     new PaintResult() {
       override getKursor() { Kursor.ARROW }
 

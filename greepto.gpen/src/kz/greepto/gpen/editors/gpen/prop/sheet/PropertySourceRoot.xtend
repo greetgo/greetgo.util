@@ -16,7 +16,7 @@ class PropertySourceRoot implements IPropertySource {
   val Map<Object, GpenPropertyDescriptor> descriptorMap = newHashMap
 
   new(PropList propList) {
-    this.propList=propList
+    this.propList = propList
     calcDescriptors
   }
 
@@ -53,6 +53,9 @@ class PropertySourceRoot implements IPropertySource {
     }
     if (pa.type === Long || pa.type === Long.TYPE) {
       return new DescriptorInt(pa, true)
+    }
+    if (pa.type === Boolean || pa.type === Boolean.TYPE) {
+      return new DescriptorBool(pa)
     }
 
     return new DescriptorRo(pa)

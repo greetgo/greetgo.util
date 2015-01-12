@@ -25,9 +25,11 @@ public class PaintLabel extends AbstractPaint {
   }
   
   public PaintResult work(final Vec2 mouse) {
+    PaintStatus ps = new PaintStatus();
     boolean _isSel = this.isSel(this.label);
-    PaintStatus _sel = PaintStatus.sel(_isSel);
-    LabelStyle calc = this.styleCalc.calcForLabel(this.label, _sel);
+    ps.selected = _isSel;
+    ps.disabled = this.label.disabled;
+    LabelStyle calc = this.styleCalc.calcForLabel(this.label, ps);
     Style _style = this.dp.style();
     _style.setForeground(calc.color);
     this.dp.setFont(calc.font);
@@ -41,9 +43,12 @@ public class PaintLabel extends AbstractPaint {
     }
     boolean hover = place.contains(mouse);
     if (hover) {
+      PaintStatus ps2 = new PaintStatus();
       boolean _isSel_1 = this.isSel(this.label);
-      PaintStatus _selHover = PaintStatus.selHover(_isSel_1);
-      LabelStyle _calcForLabel = this.styleCalc.calcForLabel(this.label, _selHover);
+      ps2.selected = _isSel_1;
+      ps2.disabled = this.label.disabled;
+      ps2.hover = true;
+      LabelStyle _calcForLabel = this.styleCalc.calcForLabel(this.label, ps2);
       calc = _calcForLabel;
       Style _style_1 = this.dp.style();
       _style_1.setForeground(calc.color);

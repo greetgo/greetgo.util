@@ -139,6 +139,9 @@ public abstract class AbstractPaint implements PaintFigure {
     if (_not) {
       return this.simpleRect(rect);
     }
+    if (figure.freeze) {
+      return this.simpleRect(rect);
+    }
     if ((figure instanceof RectFigure)) {
       PaintResult res = this.modiBoundsRect(mouseDownedAt, rect, ((RectFigure)figure));
       boolean _tripleNotEquals = (res != null);
@@ -159,64 +162,71 @@ public abstract class AbstractPaint implements PaintFigure {
       public abstract Oper createDyOper(final int dy);
     }
     
-    return new __AbstractPaint_2() {
-      public Kursor getKursor() {
-        return Kursor.ARROW;
+    __AbstractPaint_2 _xblockexpression = null;
+    {
+      if (figure.freeze) {
+        return this.simpleRect(rect);
       }
-      
-      public Rect getPlace() {
-        return rect;
-      }
-      
-      public boolean isHasOper() {
-        return true;
-      }
-      
-      public Oper createOper(final Vec2 mouseMovedTo) {
-        Vec2 d = mouseMovedTo.operator_minus(mouseDownedAt);
-        Oper dxOper = this.createDxOper(d.x);
-        Oper dyOper = this.createDyOper(d.y);
-        boolean _tripleEquals = (dxOper == null);
-        if (_tripleEquals) {
-          return dyOper;
+      _xblockexpression = new __AbstractPaint_2() {
+        public Kursor getKursor() {
+          return Kursor.ARROW;
         }
-        boolean _tripleEquals_1 = (dyOper == null);
-        if (_tripleEquals_1) {
-          return dxOper;
+        
+        public Rect getPlace() {
+          return rect;
         }
-        return new OperGroup(Collections.<Oper>unmodifiableList(CollectionLiterals.<Oper>newArrayList(dxOper, dyOper)), ((("Move dx, dy = " + Integer.valueOf(d.x)) + ", ") + Integer.valueOf(d.y)));
-      }
-      
-      public Oper createDxOper(final int dx) {
-        if ((dx == 0)) {
-          return null;
+        
+        public boolean isHasOper() {
+          return true;
         }
-        return new OperModify(AbstractPaint.SETTER_X, Integer.valueOf((rect.x + dx)), figure.id, ("Move dx = " + Integer.valueOf(dx)));
-      }
-      
-      public Oper createDyOper(final int dy) {
-        if ((dy == 0)) {
-          return null;
+        
+        public Oper createOper(final Vec2 mouseMovedTo) {
+          Vec2 d = mouseMovedTo.operator_minus(mouseDownedAt);
+          Oper dxOper = this.createDxOper(d.x);
+          Oper dyOper = this.createDyOper(d.y);
+          boolean _tripleEquals = (dxOper == null);
+          if (_tripleEquals) {
+            return dyOper;
+          }
+          boolean _tripleEquals_1 = (dyOper == null);
+          if (_tripleEquals_1) {
+            return dxOper;
+          }
+          return new OperGroup(Collections.<Oper>unmodifiableList(CollectionLiterals.<Oper>newArrayList(dxOper, dyOper)), ((("Move dx, dy = " + Integer.valueOf(d.x)) + ", ") + Integer.valueOf(d.y)));
         }
-        return new OperModify(AbstractPaint.SETTER_Y, Integer.valueOf((rect.y + dy)), figure.id, ("Move dy = " + Integer.valueOf(dy)));
-      }
-      
-      public String toString() {
-        return "modiPosition";
-      }
-      
-      public void paintDrag(final DrawPort dp, final Vec2 mouseMovedTo) {
-        Rect r = rect.copy();
-        Vec2 _point = r.getPoint();
-        Vec2 _minus = mouseMovedTo.operator_minus(mouseDownedAt);
-        Vec2 _plus = _point.operator_plus(_minus);
-        r.setPoint(_plus);
-        Style _style = dp.style();
-        _style.setForeground(AbstractPaint.this.dragingKolor);
-        RectGeom _from = dp.from(r);
-        _from.draw();
-      }
-    };
+        
+        public Oper createDxOper(final int dx) {
+          if ((dx == 0)) {
+            return null;
+          }
+          return new OperModify(AbstractPaint.SETTER_X, Integer.valueOf((rect.x + dx)), figure.id, ("Move dx = " + Integer.valueOf(dx)));
+        }
+        
+        public Oper createDyOper(final int dy) {
+          if ((dy == 0)) {
+            return null;
+          }
+          return new OperModify(AbstractPaint.SETTER_Y, Integer.valueOf((rect.y + dy)), figure.id, ("Move dy = " + Integer.valueOf(dy)));
+        }
+        
+        public String toString() {
+          return "modiPosition";
+        }
+        
+        public void paintDrag(final DrawPort dp, final Vec2 mouseMovedTo) {
+          Rect r = rect.copy();
+          Vec2 _point = r.getPoint();
+          Vec2 _minus = mouseMovedTo.operator_minus(mouseDownedAt);
+          Vec2 _plus = _point.operator_plus(_minus);
+          r.setPoint(_plus);
+          Style _style = dp.style();
+          _style.setForeground(AbstractPaint.this.dragingKolor);
+          RectGeom _from = dp.from(r);
+          _from.draw();
+        }
+      };
+    }
+    return _xblockexpression;
   }
   
   private final static ValueSetter SETTER_X = new ValueSetter() {

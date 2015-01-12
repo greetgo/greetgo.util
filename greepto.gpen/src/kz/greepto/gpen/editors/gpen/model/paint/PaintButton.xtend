@@ -15,7 +15,10 @@ class PaintButton extends AbstractPaint {
   override getFigureId() { b.id }
 
   override PaintResult work(Vec2 mouse) {
-    var style = styleCalc.calcForButton(b, PaintStatus.sel(b.sel))
+    var ps = new PaintStatus
+    ps.selected = isSel(b)
+    ps.disabled = b.disabled
+    var style = styleCalc.calcForButton(b, ps)
 
     var place = Rect.from(b.x, b.y, b.width, b.height)
 
@@ -43,7 +46,11 @@ class PaintButton extends AbstractPaint {
     if(mouse == null) return modiBounds(mouse, place, b)
 
     if (place.contains(mouse)) {
-      style = styleCalc.calcForButton(b, PaintStatus.selHover(b.sel))
+      var ps2 = new PaintStatus
+      ps2.selected = isSel(b)
+      ps2.disabled = b.disabled
+      ps2.hover = true
+      style = styleCalc.calcForButton(b, ps2)
     }
 
     dp.font = style.font

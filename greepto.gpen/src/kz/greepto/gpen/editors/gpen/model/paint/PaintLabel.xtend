@@ -15,7 +15,11 @@ class PaintLabel extends AbstractPaint {
   override getFigureId() { label.id }
 
   override PaintResult work(Vec2 mouse) {
-    var calc = styleCalc.calcForLabel(label, PaintStatus.sel(label.sel))
+    var ps = new PaintStatus
+    ps.selected = isSel(label)
+    ps.disabled = label.disabled
+    var calc = styleCalc.calcForLabel(label, ps)
+
 
     dp.style.foreground = calc.color
     dp.font = calc.font
@@ -27,7 +31,11 @@ class PaintLabel extends AbstractPaint {
     var hover = place.contains(mouse)
 
     if (hover) {
-      calc = styleCalc.calcForLabel(label, PaintStatus.selHover(label.sel))
+      var ps2 = new PaintStatus
+      ps2.selected = isSel(label)
+      ps2.disabled = label.disabled
+      ps2.hover = true
+      calc = styleCalc.calcForLabel(label, ps2)
 
       dp.style.foreground = calc.color
       dp.font = calc.font

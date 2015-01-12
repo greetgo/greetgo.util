@@ -4,6 +4,7 @@ import java.util.Map;
 import kz.greepto.gpen.editors.gpen.prop.PropAccessor;
 import kz.greepto.gpen.editors.gpen.prop.PropList;
 import kz.greepto.gpen.editors.gpen.prop.PropOptions;
+import kz.greepto.gpen.editors.gpen.prop.sheet.DescriptorBool;
 import kz.greepto.gpen.editors.gpen.prop.sheet.DescriptorInt;
 import kz.greepto.gpen.editors.gpen.prop.sheet.DescriptorPolilies;
 import kz.greepto.gpen.editors.gpen.prop.sheet.DescriptorRo;
@@ -117,6 +118,19 @@ public class PropertySourceRoot implements IPropertySource {
     }
     if (_or_1) {
       return new DescriptorInt(pa, true);
+    }
+    boolean _or_2 = false;
+    Class<?> _type_5 = pa.getType();
+    boolean _tripleEquals_5 = (_type_5 == Boolean.class);
+    if (_tripleEquals_5) {
+      _or_2 = true;
+    } else {
+      Class<?> _type_6 = pa.getType();
+      boolean _tripleEquals_6 = (_type_6 == Boolean.TYPE);
+      _or_2 = _tripleEquals_6;
+    }
+    if (_or_2) {
+      return new DescriptorBool(pa);
     }
     return new DescriptorRo(pa);
   }

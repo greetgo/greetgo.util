@@ -25,7 +25,7 @@ class GpenContentOutlinePage extends ContentOutlinePage {
 
     override getElements(Object inputElement) {
       if(sceneWorker === null) return #[]
-      return sceneWorker.all
+      return sceneWorker.all.reverseView.toArray
     }
 
     override getParent(Object element) { null }

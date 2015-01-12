@@ -16,14 +16,18 @@ class DevStyleCalc implements StyleCalc {
   override LabelStyle calcForLabel(Label label, PaintStatus ps) {
     val ret = new LabelStyle
     ret.focusColor = Kolor.GRAY
+    ret.font = FontDef.arial.h(30)
+
+    if (ps.disabled) {
+      ret.color = Kolor.GRAY
+      return ret
+    }
 
     if (ps.hover) {
       ret.color = Kolor.rgb(0, 0, 0)
     } else {
       ret.color = Kolor.rgb(50, 50, 50)
     }
-
-    ret.font = FontDef.arial.h(30)
 
     if (ps.selected) {
       if (ps.hover) {
@@ -60,7 +64,13 @@ class DevStyleCalc implements StyleCalc {
       ret.borderColor = Kolor.rgb(100, 100, 100)
     }
 
-    if (ps.hover) {
+    if (ps.disabled) {
+      ret.backgroundColor = Kolor.rgb(255, 255, 255)
+      ret.color = Kolor.GRAY
+      ret.borderColor = Kolor.GRAY
+    }
+
+    if (ps.hover && !ps.disabled) {
       ret.borderColor = Kolor.rgb(0, 0, 0)
     }
 
@@ -98,6 +108,19 @@ class DevStyleCalc implements StyleCalc {
     ret.cellPadding = new Padding
     ret.cellPadding.top = 3
     ret.cellPadding.bottom = 3
+
+    if (ps.disabled) {
+      ret.selBgColor = Kolor.rgb(220, 220, 220)
+      ret.selFgColor = Kolor.GRAY
+
+      ret.contentBgColor = Kolor.WHITE
+      ret.contentFgColor = Kolor.GRAY
+
+      ret.headerBgColor = Kolor.WHITE
+      ret.headerFgColor = Kolor.GRAY
+
+      ret.borderColor = Kolor.GRAY
+    }
 
     return ret
   }
