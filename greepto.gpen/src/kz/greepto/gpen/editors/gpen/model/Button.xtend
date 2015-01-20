@@ -1,11 +1,14 @@
 package kz.greepto.gpen.editors.gpen.model
 
 import kz.greepto.gpen.editors.gpen.model.visitor.FigureVisitor
+import kz.greepto.gpen.editors.gpen.prop.SetOrderWeight
 
 class Button extends RectFigure {
 
   public String text
+  @SetOrderWeight(200)
   public boolean autoWidth = true
+  @SetOrderWeight(200)
   public boolean autoHeight = true
 
   new(String id) {
@@ -25,5 +28,17 @@ class Button extends RectFigure {
 
   override Button copy() {
     return new Button(this)
+  }
+
+  override void setWidth(int width) {
+    if(this.width === width) return;
+    super.width = width
+    autoWidth = false
+  }
+
+  override void setHeight(int height) {
+    if (this.height === height) return;
+    super.height = height
+    autoHeight = false
   }
 }

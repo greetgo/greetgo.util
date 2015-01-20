@@ -35,7 +35,6 @@ class DescriptorBool extends PropertyDescriptor implements GpenPropertyDescripto
   Object prevValue = null
 
   override setValue(Object value) {
-    println('DSDADSDD set value = ' + value)
     if(prevValue == value) return;
     pa.value = prevValue = value
   }
@@ -59,16 +58,12 @@ class DescriptorBool extends PropertyDescriptor implements GpenPropertyDescripto
         falseButton = new Button(wall, SWT.RADIO)
         falseButton.text = 'НЕТ'
 
-        val editor = this
-
         val selectionListener = new SelectionListener() {
           override widgetDefaultSelected(SelectionEvent e) {
-            println('dsadasdasd trueButton.selection = ' + editor.trueButton.selection)
             doFireApplyEditorValue
           }
 
           override widgetSelected(SelectionEvent e) {
-            println('gfdsgfdgfdsg trueButton.selection = ' + editor.trueButton.selection)
             doFireApplyEditorValue
           }
         }

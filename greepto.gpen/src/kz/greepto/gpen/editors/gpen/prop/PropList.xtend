@@ -7,12 +7,13 @@ class PropList implements Iterable<PropAccessor> {
 
   val List<PropAccessor> list = newArrayList
   var Map<String, PropAccessor> mapCache = null
+  var PropList modiListCache = null
 
-  private new(List<PropAccessor> list) {
+  private new(Iterable<PropAccessor> list) {
     this.list += list
   }
 
-  public static def PropList from(List<PropAccessor> list) { new PropList(list) }
+  public static def PropList from(Iterable<PropAccessor> list) { new PropList(list) }
 
   override iterator() { list.iterator }
 
@@ -53,10 +54,23 @@ class PropList implements Iterable<PropAccessor> {
     }
 
     list.clear
-    for(var i = 0, var C = left.size; i < C; i++) {
+    for (var i = 0, var C = left.size; i < C; i++) {
       list += left.get(i) + right.get(i)
     }
 
+    mapCache = null
+    modiListCache = null
+
     return this
+  }
+
+  def PropList getModiList() {
+    if (modiListCache !== null) return modiListCache;
+    return modiListCache = new PropList(
+      this.list.filter[!options.readonly].sortWith [ PropAccessor a, PropAccessor b |
+        var sow = a.options.orderWeightForSet - b.options.orderWeightForSet
+        if(sow != 0) return sow
+        return a.name.compareTo(b.name)
+      ])
   }
 }

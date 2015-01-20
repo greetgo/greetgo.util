@@ -5,6 +5,8 @@ public interface PropOptions {
   
   boolean isPolilines();
   
+  int orderWeightForSet();
+  
   PropOptions operator_plus(PropOptions a);
   
   PropOptions operator_add(PropOptions a);

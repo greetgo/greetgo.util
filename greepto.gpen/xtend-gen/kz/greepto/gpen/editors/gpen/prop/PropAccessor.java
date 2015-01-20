@@ -2,6 +2,8 @@ package kz.greepto.gpen.editors.gpen.prop;
 
 import kz.greepto.gpen.editors.gpen.action.Oper;
 import kz.greepto.gpen.editors.gpen.prop.PropOptions;
+import kz.greepto.gpen.editors.gpen.prop.ValueGetter;
+import kz.greepto.gpen.editors.gpen.prop.ValueSetter;
 import kz.greepto.gpen.util.Handler;
 import kz.greepto.gpen.util.HandlerKiller;
 
@@ -32,4 +34,8 @@ public interface PropAccessor {
   public abstract PropAccessor operator_add(final PropAccessor a);
   
   public abstract PropAccessor operator_plus(final PropAccessor a);
+  
+  public abstract ValueGetter getGetter();
+  
+  public abstract ValueSetter getSetter();
 }

@@ -38,10 +38,8 @@ class PaintButton extends AbstractPaint {
       size.height += style.padding.top + style.padding.bottom
     }
 
-    if(b.autoWidth) place.width = size.width
-    if(b.autoHeight) place.height = size.height
-
-    b.size = size
+    if(b.autoWidth || b.width < size.width) place.width = size.width
+    if(b.autoHeight || b.height < size.height) place.height = size.height
 
     if(mouse == null) return modiBounds(mouse, place, b)
 

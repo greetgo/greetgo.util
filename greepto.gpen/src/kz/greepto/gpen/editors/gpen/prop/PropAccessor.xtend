@@ -28,4 +28,8 @@ interface PropAccessor {
   def PropAccessor operator_add(PropAccessor a)
 
   def PropAccessor operator_plus(PropAccessor a)
+
+  def ValueGetter getGetter()
+
+  def ValueSetter getSetter()
 }

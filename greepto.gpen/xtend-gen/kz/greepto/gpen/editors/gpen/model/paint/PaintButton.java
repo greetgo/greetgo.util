@@ -64,13 +64,28 @@ public class PaintButton extends AbstractPaint {
       int _height_1 = size.height;
       size.height = (_height_1 + (style.padding.top + style.padding.bottom));
     }
+    boolean _or = false;
     if (this.b.autoWidth) {
+      _or = true;
+    } else {
+      int _width_2 = this.b.getWidth();
+      boolean _lessThan = (_width_2 < size.width);
+      _or = _lessThan;
+    }
+    if (_or) {
       place.width = size.width;
     }
+    boolean _or_1 = false;
     if (this.b.autoHeight) {
+      _or_1 = true;
+    } else {
+      int _height_2 = this.b.getHeight();
+      boolean _lessThan_1 = (_height_2 < size.height);
+      _or_1 = _lessThan_1;
+    }
+    if (_or_1) {
       place.height = size.height;
     }
-    this.b.setSize(size);
     boolean _equals = Objects.equal(mouse, null);
     if (_equals) {
       return this.modiBounds(mouse, place, this.b);

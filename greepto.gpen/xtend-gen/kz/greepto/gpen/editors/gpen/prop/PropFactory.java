@@ -7,9 +7,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import kz.greepto.gpen.editors.gpen.action.Oper;
 import kz.greepto.gpen.editors.gpen.action.OperGroup;
 import kz.greepto.gpen.editors.gpen.action.OperModify;
@@ -19,6 +19,7 @@ import kz.greepto.gpen.editors.gpen.prop.PropAccessor;
 import kz.greepto.gpen.editors.gpen.prop.PropList;
 import kz.greepto.gpen.editors.gpen.prop.PropOptions;
 import kz.greepto.gpen.editors.gpen.prop.SceneWorker;
+import kz.greepto.gpen.editors.gpen.prop.SetOrderWeight;
 import kz.greepto.gpen.editors.gpen.prop.Skip;
 import kz.greepto.gpen.editors.gpen.prop.ValueGetter;
 import kz.greepto.gpen.editors.gpen.prop.ValueSetter;
@@ -43,6 +44,8 @@ public class PropFactory {
     private boolean skip = false;
     
     private boolean fin = false;
+    
+    private int orderWeightForSet = 1000;
     
     public AccessorInfo(final String name, final Object object, final SceneWorker sceneWorker) {
       this.name = name;
@@ -173,6 +176,14 @@ public class PropFactory {
     
     private ValueSetter setter;
     
+    public ValueGetter getGetter() {
+      return this.getter;
+    }
+    
+    public ValueSetter getSetter() {
+      return this.setter;
+    }
+    
     public String toString() {
       StringBuilder sb = new StringBuilder();
       sb.append(this.name);
@@ -205,6 +216,10 @@ public class PropFactory {
       
       public boolean isReadonly() {
         return Objects.equal(AccessorInfo.this.setter, null);
+      }
+      
+      public int orderWeightForSet() {
+        return AccessorInfo.this.orderWeightForSet;
       }
       
       public PropOptions operator_add(final PropOptions a) {
@@ -245,8 +260,13 @@ public class PropFactory {
         return null;
       }
       String _takeId = this.sceneWorker.takeId(this.object);
-      return new OperModify(this.setter, newValue, _takeId);
+      OperModify ret = new OperModify(this.setter, newValue, _takeId);
+      PropList _setterList = this.coll.getSetterList();
+      ret.modiPropList = _setterList;
+      return ret;
     }
+    
+    private PropFactory.Collector coll;
     
     public int compareTo(final PropFactory.AccessorInfo o) {
       return this.name.compareTo(o.name);
@@ -302,6 +322,10 @@ public class PropFactory {
           return _xblockexpression;
         }
         
+        public ValueGetter getGetter() {
+          return x.getGetter();
+        }
+        
         public PropOptions getOptions() {
           PropOptions _options = x.getOptions();
           PropOptions _options_1 = y.getOptions();
@@ -335,6 +359,10 @@ public class PropFactory {
           return new OperGroup(Collections.<Oper>unmodifiableList(CollectionLiterals.<Oper>newArrayList(xsetter, ysetter)), "Group2");
         }
         
+        public ValueSetter getSetter() {
+          return x.getSetter();
+        }
+        
         public HandlerKiller addChangeHandler(final Handler handler) {
           return AccessorInfo.this.sceneWorker.addChangeHandler(handler);
         }
@@ -362,19 +390,73 @@ public class PropFactory {
     }
   }
   
+  private static class Collector {
+    private final HashMap<String, PropFactory.AccessorInfo> map = new HashMap<String, PropFactory.AccessorInfo>();
+    
+    public void put(final String name, final PropFactory.AccessorInfo info) {
+      this.map.put(name, info);
+      this.__setterList__ = null;
+    }
+    
+    private PropList __setterList__ = null;
+    
+    public PropFactory.AccessorInfo get(final String name) {
+      return this.map.get(name);
+    }
+    
+    public PropList getSetterList() {
+      boolean _tripleEquals = (this.__setterList__ == null);
+      if (_tripleEquals) {
+        Collection<PropFactory.AccessorInfo> _values = this.map.values();
+        final Function1<PropFactory.AccessorInfo, Boolean> _function = new Function1<PropFactory.AccessorInfo, Boolean>() {
+          public Boolean apply(final PropFactory.AccessorInfo it) {
+            boolean _isReadonly = it.options.isReadonly();
+            return Boolean.valueOf((!_isReadonly));
+          }
+        };
+        Iterable<PropFactory.AccessorInfo> _filter = IterableExtensions.<PropFactory.AccessorInfo>filter(_values, _function);
+        final Comparator<PropAccessor> _function_1 = new Comparator<PropAccessor>() {
+          public int compare(final PropAccessor a, final PropAccessor b) {
+            PropOptions _options = a.getOptions();
+            int _orderWeightForSet = _options.orderWeightForSet();
+            PropOptions _options_1 = b.getOptions();
+            int _orderWeightForSet_1 = _options_1.orderWeightForSet();
+            int sow = (_orderWeightForSet - _orderWeightForSet_1);
+            if ((sow != 0)) {
+              return sow;
+            }
+            String _name = a.getName();
+            String _name_1 = b.getName();
+            return _name.compareTo(_name_1);
+          }
+        };
+        List<PropFactory.AccessorInfo> _sortWith = IterableExtensions.<PropFactory.AccessorInfo>sortWith(_filter, _function_1);
+        final Function1<PropFactory.AccessorInfo, PropAccessor> _function_2 = new Function1<PropFactory.AccessorInfo, PropAccessor>() {
+          public PropAccessor apply(final PropFactory.AccessorInfo it) {
+            return ((PropAccessor) it);
+          }
+        };
+        List<PropAccessor> _map = ListExtensions.<PropFactory.AccessorInfo, PropAccessor>map(_sortWith, _function_2);
+        PropList _from = PropList.from(_map);
+        this.__setterList__ = _from;
+      }
+      return this.__setterList__;
+    }
+  }
+  
   public static PropList parseObject(final Object object, final SceneWorker sceneWorker) {
-    final HashMap<String, PropFactory.AccessorInfo> infoMap = new HashMap<String, PropFactory.AccessorInfo>();
+    final PropFactory.Collector collector = new PropFactory.Collector();
     Class<?> _class = object.getClass();
     Field[] _fields = _class.getFields();
     for (final Field f : _fields) {
-      PropFactory.appendField(infoMap, f, object, sceneWorker);
+      PropFactory.appendField(collector, f, object, sceneWorker);
     }
     Class<?> _class_1 = object.getClass();
     Method[] _methods = _class_1.getMethods();
     for (final Method m : _methods) {
-      PropFactory.appendMethod(infoMap, m, object, sceneWorker);
+      PropFactory.appendMethod(collector, m, object, sceneWorker);
     }
-    Collection<PropFactory.AccessorInfo> _values = infoMap.values();
+    Collection<PropFactory.AccessorInfo> _values = collector.map.values();
     final Function1<PropFactory.AccessorInfo, Boolean> _function = new Function1<PropFactory.AccessorInfo, Boolean>() {
       public Boolean apply(final PropFactory.AccessorInfo it) {
         return Boolean.valueOf((!it.skip));
@@ -419,19 +501,19 @@ public class PropFactory {
     return _xifexpression;
   }
   
-  private static void appendMethod(final Map<String, PropFactory.AccessorInfo> infoMap, final Method m, final Object object, final SceneWorker sceneWorker) {
+  private static void appendMethod(final PropFactory.Collector coll, final Method m, final Object object, final SceneWorker sceneWorker) {
     m.setAccessible(true);
     ValueGetter getter = PropFactory.createMethodValueGetter(m);
     boolean _notEquals = (!Objects.equal(getter, null));
     if (_notEquals) {
       String _name = getter.getName();
-      PropFactory.AccessorInfo info = infoMap.get(_name);
+      PropFactory.AccessorInfo info = coll.get(_name);
       boolean _equals = Objects.equal(info, null);
       if (_equals) {
         String _name_1 = getter.getName();
         PropFactory.AccessorInfo _accessorInfo = new PropFactory.AccessorInfo(_name_1, object, sceneWorker);
         info = _accessorInfo;
-        infoMap.put(info.name, info);
+        coll.put(info.name, info);
       }
       info.getter = getter;
       Class<?> _type = getter.getType();
@@ -441,19 +523,19 @@ public class PropFactory {
     }
     {
       Class<?> _class = object.getClass();
-      ValueSetter setter = PropFactory.createMethodValueSetter(m, infoMap, _class);
+      ValueSetter setter = PropFactory.createMethodValueSetter(m, coll, _class);
       boolean _equals_1 = Objects.equal(setter, null);
       if (_equals_1) {
         return;
       }
       String _name_2 = setter.getName();
-      PropFactory.AccessorInfo info_1 = infoMap.get(_name_2);
+      PropFactory.AccessorInfo info_1 = coll.get(_name_2);
       boolean _equals_2 = Objects.equal(info_1, null);
       if (_equals_2) {
         String _name_3 = setter.getName();
         PropFactory.AccessorInfo _accessorInfo_1 = new PropFactory.AccessorInfo(_name_3, object, sceneWorker);
         info_1 = _accessorInfo_1;
-        infoMap.put(info_1.name, info_1);
+        coll.put(info_1.name, info_1);
       }
       if (info_1.skip) {
         return;
@@ -468,7 +550,7 @@ public class PropFactory {
     }
   }
   
-  private static void appendField(final Map<String, PropFactory.AccessorInfo> infoMap, final Field f, final Object object, final SceneWorker sceneWorker) {
+  private static void appendField(final PropFactory.Collector coll, final Field f, final Object object, final SceneWorker sceneWorker) {
     f.setAccessible(true);
     boolean needRead = true;
     {
@@ -478,13 +560,14 @@ public class PropFactory {
         return;
       }
       String _name = getter.getName();
-      PropFactory.AccessorInfo info = infoMap.get(_name);
+      PropFactory.AccessorInfo info = coll.get(_name);
       boolean _equals_1 = Objects.equal(info, null);
       if (_equals_1) {
         String _name_1 = getter.getName();
         PropFactory.AccessorInfo _accessorInfo = new PropFactory.AccessorInfo(_name_1, object, sceneWorker);
         info = _accessorInfo;
-        infoMap.put(info.name, info);
+        info.coll = coll;
+        coll.put(info.name, info);
       }
       info.getter = getter;
       Class<?> _type = getter.getType();
@@ -494,19 +577,19 @@ public class PropFactory {
     }
     {
       Class<?> _class = object.getClass();
-      ValueSetter setter = PropFactory.createFieldValueSetter(f, infoMap, _class);
+      ValueSetter setter = PropFactory.createFieldValueSetter(f, coll, _class);
       boolean _equals = Objects.equal(setter, null);
       if (_equals) {
         return;
       }
       String _name = setter.getName();
-      PropFactory.AccessorInfo info = infoMap.get(_name);
+      PropFactory.AccessorInfo info = coll.get(_name);
       boolean _equals_1 = Objects.equal(info, null);
       if (_equals_1) {
         String _name_1 = setter.getName();
         PropFactory.AccessorInfo _accessorInfo = new PropFactory.AccessorInfo(_name_1, object, sceneWorker);
         info = _accessorInfo;
-        infoMap.put(info.name, info);
+        coll.put(info.name, info);
       }
       info.setter = setter;
       Class<?> _type = setter.getType();
@@ -517,7 +600,7 @@ public class PropFactory {
     }
   }
   
-  private static ValueSetter createMethodValueSetter(final Method method, final Map<String, PropFactory.AccessorInfo> infoMap, final Class<?> klass) {
+  private static ValueSetter createMethodValueSetter(final Method method, final PropFactory.Collector coll, final Class<?> klass) {
     boolean _and = false;
     String _name = method.getName();
     int _length = _name.length();
@@ -545,7 +628,7 @@ public class PropFactory {
     return new ValueSetter() {
       public Object setValue(final Object object, final Object value) {
         try {
-          final PropFactory.AccessorInfo info = infoMap.get(propertyName);
+          final PropFactory.AccessorInfo info = coll.get(propertyName);
           boolean _equals = Objects.equal(info, null);
           if (_equals) {
             throw new NoGetter(propertyName, klass);
@@ -681,7 +764,7 @@ public class PropFactory {
     };
   }
   
-  private static ValueSetter createFieldValueSetter(final Field field, final Map<String, PropFactory.AccessorInfo> infoMap, final Class<?> klass) {
+  private static ValueSetter createFieldValueSetter(final Field field, final PropFactory.Collector coll, final Class<?> klass) {
     return new ValueSetter() {
       public Class<?> getType() {
         return field.getType();
@@ -694,7 +777,7 @@ public class PropFactory {
       public Object setValue(final Object object, final Object value) {
         try {
           String _name = field.getName();
-          PropFactory.AccessorInfo info = infoMap.get(_name);
+          PropFactory.AccessorInfo info = coll.get(_name);
           boolean _equals = Objects.equal(info, null);
           if (_equals) {
             String _name_1 = field.getName();
@@ -721,6 +804,7 @@ public class PropFactory {
     boolean _notEquals = (!Objects.equal(_annotation, null));
     info.skip = _notEquals;
     PropFactory.readPolilines(info, method, false);
+    PropFactory.readSetOrderWieght(info, method);
   }
   
   private static void readFieldOptions(final PropFactory.AccessorInfo info, final Field field) {
@@ -731,6 +815,7 @@ public class PropFactory {
     boolean _isFinal = Modifier.isFinal(_modifiers);
     info.fin = _isFinal;
     PropFactory.readPolilines(info, field, true);
+    PropFactory.readSetOrderWieght(info, field);
   }
   
   private static void readGetterOptions(final PropFactory.AccessorInfo info, final Method method) {
@@ -738,6 +823,7 @@ public class PropFactory {
     boolean _notEquals = (!Objects.equal(_annotation, null));
     info.skip = _notEquals;
     PropFactory.readPolilines(info, method, true);
+    PropFactory.readSetOrderWieght(info, method);
   }
   
   public static void readPolilines(final PropFactory.AccessorInfo info, final AccessibleObject ao, final boolean force) {
@@ -756,6 +842,16 @@ public class PropFactory {
     if (_tripleNotEquals) {
       info.polilines = true;
     }
+  }
+  
+  public static void readSetOrderWieght(final PropFactory.AccessorInfo info, final AccessibleObject ao) {
+    SetOrderWeight ann = ao.<SetOrderWeight>getAnnotation(SetOrderWeight.class);
+    boolean _tripleEquals = (ann == null);
+    if (_tripleEquals) {
+      return;
+    }
+    int _value = ann.value();
+    info.orderWeightForSet = _value;
   }
   
   private static PropOptions plusOptions(final PropOptions x, final PropOptions y) {
@@ -790,6 +886,13 @@ public class PropFactory {
       
       public PropOptions operator_plus(final PropOptions a) {
         return PropFactory.plusOptions(this, a);
+      }
+      
+      public int orderWeightForSet() {
+        int _orderWeightForSet = x.orderWeightForSet();
+        int _orderWeightForSet_1 = y.orderWeightForSet();
+        int _plus = (_orderWeightForSet + _orderWeightForSet_1);
+        return (_plus / 2);
       }
     };
   }

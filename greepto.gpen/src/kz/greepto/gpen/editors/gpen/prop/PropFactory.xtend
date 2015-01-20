@@ -1,16 +1,16 @@
 package kz.greepto.gpen.editors.gpen.prop
 
+import java.lang.reflect.AccessibleObject
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.util.Collection
 import java.util.HashMap
-import java.util.Map
 import kz.greepto.gpen.editors.gpen.action.OperGroup
 import kz.greepto.gpen.editors.gpen.action.OperModify
 import kz.greepto.gpen.util.Handler
-import kz.greepto.gpen.editors.gpen.prop.PropFactory.AccessorInfo
-import java.lang.reflect.AccessibleObject
+
+import static kz.greepto.gpen.editors.gpen.prop.PropFactory.*
 
 class PropFactory {
 
@@ -21,6 +21,7 @@ class PropFactory {
 
     boolean skip = false
     boolean fin = false
+    int orderWeightForSet = 1000
 
     new(String name, Object object, SceneWorker sceneWorker) {
       this.name = name
@@ -87,6 +88,10 @@ class PropFactory {
     ValueGetter getter
     ValueSetter setter
 
+    override getGetter() { getter }
+
+    override getSetter() { setter }
+
     override toString() {
       var StringBuilder sb = new StringBuilder
       sb.append(name)
@@ -116,10 +121,13 @@ class PropFactory {
         return setter == null
       }
 
+      override orderWeightForSet() {
+        return orderWeightForSet
+      }
+
       override operator_add(PropOptions a) { this + a }
 
       override operator_plus(PropOptions a) { plusOptions(this, a) }
-
     }
 
     override getOptions() {
@@ -137,8 +145,12 @@ class PropFactory {
       if(getter == null) throw new NoGetter(name, object.class)
       var curValue = getter.getValue(object)
       if(newValue == curValue) return null
-      return new OperModify(setter, newValue, sceneWorker.takeId(object))
+      var ret = new OperModify(setter, newValue, sceneWorker.takeId(object))
+      ret.modiPropList = coll.setterList
+      return ret
     }
+
+    Collector coll
 
     override compareTo(AccessorInfo o) {
       return name.compareTo(o.name)
@@ -168,6 +180,8 @@ class PropFactory {
           if(v == y.value) v else DIFF_VALUES
         }
 
+        override getGetter() { x.getter }
+
         override getOptions() { x.options + y.options }
 
         override setValue(Object value) {
@@ -185,6 +199,8 @@ class PropFactory {
           return new OperGroup(#[xsetter, ysetter], 'Group2')
         }
 
+        override getSetter() { x.setter }
+
         override addChangeHandler(Handler handler) {
           sceneWorker.addChangeHandler(handler)
         }
@@ -199,18 +215,45 @@ class PropFactory {
 
   }
 
+  private static class Collector {
+    val map = new HashMap<String, AccessorInfo>
+
+    def void put(String name, AccessorInfo info) {
+      map.put(name, info)
+      __setterList__ = null
+    }
+
+    PropList __setterList__ = null
+
+    def AccessorInfo get(String name) {
+      return map.get(name)
+    }
+
+    def PropList getSetterList() {
+      if (__setterList__ === null) {
+        __setterList__ = PropList.from(
+          map.values.filter[!options.readonly].sortWith [ PropAccessor a, PropAccessor b |
+            var sow = a.options.orderWeightForSet - b.options.orderWeightForSet
+            if(sow != 0) return sow
+            return a.name.compareTo(b.name)
+          ].map[it as PropAccessor])
+      }
+      return __setterList__
+    }
+  }
+
   def static PropList parseObject(Object object, SceneWorker sceneWorker) {
-    val infoMap = new HashMap<String, AccessorInfo>
+    val collector = new Collector
 
     for (f : object.class.fields) {
-      appendField(infoMap, f, object, sceneWorker)
+      appendField(collector, f, object, sceneWorker)
     }
 
     for (m : object.class.methods) {
-      appendMethod(infoMap, m, object, sceneWorker)
+      appendMethod(collector, m, object, sceneWorker)
     }
 
-    return PropList.from(infoMap.values.filter[!skip].sort.map[postInit; it])
+    return PropList.from(collector.map.values.filter[!skip].sort.map[postInit; it])
   }
 
   def static <T> PropList parseObjectList(Collection<T> list, SceneWorker sceneWorker) {
@@ -228,16 +271,16 @@ class PropFactory {
     return if(ret === null) PropList.empty else ret
   }
 
-  private def static appendMethod(Map<String, AccessorInfo> infoMap, Method m, Object object, SceneWorker sceneWorker) {
+  private def static appendMethod(Collector coll, Method m, Object object, SceneWorker sceneWorker) {
     m.accessible = true
 
     var getter = createMethodValueGetter(m)
     if (getter != null) {
 
-      var info = infoMap.get(getter.name)
+      var info = coll.get(getter.name)
       if (info == null) {
         info = new AccessorInfo(getter.name, object, sceneWorker)
-        infoMap.put(info.name, info)
+        coll.put(info.name, info)
       }
 
       info.getter = getter
@@ -248,13 +291,13 @@ class PropFactory {
     }
 
     {
-      var setter = createMethodValueSetter(m, infoMap, object.class)
+      var setter = createMethodValueSetter(m, coll, object.class)
       if(setter == null) return;
 
-      var info = infoMap.get(setter.name)
+      var info = coll.get(setter.name)
       if (info == null) {
         info = new AccessorInfo(setter.name, object, sceneWorker)
-        infoMap.put(info.name, info)
+        coll.put(info.name, info)
       }
       if(info.skip) return;
 
@@ -267,7 +310,7 @@ class PropFactory {
     }
   }
 
-  private def static appendField(Map<String, AccessorInfo> infoMap, Field f, Object object, SceneWorker sceneWorker) {
+  private def static appendField(Collector coll, Field f, Object object, SceneWorker sceneWorker) {
     f.accessible = true
 
     var needRead = true
@@ -276,10 +319,11 @@ class PropFactory {
       var getter = createFieldValueGetter(f)
       if(getter == null) return;
 
-      var info = infoMap.get(getter.name)
+      var info = coll.get(getter.name)
       if (info == null) {
         info = new AccessorInfo(getter.name, object, sceneWorker)
-        infoMap.put(info.name, info)
+        info.coll = coll
+        coll.put(info.name, info)
       }
 
       info.getter = getter
@@ -290,13 +334,13 @@ class PropFactory {
     }
 
     {
-      var setter = createFieldValueSetter(f, infoMap, object.class)
+      var setter = createFieldValueSetter(f, coll, object.class)
       if(setter == null) return;
 
-      var info = infoMap.get(setter.name)
+      var info = coll.get(setter.name)
       if (info == null) {
         info = new AccessorInfo(setter.name, object, sceneWorker)
-        infoMap.put(info.name, info)
+        coll.put(info.name, info)
       }
 
       info.setter = setter
@@ -306,8 +350,7 @@ class PropFactory {
     }
   }
 
-  private def static ValueSetter createMethodValueSetter(Method method, Map<String, AccessorInfo> infoMap,
-    Class<?> klass) {
+  private def static ValueSetter createMethodValueSetter(Method method, Collector coll, Class<?> klass) {
 
     if(method.name.length > 3 && "set" != method.name.substring(0, 3)) return null
     if(method.parameterTypes.length != 1) return null
@@ -316,7 +359,7 @@ class PropFactory {
 
     return new ValueSetter() {
       override setValue(Object object, Object value) {
-        val info = infoMap.get(propertyName)
+        val info = coll.get(propertyName)
         if(info == null) throw new NoGetter(propertyName, klass)
         val getter = info.getter
         if(getter == null) throw new NoGetter(propertyName, klass)
@@ -379,7 +422,7 @@ class PropFactory {
     }
   }
 
-  private def static ValueSetter createFieldValueSetter(Field field, Map<String, AccessorInfo> infoMap, Class<?> klass) {
+  private def static ValueSetter createFieldValueSetter(Field field, Collector coll, Class<?> klass) {
     return new ValueSetter() {
       override getType() {
         return field.type
@@ -390,7 +433,7 @@ class PropFactory {
       }
 
       override setValue(Object object, Object value) {
-        var info = infoMap.get(field.name)
+        var info = coll.get(field.name)
         if(info == null) throw new NoGetter(field.name, klass)
         var getter = info.getter
         if(getter == null) throw new NoGetter(field.name, klass)
@@ -405,6 +448,7 @@ class PropFactory {
     info.skip = method.getAnnotation(Skip) != null
 
     readPolilines(info, method, false)
+    readSetOrderWieght(info, method)
   }
 
   private def static readFieldOptions(AccessorInfo info, Field field) {
@@ -413,12 +457,14 @@ class PropFactory {
     info.fin = Modifier.isFinal(field.modifiers)
 
     readPolilines(info, field, true)
+    readSetOrderWieght(info, field)
   }
 
   private def static readGetterOptions(AccessorInfo info, Method method) {
     info.skip = method.getAnnotation(Skip) != null
 
     readPolilines(info, method, true)
+    readSetOrderWieght(info, method)
   }
 
   def static readPolilines(AccessorInfo info, AccessibleObject ao, boolean force) {
@@ -426,6 +472,12 @@ class PropFactory {
     if (ao.getAnnotation(Polilines) !== null) {
       info.polilines = true
     }
+  }
+
+  def static void readSetOrderWieght(AccessorInfo info, AccessibleObject ao) {
+    var ann = ao.getAnnotation(SetOrderWeight)
+    if(ann === null) return;
+    info.orderWeightForSet = ann.value
   }
 
   private def static PropOptions plusOptions(PropOptions x, PropOptions y) {
@@ -437,6 +489,8 @@ class PropFactory {
       override operator_add(PropOptions a) { this + a }
 
       override operator_plus(PropOptions a) { plusOptions(this, a) }
+
+      override orderWeightForSet() { (x.orderWeightForSet + y.orderWeightForSet) / 2 }
     }
   }
 }
