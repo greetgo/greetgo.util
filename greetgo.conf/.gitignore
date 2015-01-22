@@ -1,3 +1,4 @@
-/.gradle
+/target
 /test-output
 /build
+/.gradle
