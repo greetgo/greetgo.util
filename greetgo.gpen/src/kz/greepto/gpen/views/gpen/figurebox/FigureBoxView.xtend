@@ -9,7 +9,7 @@ import org.eclipse.jface.viewers.ISelection
 import org.eclipse.ui.IWorkbenchPart
 import kz.greepto.gpen.editors.gpen.GpenEditor
 
-class FigureBox extends ViewPart {
+class FigureBoxView extends ViewPart {
 
   override setFocus() {}
 

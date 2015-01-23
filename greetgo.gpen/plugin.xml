@@ -35,7 +35,7 @@
       </view>
       <view
             category="kz.greepto.gpen"
-            class="kz.greepto.gpen.views.gpen.figurebox.FigureBox"
+            class="kz.greepto.gpen.views.gpen.figurebox.FigureBoxView"
             icon="icons/props.gif"
             id="kz.greepto.gpen.views.gpen.figurebox.FigureBox"
             name="Figure Box">
