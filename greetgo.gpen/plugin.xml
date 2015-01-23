@@ -33,6 +33,13 @@
             id="kz.greepto.gpen.views.gpen.GpenPropertyView"
             name="Gpen Properties">
       </view>
+      <view
+            category="kz.greepto.gpen"
+            class="kz.greepto.gpen.views.gpen.figurebox.FigureBox"
+            icon="icons/props.gif"
+            id="kz.greepto.gpen.views.gpen.figurebox.FigureBox"
+            name="Figure Box">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
