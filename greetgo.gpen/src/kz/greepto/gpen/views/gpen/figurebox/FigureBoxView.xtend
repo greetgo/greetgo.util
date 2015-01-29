@@ -18,6 +18,14 @@ class FigureBoxView extends ViewPart {
     site.workbenchWindow.selectionService.addSelectionListener(listener)
 
     ui = new FigureBoxUI(parent)
+
+    ui.selectHandlerList.add [ FigureMediator fm |
+      if (fm.state === State.DOWN) {
+        ui.figureMediatorList.filter[it != fm].forEach[state = State.DISABLE]
+      } else {
+        ui.figureMediatorList.forEach[state = State.UP]
+      }
+    ]
   }
 
   val ISelectionListener listener = [ IWorkbenchPart part, ISelection selection |

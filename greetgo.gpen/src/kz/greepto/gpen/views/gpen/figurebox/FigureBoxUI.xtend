@@ -1,7 +1,9 @@
 package kz.greepto.gpen.views.gpen.figurebox
 
+import java.util.List
 import kz.greepto.gpen.util.ColorManager
 import kz.greepto.gpen.util.FontManager
+import kz.greepto.gpen.views.gpen.figurebox.figureCreator.FigureCreator
 import kz.greepto.gpen.views.gpen.figurebox.figureCreator.FigureCreatorList
 import kz.greepto.gpen.views.gpen.figurebox.figureCreator.FigureCreatorUtil
 import org.eclipse.swt.SWT
@@ -18,6 +20,10 @@ class FigureBoxUI {
   val fonts = new FontManager
 
   val fcList = new FigureCreatorList;
+
+  public val List<FigureMediator> figureMediatorList = newArrayList
+
+  public val selectHandlerList = new FigureMediatorHandlerList
 
   new(Composite parent) {
 
@@ -60,16 +66,58 @@ class FigureBoxUI {
         lab.text = '   '
         lab.background = null
 
-        var b = new Button(wall, SWT.NONE)
+        val b = new Button(wall, SWT.TOGGLE)
         b.image = im
         b.text = fc.name + '  '
         var gd = new GridData
         b.layoutData = gd
+
+        val fm = new ButtonFigureMediator(b, fc)
+
+        figureMediatorList += fm
+
+        b.addListener(SWT.Selection) [
+          selectHandlerList.fire(fm)
+        ]
       }
     }
 
     sc.minSize = wall.computeSize(SWT.DEFAULT, SWT.DEFAULT)
     parent.layout(true)
+  }
+
+  private static class ButtonFigureMediator implements FigureMediator {
+    val Button b
+    val FigureCreator fc
+
+    new(Button b, FigureCreator fc) {
+      this.b = b
+      this.fc = fc
+    }
+
+    override createFigure() { fc.createFigure }
+
+    override setState(State state) {
+      switch (state) {
+        case UP: {
+          b.selection = false
+          b.enabled = true
+        }
+        case DOWN: {
+          b.selection = true
+          b.enabled = true
+        }
+        case DISABLE: {
+          b.selection = false
+          b.enabled = false
+        }
+      }
+    }
+
+    override getState() {
+      if (!b.getEnabled()) return State.DISABLE
+      if (b.selection) State.DOWN else State.UP
+    }
   }
 
   def dispose() {
