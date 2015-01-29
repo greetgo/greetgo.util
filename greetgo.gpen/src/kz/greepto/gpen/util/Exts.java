@@ -9,13 +9,9 @@ import org.eclipse.xtext.xbase.lib.Pure;
 
 import com.google.common.annotations.GwtCompatible;
 
-//TODO modi before go to git
-
 @GwtCompatible
 public class Exts {
   
-  //@Pure
-  //@Inline("$1.put($2.getKey(), $2.getValue())")
   public static <K, V> Map<K, V> operator_doubleLessThan(Map<K, V> map, Pair<K, V> pair) {
     map.put(pair.getKey(), pair.getValue());
     return map;
