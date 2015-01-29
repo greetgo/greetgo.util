@@ -2,3 +2,4 @@
 /.gradle
 /test-output
 /build
+/bin
