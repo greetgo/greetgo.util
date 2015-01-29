@@ -1,9 +1,9 @@
 package kz.greepto.gpen.views.gpen.figurebox;
 
-import kz.greepto.gpen.editors.gpen.model.IdFigure;
+import kz.greepto.gpen.editors.gpen.model.PointFigure;
 
 public interface FigureMediator {
-  IdFigure createFigure();
+  PointFigure createFigure();
   
   void setState(State state);
   

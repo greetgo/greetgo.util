@@ -2,7 +2,7 @@ package kz.greepto.gpen.views.gpen.figurebox.figureCreator
 
 import java.util.UUID
 import kz.greepto.gpen.drawport.Size
-import kz.greepto.gpen.editors.gpen.model.IdFigure
+import kz.greepto.gpen.editors.gpen.model.PointFigure
 import kz.greepto.gpen.editors.gpen.model.Table
 
 class FigureCreatorTable extends FigureCreator {
@@ -11,11 +11,11 @@ class FigureCreatorTable extends FigureCreator {
 
   override getName() { 'Таблица' }
 
-  override IdFigure createFigure() {
+  override PointFigure createFigure() {
     var ret = new Table(UUID.randomUUID.toString)
 
     ret.content = "#col1|col2\nr11|r12\nr21|r22"
-    ret.colWidths="100|100"
+    ret.colWidths = "100|100"
     ret.x = 10
     ret.y = 10
     ret.width = 200

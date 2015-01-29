@@ -12,6 +12,7 @@ import kz.greepto.gpen.drawport.swt.DrawableGcSource
 import kz.greepto.gpen.editors.gpen.action.GpenOperation
 import kz.greepto.gpen.editors.gpen.action.Oper
 import kz.greepto.gpen.editors.gpen.model.IdFigure
+import kz.greepto.gpen.editors.gpen.model.PointFigure
 import kz.greepto.gpen.editors.gpen.model.Scene
 import kz.greepto.gpen.editors.gpen.model.paint.DraggingThing
 import kz.greepto.gpen.editors.gpen.model.paint.MoveDragging
@@ -42,6 +43,7 @@ import org.eclipse.swt.events.MouseTrackListener
 import org.eclipse.swt.events.PaintEvent
 import org.eclipse.swt.widgets.Canvas
 import org.eclipse.swt.widgets.Composite
+import kz.greepto.gpen.editors.gpen.action.OperAppend
 
 class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, MouseTrackListener {
   val MOVE_OFFSET = 3.0
@@ -54,6 +56,7 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
   val styleCalc = new DevStyleCalc
   val cursors = new CursorManager
   val List<String> selIdList = new ArrayList
+  var PointFigure creatingFigure = null
 
   val SelChecker selChecker = [ IdFigure figure |
     if(selIdList.contains(figure.id)) return true
@@ -238,7 +241,12 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
 
       var ret = scene.visit(vp)
 
-      if (draggingThing === null) {
+      if (creatingFigure !== null) {
+        creatingFigure.point = mouse
+        creatingFigure.disabled = true
+        creatingFigure.visit(vp)
+        displayCursor(Kursor.NO)
+      } else if (draggingThing === null) {
         displayCursor(ret?.kursor)
       } else {
         displayCursor(draggingThing.kursor)
@@ -276,6 +284,14 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
     mouse.y = e.y
 
     if (Mouse.LMB(e)) {
+      if (creatingFigure !== null) {
+        creatingFigure.disabled = false
+        creatingFigure.point = mouse
+        var oper = new OperAppend(creatingFigure)
+        creatingFigure = null
+        sceneWorker.applyOper(oper)
+        return
+      }
 
       if (selIdList.size > 1) {
         var dp = createDP
@@ -428,6 +444,11 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
 
   def void afterSelChangeWork() {
     selectionProvider.selection = selection
+    redraw
+  }
+
+  def void startCreateFigure(PointFigure figure) {
+    creatingFigure = figure
     redraw
   }
 

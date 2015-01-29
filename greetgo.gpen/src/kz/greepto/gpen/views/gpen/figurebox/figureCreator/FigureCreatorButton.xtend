@@ -3,7 +3,7 @@ package kz.greepto.gpen.views.gpen.figurebox.figureCreator
 import java.util.UUID
 import kz.greepto.gpen.drawport.Size
 import kz.greepto.gpen.editors.gpen.model.Button
-import kz.greepto.gpen.editors.gpen.model.IdFigure
+import kz.greepto.gpen.editors.gpen.model.PointFigure
 
 class FigureCreatorButton extends FigureCreator {
 
@@ -11,7 +11,7 @@ class FigureCreatorButton extends FigureCreator {
 
   override getName() { 'Кнопка' }
 
-  override IdFigure createFigure() {
+  override PointFigure createFigure() {
     var but = new Button(UUID.randomUUID.toString)
 
     but.text = 'OK'

@@ -5,6 +5,7 @@ import java.util.List
 import kz.greepto.gpen.drawport.Size
 import kz.greepto.gpen.drawport.Vec2
 import kz.greepto.gpen.editors.gpen.model.Fig
+import kz.greepto.gpen.editors.gpen.model.PointFigure
 import kz.greepto.gpen.editors.gpen.model.Scene
 import kz.greepto.gpen.editors.gpen.model.Table
 import kz.greepto.gpen.editors.gpen.outline.GpenContentOutlinePage
@@ -140,4 +141,10 @@ class GpenEditor extends EditorPart {
   }
 
   def SceneWorker getSceneWorker() { contents?.sceneWorker }
+
+  def void startCreateFigure(PointFigure figure) {
+    if (contents === null) return;
+    contents.startCreateFigure(figure)
+  }
+
 }

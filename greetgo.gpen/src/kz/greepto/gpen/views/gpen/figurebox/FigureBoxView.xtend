@@ -21,7 +21,10 @@ class FigureBoxView extends ViewPart {
 
     ui.selectHandlerList.add [ FigureMediator fm |
       if (fm.state === State.DOWN) {
-        ui.figureMediatorList.filter[it != fm].forEach[state = State.DISABLE]
+        ui.figureMediatorList.filter[it != fm].forEach[state = State.UP]
+        if (gpenEditor !== null) {
+          gpenEditor.startCreateFigure(fm.createFigure);
+        }
       } else {
         ui.figureMediatorList.forEach[state = State.UP]
       }
@@ -38,10 +41,12 @@ class FigureBoxView extends ViewPart {
   ]
 
   def updateUI() {
+    ui.figureMediatorList.forEach[state = if(gpenEditor === null) State.DISABLE else  State.UP]
   }
 
   override dispose() {
-    super.dispose()
+    site.workbenchWindow.selectionService.removeSelectionListener(listener)
     if(ui !== null) ui.dispose
+    super.dispose()
   }
 }
