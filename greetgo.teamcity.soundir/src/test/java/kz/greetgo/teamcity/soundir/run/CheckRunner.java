@@ -45,7 +45,7 @@ public class CheckRunner {
   public void prepare() {
     Api.prepareBasicAuthenticator("root", "111");
     Api.protocol = "http";
-    Api.host = "192.168.0.102";
+    Api.host = "192.168.11.102";
     Api.port = 8111;
     
     stor = StorageDir.defaultSD();
