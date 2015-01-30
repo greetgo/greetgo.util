@@ -7,13 +7,9 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage
 class GpenEditorAdapterFactory extends AbstractAdapterFactory {
 
   new() {
-    println('Creating GpenEditorAdapterFactory .....................')
   }
 
-  override protected servableTypes() {
-    println('.................................... GpenEditorAdapterFactory.servableTypes')
-    #[IPropertySheetPage]
-  }
+  override protected servableTypes() { #[IPropertySheetPage] }
 
   override protected <T> T adapter(Object adaptableObject, Class<T> adapterType) {
     if (adaptableObject instanceof GpenEditor && adapterType.isAssignableFrom(IPropertySheetPage)) {
