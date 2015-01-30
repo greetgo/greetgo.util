@@ -4,7 +4,7 @@ import kz.greepto.gpen.drawport.DrawPort
 import kz.greepto.gpen.drawport.Kolor
 import kz.greepto.gpen.util.ColorManager
 
-class AlignWorkerToRight implements AlignWorker {
+class AlignWorkerToRightFromBottom implements AlignWorker {
 
    override paintIcon(DrawPort dp, ColorManager colors, int width, int height) {
     dp.style.foreground = Kolor.BLUE

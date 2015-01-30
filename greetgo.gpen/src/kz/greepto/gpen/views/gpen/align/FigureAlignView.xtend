@@ -72,7 +72,7 @@ class FigureAlignView extends ViewPart {
 
     for (fat : FigureAlignType.values) {
       var b = new Button(wall, SWT.NONE)
-      b.image = createImage(parent.display, fat.worker, 64, 64)
+      b.image = createImage(parent.display, fat.worker, 61, 61)
     }
 
     sc.minSize = wall.computeSize(SWT.DEFAULT, SWT.DEFAULT)

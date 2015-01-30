@@ -1,8 +1,10 @@
 package kz.greepto.gpen.views.gpen.align.worker;
 
 public enum FigureAlignType {
-  ToLeft, ToRight, EqualHoriz, //
-  ToTop, ToBottom, EqualVert, //
+  ToLeftFromTop, ToRightFromTop, ToLeftFromBottom, ToRightFromBottom, //
+  EqualHoriz, //
+  ToTopFromLeft, ToBottomFromLeft, ToTopFromRight, ToBottomFromRight, //
+  EqualVert, //
   
   ;
   
