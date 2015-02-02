@@ -12,7 +12,6 @@ public enum FigureAlignType {
   
   private FigureAlignType() {
     try {
-      System.out.println("name = " + name());
       String cl = getClass().getPackage().getName() + ".AlignWorker" + name();
       this.worker = (AlignWorker)Class.forName(cl).newInstance();
     } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
