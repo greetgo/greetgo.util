@@ -10,6 +10,8 @@ import kz.greepto.gpen.views.gpen.align.worker.FigureAlignType
 import org.eclipse.jface.viewers.ISelection
 import org.eclipse.swt.SWT
 import org.eclipse.swt.custom.ScrolledComposite
+import org.eclipse.swt.events.MouseAdapter
+import org.eclipse.swt.events.MouseEvent
 import org.eclipse.swt.graphics.Image
 import org.eclipse.swt.layout.GridLayout
 import org.eclipse.swt.widgets.Button
@@ -54,13 +56,30 @@ class FigureAlignView extends ViewPart {
     return ret
   }
 
+  Composite parent = null
+
   override createPartControl(Composite parent) {
+    this.parent = parent
     site.workbenchWindow.selectionService.addSelectionListener(listener)
+
+    updateUI
+
+  }
+
+  def updateUI() {
+    parent.children.forEach[dispose]
 
     var ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL + SWT.H_SCROLL)
     var Composite wall = new Composite(sc, SWT.NONE)
     wall.backgroundMode = SWT.INHERIT_DEFAULT
     wall.background = colors.rgb(255, 255, 255)
+
+    wall.addMouseListener(
+      new MouseAdapter() {
+        override mouseDoubleClick(MouseEvent e) {
+          updateUI
+        }
+      })
 
     sc.content = wall
     sc.expandHorizontal = true
