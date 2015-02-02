@@ -1,37 +1,35 @@
 package kz.greepto.gpen.views.gpen.align.worker
 
 import kz.greepto.gpen.drawport.DrawPort
-import kz.greepto.gpen.drawport.Kolor
-import kz.greepto.gpen.util.ColorManager
 import kz.greepto.gpen.drawport.FontDef
+import kz.greepto.gpen.drawport.Kolor
 import kz.greepto.gpen.drawport.Vec2
+import kz.greepto.gpen.util.ColorManager
 
 class AlignWorkerEqualVert implements AlignWorker {
 
   override paintIcon(DrawPort dp, ColorManager colors, int width, int height) {
     dp.style.foreground = Kolor.BLUE
 
-    dp.font = FontDef.timesNewRoman.h(7).b
+    dp.font = FontDef.timesNewRoman.h(6).b
 
-    var t = Vec2.from(1, 0)
+    var t = Vec2.from(0, 1)
 
     {
       var s = dp.str("РОВНО")
-      s.draw(t + #[14, 2])
+      s.draw(t + #[11, 25])
     }
 
-    dp.from(t + #[10, 12]).shift(-3, 3).line.shift(3, 3).line//
-    .shift(-3, -3).move.shift(45, 0).line //
-    .shift(-3, -3).move.shift(3, 3).line.shift(-3, 3).line
+    dp.from(t + #[53, 5]).shift(-5, 5).move.shift(5, -5).line.shift(5, 5).line.shift(-5, -5).move//
+    .shift(0, 50).line//
+    .shift(-5, -5).move.shift(5, 5).line.shift(5, -5).line
 
-    dp.from(t + #[2, 22]).shift(10, 35).rect.draw
-    dp.from(t + #[47, 22]).shift(10, 35).rect.draw
+    dp.from(t + #[4, 4]).shift(40, 10).rect.draw
 
-    var i = t - #[3, 3]
+    dp.from(t + #[9, 18]).shift(30, 5).rect.draw
+    dp.from(t + #[9, 36]).shift(30, 5).rect.draw
 
-    dp.from(i + #[20, 30]).shift(5, 25).rect.draw
-    dp.from(i + #[30, 30]).shift(5, 25).rect.draw
-    dp.from(i + #[40, 30]).shift(5, 25).rect.draw
+    dp.from(t + #[4, 45]).shift(40, 10).rect.draw
   }
 
 }

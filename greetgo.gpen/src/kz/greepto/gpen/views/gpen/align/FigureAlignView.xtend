@@ -86,7 +86,7 @@ class FigureAlignView extends ViewPart {
     sc.expandVertical = true
 
     var lay = new GridLayout
-    lay.numColumns = 3
+    lay.numColumns = 4
     wall.layout = lay
 
     for (fat : FigureAlignType.values) {

@@ -21,10 +21,30 @@ class SwtGeom extends AbstractGeom {
 
   override rect() {
     var _size = size
+    var from = this.from
     if (_size === null) {
-      if (toList.size == 0) throw new NoToPoints
-      if (toList.size > 1) throw new TooManyToPoints(toList.size)
-      _size = Size.fromTo(from, toList.get(0));
+      if(toList.size == 0) throw new NoToPoints
+      if(toList.size > 1) throw new TooManyToPoints(toList.size)
+      var to = toList.get(0)
+      var copied = false
+      if (from.x > to.x) {
+        to = to.copy
+        from = from.copy
+        copied = true
+        var tmp = to.x;
+        to.x = from.x;
+        from.x = tmp
+      }
+      if (from.y > to.y) {
+        if (!copied) {
+          to = to.copy
+          from = from.copy
+        }
+        var tmp = to.y;
+        to.y = from.y;
+        from.y = tmp
+      }
+      _size = Size.fromTo(from, to);
     }
     return new SwtRectGeom(gc, from, _size)
   }
