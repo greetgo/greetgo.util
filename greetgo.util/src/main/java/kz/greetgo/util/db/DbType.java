@@ -7,5 +7,5 @@ package kz.greetgo.util.db;
  * 
  */
 public enum DbType {
-  PostgreSQL, Oracle
+  PostgreSQL, Oracle, HSQLDB
 }

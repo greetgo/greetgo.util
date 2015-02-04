@@ -10,6 +10,7 @@ public class DbTypeDetector {
     String db = con.getMetaData().getDatabaseProductName().toLowerCase();
     if ("oracle".equals(db)) return DbType.Oracle;
     if ("postgresql".equals(db)) return DbType.PostgreSQL;
+    if ("hsql database engine".equals(db)) return DbType.HSQLDB;
     throw new IllegalArgumentException("Unknown connection db type");
   }
   
