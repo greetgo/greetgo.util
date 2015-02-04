@@ -5,7 +5,7 @@ apply plugin: 'maven'
 group = 'kz.greetgo'
 
 sourceCompatibility = 1.7
-version = '2.2.0'
+version = '2.2.1'
 
 def nowDate = new Date()
 def nowFormattedDate = nowDate.format("yyyy-MM-dd/HH:mm:ss")
@@ -59,9 +59,8 @@ project.eclipse.classpath.file.whenMerged { cp ->
 repositories {
   maven {
     name 'Our repository'
-    url 'http://192.168.0.1:8080/repository/internal/'
+    url 'http://192.168.11.11:8080/repository/internal/'
   }
-  mavenCentral()
 }
 
 dependencies {
@@ -73,7 +72,7 @@ dependencies {
   compile 'com.metapossum:metapossum-scanner:1.0.1'
   compile 'kz.greetgo:greetgo.sqlmanager:2.0.0'
 
-  compile 'kz.greetgo:greetgo.util:0.0.4'
+  compile 'kz.greetgo:greetgo.util:0.0.7'
 
   testCompile 'org.testng:testng:6.1.1'
   testCompile 'org.easytesting:fest-assert-core:2.0M10'
@@ -108,7 +107,7 @@ uploadArchives {
   repositories.mavenDeployer {
     configuration = configurations.archives
     repository(
-      url: 'http://192.168.0.1:8080/repository/internal/'
+      url: 'http://192.168.11.11:8080/repository/internal/'
     )
 
     pom.project {
