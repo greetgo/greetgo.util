@@ -1,14 +1,15 @@
 package kz.greepto.gpen.views.gpen.align.worker
 
+import java.util.List
 import kz.greepto.gpen.drawport.DrawPort
-import kz.greepto.gpen.drawport.Kolor
-import kz.greepto.gpen.util.ColorManager
 import kz.greepto.gpen.drawport.FontDef
+import kz.greepto.gpen.drawport.Kolor
 import kz.greepto.gpen.drawport.Vec2
+import kz.greepto.gpen.editors.gpen.model.FigureGeom
 
 class AlignWorkerEqualHoriz implements AlignWorker {
 
-  override paintIcon(DrawPort dp, ColorManager colors, int width, int height) {
+  override paintIcon(DrawPort dp, int width, int height) {
     dp.style.foreground = Kolor.BLUE
 
     dp.font = FontDef.timesNewRoman.h(7).b
@@ -32,6 +33,11 @@ class AlignWorkerEqualHoriz implements AlignWorker {
     dp.from(i + #[20, 30]).shift(5, 25).rect.draw
     dp.from(i + #[30, 30]).shift(5, 25).rect.draw
     dp.from(i + #[40, 30]).shift(5, 25).rect.draw
+  }
+
+  override canDoFor(List<FigureGeom> geomList) {
+    println(getClass.simpleName + '.canDoFor ' + geomList)
+    return true;
   }
 
 }

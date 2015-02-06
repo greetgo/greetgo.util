@@ -2,15 +2,16 @@ package kz.greepto.gpen.views.gpen.align.worker
 
 import kz.greepto.gpen.drawport.DrawPort
 import kz.greepto.gpen.drawport.Kolor
-import kz.greepto.gpen.util.ColorManager
 import kz.greepto.gpen.drawport.Vec2
+import java.util.List
+import kz.greepto.gpen.editors.gpen.model.FigureGeom
 
 class AlignWorkerToTopFromRight implements AlignWorker {
 
-  override paintIcon(DrawPort dp, ColorManager colors, int width, int height) {
+  override paintIcon(DrawPort dp, int width, int height) {
     dp.style.foreground = Kolor.BLUE
 
-     var t = Vec2.from(3, 5)
+    var t = Vec2.from(3, 5)
 
     dp.from(t + #[2, 0]).shift(50, 0).line
 
@@ -24,6 +25,11 @@ class AlignWorkerToTopFromRight implements AlignWorker {
 
     dp.from(t + #[16, 50]).shift(0, -20).line//
     .shift(-5, 5).line.shift(10, 0).move.shift(-5, -5).line
+  }
+
+  override canDoFor(List<FigureGeom> geomList) {
+    println(getClass.simpleName + '.canDoFor ' + geomList)
+    return true;
   }
 
 }

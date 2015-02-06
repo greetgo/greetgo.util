@@ -11,6 +11,8 @@ import kz.greepto.gpen.drawport.swt.DrawPortSwt
 import kz.greepto.gpen.drawport.swt.DrawableGcSource
 import kz.greepto.gpen.editors.gpen.action.GpenOperation
 import kz.greepto.gpen.editors.gpen.action.Oper
+import kz.greepto.gpen.editors.gpen.action.OperAppend
+import kz.greepto.gpen.editors.gpen.model.FigureGeom
 import kz.greepto.gpen.editors.gpen.model.IdFigure
 import kz.greepto.gpen.editors.gpen.model.PointFigure
 import kz.greepto.gpen.editors.gpen.model.Scene
@@ -19,6 +21,7 @@ import kz.greepto.gpen.editors.gpen.model.paint.MoveDragging
 import kz.greepto.gpen.editors.gpen.model.paint.PaintResult
 import kz.greepto.gpen.editors.gpen.model.paint.SelChecker
 import kz.greepto.gpen.editors.gpen.model.visitor.Hit
+import kz.greepto.gpen.editors.gpen.model.visitor.VisitorGeom
 import kz.greepto.gpen.editors.gpen.model.visitor.VisitorPaint
 import kz.greepto.gpen.editors.gpen.model.visitor.VisitorPlacer
 import kz.greepto.gpen.editors.gpen.prop.SceneWorker
@@ -43,7 +46,6 @@ import org.eclipse.swt.events.MouseTrackListener
 import org.eclipse.swt.events.PaintEvent
 import org.eclipse.swt.widgets.Canvas
 import org.eclipse.swt.widgets.Composite
-import kz.greepto.gpen.editors.gpen.action.OperAppend
 
 class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, MouseTrackListener {
   val MOVE_OFFSET = 3.0
@@ -227,6 +229,20 @@ class GpenCanvas extends Canvas implements MouseListener, MouseMoveListener, Mou
         ofs = x.to(r.rightBottom).dashLine(ofs, skvaj, step)
       }
 
+    } finally {
+      dp.dispose
+    }
+  }
+
+  public def List<FigureGeom> getSelectedGeomList() {
+    val dp = createDP
+    try {
+      val placer = new VisitorPlacer(dp, styleCalc, selChecker)
+      val geomer = new VisitorGeom(placer)
+
+      var List<FigureGeom> ret = newArrayList
+      ret += selIdList.map[sceneWorker.findByIdOrDie(it)].map[it.visit(geomer)].filter[it !== null]
+      return ret
     } finally {
       dp.dispose
     }

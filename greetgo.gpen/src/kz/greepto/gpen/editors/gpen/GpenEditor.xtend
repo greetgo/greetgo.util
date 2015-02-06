@@ -30,6 +30,7 @@ import org.eclipse.ui.part.EditorPart
 import org.eclipse.ui.views.contentoutline.ContentOutline
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage
 import org.eclipse.ui.views.properties.IPropertySheetPage
+import kz.greepto.gpen.editors.gpen.model.FigureGeom
 
 class GpenEditor extends EditorPart {
   override doSave(IProgressMonitor monitor) {
@@ -147,4 +148,8 @@ class GpenEditor extends EditorPart {
     contents.startCreateFigure(figure)
   }
 
+  public def List<FigureGeom> getSelectedGeomList() {
+    if (contents === null) return #[]
+    return contents.selectedGeomList
+  }
 }
