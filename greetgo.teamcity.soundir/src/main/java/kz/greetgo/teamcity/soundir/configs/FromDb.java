@@ -14,7 +14,7 @@ public class FromDb {
   
   private static Connection createCon() throws Exception {
     Class.forName("org.postgresql.Driver");
-    return DriverManager.getConnection("jdbc:postgresql://192.168.0.1:5432/com", "greetgo",
+    return DriverManager.getConnection("jdbc:postgresql://192.168.11.11:5432/com", "greetgo",
         "greetgo");
   }
   
