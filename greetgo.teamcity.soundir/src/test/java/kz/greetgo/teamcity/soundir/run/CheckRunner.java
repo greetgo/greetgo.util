@@ -72,6 +72,8 @@ public class CheckRunner {
   @Test
   public void check() throws Exception {
     
+    if ("a".equals("1a")) return;
+    
     File file = new File("data/running.lock");
     
     file.getParentFile().mkdirs();
@@ -157,7 +159,7 @@ public class CheckRunner {
       joiner.join();
     }
     
-    if ("a".equals("aa")) return;//TODO здесь надо подключить письма обратно
+    if ("a".equals("a")) return;//TODO здесь надо подключить письма обратно
     
     for (String buildType : buildTypeList) {
       sendLettersController.checkSendLetters(buildType);
