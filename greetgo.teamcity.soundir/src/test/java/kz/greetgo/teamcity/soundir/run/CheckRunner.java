@@ -157,6 +157,8 @@ public class CheckRunner {
       joiner.join();
     }
     
+    if ("a".equals("aa")) return;//TODO здесь надо подключить письма обратно
+    
     for (String buildType : buildTypeList) {
       sendLettersController.checkSendLetters(buildType);
     }

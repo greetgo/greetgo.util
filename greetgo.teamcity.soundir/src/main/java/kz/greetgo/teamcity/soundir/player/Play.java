@@ -11,8 +11,8 @@ public class Play {
       this.message = message;
     }
     
-    public void to(String sshAlias) {
-      playMessageTo(message, sshAlias);
+    public void to(String playTarget) {
+      playMessageTo(message, playTarget);
     }
     
   }
@@ -21,20 +21,20 @@ public class Play {
     return new Message(message);
   }
   
-  public static void playMessageTo(String message, String sshAlias) {
+  public static void playMessageTo(String message, String playTarget) {
     try {
-      if ("a".equals("1a")) {
-        System.out.println("Playing message " + message + " to " + sshAlias + " ...");
+      if ("a".equals("a")) {
+        System.out.println("Playing message " + message + " to " + playTarget + " ...");
         
         Thread.sleep(3000);
         
-        System.out.println("   OK to " + sshAlias);
+        System.out.println("   OK to " + playTarget);
         return;
       }
       
       File file = getWaveFile(message);
       
-      WavePlayer.fileTo(file, sshAlias);
+      WavePlayer.fileTo(file, playTarget);
       
     } catch (Exception e) {
       throw new RuntimeException(e);
