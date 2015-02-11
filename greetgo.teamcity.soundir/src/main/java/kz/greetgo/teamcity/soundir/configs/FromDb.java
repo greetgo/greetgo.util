@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 
 public class FromDb {
   
-  private static Connection createCon() throws Exception {
+  public static Connection createCon() throws Exception {
     Class.forName("org.postgresql.Driver");
     return DriverManager.getConnection("jdbc:postgresql://192.168.11.11:5432/com", "greetgo",
         "greetgo");
