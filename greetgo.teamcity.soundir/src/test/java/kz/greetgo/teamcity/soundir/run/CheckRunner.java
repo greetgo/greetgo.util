@@ -72,7 +72,7 @@ public class CheckRunner {
   @Test
   public void check() throws Exception {
     
-    if ("a".equals("a")) return;
+    if ("a".equals("1a")) return;
     
     File file = new File("data/running.lock");
     
