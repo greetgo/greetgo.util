@@ -30,27 +30,26 @@ public class RotatingWriter extends Writer {
     nomerFormat = "%0" + max + "d";
   }
   
-  private static final int afterEnter(char[] cbuf, int off, int len) {
-    for (int i = off, end = off + len; i < end; i++) {
-      if (cbuf[i] == '\n') return i + 1;
+  private static final int indexOfNewline(char[] cbuf, int off, int to) {
+    for (int i = off; i < to; i++) {
+      if (cbuf[i] == '\n') return i;
     }
     return -1;
   }
   
   @Override
   public void write(char[] cbuf, int off, int len) throws IOException {
-    
+    int to = off + len;
     while (true) {
-      int afterEnter = afterEnter(cbuf, off, len);
-      if (afterEnter < 0) {
-        flushPart(cbuf, off, len);
+      int nl = indexOfNewline(cbuf, off, to);
+      if (nl < 0) {
+        flushPart(cbuf, off, to - off);
         break;
       }
-      flushPart(cbuf, off, afterEnter - off);
+      flushPart(cbuf, off, nl + 1 - off);
       swap();
-      off = afterEnter;
+      off = nl + 1;
     }
-    
   }
   
   private PrintWriter writer = null;
