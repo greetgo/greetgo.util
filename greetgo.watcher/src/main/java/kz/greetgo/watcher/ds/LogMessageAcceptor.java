@@ -1,5 +1,6 @@
 package kz.greetgo.watcher.ds;
 
+@Deprecated
 public interface LogMessageAcceptor {
   void acceptInfo(String logMessage);
   

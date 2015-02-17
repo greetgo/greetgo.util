@@ -1,6 +1,7 @@
 package kz.greetgo.watcher.trace;
 
-public class MyTrace extends TopTrace {
+@SuppressWarnings("deprecation")
+public class MyTrace extends TopFileTrace {
   
   public MyTrace() {
     super(new LinkedMessageOuter());
@@ -16,10 +17,7 @@ public class MyTrace extends TopTrace {
   public void info(String message) {
     StringBuilder sb = new StringBuilder();
     appendTime(sb);
-    appendProcessId(sb);
-    appendThreadID(sb);
     appendTraceID(sb);
-    appendHost(sb);
     append(sb, "INFO ###", message);
     out(sb);
   }

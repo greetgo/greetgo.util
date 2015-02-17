@@ -1,9 +1,10 @@
 package kz.greetgo.watcher.ds;
 
-import kz.greetgo.watcher.trace.TopTrace;
 import kz.greetgo.watcher.trace.LinkedMessageOuter;
+import kz.greetgo.watcher.trace.TopFileTrace;
 
-public class ConfDataSourceTrace extends TopTrace {
+@Deprecated
+public class ConfDataSourceTrace extends TopFileTrace {
   
   final LinkedMessageOuter outer;
   
@@ -15,9 +16,6 @@ public class ConfDataSourceTrace extends TopTrace {
   public void info(String logMessage) {
     StringBuilder sb = new StringBuilder();
     appendTime(sb);
-    appendHost(sb);
-    appendProcessId(sb);
-    appendThreadID(sb);
     appendTraceID(sb);
     append(sb, "INFO", logMessage);
     out(sb);
@@ -26,9 +24,6 @@ public class ConfDataSourceTrace extends TopTrace {
   public void common(String logMessage) {
     StringBuilder sb = new StringBuilder();
     appendTime(sb);
-    appendHost(sb);
-    appendProcessId(sb);
-    appendThreadID(sb);
     appendTraceID(sb);
     append(sb, "COMMON", logMessage);
     out(sb);
@@ -37,9 +32,6 @@ public class ConfDataSourceTrace extends TopTrace {
   public void info2(String logMessage) {
     StringBuilder sb = new StringBuilder();
     appendTime(sb);
-    appendHost(sb);
-    appendProcessId(sb);
-    appendThreadID(sb);
     appendTraceID(sb);
     append(sb, "INFO2", logMessage);
     out(sb);

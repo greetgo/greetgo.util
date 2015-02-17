@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 
+@Deprecated
 public class ConnectionWatcher {
   
   private final LogMessageAcceptor log;

@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 
+@Deprecated
 public abstract class ConfDataSourceWatcher extends DataSourceWatcher {
   private final String filePrefix;
   

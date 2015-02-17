@@ -3,29 +3,17 @@ package kz.greetgo.watcher.trace;
 import java.lang.management.ManagementFactory;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
-public class TopTrace {
-  private static final AtomicInteger nextId = new AtomicInteger(1);
+@Deprecated
+public class TopFileTrace extends TraceIdThreadStorage {
   
   public int traceIdLength = 7;
   public int threadIdLength = 7;
   
-  private static ThreadLocal<Integer> traceIdStorage = new ThreadLocal<Integer>() {
-    @Override
-    protected Integer initialValue() {
-      return nextId.incrementAndGet();
-    }
-  };
-  
   private static String processId = "unknown";
   private static String host = "unknown";
   
-  public static final String RUN_ID;
-  
   static {
-    RUN_ID = UUID.randomUUID().toString().substring(0, 8);
     
     String name = ManagementFactory.getRuntimeMXBean().getName();
     
@@ -42,22 +30,12 @@ public class TopTrace {
   
   protected final MessageOuter outer;
   
-  public TopTrace(MessageOuter outer) {
+  public TopFileTrace(MessageOuter outer) {
     this.outer = outer;
   }
   
   public void close() {
     outer.close();
-  }
-  
-  public static void reset() {
-    traceIdStorage.set(nextId.incrementAndGet());
-  }
-  
-  public int traceID() {
-    Integer ret = traceIdStorage.get();
-    if (ret == null) return 0;
-    return ret.intValue();
   }
   
   public String processId() {
@@ -87,20 +65,17 @@ public class TopTrace {
   
   public void appendTraceID(StringBuilder sb) {
     if (sb.length() > 0) sb.append(' ');
-    StringBuilder s = new StringBuilder(traceIdLength);
-    s.append(traceID());
-    tolen(traceIdLength, s);
-    sb.append("TRACE").append(s);
+    sb.append(traceId().toString());
   }
   
   public void appendRunTraceIds(StringBuilder sb) {
     if (sb.length() > 0) sb.append(' ');
     {
-      sb.append("R").append(RUN_ID);
+      sb.append("R").append(traceId().run.toString().substring(0, 8));
     }
     {
       StringBuilder s = new StringBuilder(traceIdLength);
-      s.append(traceID());
+      s.append(traceId().number);
       tolen(traceIdLength, s);
       sb.append("TRACE").append(s);
     }
@@ -108,7 +83,7 @@ public class TopTrace {
   
   public void appendRunID(StringBuilder sb) {
     if (sb.length() > 0) sb.append(' ');
-    sb.append("R").append(RUN_ID);
+    sb.append("R").append(traceId().run.toString().substring(0, 8));
   }
   
   public void appendThreadID(StringBuilder sb) {
@@ -134,11 +109,13 @@ public class TopTrace {
     sb.append("DELAY ").append(System.currentTimeMillis() - timeFrom);
   }
   
+  @Deprecated
   public void appendProcessId(StringBuilder sb) {
     if (sb.length() > 0) sb.append(' ');
     sb.append("PROCESS").append(processId);
   }
   
+  @Deprecated
   public void appendHost(StringBuilder sb) {
     if (sb.length() > 0) sb.append(' ');
     sb.append("HOST").append(host);

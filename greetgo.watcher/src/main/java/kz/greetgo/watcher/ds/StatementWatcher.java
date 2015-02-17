@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+@Deprecated
 public class StatementWatcher {
   
   private final LogMessageAcceptor log;

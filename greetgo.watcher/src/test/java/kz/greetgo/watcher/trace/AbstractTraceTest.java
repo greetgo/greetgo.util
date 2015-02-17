@@ -1,6 +1,7 @@
 package kz.greetgo.watcher.trace;
 
 public class AbstractTraceTest {
+  @SuppressWarnings("deprecation")
   public static void main(String[] args) throws Exception {
     final MyTrace trace = new MyTrace();
     

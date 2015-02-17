@@ -3,7 +3,7 @@
 	<classpathentry kind="output" path="bin"/>
 	<classpathentry output="build/eclipse_bin" kind="src" path="src/main/java"/>
 	<classpathentry output="build/eclipse_bin" kind="src" path="src/test/java"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6" exported="true"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7" exported="true"/>
 	<classpathentry sourcepath="GRADLE_USER_HOME/caches/modules-2/files-2.1/org.testng/testng/6.1.1/c762bd3de6bcc529e457fed1433d74c09d9e6afc/testng-6.1.1-sources.jar" kind="var" path="GRADLE_USER_HOME/caches/modules-2/files-2.1/org.testng/testng/6.1.1/a94d7d28cabfa782f0cfd4275cbe4106aecd6aec/testng-6.1.1.jar" exported="true"/>
 	<classpathentry sourcepath="GRADLE_USER_HOME/caches/modules-2/files-2.1/org.easytesting/fest-assert-core/2.0M10/16321e3a0a61af0505a0d3726c6c75d0a44e34e8/fest-assert-core-2.0M10-sources.jar" kind="var" path="GRADLE_USER_HOME/caches/modules-2/files-2.1/org.easytesting/fest-assert-core/2.0M10/cb7c91cf614901928ae405f19d9bcdedf82781db/fest-assert-core-2.0M10.jar" exported="true"/>
 	<classpathentry sourcepath="GRADLE_USER_HOME/caches/modules-2/files-2.1/junit/junit/3.8.1/525753763e53f6f76da052b316d0f2e3bfa4d73/junit-3.8.1-sources.jar" kind="var" path="GRADLE_USER_HOME/caches/modules-2/files-2.1/junit/junit/3.8.1/99129f16442844f6a4a11ae22fbbee40b14d774f/junit-3.8.1.jar" exported="true"/>

@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+@Deprecated
 public abstract class DataSourceWatcher implements DataSource, LogMessageAcceptor {
   
   private ConnectionWatcher connectionWatcher = new ConnectionWatcher(this);

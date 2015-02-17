@@ -2,6 +2,7 @@ package kz.greetgo.watcher.trace;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Deprecated
 public class ThreadId {
   private static final AtomicInteger nextId = new AtomicInteger(1);
   
