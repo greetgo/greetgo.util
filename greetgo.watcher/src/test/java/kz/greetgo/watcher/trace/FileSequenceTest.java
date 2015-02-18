@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.Iterator;
 
 import org.testng.annotations.BeforeTest;
@@ -88,16 +89,21 @@ public class FileSequenceTest {
     assertThat(it.next()).exists().hasContent("Hello 2");
   }
   
-  public static void main(String[] args) throws IOException {
-    //    RotatingWriter writer = new RotatingWriter(new File("/home/den/tmp/rot"), "test", ".txt", 10,
-    //        20);
-    //    PrintWriter p = new PrintWriter(writer, true);
-    //    p.println("Hello all 1");
-    //    p.println("Hello all 2");
-    //    p.println("Hello all 3");
-    //    p.println("Hello all 4");
-    //    p.close();
-    //    
-    //    FilterOutputStream f;
+  @Test
+  public void rotateWriter() throws IOException {
+    for (File file : FILES) {
+      file.delete();
+    }
+    RotateWriter rw = new RotateWriter(10, FILES);
+    PrintWriter ps = new PrintWriter(rw);
+    for (int i = 1; i <= 8; i++) {
+      ps.println("Hello " + i);
+    }
+    ps.close();
+    
+    Iterator<File> it = FILES.iterator();
+    assertThat(it.next()).exists().hasContent("Hello 7\nHello 8\n");
+    assertThat(it.next()).exists().hasContent("Hello 5\nHello 6\n");
+    assertThat(it.next()).exists().hasContent("Hello 3\nHello 4\n");
   }
 }
