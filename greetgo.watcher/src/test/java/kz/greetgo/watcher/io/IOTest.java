@@ -1,4 +1,4 @@
-package kz.greetgo.watcher.trace;
+package kz.greetgo.watcher.io;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -12,8 +12,8 @@ import java.util.Iterator;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-public class FileSequenceTest {
-  private static final Iterable<File> FILES = FileSequence.fileSequence(new File("build/tmp"), "p",
+public class IOTest {
+  private static final Iterable<File> FILES = Util.fileSequence(new File("build/tmp"), "p",
       ".txt", 9, 11);
   private static final File FILE9 = new File("build/tmp/p09.txt");
   private static final File FILE10 = new File("build/tmp/p10.txt");
@@ -37,7 +37,7 @@ public class FileSequenceTest {
       ps.print(file.getName());
       ps.close();
     }
-    FileSequence.rotate(FILES);
+    Util.rotate(FILES);
     Iterator<File> it = FILES.iterator();
     assertThat(it.next()).doesNotExist();
     assertThat(it.next()).exists().hasContent("p09.txt");
@@ -53,7 +53,7 @@ public class FileSequenceTest {
       ps.close();
     }
     FILE10.delete();
-    FileSequence.rotate(FILES);
+    Util.rotate(FILES);
     Iterator<File> it = FILES.iterator();
     assertThat(it.next()).doesNotExist();
     assertThat(it.next()).exists().hasContent("p09.txt");
@@ -68,7 +68,7 @@ public class FileSequenceTest {
     
     LazyOutputStream los = new LazyOutputStream() {
       public void newOut() throws IOException {
-        FileSequence.rotate(FILES);
+        Util.rotate(FILES);
         this.length = 0;
         this.out = new FileOutputStream(FILES.iterator().next());
       }
@@ -113,9 +113,9 @@ public class FileSequenceTest {
       file.delete();
     }
     FileOutputStream os = new FileOutputStream(FILE9);
-    os.write(65);
-    os.write(66);
-    os.write(67);
+    os.write(65); // A
+    os.write(66); // B
+    os.write(67); // C
     os.close();
     
     RotateWriter rw = new RotateWriter(10, FILES);

@@ -1,4 +1,4 @@
-package kz.greetgo.watcher.trace;
+package kz.greetgo.watcher.io;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public final class FileSequence {
+public final class Util {
   
   public static final Iterable<File> fileSequence(final File dir, final String prefix,
       final String suffix, final int minNum, final int maxNum) {

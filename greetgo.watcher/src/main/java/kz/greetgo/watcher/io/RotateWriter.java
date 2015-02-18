@@ -1,4 +1,4 @@
-package kz.greetgo.watcher.trace;
+package kz.greetgo.watcher.io;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -30,7 +30,7 @@ public class RotateWriter extends Writer {
         if (firstFile.exists()) {
           length = firstFile.length();
           if (length >= maxFileLength) {
-            FileSequence.rotate(files);
+            Util.rotate(files);
             length = 0;
           }
         }

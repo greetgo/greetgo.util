@@ -1,4 +1,4 @@
-package kz.greetgo.watcher.trace;
+package kz.greetgo.watcher.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
