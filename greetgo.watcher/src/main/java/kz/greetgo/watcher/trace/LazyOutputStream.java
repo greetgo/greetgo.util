@@ -4,15 +4,17 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public abstract class LazyOutputStream extends OutputStream {
-  private OutputStream out;
-  private long count;
+  protected OutputStream out;
+  protected long length;
   
-  protected abstract OutputStream newOut() throws IOException;
+  /**
+   * Setup out and length
+   */
+  protected abstract void newOut() throws IOException;
   
   private final void ensureOut() throws IOException {
     if (out == null) {
-      out = newOut();
-      count = 0;
+      newOut();
     }
   }
   
@@ -22,14 +24,14 @@ public abstract class LazyOutputStream extends OutputStream {
     out = null;
   }
   
-  public final long getCount() {
-    return count;
+  public final long getLength() {
+    return length;
   }
   
   public final void write(int b) throws IOException {
     ensureOut();
     out.write(b);
-    count++;
+    length++;
   }
   
   public final void write(byte b[]) throws IOException {
@@ -41,14 +43,11 @@ public abstract class LazyOutputStream extends OutputStream {
     
     ensureOut();
     out.write(b, off, len);
-    count += len;
+    length += len;
   }
   
   public final void flush() throws IOException {
-    //TODO fix it
-    //    if (out != null) {
-    //      out.flush();
-    //    }
+    // Do nothing to not flush every '\n'
   }
   
   public final void close() throws IOException {

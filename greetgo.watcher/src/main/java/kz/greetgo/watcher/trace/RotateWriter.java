@@ -1,34 +1,41 @@
 package kz.greetgo.watcher.trace;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 
 public class RotateWriter extends Writer {
-  private final long maxFileSize;
+  private final long maxLength;
   private final LazyOutputStream out;
   private Writer writer;
   
-  //TODO если файл 001 уже есть но не достиг максимального размера - это надо учесть
-  
   private final void tryReset() throws IOException {
     writer.flush();
-    if (out.getCount() > maxFileSize) {
+    if (out.getLength() > maxLength) {
       out.reset();
     }
   }
   
-  public RotateWriter(long maxFileSize, final Iterable<File> files)
+  public RotateWriter(final long maxFileLength, final Iterable<File> files)
       throws UnsupportedEncodingException {
-    this.maxFileSize = maxFileSize;
+    this.maxLength = maxFileLength;
     out = new LazyOutputStream() {
-      protected OutputStream newOut() throws IOException {
-        FileSequence.rotate(files);
-        return new FileOutputStream(files.iterator().next());
+      protected void newOut() throws IOException {
+        File firstFile = files.iterator().next();
+        long length = 0;
+        if (firstFile.exists()) {
+          length = firstFile.length();
+          if (length >= maxFileLength) {
+            FileSequence.rotate(files);
+            length = 0;
+          }
+        }
+        this.length = length;
+        this.out = new BufferedOutputStream(new FileOutputStream(firstFile, true));
       }
     };
     writer = new OutputStreamWriter(out, "UTF-8");

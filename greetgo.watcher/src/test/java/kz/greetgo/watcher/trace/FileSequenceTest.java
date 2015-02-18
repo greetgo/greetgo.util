@@ -5,7 +5,6 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Iterator;
@@ -68,9 +67,10 @@ public class FileSequenceTest {
     }
     
     LazyOutputStream los = new LazyOutputStream() {
-      public OutputStream newOut() throws IOException {
+      public void newOut() throws IOException {
         FileSequence.rotate(FILES);
-        return new FileOutputStream(FILES.iterator().next());
+        this.length = 0;
+        this.out = new FileOutputStream(FILES.iterator().next());
       }
     };
     PrintStream ps = new PrintStream(los);
@@ -105,5 +105,28 @@ public class FileSequenceTest {
     assertThat(it.next()).exists().hasContent("Hello 7\nHello 8\n");
     assertThat(it.next()).exists().hasContent("Hello 5\nHello 6\n");
     assertThat(it.next()).exists().hasContent("Hello 3\nHello 4\n");
+  }
+  
+  @Test
+  public void rotateWriter_nonempty() throws IOException {
+    for (File file : FILES) {
+      file.delete();
+    }
+    FileOutputStream os = new FileOutputStream(FILE9);
+    os.write(65);
+    os.write(66);
+    os.write(67);
+    os.close();
+    
+    RotateWriter rw = new RotateWriter(10, FILES);
+    PrintWriter ps = new PrintWriter(rw);
+    ps.println("Hello 1");
+    ps.println("Hello 2");
+    ps.println("Hello 3");
+    ps.close();
+    
+    Iterator<File> it = FILES.iterator();
+    assertThat(it.next()).exists().hasContent("Hello 2\nHello 3\n");
+    assertThat(it.next()).exists().hasContent("ABCHello 1\n");
   }
 }
