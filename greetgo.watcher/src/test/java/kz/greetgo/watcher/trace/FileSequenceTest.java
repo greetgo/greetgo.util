@@ -3,7 +3,9 @@ package kz.greetgo.watcher.trace;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Iterator;
 
@@ -56,6 +58,34 @@ public class FileSequenceTest {
     assertThat(it.next()).doesNotExist();
     assertThat(it.next()).exists().hasContent("p09.txt");
     assertThat(it.next()).exists().hasContent("p11.txt");
+  }
+  
+  @Test
+  public void lazyOutputStream() throws IOException {
+    for (File file : FILES) {
+      file.delete();
+    }
+    
+    LazyOutputStream los = new LazyOutputStream() {
+      public OutputStream newOut() throws IOException {
+        FileSequence.rotate(FILES);
+        return new FileOutputStream(FILES.iterator().next());
+      }
+    };
+    PrintStream ps = new PrintStream(los);
+    ps.println("Hello 1");
+    los.reset();
+    ps.println("Hello 2");
+    los.reset();
+    ps.println("Hello 3");
+    los.reset();
+    ps.println("Hello 4");
+    ps.close();
+    
+    Iterator<File> it = FILES.iterator();
+    assertThat(it.next()).exists().hasContent("Hello 4");
+    assertThat(it.next()).exists().hasContent("Hello 3");
+    assertThat(it.next()).exists().hasContent("Hello 2");
   }
   
   public static void main(String[] args) throws IOException {
