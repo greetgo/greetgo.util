@@ -107,7 +107,7 @@ public class RotatingWriter extends Writer {
     }
   }
   
-  private File getFile(int nomer) {
+  private final File getFile(int nomer) {
     return new File(dir, prefix + String.format(nomerFormat, nomer) + suffix);
   }
   
