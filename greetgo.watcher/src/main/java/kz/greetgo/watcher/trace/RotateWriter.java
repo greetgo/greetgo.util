@@ -13,6 +13,8 @@ public class RotateWriter extends Writer {
   private final LazyOutputStream out;
   private Writer writer;
   
+  //TODO если файл 001 уже есть но не достиг максимального размера - это надо учесть
+  
   private final void tryReset() throws IOException {
     writer.flush();
     if (out.getCount() > maxFileSize) {

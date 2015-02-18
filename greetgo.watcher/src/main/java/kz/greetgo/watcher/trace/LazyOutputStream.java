@@ -9,7 +9,7 @@ public abstract class LazyOutputStream extends OutputStream {
   
   protected abstract OutputStream newOut() throws IOException;
   
-  private final void tryCreate() throws IOException {
+  private final void ensureOut() throws IOException {
     if (out == null) {
       out = newOut();
       count = 0;
@@ -17,7 +17,8 @@ public abstract class LazyOutputStream extends OutputStream {
   }
   
   public final void reset() throws IOException {
-    flush();
+    if (out == null) return;
+    out.close();
     out = null;
   }
   
@@ -26,7 +27,7 @@ public abstract class LazyOutputStream extends OutputStream {
   }
   
   public final void write(int b) throws IOException {
-    tryCreate();
+    ensureOut();
     out.write(b);
     count++;
   }
@@ -38,15 +39,16 @@ public abstract class LazyOutputStream extends OutputStream {
   public final void write(byte[] b, int off, int len) throws IOException {
     if ((off | len | (b.length - (len + off)) | (off + len)) < 0) throw new IndexOutOfBoundsException();
     
-    tryCreate();
+    ensureOut();
     out.write(b, off, len);
     count += len;
   }
   
   public final void flush() throws IOException {
-    if (out != null) {
-      out.flush();
-    }
+    //TODO fix it
+    //    if (out != null) {
+    //      out.flush();
+    //    }
   }
   
   public final void close() throws IOException {
