@@ -11,23 +11,12 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 
 public class RotatingWriter extends Writer {
-  
-  private final File dir;
-  private final String prefix;
-  private final String suffix;
-  private final int maxFiles;
+  private final Iterable<File> files;
   private final long maxFileSize;
-  private final String nomerFormat;
   
-  public RotatingWriter(File dir, String prefix, String suffix, int maxFiles, long maxFileSize) {
-    this.dir = dir;
-    this.prefix = prefix;
-    this.suffix = suffix;
-    this.maxFiles = maxFiles;
+  public RotatingWriter(Iterable<File> files, long maxFileSize) {
+    this.files = files;
     this.maxFileSize = maxFileSize;
-    
-    int max = Integer.toString(maxFiles).length();
-    nomerFormat = "%0" + max + "d";
   }
   
   private static final int indexOfNewline(char[] cbuf, int off, int to) {
@@ -69,26 +58,12 @@ public class RotatingWriter extends Writer {
     if (length < maxFileSize) return;
     writer.close();
     writer = null;
-    preparePlace(1);
-  }
-  
-  private void preparePlace(int nomer) {
-    File file = getFile(nomer);
-    
-    if (!file.exists()) return;
-    
-    if (nomer > maxFiles) {
-      file.delete();
-      return;
-    }
-    
-    preparePlace(nomer + 1);
-    file.renameTo(getFile(nomer + 1));
+    FileSequence.rotate(files);
   }
   
   private void prepareWriter() {
     assert writer == null;
-    File file = getFile(1);
+    File file = files.iterator().next();
     file.getParentFile().mkdirs();
     
     if (file.exists()) {
@@ -105,10 +80,6 @@ public class RotatingWriter extends Writer {
     } catch (FileNotFoundException | UnsupportedEncodingException e) {
       throw new RuntimeException(e);
     }
-  }
-  
-  private final File getFile(int nomer) {
-    return new File(dir, prefix + String.format(nomerFormat, nomer) + suffix);
   }
   
   @Override
