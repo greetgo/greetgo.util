@@ -14,7 +14,7 @@ public abstract class ProjectTracer<T extends Event> extends Tracer<T> {
     DEFAULT_DIR.mkdirs();
   }
   
-  public static final TraceStamp STAMP = new TraceStamp();
+  public static final Stamp STAMP = new Stamp();
   
   protected static final Writer defaultWriter(String prefix) {
     try {

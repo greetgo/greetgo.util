@@ -3,7 +3,7 @@ package kz.greetgo.watcher.tracer;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
-public final class TraceStamp {
+public final class Stamp {
   private final UUID run = UUID.randomUUID();
   private final AtomicLong currentNumber = new AtomicLong(0);
   private final ThreadLocal<Long> number = new ThreadLocal<Long>() {

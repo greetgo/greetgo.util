@@ -8,7 +8,7 @@ public class Event {
   public final long number;
   public final Date timestamp = new Date();
   
-  public Event(TraceStamp stamp) {
+  public Event(Stamp stamp) {
     this.run = stamp.run();
     this.number = stamp.number();
   }
