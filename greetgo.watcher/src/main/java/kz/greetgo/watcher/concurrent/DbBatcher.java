@@ -15,7 +15,7 @@ public abstract class DbBatcher<T> extends Batcher<T> {
     this.sql = sql;
   }
   
-  protected abstract void unpack(PreparedStatement ps, T t);
+  protected abstract void unpack(PreparedStatement ps, T t) throws SQLException;
   
   @Override
   protected final void batch(List<T> list) {
@@ -23,9 +23,6 @@ public abstract class DbBatcher<T> extends Batcher<T> {
       PreparedStatement ps = connection.prepareStatement(sql);
       try {
         for (T t : list) {
-          //          ps.setString(0, t.run.toString());
-          //          ps.setLong(1, t.number);
-          //          ps.setTimestamp(2, new Timestamp(t.timestamp.getTime()));
           unpack(ps, t);
           ps.addBatch();
         }

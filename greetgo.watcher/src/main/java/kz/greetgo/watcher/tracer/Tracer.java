@@ -7,8 +7,12 @@ public abstract class Tracer<T extends Event> {
   
   protected abstract T pack(String message);
   
+  protected abstract boolean isEnabled();
+  
   public final void trace(String message) {
-    batcher().add(pack(message));
+    if (isEnabled()) {
+      batcher().add(pack(message));
+    }
   }
   
 }
