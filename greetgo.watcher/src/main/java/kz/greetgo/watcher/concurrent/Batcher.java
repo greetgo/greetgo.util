@@ -1,7 +1,6 @@
 package kz.greetgo.watcher.concurrent;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -15,11 +14,7 @@ public abstract class Batcher<T> {
       private final List<T> list = new ArrayList<>();
       
       protected void work() {
-        while (true) {
-          T t = queue.poll();
-          if (t == null) break;
-          list.add(t);
-        }
+        moveQueueToList(queue, list);
         
         if (list.isEmpty()) {
           return;
@@ -44,13 +39,13 @@ public abstract class Batcher<T> {
     queue.add(t);
   }
   
-  public final void addAll(Collection<? extends T> c) {
-    if (!started) {
-      worker.start();
-      started = true;
+  protected abstract void batch(List<T> list);
+  
+  private static final <T> void moveQueueToList(ConcurrentLinkedQueue<T> queue, List<T> list) {
+    T t;
+    while ((t = queue.poll()) != null) {
+      list.add(t);
     }
-    queue.addAll(c);
   }
   
-  protected abstract void batch(List<T> list);
 }
