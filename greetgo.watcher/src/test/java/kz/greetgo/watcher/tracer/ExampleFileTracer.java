@@ -1,10 +1,10 @@
 package kz.greetgo.watcher.tracer;
 
 import kz.greetgo.watcher.concurrent.Batcher;
-import kz.greetgo.watcher.concurrent.FileBatcher;
+import kz.greetgo.watcher.concurrent.WriterBatcher;
 
 public class ExampleFileTracer extends ProjectTracer<ExampleEvent> {
-  private static final Batcher<ExampleEvent> BATCHER = new FileBatcher<ExampleEvent>(100, defaultWriter("example"));
+  private static final Batcher<ExampleEvent> BATCHER = new WriterBatcher<ExampleEvent>(100, defaultWriter("example"));
   
   @Override
   protected Batcher<ExampleEvent> batcher() {
