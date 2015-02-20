@@ -13,8 +13,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class IOTest {
-  private static final Iterable<File> FILES = Util.fileSequence(new File("build/tmp"), "p",
-      ".txt", 9, 11);
+  private static final Iterable<File> FILES = Util.fileSequence(new File("build/tmp"), "p", ".txt",
+      9, 11);
   private static final File FILE9 = new File("build/tmp/p09.txt");
   private static final File FILE10 = new File("build/tmp/p10.txt");
   private static final File FILE11 = new File("build/tmp/p11.txt");
@@ -94,6 +94,8 @@ public class IOTest {
     for (File file : FILES) {
       file.delete();
     }
+    FILES.iterator().next().getParentFile().delete();
+    
     RotateWriter rw = new RotateWriter(10, FILES);
     PrintWriter ps = new PrintWriter(rw);
     for (int i = 1; i <= 8; i++) {

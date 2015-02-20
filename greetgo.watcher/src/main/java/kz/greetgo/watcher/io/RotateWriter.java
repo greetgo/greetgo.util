@@ -33,6 +33,10 @@ public class RotateWriter extends Writer {
             Util.rotate(files);
             length = 0;
           }
+        } else {
+          if (!firstFile.getParentFile().exists()) {
+            firstFile.getParentFile().mkdirs();
+          }
         }
         this.length = length;
         this.out = new BufferedOutputStream(new FileOutputStream(firstFile, true));
