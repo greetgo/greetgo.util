@@ -31,7 +31,7 @@ public abstract class DataSourceBatcher<T> extends Batcher<T> {
         connection.commit();
       }
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new RuntimeException(e);
     }
   }
 }
