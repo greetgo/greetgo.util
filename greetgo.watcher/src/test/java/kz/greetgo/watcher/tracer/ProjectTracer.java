@@ -8,8 +8,8 @@ import java.io.Writer;
 
 import kz.greetgo.watcher.io.RotateWriter;
 
-public abstract class ProjectTracer<T extends Event> extends Tracer<T> {
-  private static final long MAX_FILE_LENGTH = 10;
+public abstract class ProjectTracer {
+  private static final long MAX_FILE_LENGTH = 60;
   private static final File DIR = new File("build/trace");
   static {
     DIR.mkdirs();

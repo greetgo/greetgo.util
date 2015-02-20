@@ -1,16 +1,17 @@
 package kz.greetgo.watcher.tracer;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import kz.greetgo.watcher.concurrent.Batcher;
-import kz.greetgo.watcher.concurrent.DbBatcher;
+import javax.sql.DataSource;
 
-public class ExampleDbTracer extends ProjectTracer<ExampleEvent> {
-  private static Connection connection = null; // TODO
-  private static final Batcher<ExampleEvent> BATCHER = new DbBatcher<ExampleEvent>(100, connection,
+import kz.greetgo.watcher.concurrent.Batcher;
+import kz.greetgo.watcher.concurrent.DataSourceBatcher;
+
+public class ExampleDbTracer extends ProjectTracer {
+  private static DataSource dataSource = null; // TODO
+  private static final Batcher<ExampleEvent> BATCHER = new DataSourceBatcher<ExampleEvent>(100, dataSource,
       "insert into trace_table (run, num, stamp, message) values (?, ?, ?, ?)") {
     protected void unpack(PreparedStatement ps, ExampleEvent t) throws SQLException {
       ps.setString(1, t.run.toString());
@@ -20,18 +21,7 @@ public class ExampleDbTracer extends ProjectTracer<ExampleEvent> {
     }
   };
   
-  @Override
-  protected boolean isEnabled() {
-    return true; // May read from HotConfig
-  }
-  
-  @Override
-  protected Batcher<ExampleEvent> batcher() {
-    return BATCHER;
-  }
-  
-  @Override
-  protected ExampleEvent pack(String message) {
-    return new ExampleEvent(message);
+  public final void trace(String message) {
+    BATCHER.add(new ExampleEvent(message));
   }
 }

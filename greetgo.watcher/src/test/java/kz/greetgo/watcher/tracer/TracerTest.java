@@ -5,7 +5,7 @@ import org.testng.annotations.Test;
 public class TracerTest {
   @Test
   public void test() throws InterruptedException {
-    Tracer<?> t = new ExampleFileTracer();
+    ExampleFileTracer t = new ExampleFileTracer();
     
     t.trace("Ok");
     t.trace("Ohh");
