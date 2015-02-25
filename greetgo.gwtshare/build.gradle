@@ -4,15 +4,15 @@ apply plugin: 'maven'
 
 group = 'kz.greetgo'
 
-sourceCompatibility = 1.6
-version = '1.2.3'
+sourceCompatibility = 1.7
+version = '1.3.0'
 
 def nowDate = new Date()
 def nowFormattedDate = nowDate.format("yyyy-MM-dd/HH:mm:ss")
 
 jar {
   manifest {
-    attributes 'Implementation-Title': project.name, 
+    attributes 'Implementation-Title': project.name,
       'Implementation-Version': version, 'Implementation-Vendor': 'greetgo!',
       'Built-By': System.getProperty("user.name"), 'Built-At': nowFormattedDate
   }
@@ -24,46 +24,39 @@ eclipse {
     // if you want to alter the java versions (by default they are configured with
     // gradle java plugin settings):
     //
-    sourceCompatibility = 1.6
-    targetCompatibility = 1.6
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
   }
-  
-  pathVariables 'GRADLE_USER_HOME': gradle.gradleUserHomeDir
 }
 
 project.eclipse.classpath.file.whenMerged { cp ->
   if (project.hasProperty("sourceCompatibility")) {
     cp.entries.findAll { it.path.contains('JRE_CONTAINER') }.each {
-      
+
       it.path += "/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/" +
           "JavaSE-$project.sourceCompatibility"
-      
+
     }
   }
 }
 
 import org.gradle.plugins.ide.eclipse.model.SourceFolder as SF
 
-eclipse.classpath.file.whenMerged { cp ->
-  cp.entries.findAll { it instanceof SF }*.output = "build/eclipse_bin"
-}
-
 repositories {
-  mavenRepo (
-      name: 'Our repository',
-      url: 'http://192.168.0.1:8080/repository/internal/'
-      )
-  mavenCentral()
+  maven {
+      name 'Our repository'
+      url 'http://192.168.11.11:8080/repository/internal/'
+  }
 }
 
 configurations { repoUpload }
 
 dependencies {
-  compile "com.google.gwt:gwt-user:2.4.0"
-  
+  compile "com.google.gwt:gwt-user:2.7.0"
+
   testCompile 'org.testng:testng:6.1.1'
   testCompile 'org.easytesting:fest-assert-core:2.0M10'
-  
+
   // needed for DAV protocol on maven uploads
   repoUpload "org.apache.maven.wagon:wagon-webdav-jackrabbit:1.0-beta-6"
 }
@@ -83,9 +76,9 @@ uploadArchives {
   repositories.mavenDeployer {
     configuration = configurations.archives
     repository(
-        url: 'http://192.168.0.1:8080/repository/internal/'
+        url: 'http://192.168.11.11:8080/repository/internal/'
         )
-    
+
     pom.project {
       name project.name
       packaging 'jar'
