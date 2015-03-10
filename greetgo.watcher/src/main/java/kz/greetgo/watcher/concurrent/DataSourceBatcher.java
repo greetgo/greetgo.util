@@ -28,7 +28,6 @@ public abstract class DataSourceBatcher<T> extends Batcher<T> {
           ps.addBatch();
         }
         ps.executeBatch();
-        connection.commit();
       }
     } catch (SQLException e) {
       throw new RuntimeException(e);
