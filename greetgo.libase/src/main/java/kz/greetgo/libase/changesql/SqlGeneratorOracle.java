@@ -78,11 +78,16 @@ public class SqlGeneratorOracle implements SqlGenerator {
       return;
     }
     if (change instanceof TableComment) {
-      res.add(GeneratorAddon.generateTableComment(((TableComment)change).table));
+      TableComment x = (TableComment)change;
+      if (x.table.comment != null) {
+        res.add(GeneratorAddon.generateTableComment(x.table));
+      }
     }
     if (change instanceof FieldComment) {
       FieldComment x = (FieldComment)change;
-      res.add(GeneratorAddon.generateFieldComment(x.table, x.field));
+      if (x.field.comment != null) {
+        res.add(GeneratorAddon.generateFieldComment(x.table, x.field));
+      }
     }
     
     throw new IllegalArgumentException("Unknown change " + change);
