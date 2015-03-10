@@ -69,7 +69,9 @@ public class Comparer {
           changeList.add(new TableComment(tableFrom));
         }
         for (Field fieldFrom : tableFrom.allFields) {
-          changeList.add(new FieldComment(tableFrom, fieldFrom));
+          if (fieldFrom.comment != null) {
+            changeList.add(new FieldComment(tableFrom, fieldFrom));
+          }
         }
         continue;
       }
