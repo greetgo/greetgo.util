@@ -88,4 +88,12 @@ public class StrReplacer {
     
     return ret.toString();
   }
+  
+  public int getLen() {
+    return sb.length();
+  }
+  
+  public void setLen(int newLen) {
+    sb.setLength(newLen);
+  }
 }
