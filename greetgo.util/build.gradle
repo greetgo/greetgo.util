@@ -94,6 +94,7 @@ uploadArchives {
     configuration = configurations.archives
     repository(
       url: System.getenv('GG_REPO')
+      //url: 'http://192.168.11.11:8080/repository/internal/'
     )
 
     pom.project {
