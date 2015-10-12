@@ -6,6 +6,23 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class ServerUtil {
+  /**
+   * Поднять первую букву в верхний регистр
+   * 
+   * @param str
+   *          исходная строка
+   * @return строка с заглавной первой буквой
+   */
+  public static String firstUpper(String str) {
+    if (str == null) return null;
+    str = str.trim();
+    if (str.length() == 0) return null;
+    
+    return str.substring(0, 1).toUpperCase() + str.substring(1);
+  }
+  
+  public static void dummyCheck(boolean tmp) {}
+  
   public static void appendToSB(InputStream in, StringBuilder sb) {
     try {
       appendToSB0(in, sb);
