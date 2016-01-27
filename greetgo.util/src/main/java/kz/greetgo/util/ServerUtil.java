@@ -37,6 +37,12 @@ public class ServerUtil {
     sb.append(new String(bout.toByteArray(), "UTF-8"));
   }
   
+  public static byte[] streamToByteArray(InputStream in) {
+    ByteArrayOutputStream bout = new ByteArrayOutputStream();
+    copyStreamsAndCloseIn(in, bout);
+    return bout.toByteArray();
+  }
+  
   public static String streamToStr(InputStream in) {
     StringBuilder sb = new StringBuilder();
     appendToSB(in, sb);
