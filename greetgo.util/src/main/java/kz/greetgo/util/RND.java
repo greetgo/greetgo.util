@@ -45,12 +45,6 @@ public class RND {
     return rnd.nextInt(max);
   }
   
-  public static byte[] rndBytes(int size) {
-    byte[] ret = new byte[size];
-    rnd.nextBytes(ret);
-    return ret;
-  }
-  
   public static Date dateYears(int yearFrom, int yearTo) {
     Calendar cal = new GregorianCalendar();
     cal.add(Calendar.YEAR, yearFrom);
