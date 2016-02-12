@@ -1,9 +1,13 @@
 package kz.greetgo.util;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 public class ServerUtil {
   /**
@@ -85,5 +89,25 @@ public class ServerUtil {
   public static void justOne(int value) {
     if (value == 1) return;
     throw new IllegalArgumentException("Update count = " + value);
+  }
+  
+  private static final Class<?>[] PARAMETERS = new Class[] { URL.class };
+  
+  /**
+   * Добавляет указанную директорию в текущий classpath. После вызова, можно будет загружать классы
+   * из этой директории с помощью Class.forName(...)
+   * 
+   * @param dir
+   *          директория, в которой лежат откомпилированные классы, и которая не находиться ещё в
+   *          текущем classpath-е
+   */
+  public static void addToClasspath(File dir) throws Exception {
+    if (!dir.isDirectory()) throw new IllegalArgumentException(dir + " must be directory");
+    
+    URLClassLoader sysLoader = (URLClassLoader)ClassLoader.getSystemClassLoader();
+    
+    Method addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", PARAMETERS);
+    addUrlMethod.setAccessible(true);
+    addUrlMethod.invoke(sysLoader, new Object[] { dir.toURI().toURL() });
   }
 }
