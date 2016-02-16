@@ -110,4 +110,47 @@ public class ServerUtil {
     addUrlMethod.setAccessible(true);
     addUrlMethod.invoke(sysLoader, new Object[] { dir.toURI().toURL() });
   }
+  
+  /**
+   * Извлекает имя пакета из поного имени класса
+   * 
+   * @param className
+   *          полное имя класса
+   * @return имя пакета
+   */
+  public static String extractPackage(String className) {
+    final int idx = className.lastIndexOf('.');
+    if (idx < 0) return null;
+    return className.substring(0, idx);
+  }
+  
+  /**
+   * Формирует исходный файл (но не создаёт его) для указанной source-папки и именем класса. Также
+   * можно указать расширение. По умолчанию расширение берётся <code>.java</code>
+   * 
+   * @param srcDir
+   *          директория, в которой ложат исходники
+   * @param className
+   *          полное имя класса
+   * @param extension
+   *          расширение (если <code>null</code>, то применяется <code>.java</code>)
+   * @return сформированный файл
+   */
+  public static File resolveFile(String srcDir, String className, String extension) {
+    return new File(
+        srcDir + '/' + className.replace('.', '/') + (extension == null ? ".java" :extension));
+  }
+  
+  /**
+   * Извлекает имя класса из полного имени класса
+   * 
+   * @param className
+   *          полное имя класса
+   * @return имя класса без пакета
+   */
+  public static String extractName(String className) {
+    final int idx = className.lastIndexOf('.');
+    if (idx < 0) return className;
+    return className.substring(idx + 1);
+  }
 }
