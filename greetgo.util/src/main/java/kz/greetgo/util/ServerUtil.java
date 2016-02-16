@@ -27,6 +27,11 @@ public class ServerUtil {
   
   public static void dummyCheck(boolean tmp) {}
   
+  public static <T> T notNull(T t) {
+    if (t == null) throw new NullPointerException();
+    return t;
+  }
+  
   public static void appendToSB(InputStream in, StringBuilder sb) {
     try {
       appendToSB0(in, sb);
