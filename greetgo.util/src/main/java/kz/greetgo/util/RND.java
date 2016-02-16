@@ -1,5 +1,6 @@
 package kz.greetgo.util;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -60,9 +61,55 @@ public class RND {
     return new Date(time);
   }
   
+  public static Date dateDays(int fromDaysBeforeNow, int toDayAfterNow) {
+    Calendar cal = new GregorianCalendar();
+    cal.add(Calendar.DAY_OF_YEAR, fromDaysBeforeNow);
+    long from = cal.getTimeInMillis();
+    cal.add(Calendar.DAY_OF_YEAR, toDayAfterNow - fromDaysBeforeNow);
+    long to = cal.getTimeInMillis();
+    long x = plusLong(to - from);
+    cal.setTimeInMillis(from + x);
+    return cal.getTime();
+  }
+  
   public static byte[] byteArray(int len) {
     final byte[] ret = new byte[len];
     rnd.nextBytes(ret);
+    return ret;
+  }
+  
+  public static boolean bool() {
+    return plusInt(10) % 2 == 0;
+  }
+  
+  @SafeVarargs
+  public static <E extends Enum<E>> E someEnum(E... values) {
+    return values[rnd.nextInt(values.length)];
+  }
+  
+  public static double plusDouble(double max, int point) {
+    double ret = rnd.nextDouble();
+    ret *= (double)max;
+    for (int i = 0; i < point; i++) {
+      ret *= 10.0;
+    }
+    ret = Math.floor(ret);
+    for (int i = 0; i < point; i++) {
+      ret /= 10.0;
+    }
+    return ret;
+  }
+  
+  public static BigDecimal bd(long max, int afterPoint) {
+    BigDecimal ret = new BigDecimal(plusLong(max));
+    for (int i = 0; i < afterPoint; i++) {
+      ret = ret.multiply(BigDecimal.TEN);
+      ret = ret.add(new BigDecimal(plusInt(10)));
+    }
+    
+    for (int i = 0; i < afterPoint; i++) {
+      ret = ret.divide(BigDecimal.TEN);
+    }
     return ret;
   }
 }
