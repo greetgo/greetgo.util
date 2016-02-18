@@ -11,7 +11,8 @@ public class DbTypeDetector {
     if ("oracle".equals(db)) return DbType.Oracle;
     if ("postgresql".equals(db)) return DbType.PostgreSQL;
     if ("hsql database engine".equals(db)) return DbType.HSQLDB;
-    throw new IllegalArgumentException("Unknown connection db type");
+    throw new IllegalArgumentException(
+        "Unknown connection db: " + con.getMetaData().getDatabaseProductName());
   }
   
   public static DbType detect(DataSource dataSource) throws SQLException {
