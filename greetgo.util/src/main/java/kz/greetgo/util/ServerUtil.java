@@ -117,6 +117,18 @@ public class ServerUtil {
   }
   
   /**
+   * Добавляет указанную директорию в текущий classpath. После вызова, можно будет загружать классы
+   * из этой директории с помощью Class.forName(...)
+   * 
+   * @param dir
+   *          директория, в которой лежат откомпилированные классы, и которая не находиться ещё в
+   *          текущем classpath-е
+   */
+  public static void addToClasspath(String dirName) throws Exception {
+    addToClasspath(new File(dirName));
+  }
+  
+  /**
    * Извлекает имя пакета из поного имени класса
    * 
    * @param className
