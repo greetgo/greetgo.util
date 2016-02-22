@@ -190,4 +190,12 @@ public class ServerUtil {
     if (idx < 0) return className;
     return className.substring(idx + 1);
   }
+  
+  public static void deleteRecursively(File file) {
+    if (!file.exists()) return;
+    if (file.isDirectory()) for (File sub : file.listFiles()) {
+      deleteRecursively(sub);
+    }
+    file.delete();
+  }
 }
