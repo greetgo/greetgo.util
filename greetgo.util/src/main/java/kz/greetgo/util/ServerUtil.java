@@ -198,4 +198,8 @@ public class ServerUtil {
     }
     file.delete();
   }
+  
+  public static void deleteRecursively(String fileFullName) {
+    deleteRecursively(new File(fileFullName));
+  }
 }
