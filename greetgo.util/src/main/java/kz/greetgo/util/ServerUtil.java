@@ -1,5 +1,7 @@
 package kz.greetgo.util;
 
+import static java.util.Collections.unmodifiableSet;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +10,9 @@ import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerUtil {
   /**
@@ -98,6 +103,19 @@ public class ServerUtil {
   
   private static final Class<?>[] PARAMETERS = new Class[] { URL.class };
   
+  private static final ConcurrentHashMap<File, File> addedToClassPath = new ConcurrentHashMap<>();
+  
+  /**
+   * Получает список файлов, которые были добавлены в classpath
+   * 
+   * @return список файлов
+   */
+  public static Set<File> getAddedToClassPath() {
+    Set<File> ret = new HashSet<>();
+    ret.addAll(addedToClassPath.keySet());
+    return unmodifiableSet(ret);
+  }
+  
   /**
    * Добавляет указанную директорию в текущий classpath. После вызова, можно будет загружать классы
    * из этой директории с помощью Class.forName(...)
@@ -107,7 +125,9 @@ public class ServerUtil {
    *          текущем classpath-е
    */
   public static void addToClasspath(File dir) throws Exception {
-    if (!dir.isDirectory()) throw new IllegalArgumentException(dir + " must be directory");
+    
+    if (addedToClassPath.containsKey(dir)) return;
+    addedToClassPath.put(dir, dir);
     
     URLClassLoader sysLoader = (URLClassLoader)ClassLoader.getSystemClassLoader();
     
