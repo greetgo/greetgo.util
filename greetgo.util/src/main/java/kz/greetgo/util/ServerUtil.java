@@ -2,10 +2,13 @@ package kz.greetgo.util;
 
 import static java.util.Collections.unmodifiableSet;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -201,5 +204,26 @@ public class ServerUtil {
   
   public static void deleteRecursively(String fileFullName) {
     deleteRecursively(new File(fileFullName));
+  }
+  
+  public static byte[] javaSerialize(Object object) {
+    if (object == null) return null;
+    ByteArrayOutputStream bout = new ByteArrayOutputStream();
+    try (ObjectOutputStream oos = new ObjectOutputStream(bout)) {
+      oos.writeObject(object);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    return bout.toByteArray();
+  }
+  
+  @SuppressWarnings("unchecked")
+  public static <T> T javaDeserialize(byte[] bytes) {
+    ByteArrayInputStream bin = new ByteArrayInputStream(bytes);
+    try (ObjectInputStream oin = new ObjectInputStream(bin)) {
+      return (T)oin.readObject();
+    } catch (IOException | ClassNotFoundException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

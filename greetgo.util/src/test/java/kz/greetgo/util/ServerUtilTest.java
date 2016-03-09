@@ -3,6 +3,7 @@ package kz.greetgo.util;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 import java.io.File;
+import java.io.Serializable;
 
 import org.testng.annotations.Test;
 
@@ -36,5 +37,35 @@ public class ServerUtilTest {
   public void extractName() throws Exception {
     final String name = ServerUtil.extractName("asd.dsa.Asd");
     assertThat(name).isEqualTo("Asd");
+  }
+  
+  private static class TestClass implements Serializable {
+    int intField;
+    String strField;
+  }
+  
+  @Test
+  public void java_serialize_deserialize() throws Exception {
+    TestClass original = new TestClass();
+    original.intField = RND.plusInt(1_000_000);
+    original.strField = RND.str(10);
+    
+    //
+    //
+    byte[] bytes = ServerUtil.javaSerialize(original);
+    //
+    //
+    
+    assertThat(bytes).isNotNull();
+    
+    //
+    //
+    TestClass actual = ServerUtil.javaDeserialize(bytes);
+    //
+    //
+    
+    assertThat(actual).isNotNull();
+    assertThat(actual.intField).isEqualTo(original.intField);
+    assertThat(actual.strField).isEqualTo(original.strField);
   }
 }
