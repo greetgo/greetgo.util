@@ -68,4 +68,14 @@ public class ServerUtilTest {
     assertThat(actual.intField).isEqualTo(original.intField);
     assertThat(actual.strField).isEqualTo(original.strField);
   }
+  
+  @Test
+  public void trimLeft() throws Exception {
+    assertThat(ServerUtil.trimLeft("   asd  ")).isEqualTo("asd  ");
+  }
+  
+  @Test
+  public void trimRight() throws Exception {
+    assertThat(ServerUtil.trimRight("   asd     ")).isEqualTo("   asd");
+  }
 }

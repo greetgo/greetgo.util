@@ -226,4 +226,30 @@ public class ServerUtil {
       throw new RuntimeException(e);
     }
   }
+  
+  public static String trim(String str) {
+    if (str == null) return null;
+    return str.trim();
+  }
+  
+  public static String trimLeft(String str) {
+    if (str == null) return null;
+    for (int i = 0, len = str.length(); i < len; i++) {
+      if (str.charAt(i) > ' ') {
+        if (i == 0) return str;
+        return str.substring(i);
+      }
+    }
+    return "";
+  }
+  
+  public static String trimRight(String str) {
+    if (str == null) return str;
+    int i = str.length() - 1;
+    if (str.charAt(i) > ' ') return str;
+    for (; i >= 0; i--) {
+      if (str.charAt(i) > ' ') return str.substring(0, i + 1);
+    }
+    return "";
+  }
 }
