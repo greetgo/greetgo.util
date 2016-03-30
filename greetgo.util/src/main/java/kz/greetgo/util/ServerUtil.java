@@ -33,6 +33,14 @@ public class ServerUtil {
     return str.substring(0, 1).toUpperCase() + str.substring(1);
   }
   
+  @SafeVarargs
+  public static <T> T fnn(T... tt) {
+    for (T t : tt) {
+      if (t != null) return t;
+    }
+    return null;
+  }
+  
   public static void dummyCheck(boolean tmp) {}
   
   public static <T> T notNull(T t) {

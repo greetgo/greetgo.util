@@ -78,4 +78,14 @@ public class ServerUtilTest {
   public void trimRight() throws Exception {
     assertThat(ServerUtil.trimRight("   asd     ")).isEqualTo("   asd");
   }
+  
+  @Test
+  public void fnn_001() throws Exception {
+    assertThat(ServerUtil.fnn(null, "asd", "dsa")).isEqualTo("asd");
+  }
+  
+  @Test
+  public void fnn_002() throws Exception {
+    assertThat(ServerUtil.fnn(null, null, null)).isNull();
+  }
 }
