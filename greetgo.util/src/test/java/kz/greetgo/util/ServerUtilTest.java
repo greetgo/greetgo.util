@@ -4,6 +4,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 import java.io.File;
 import java.io.Serializable;
+import java.lang.reflect.Method;
 
 import org.testng.annotations.Test;
 
@@ -87,5 +88,46 @@ public class ServerUtilTest {
   @Test
   public void fnn_002() throws Exception {
     assertThat(ServerUtil.fnn(null, null, null)).isNull();
+  }
+  
+  @Test
+  public void getAnnotation() throws Exception {
+    
+    class ParentAsd {
+      @Test
+      public void asd() {}
+    }
+    
+    class ChildAsd extends ParentAsd {
+      public void asd() {}
+      
+      @SuppressWarnings("unused")
+      public void noIt() {}
+      
+      @Test
+      public void iHave() {}
+    }
+    
+    {
+      Method method = ChildAsd.class.getMethod("asd");
+      
+      Test test = ServerUtil.getAnnotation(method, Test.class);
+      
+      assertThat(test).isNotNull();
+    }
+    {
+      Method method = ChildAsd.class.getMethod("noIt");
+      
+      Test test = ServerUtil.getAnnotation(method, Test.class);
+      
+      assertThat(test).isNull();
+    }
+    {
+      Method method = ChildAsd.class.getMethod("iHave");
+      
+      Test test = ServerUtil.getAnnotation(method, Test.class);
+      
+      assertThat(test).isNotNull();
+    }
   }
 }

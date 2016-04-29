@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -259,5 +260,22 @@ public class ServerUtil {
       if (str.charAt(i) > ' ') return str.substring(0, i + 1);
     }
     return "";
+  }
+  
+  public static <T extends Annotation> T getAnnotation(Method method, Class<T> annotation) {
+    while (true) {
+      T ann = method.getAnnotation(annotation);
+      if (ann != null) return ann;
+      
+      Class<?> aClass = method.getDeclaringClass();
+      if (aClass == Object.class) return null;
+      
+      Class<?> superclass = aClass.getSuperclass();
+      try {
+        method = superclass.getMethod(method.getName(), method.getParameterTypes());
+      } catch (NoSuchMethodException e) {
+        return null;
+      }
+    }
   }
 }
