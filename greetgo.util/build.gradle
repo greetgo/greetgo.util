@@ -5,7 +5,7 @@ apply plugin: 'maven'
 group = 'kz.greetgo'
 
 sourceCompatibility = 1.7
-version = '0.0.25'
+version = '0.0.26'
 
 def nowDate = new Date()
 def nowFormattedDate = nowDate.format("yyyy-MM-dd/HH:mm:ss")
@@ -61,7 +61,7 @@ dependencies {
   testCompile 'org.testng:testng:6.5.1'
   testCompile 'org.easytesting:fest-assert-core:2.0M10'
 
-  testCompile "kz.greetgo:greetgo.conf:0.0.13"
+  testCompile "kz.greetgo:greetgo.conf:0.0.17"
 
   testCompile 'postgresql:postgresql:9.1-901.jdbc4'
   testCompile 'c3p0:c3p0:0.9.1.2'
@@ -70,6 +70,8 @@ dependencies {
   testCompile "greetgo.3rd-party:oracle-ucp:11.2.0.3"
 
   testCompile 'hsqldb:hsqldb:1.8.0.10'
+  testCompile 'mysql:mysql-connector-java:5.1.38'
+  
 }
 
 test { useTestNG() }

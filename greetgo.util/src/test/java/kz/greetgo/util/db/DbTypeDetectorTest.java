@@ -1,5 +1,8 @@
 package kz.greetgo.util.db;
 
+import static kz.greetgo.conf.SysParams.mysqlAdminPassword;
+import static kz.greetgo.conf.SysParams.mysqlAdminUrl;
+import static kz.greetgo.conf.SysParams.mysqlAdminUserid;
 import static kz.greetgo.conf.SysParams.oracleAdminHost;
 import static kz.greetgo.conf.SysParams.oracleAdminPassword;
 import static kz.greetgo.conf.SysParams.oracleAdminPort;
@@ -16,12 +19,12 @@ import java.util.UUID;
 
 import javax.sql.DataSource;
 
-import oracle.ucp.jdbc.PoolDataSource;
-import oracle.ucp.jdbc.PoolDataSourceFactory;
-
 import org.testng.annotations.Test;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+
+import oracle.ucp.jdbc.PoolDataSource;
+import oracle.ucp.jdbc.PoolDataSourceFactory;
 
 public class DbTypeDetectorTest {
   
@@ -84,6 +87,21 @@ public class DbTypeDetectorTest {
     return ret;
   }
   
+  private DataSource getMysqlDatasource() throws PropertyVetoException {
+    ComboPooledDataSource ret = new ComboPooledDataSource();
+    ret.setDriverClass("com.mysql.jdbc.Driver");
+    ret.setJdbcUrl(mysqlAdminUrl());
+    ret.setUser(mysqlAdminUserid());
+    ret.setPassword(mysqlAdminPassword());
+    
+    ret.setAcquireIncrement(1);
+    ret.setMinPoolSize(1);
+    ret.setMaxPoolSize(2);
+    ret.setMaxIdleTime(120);
+    
+    return ret;
+  }
+  
   @Test
   public void detect_PostgresDataSource() throws Exception {
     DataSource ds = getPostgresDatasource();
@@ -91,6 +109,15 @@ public class DbTypeDetectorTest {
     DbType dbType = DbTypeDetector.detect(ds);
     
     assertThat(dbType).isEqualTo(DbType.PostgreSQL);
+  }
+  
+  @Test
+  public void detect_MysqlDataSource() throws Exception {
+    DataSource ds = getMysqlDatasource();
+    
+    DbType dbType = DbTypeDetector.detect(ds);
+    
+    assertThat(dbType).isEqualTo(DbType.MySQL);
   }
   
   @Test
@@ -102,6 +129,17 @@ public class DbTypeDetectorTest {
     con.close();
     
     assertThat(dbType).isEqualTo(DbType.PostgreSQL);
+  }
+  
+  @Test
+  public void detect_MysqlConnection() throws Exception {
+    DataSource ds = getMysqlDatasource();
+    
+    Connection con = ds.getConnection();
+    DbType dbType = DbTypeDetector.detect(con);
+    con.close();
+    
+    assertThat(dbType).isEqualTo(DbType.MySQL);
   }
   
   private DataSource getHsqlDbDatasource() throws PropertyVetoException {
