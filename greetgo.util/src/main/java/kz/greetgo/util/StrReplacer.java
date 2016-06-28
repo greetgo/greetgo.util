@@ -5,18 +5,18 @@ import java.util.Map;
 
 /**
  * <p>
- * Предоставляет возможность генерирования большой строки с возможностью использования подставляемых
- * параметров. Подставляемые параметры определяются внутри строки в фигурных скобках, например:
- * {ИМЯ_ПАРАМЕТРА}.
+ * Provides the ability to generate large string with the possibility of using substitutional
+ * parameters. Substitutional parameters are defined within the string in curly brackets, for
+ * example: {PARAMETER_NAME}.
  * </p>
  * 
  * <p>
- * Параметры подставляются их значениями в момент чтения результирующей строки. Чтение
- * результирующей строки происходит вызовом метода {@link #toString()}.
+ * The parameters are substituted with their values at the time of reading the resulting string.
+ * Reading the resulting string is executed with method call {@link #toString()}.
  * </p>
  * 
  * <p>
- * Значения параметров определяются методом {@link #prm(String, String)}.
+ * Parameters values are defined with the method {@link #prm(String, String)}.
  * </p>
  * 
  * @author pompei
@@ -65,10 +65,10 @@ public class StrReplacer {
   private final Map<String, String> paramMap = new HashMap<String, String>();
 
   /**
-   * Добавляет стороннюю строку целиком
+   * Appends third-party string entirely
    * 
    * @param s
-   *          добавляемая сторонняя строка
+   *          third-party string to be appended
    * @return <code>this</code>
    */
   public StrReplacer add(CharSequence s) {
@@ -77,14 +77,14 @@ public class StrReplacer {
   }
 
   /**
-   * Добавляет часть сторонней строки
+   * Appends a part of third-party string
    * 
    * @param s
-   *          сторонняя строка
+   *          third-party string
    * @param start
-   *          начало добавляемой части в сторонней строке
+   *          start of part to be appended in third-party string
    * @param end
-   *          конец добавляемой части в сторонней строке
+   *          end of part to be appended in third-party string
    * @return <code>this</code>
    */
   public StrReplacer add(CharSequence s, int start, int end) {
@@ -93,11 +93,11 @@ public class StrReplacer {
   }
 
   /**
-   * Добавляет целое число, преобразуя его в строку таким же способом, как это делает метод
+   * Appends an integer, converting it to a string in the same manner as the method does
    * {@link String#valueOf(int)}
    * 
    * @param i
-   *          добавляемое число
+   *          number to be appended
    * @return <code>this</code>
    */
   public StrReplacer add(int i) {
@@ -133,10 +133,10 @@ public class StrReplacer {
   }
 
   /**
-   * Тоже что и {@link #add(char[], int, int)}, но берёт массив целиком
+   * The same as {@link #add(char[], int, int)}, but takes the array entirely
    * 
    * @param str
-   *          добавляемы целиком массив
+   *          array to be appended entirely
    * @return <code>this</code>
    */
   public StrReplacer add(char[] str) {
@@ -145,11 +145,11 @@ public class StrReplacer {
   }
 
   /**
-   * Добавляет целое число, преобразуя его в строку таким же способом, как это делает метод
+   * Appends an integer, converting it to a string in the same manner as the method does
    * {@link String#valueOf(int)}
    * 
    * @param i
-   *          добавляемое число
+   *          number to be appended
    * @return <code>this</code>
    */
   public StrReplacer add(Integer i) {
@@ -158,11 +158,11 @@ public class StrReplacer {
   }
 
   /**
-   * Добавляет целое число, преобразуя его в строку таким же способом, как это делает метод
+   * Appends an integer, converting it to a string in the same manner as the method does
    * {@link String#valueOf(long)}
    * 
    * @param i
-   *          добавляемое число
+   *          number to be appended
    * @return <code>this</code>
    */
   public StrReplacer add(long l) {
@@ -171,11 +171,11 @@ public class StrReplacer {
   }
 
   /**
-   * Добавляет целое число, преобразуя его в строку таким же способом, как это делает метод
+   * Appends an integer, converting it to a string in the same manner as the method does
    * {@link String#valueOf(long)}
    * 
    * @param i
-   *          добавляемое число
+   *          number to be appended
    * @return <code>this</code>
    */
   public StrReplacer add(Long l) {
@@ -194,12 +194,12 @@ public class StrReplacer {
   }
 
   /**
-   * Устанавливает значение параметра
+   * Sets the value of the parameter
    * 
    * @param key
-   *          имя параметра
+   *          parameter key
    * @param value
-   *          значение параметра
+   *          parameter value
    * @return <code>this</code>
    */
   public StrReplacer prm(String key, String value) {
@@ -208,7 +208,7 @@ public class StrReplacer {
   }
 
   /**
-   * Генерирует результирующий {@link StringBuilder}, где вместо параметров, стоят их значения
+   * Generates resulting {@link StringBuilder}, where instead of the parameters their values are
    */
   public StringBuilder generateResultStringBuilder() {
     StringBuilder ret = new StringBuilder(sb.length());
@@ -217,10 +217,10 @@ public class StrReplacer {
   }
 
   /**
-   * Добавляет результирующий текст в указанный {@link StringBuilder}
+   * Appends resulting text into specified {@link StringBuilder}
    * 
    * @param target
-   *          место, куда добавляется результат
+   *          a place where result is appended
    */
   public void appendResultTo(StringBuilder target) {
     String s = sb.toString();
@@ -243,7 +243,7 @@ public class StrReplacer {
   }
 
   /**
-   * Формирует результирующую строку, где вместо параметров, стоят их значения
+   * Generates the resulting string, where instead of the parameters their values are
    */
   @Override
   public String toString() {
@@ -251,10 +251,10 @@ public class StrReplacer {
   }
 
   /**
-   * Получает длинну (количество символов) текущего сформированного текста (без подстановки значений
-   * параметров)
+   * Get the lenght (number of characters) of current generated text (without substitution of values
+   * of parameters)
    * 
-   * @return длинна текущего текста
+   * @return the lenght of current text
    */
   public int getLen() {
     return sb.length();
@@ -286,11 +286,11 @@ public class StrReplacer {
   }
 
   /**
-   * Уменьшает длинну текста на указанное количество символов. Если результирующий размер получается
-   * меньше нуля, то никакой ошибки не возникет, просто весь тест очищается
+   * Decreases the length of the text by the specified number of characters. If resulting size is
+   * less than less than 0, no error occur, just the whole text is cleared
    * 
    * @param size
-   *          размер, на который уменьшается текст
+   *          size by which the text is decreased
    */
   public void decLen(int size) {
     int newLen = sb.length() - size;

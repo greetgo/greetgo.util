@@ -21,13 +21,13 @@ public class RND {
   public static final Random rnd = new Random();
 
   /**
-   * Генерирует случайную строку длинной <code>len</code> символов. Символы выбираются случайно из
-   * следующего надора: арабские цифры, русский алфавит большой и малый регистры, английский алфавит
-   * большой и малый регистры.
+   * Generates random string with a length of <code>len</code> characters. Characters are selected
+   * randomly from the following array: Arabic numerals, Russian alphabet uppercase and lowercase,
+   * English alphabet uppercase and lowercase.
    * 
    * @param len
-   *          блина генерируемой строки
-   * @return сгенерированная строка
+   *          the length of generate string
+   * @return generated string
    */
   public static String str(int len) {
     char[] charArray = new char[len];
@@ -38,11 +38,11 @@ public class RND {
   }
 
   /**
-   * Генерирует строку, сотоящую из случайно выбранных цыфр
+   * Generates a string consisting of random numbers
    * 
    * @param len
-   *          длинна генерируемой строки
-   * @return сгенерированная строка
+   *          the length of generate string
+   * @return generated string
    */
   public static String intStr(int len) {
     char[] charArray = new char[len];
@@ -54,15 +54,15 @@ public class RND {
 
   /**
    * <p>
-   * Генерирует случайное положительное число типа <code>long</code> в диапазоне
+   * Generates a random positive number of type <code>long</code> in the range
    * </p>
    * <p>
    * 0 &lt;= x &lt; max
    * </p>
    * 
    * @param max
-   *          максимальное значение генерируемого числа
-   * @return сгенерированное число
+   *          the maximum value of the generate number
+   * @return generated number
    */
   public static long plusLong(long max) {
     long L = rnd.nextLong();
@@ -72,29 +72,29 @@ public class RND {
 
   /**
    * <p>
-   * Генерирует случайное положительное число типа <code>int</code> в диапазоне
+   * Generates a random positive number of type <code>int</code> in the range
    * </p>
    * <p>
    * 0 &lt;= x &lt; max
    * </p>
    * 
    * @param max
-   *          максимальное значение генерируемого числа
-   * @return сгенерированное число
+   *          the maximum value of the generate number
+   * @return generated number
    */
   public static int plusInt(int max) {
     return rnd.nextInt(max);
   }
 
   /**
-   * Генерирует случайную дату в диапазоне от <code>yearFrom</code> лет назад, до
-   * <code>yearTo</code> лет назад
+   * Generates a random date in the range from <code>yearFrom</code> years ago, to
+   * <code>yearTo</code> years ago
    * 
    * @param yearFrom
-   *          столько лет назад - начало диапазона, в котором генерируется дата
+   *          as many years ago - range start in which date is generated
    * @param yearTo
-   *          столько лет назад - конец диапазона, в котором генерируется дата
-   * @return случайно сгенерированная дата
+   *          as many years ago - range end in which date is generated
+   * @return randomly generated date
    */
   public static Date dateYears(int yearFrom, int yearTo) {
     Calendar cal = new GregorianCalendar();
@@ -112,14 +112,14 @@ public class RND {
   }
 
   /**
-   * Генерирует случайную дату в диапазоне от <code>fromDaysBeforeNow</code> дней назад, до
-   * <code>toDayAfterNow</code> дней назад
+   * Generates a random date in the range from <code>fromDaysBeforeNow</code> days ago, to
+   * <code>toDayAfterNow</code> days ago
    * 
    * @param fromDaysBeforeNow
-   *          столько дней назад - начало диапазона, в котором генерируется дата
+   *          as many days ago - range start in which date is generated
    * @param toDayAfterNow
-   *          столько дней назад - конец диапазона, в котором генерируется дата
-   * @return случайно сгенерированная дата
+   *          as many days ago - range end in which date is generated
+   * @return randomly generated date
    */
   public static Date dateDays(int fromDaysBeforeNow, int toDayAfterNow) {
     Calendar cal = new GregorianCalendar();
@@ -133,11 +133,11 @@ public class RND {
   }
 
   /**
-   * Генерирует случайный массив длинной <code>len</code>
+   * Generates a random array with a lenght <code>len</code>
    * 
    * @param len
-   *          длинна генерируемого массива
-   * @return сгенерированный массив
+   *          the lenght of generate array
+   * @return generated array
    */
   public static byte[] byteArray(int len) {
     final byte[] ret = new byte[len];
@@ -146,20 +146,20 @@ public class RND {
   }
 
   /**
-   * Генерирует случайную булевскую величину
+   * Generates random Boolean value
    * 
-   * @return сгенерированная случайная величина
+   * @return generated random value
    */
   public static boolean bool() {
     return plusInt(10) % 2 == 0;
   }
 
   /**
-   * Выбирает случайное значение из значений передаваемого enum-а
+   * Selects a random value from the values transmitted from enum
    * 
    * @param values
-   *          значения enum-a
-   * @return случайно выбранное значение
+   *          enum values
+   * @return randomly selected value
    */
   @SafeVarargs
   public static <E extends Enum<E>> E someEnum(E... values) {
@@ -168,17 +168,17 @@ public class RND {
 
   /**
    * <p>
-   * Генерирует случайное вещественное положительное число в диапазоне
+   * Generates a random real positive number in the range
    * </p>
    * <p>
    * 0 &lt;= x &lt; max
    * </p>
    * 
    * @param max
-   *          верхняя граница области выбираемых значений
+   *          the upper limit of the selected values
    * @param point
-   *          количество разрядов после запятой
-   * @return сгенерированное число
+   *          the number of decimal places
+   * @return generated number
    */
   public static double plusDouble(double max, int point) {
     double ret = rnd.nextDouble();
@@ -195,17 +195,17 @@ public class RND {
 
   /**
    * <p>
-   * Генерирует случайное число типа <code>BigDecimal</code> в диапазоне
+   * Generates a random number of type <code>BigDecimal</code> in the range
    * </p>
    * <p>
    * 0 &lt;= x &lt; max
    * </p>
    * 
    * @param max
-   *          верхняя граница генерируемого числа
+   *          the upper limit of generate number
    * @param afterPoint
-   *          количество разрядов после запятой
-   * @return сгенерированное число
+   *          the number of decimal places
+   * @return generated number
    */
   public static BigDecimal bd(long max, int afterPoint) {
     BigDecimal ret = new BigDecimal(plusLong(max));
