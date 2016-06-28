@@ -20,11 +20,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerUtil {
   /**
-   * Поднять первую букву в верхний регистр
+   * Raise the first letter in upper case
    * 
    * @param str
-   *          исходная строка
-   * @return строка с заглавной первой буквой
+   *          source line
+   * @return string with a capital first letter
    */
   public static String firstUpper(String str) {
     if (str == null) return null;
@@ -35,11 +35,11 @@ public class ServerUtil {
   }
 
   /**
-   * Вернуть первый элемент которы не равен <code>null</code>
+   * Return the first element that is not equal to <code>null</code>
    * 
    * @param tt
-   *          список элементов
-   * @return первый not-null-елемент
+   *          element list
+   * @return the first not-null-element
    */
   @SafeVarargs
   public static <T> T fnn(T... tt) {
@@ -50,16 +50,16 @@ public class ServerUtil {
   }
 
   /**
-   * Ни чего не делающая проверка
+   * The check which does not perform anything
    */
   public static void dummyCheck(boolean tmp) {}
 
   /**
-   * Проверяет чтобы элемент не был null, иначе генерирует NullPointerException
+   * Checks that the element was not null, otherwise generates NullPointerException
    * 
    * @param t
-   *          проверяемый элемент
-   * @return проверяемый элемент, который точно not null
+   *          coverage element
+   * @return coverage element, that exactly is not null
    */
   public static <T> T notNull(T t) {
     if (t == null) throw new NullPointerException();
@@ -67,12 +67,12 @@ public class ServerUtil {
   }
 
   /**
-   * Считать поток в кодировке UTF-8 и добавить полученнцю строку в <code>sb</code>
+   * Read stream encoded as UTF-8 and add to the resulting string <code>sb</code>
    * 
    * @param in
-   *          считываемый поток
+   *          readable stream
    * @param sb
-   *          назначение для добавления строки
+   *          dedication to add a string
    */
   public static void appendToSB(InputStream in, StringBuilder sb) {
     try {
@@ -83,15 +83,15 @@ public class ServerUtil {
   }
 
   /**
-   * То же что и {@link #appendToSB(InputStream, StringBuilder)}, но содержит
+   * The same as {@link #appendToSB(InputStream, StringBuilder)}, but contains
    * <code>throws IOException</code>
    * 
    * @param in
-   *          считываемый поток
+   *          readable stream
    * @param sb
-   *          назначение для добавления строки
+   *          dedication to add a string
    * @throws IOException
-   *           генерируется в случае ошибки ввода/вывода
+   *           generated in the case of I / O errors
    */
   public static void appendToSB0(InputStream in, StringBuilder sb) throws IOException {
     ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -100,11 +100,11 @@ public class ServerUtil {
   }
 
   /**
-   * Считывает поток до конца в массив байтов, закрывает поток, и возвращает, что считал
+   * Reads a stream to the end to bytes array, closes a stream, and returns that was read
    * 
    * @param in
-   *          считываемый поток
-   * @return массив считанных байт
+   *          readable stream
+   * @return the array of read bytes
    */
   public static byte[] streamToByteArray(InputStream in) {
     ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -113,12 +113,12 @@ public class ServerUtil {
   }
 
   /**
-   * Считывает и закрывает поток, и считанную информацию превращает в строку, предполагая что она
-   * предствлена в кодировке UTF-8
+   * Reads and closes the stream, and converts the read information into a string, assuming that it
+   * represented in coding UTF-8
    * 
    * @param in
-   *          считываемый поток
-   * @return полученная строка
+   *          readable stream
+   * @return resulting string
    */
   public static String streamToStr(InputStream in) {
     StringBuilder sb = new StringBuilder();
@@ -127,13 +127,13 @@ public class ServerUtil {
   }
 
   /**
-   * То же что и {@link #streamToStr(InputStream)} но содержит <code>throws Exception</code>
+   * The same as {@link #streamToStr(InputStream)} but contains <code>throws Exception</code>
    * 
    * @param in
-   *          считываемый поток
-   * @return полученная строка
+   *          readable stream
+   * @return resulting string
    * @throws Exception
-   *           сюда пробрасываются все ошибки
+   *           here are all the errors
    */
   public static String streamToStr0(InputStream in) throws Exception {
     StringBuilder sb = new StringBuilder();
@@ -142,14 +142,14 @@ public class ServerUtil {
   }
 
   /**
-   * Копирует один поток в другой, и после копирования закрывает входящий. Буфер копирования равен 4
-   * кБ
+   * Copies one stream into another, and after copy closes input stream. Copy buffer size is equal
+   * to 4 Kb
    * 
    * @param in
-   *          считываемый поток, который закрывается после считывания
+   *          readable stream, which is closed after reading
    * @param out
-   *          выходящий поток
-   * @return выходящий поток
+   *          output stream
+   * @return output stream
    */
   public static OutputStream copyStreamsAndCloseIn(InputStream in, OutputStream out) {
     try {
@@ -179,10 +179,10 @@ public class ServerUtil {
   }
 
   /**
-   * Проверяет аргумент на равенство единице. Если проверка проваливается - генерирует исключение
+   * Check the argument for equality to one. If the check is failed - generates exception
    * 
    * @param value
-   *          проверяемый на единицу аргумент
+   *          argument checking for one
    */
   public static void justOne(int value) {
     if (value == 1) return;
@@ -194,9 +194,9 @@ public class ServerUtil {
   private static final ConcurrentHashMap<File, File> addedToClassPath = new ConcurrentHashMap<>();
 
   /**
-   * Получает список файлов, которые были добавлены в classpath
+   * Receives files list, which were added classpath
    * 
-   * @return список файлов
+   * @return files list
    */
   public static Set<File> getAddedToClassPath() {
     Set<File> ret = new HashSet<>();
@@ -205,12 +205,12 @@ public class ServerUtil {
   }
 
   /**
-   * Добавляет указанную директорию в текущий classpath. После вызова, можно будет загружать классы
-   * из этой директории с помощью Class.forName(...)
+   * Adds the specified directory to the current classpath. After the call, it will be possible to
+   * load classes from this directory with a help of Class.forName(...)
    * 
    * @param dir
-   *          директория, в которой лежат откомпилированные классы, и которая не находиться ещё в
-   *          текущем classpath-е
+   *          the directory which has the compiled classes, and which is not yet in current
+   *          classpath
    */
   public static void addToClasspath(File dir) throws Exception {
 
@@ -225,23 +225,23 @@ public class ServerUtil {
   }
 
   /**
-   * Добавляет указанную директорию в текущий classpath. После вызова, можно будет загружать классы
-   * из этой директории с помощью Class.forName(...)
+   * Adds the specified directory to the current classpath. After the call, it will be possible to
+   * load classes from this directory with a help of Class.forName(...)
    * 
    * @param dir
-   *          директория, в которой лежат откомпилированные классы, и которая не находиться ещё в
-   *          текущем classpath-е
+   *          the directory which has the compiled classes, and which is not yet in current
+   *          classpath-е
    */
   public static void addToClasspath(String dirName) throws Exception {
     addToClasspath(new File(dirName));
   }
 
   /**
-   * Извлекает имя пакета из поного имени класса
+   * Extract the package name from the full name of the class
    * 
    * @param className
-   *          полное имя класса
-   * @return имя пакета
+   *          full name of the class
+   * @return package name
    */
   public static String extractPackage(String className) {
     final int idx = className.lastIndexOf('.');
@@ -250,16 +250,16 @@ public class ServerUtil {
   }
 
   /**
-   * Формирует исходный файл (но не создаёт его) для указанной source-папки и именем класса. Также
-   * можно указать расширение. По умолчанию расширение берётся <code>.java</code>
+   * Forms the source file (but does not create it) for a specified source-folder and with name of
+   * the class. Also the extension can be specified. By default, the extension is <code>.java</code>
    * 
    * @param srcDir
-   *          директория, в которой ложат исходники
+   *          the directory where the source codes are
    * @param className
-   *          полное имя класса
+   *          full name of the class
    * @param extension
-   *          расширение (если <code>null</code>, то применяется <code>.java</code>)
-   * @return сформированный файл
+   *          extension (if <code>null</code>, <code>.java</code> is used)
+   * @return formed file
    */
   public static File resolveFile(String srcDir, String className, String extension) {
     return new File(
@@ -267,11 +267,11 @@ public class ServerUtil {
   }
 
   /**
-   * Извлекает имя класса из полного имени класса
+   * Extracts class name from the full name of the class
    * 
    * @param className
-   *          полное имя класса
-   * @return имя класса без пакета
+   *          full name of the class
+   * @return class name without the package
    */
   public static String extractName(String className) {
     final int idx = className.lastIndexOf('.');
@@ -280,10 +280,10 @@ public class ServerUtil {
   }
 
   /**
-   * Удаляет файл или папку со всем её содержимым
+   * Deletes a file or folder with all its contents
    * 
    * @param file
-   *          удаляемый файл или папка
+   *          deletable file or folder
    */
   public static void deleteRecursively(File file) {
     if (!file.exists()) return;
@@ -294,21 +294,21 @@ public class ServerUtil {
   }
 
   /**
-   * Удаляет файл или папку со всем её содержимым
+   * Deletes a file or folder with all its contents
    * 
    * @param fileFullName
-   *          путь к файлу или папке
+   *          path to the file or folder
    */
   public static void deleteRecursively(String fileFullName) {
     deleteRecursively(new File(fileFullName));
   }
 
   /**
-   * Производит java-сериализацию объекта и возвращает получиенные сериализацией данные
+   * Performs java-serialization of the object and returns the data resulting after serialization
    * 
    * @param object
-   *          сериализуемый объект
-   * @return сериализованные данные
+   *          serialisable object
+   * @return serialisable data
    */
   public static byte[] javaSerialize(Object object) {
     if (object == null) return null;
@@ -322,11 +322,11 @@ public class ServerUtil {
   }
 
   /**
-   * Производит java-десериализацию и возвращает полученный объект
+   * Performs java-serialization of the object and returns the resulting object
    * 
    * @param bytes
-   *          ранее сериализованные данные
-   * @return десериализованный объект
+   *          previously serialized data
+   * @return deserialized object
    */
   @SuppressWarnings("unchecked")
   public static <T> T javaDeserialize(byte[] bytes) {
@@ -339,13 +339,13 @@ public class ServerUtil {
   }
 
   /**
-   * Обрезает строку с обоих сторон, т.е. удаляет пробельные символы в начале и в конце строки и
-   * возвращает полученный результат. При <code>null</code> ошибок не возникает - возвращается
-   * <code>null</code>
+   * Trims the string on both sides, i. e. deletes whitespace at the beginning and end of the string
+   * and returns the result. At <code>null</code> there are no errors - <code>null</code> is
+   * returned
    * 
    * @param str
-   *          обрезаемая строка
-   * @return обрезанная строка
+   *          string to trim
+   * @return string after trimming
    */
   public static String trim(String str) {
     if (str == null) return null;
@@ -353,12 +353,12 @@ public class ServerUtil {
   }
 
   /**
-   * Обрезает строку слева, т.е. удаляет из строки пробельные символы вначале строки. При
-   * <code>null</code> ошибок не возникает - возвращается <code>null</code>
+   * Trims the srting on the left, i. e. deletes whitespace at the beginning of the string. At
+   * <code>null</code> there are no errors - <code>null</code> is returned
    * 
    * @param str
-   *          обрезаемая строка
-   * @return обрезанная строка
+   *          string to trim
+   * @return string after trimming
    */
   public static String trimLeft(String str) {
     if (str == null) return null;
@@ -372,12 +372,12 @@ public class ServerUtil {
   }
 
   /**
-   * Обрезает строку справа, т.е. удаляет из строки пробельные символы вконце строки. При
-   * <code>null</code> ошибок не возникает - возвращается <code>null</code>
+   * Trims the srting on the right, i. e. deletes whitespace at the end of the string. At
+   * <code>null</code> there are no errors - <code>null</code> is returned
    * 
    * @param str
-   *          обрезаемая строка
-   * @return обрезанная строка
+   *          string to trim
+   * @return string after trimming
    */
   public static String trimRight(String str) {
     if (str == null) return str;
@@ -390,14 +390,14 @@ public class ServerUtil {
   }
 
   /**
-   * Возвращает аннотацию метода, проверяя наличие этой аннотации у всех наследуемых методов, если
-   * они есть
+   * Returns the annotation of the method checking the presence of this annotation at all inherited
+   * methods if they are
    * 
    * @param method
-   *          исходный метод
+   *          source method
    * @param annotation
-   *          класс необходимой аннотации
-   * @return значение необходиой аннотации, или <code>null</code> если такая аннотация не найдена
+   *          class of required annotation
+   * @return the value of required annotation, or <code>null</code> if such annotation is not found
    */
   public static <T extends Annotation> T getAnnotation(Method method, Class<T> annotation) {
     while (true) {
@@ -419,12 +419,12 @@ public class ServerUtil {
   private final static char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
   /**
-   * Преобразует массив байтов в их шеснадцатиричное представление
+   * Converts an array of bytes into their hexadecimal representation
    * 
    * @param bytes
-   *          исходный массив байтов или <code>null</code>
-   * @return шеснадцатиричное представление байтов в массиве или пустая строка, если передали
-   *         <code>null</code> вместо массива байтов
+   *          source array of bytes or <code>null</code>
+   * @return hexadecimal representation of the bytes in the array, or an empty string, if
+   *         transmitted <code>null</code> instead of array of bytes
    */
   public static String bytesToHex(byte[] bytes) {
     if (bytes == null) return "";
