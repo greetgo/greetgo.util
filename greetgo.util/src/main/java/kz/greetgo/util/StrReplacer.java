@@ -287,7 +287,7 @@ public class StrReplacer {
 
   /**
    * Decreases the length of the text by the specified number of characters. If resulting size is
-   * less than less than 0, no error occur, just the whole text is cleared
+   * less than 0, no error occur, just the whole text is cleared
    * 
    * @param size
    *          size by which the text is decreased
