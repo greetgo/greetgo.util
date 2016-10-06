@@ -1,6 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
+apply plugin: 'idea'
 
 group = 'kz.greetgo'
 
@@ -22,7 +23,12 @@ jar {
 
 sourceSets {
   main {
-    resources.srcDirs = ["src/main/java", "src/main/resources"]
+    java.srcDirs = ["src", "src_resources"]
+    resources.srcDirs = ["src", "src_resources"]
+  }
+  test {
+    java.srcDirs = ["test_src", "test_src_resources"]
+    resources.srcDirs = ["test_src", "test_src_resources"]
   }
 }
 
