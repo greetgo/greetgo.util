@@ -9,16 +9,16 @@ import java.util.Map;
  * parameters. Substitutional parameters are defined within the string in curly brackets, for
  * example: {PARAMETER_NAME}.
  * </p>
- * 
+ * <p>
  * <p>
  * The parameters are substituted with their values at the time of reading the resulting string.
  * Reading the resulting string is executed with method call {@link #toString()}.
  * </p>
- * 
+ * <p>
  * <p>
  * Parameters values are defined with the method {@link #prm(String, String)}.
  * </p>
- * 
+ *
  * @author pompei
  */
 public class StrReplacer {
@@ -35,10 +35,8 @@ public class StrReplacer {
    * Constructs a string replacer with no characters in it and an initial capacity specified by the
    * <code>capacity</code> argument.
    *
-   * @param capacity
-   *          the initial capacity.
-   * @throws NegativeArraySizeException
-   *           if the <code>capacity</code> argument is less than <code>0</code>.
+   * @param capacity the initial capacity.
+   * @throws NegativeArraySizeException if the <code>capacity</code> argument is less than <code>0</code>.
    */
   public StrReplacer(int capacity) {
     sb = new StringBuilder(capacity);
@@ -53,22 +51,19 @@ public class StrReplacer {
    * <code>CharSequence</code>. The initial capacity of the string builder is <code>16</code> plus
    * the length of the <code>CharSequence</code> argument.
    *
-   * @param charSequence
-   *          the sequence to copy.
-   * @throws NullPointerException
-   *           if <code>charSequence</code> is <code>null</code>
+   * @param charSequence the sequence to copy.
+   * @throws NullPointerException if <code>charSequence</code> is <code>null</code>
    */
   public static StrReplacer wrap(CharSequence charSequence) {
     return new StrReplacer(charSequence);
   }
 
-  private final Map<String, String> paramMap = new HashMap<String, String>();
+  private final Map<String, String> paramMap = new HashMap<>();
 
   /**
    * Appends third-party string entirely
-   * 
-   * @param s
-   *          third-party string to be appended
+   *
+   * @param s third-party string to be appended
    * @return <code>this</code>
    */
   public StrReplacer add(CharSequence s) {
@@ -78,13 +73,10 @@ public class StrReplacer {
 
   /**
    * Appends a part of third-party string
-   * 
-   * @param s
-   *          third-party string
-   * @param start
-   *          start of part to be appended in third-party string
-   * @param end
-   *          end of part to be appended in third-party string
+   *
+   * @param s     third-party string
+   * @param start start of part to be appended in third-party string
+   * @param end   end of part to be appended in third-party string
    * @return <code>this</code>
    */
   public StrReplacer add(CharSequence s, int start, int end) {
@@ -95,13 +87,23 @@ public class StrReplacer {
   /**
    * Appends an integer, converting it to a string in the same manner as the method does
    * {@link String#valueOf(int)}
-   * 
-   * @param i
-   *          number to be appended
+   *
+   * @param i number to be appended
    * @return <code>this</code>
    */
   public StrReplacer add(int i) {
     sb.append(i);
+    return this;
+  }
+
+  /**
+   * Appends a character as a character
+   *
+   * @param c a character to be appended
+   * @return <code>this</code>
+   */
+  public StrReplacer add(char c) {
+    sb.append(c);
     return this;
   }
 
@@ -114,18 +116,14 @@ public class StrReplacer {
    * the value of {@code len}.
    * <p>
    * The overall effect is exactly as if the arguments were converted to a string by the method
-   * {@link String#valueOf(char[],int,int)}, and the characters of that string were then
-   * {@link #append(String) appended} to this character sequence.
+   * {@link String#valueOf(char[], int, int)}, and the characters of that string were then
+   * {@link StringBuilder#append(String) appended} to this character sequence.
    *
-   * @param str
-   *          the characters to be appended.
-   * @param offset
-   *          the index of the first {@code char} to append.
-   * @param len
-   *          the number of {@code char}s to append.
+   * @param str    the characters to be appended.
+   * @param offset the index of the first {@code char} to append.
+   * @param len    the number of {@code char}s to append.
    * @return a reference to this object.
-   * @throws IndexOutOfBoundsException
-   *           if {@code offset < 0} or {@code len < 0} or {@code offset+len > str.length}
+   * @throws IndexOutOfBoundsException if {@code offset < 0} or {@code len < 0} or {@code offset+len > str.length}
    */
   public StrReplacer add(char[] str, int offset, int len) {
     sb.append(str, offset, len);
@@ -134,9 +132,8 @@ public class StrReplacer {
 
   /**
    * The same as {@link #add(char[], int, int)}, but takes the array entirely
-   * 
-   * @param str
-   *          array to be appended entirely
+   *
+   * @param str array to be appended entirely
    * @return <code>this</code>
    */
   public StrReplacer add(char[] str) {
@@ -147,9 +144,8 @@ public class StrReplacer {
   /**
    * Appends an integer, converting it to a string in the same manner as the method does
    * {@link String#valueOf(int)}
-   * 
-   * @param i
-   *          number to be appended
+   *
+   * @param i number to be appended
    * @return <code>this</code>
    */
   public StrReplacer add(Integer i) {
@@ -160,9 +156,8 @@ public class StrReplacer {
   /**
    * Appends an integer, converting it to a string in the same manner as the method does
    * {@link String#valueOf(long)}
-   * 
-   * @param i
-   *          number to be appended
+   *
+   * @param l number to be appended
    * @return <code>this</code>
    */
   public StrReplacer add(long l) {
@@ -173,9 +168,8 @@ public class StrReplacer {
   /**
    * Appends an integer, converting it to a string in the same manner as the method does
    * {@link String#valueOf(long)}
-   * 
-   * @param i
-   *          number to be appended
+   *
+   * @param l number to be appended
    * @return <code>this</code>
    */
   public StrReplacer add(Long l) {
@@ -184,7 +178,12 @@ public class StrReplacer {
   }
 
   public StrReplacer add(StringBuilder sb) {
-    sb.append(sb);
+    this.sb.append(sb);
+    return this;
+  }
+
+  public StrReplacer add(StringBuffer sb) {
+    this.sb.append(sb);
     return this;
   }
 
@@ -195,11 +194,9 @@ public class StrReplacer {
 
   /**
    * Sets the value of the parameter
-   * 
-   * @param key
-   *          parameter key
-   * @param value
-   *          parameter value
+   *
+   * @param key   parameter key
+   * @param value parameter value
    * @return <code>this</code>
    */
   public StrReplacer prm(String key, String value) {
@@ -218,9 +215,8 @@ public class StrReplacer {
 
   /**
    * Appends resulting text into specified {@link StringBuilder}
-   * 
-   * @param target
-   *          a place where result is appended
+   *
+   * @param target a place where result is appended
    */
   public void appendResultTo(StringBuilder target) {
     String s = sb.toString();
@@ -253,7 +249,7 @@ public class StrReplacer {
   /**
    * Get the lenght (number of characters) of current generated text (without substitution of values
    * of parameters)
-   * 
+   *
    * @return the lenght of current text
    */
   public int getLen() {
@@ -266,7 +262,7 @@ public class StrReplacer {
    * <code>newLength</code>, the character at index <i>k</i> in the new character sequence is the
    * same as the character at index <i>k</i> in the old sequence if <i>k</i> is less than the length
    * of the old character sequence; otherwise, it is the null character <code>'&#92;u0000'</code>.
-   *
+   * <p>
    * In other words, if the <code>newLength</code> argument is less than the current length, the
    * length is changed to the specified length.
    * <p>
@@ -276,10 +272,8 @@ public class StrReplacer {
    * <p>
    * The <code>newLength</code> argument must be greater than or equal to <code>0</code>.
    *
-   * @param newLength
-   *          the new length
-   * @throws IndexOutOfBoundsException
-   *           if the <code>newLength</code> argument is negative.
+   * @param newLen the new length
+   * @throws IndexOutOfBoundsException if the <code>newLength</code> argument is negative.
    */
   public void setLen(int newLen) {
     sb.setLength(newLen);
@@ -288,12 +282,11 @@ public class StrReplacer {
   /**
    * Decreases the length of the text by the specified number of characters. If resulting size is
    * less than 0, no error occur, just the whole text is cleared
-   * 
-   * @param size
-   *          size by which the text is decreased
+   *
+   * @param decValue size by which the text is decreased
    */
-  public void decLen(int size) {
-    int newLen = sb.length() - size;
+  public void decLen(int decValue) {
+    int newLen = sb.length() - decValue;
     if (newLen < 0) {
       sb.setLength(0);
     } else {

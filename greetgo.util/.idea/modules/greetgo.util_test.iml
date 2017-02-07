@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id="greetgo.util:test" external.linked.project.path="$MODULE_DIR$/../.." external.root.project.path="$MODULE_DIR$/../.." external.system.id="GRADLE" external.system.module.group="kz.greetgo" external.system.module.type="sourceSet" external.system.module.version="0.0.26" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7" inherit-compiler-output="false">
+    <output-test url="file://$MODULE_DIR$/../../build/classes/test" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../test_src">
+      <sourceFolder url="file://$MODULE_DIR$/../../test_src" isTestSource="true" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../test_src_resources">
+      <sourceFolder url="file://$MODULE_DIR$/../../test_src_resources" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../test_src_resources" type="java-test-resource" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="greetgo.util_main" />
+    <orderEntry type="library" name="Gradle: com.google.code.findbugs:annotations:2.0.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.testng:testng:6.5.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.easytesting:fest-assert-core:2.0M10" level="project" />
+    <orderEntry type="library" name="Gradle: kz.greetgo:greetgo.conf:0.0.17" level="project" />
+    <orderEntry type="library" name="Gradle: postgresql:postgresql:9.1-901.jdbc4" level="project" />
+    <orderEntry type="library" name="Gradle: c3p0:c3p0:0.9.1.2" level="project" />
+    <orderEntry type="library" name="Gradle: greetgo.3rd-party:oracle-ojdbc6_g:11.2.0.3" level="project" />
+    <orderEntry type="library" name="Gradle: greetgo.3rd-party:oracle-ucp:11.2.0.3" level="project" />
+    <orderEntry type="library" name="Gradle: hsqldb:hsqldb:1.8.0.10" level="project" />
+    <orderEntry type="library" name="Gradle: mysql:mysql-connector-java:5.1.38" level="project" />
+    <orderEntry type="library" name="Gradle: junit:junit:4.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.beanshell:bsh:2.0b4" level="project" />
+    <orderEntry type="library" name="Gradle: com.beust:jcommander:1.12" level="project" />
+    <orderEntry type="library" name="Gradle: org.yaml:snakeyaml:1.6" level="project" />
+    <orderEntry type="library" name="Gradle: org.easytesting:fest-util:1.2.5" level="project" />
+    <orderEntry type="library" name="Gradle: org.hamcrest:hamcrest-core:1.1" level="project" />
+  </component>
+  <component name="TestModuleProperties" production-module="greetgo.util_main" />
+</module>

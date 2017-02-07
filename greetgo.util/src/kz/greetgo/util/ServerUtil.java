@@ -228,7 +228,7 @@ public class ServerUtil {
    * Adds the specified directory to the current classpath. After the call, it will be possible to
    * load classes from this directory with a help of Class.forName(...)
    * 
-   * @param dir
+   * @param dirName
    *          the directory which has the compiled classes, and which is not yet in current
    *          classpath-е
    */
