@@ -1,7 +1,5 @@
 package kz.greetgo.util;
 
-import static java.util.Collections.unmodifiableSet;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -18,12 +16,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static java.util.Collections.unmodifiableSet;
+
 public class ServerUtil {
   /**
    * Raise the first letter in upper case
-   * 
-   * @param str
-   *          source line
+   *
+   * @param str source line
    * @return string with a capital first letter
    */
   public static String firstUpper(String str) {
@@ -36,9 +35,8 @@ public class ServerUtil {
 
   /**
    * Return the first element that is not equal to <code>null</code>
-   * 
-   * @param tt
-   *          element list
+   *
+   * @param tt element list
    * @return the first not-null-element
    */
   @SafeVarargs
@@ -52,13 +50,13 @@ public class ServerUtil {
   /**
    * The check which does not perform anything
    */
-  public static void dummyCheck(boolean tmp) {}
+  public static void dummyCheck(boolean tmp) {
+  }
 
   /**
    * Checks that the element was not null, otherwise generates NullPointerException
-   * 
-   * @param t
-   *          coverage element
+   *
+   * @param t coverage element
    * @return coverage element, that exactly is not null
    */
   public static <T> T notNull(T t) {
@@ -68,11 +66,9 @@ public class ServerUtil {
 
   /**
    * Read stream encoded as UTF-8 and add to the resulting string <code>sb</code>
-   * 
-   * @param in
-   *          readable stream
-   * @param sb
-   *          dedication to add a string
+   *
+   * @param in readable stream
+   * @param sb dedication to add a string
    */
   public static void appendToSB(InputStream in, StringBuilder sb) {
     try {
@@ -85,13 +81,10 @@ public class ServerUtil {
   /**
    * The same as {@link #appendToSB(InputStream, StringBuilder)}, but contains
    * <code>throws IOException</code>
-   * 
-   * @param in
-   *          readable stream
-   * @param sb
-   *          dedication to add a string
-   * @throws IOException
-   *           generated in the case of I / O errors
+   *
+   * @param in readable stream
+   * @param sb dedication to add a string
+   * @throws IOException generated in the case of I / O errors
    */
   public static void appendToSB0(InputStream in, StringBuilder sb) throws IOException {
     ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -101,9 +94,8 @@ public class ServerUtil {
 
   /**
    * Reads a stream to the end to bytes array, closes a stream, and returns that was read
-   * 
-   * @param in
-   *          readable stream
+   *
+   * @param in readable stream
    * @return the array of read bytes
    */
   public static byte[] streamToByteArray(InputStream in) {
@@ -115,9 +107,8 @@ public class ServerUtil {
   /**
    * Reads and closes the stream, and converts the read information into a string, assuming that it
    * represented in coding UTF-8
-   * 
-   * @param in
-   *          readable stream
+   *
+   * @param in readable stream
    * @return resulting string
    */
   public static String streamToStr(InputStream in) {
@@ -128,12 +119,10 @@ public class ServerUtil {
 
   /**
    * The same as {@link #streamToStr(InputStream)} but contains <code>throws Exception</code>
-   * 
-   * @param in
-   *          readable stream
+   *
+   * @param in readable stream
    * @return resulting string
-   * @throws Exception
-   *           here are all the errors
+   * @throws Exception here are all the errors
    */
   public static String streamToStr0(InputStream in) throws Exception {
     StringBuilder sb = new StringBuilder();
@@ -144,11 +133,9 @@ public class ServerUtil {
   /**
    * Copies one stream into another, and after copy closes input stream. Copy buffer size is equal
    * to 4 Kb
-   * 
-   * @param in
-   *          readable stream, which is closed after reading
-   * @param out
-   *          output stream
+   *
+   * @param in  readable stream, which is closed after reading
+   * @param out output stream
    * @return output stream
    */
   public static OutputStream copyStreamsAndCloseIn(InputStream in, OutputStream out) {
@@ -180,22 +167,21 @@ public class ServerUtil {
 
   /**
    * Check the argument for equality to one. If the check is failed - generates exception
-   * 
-   * @param value
-   *          argument checking for one
+   *
+   * @param value argument checking for one
    */
   public static void justOne(int value) {
     if (value == 1) return;
     throw new IllegalArgumentException("Update count = " + value);
   }
 
-  private static final Class<?>[] PARAMETERS = new Class[] { URL.class };
+  private static final Class<?>[] PARAMETERS = new Class[]{URL.class};
 
   private static final ConcurrentHashMap<File, File> addedToClassPath = new ConcurrentHashMap<>();
 
   /**
    * Receives files list, which were added classpath
-   * 
+   *
    * @return files list
    */
   public static Set<File> getAddedToClassPath() {
@@ -207,30 +193,28 @@ public class ServerUtil {
   /**
    * Adds the specified directory to the current classpath. After the call, it will be possible to
    * load classes from this directory with a help of Class.forName(...)
-   * 
-   * @param dir
-   *          the directory which has the compiled classes, and which is not yet in current
-   *          classpath
+   *
+   * @param dir the directory which has the compiled classes, and which is not yet in current
+   *            classpath
    */
   public static void addToClasspath(File dir) throws Exception {
 
     if (addedToClassPath.containsKey(dir)) return;
     addedToClassPath.put(dir, dir);
 
-    URLClassLoader sysLoader = (URLClassLoader)ClassLoader.getSystemClassLoader();
+    URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
 
     Method addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", PARAMETERS);
     addUrlMethod.setAccessible(true);
-    addUrlMethod.invoke(sysLoader, new Object[] { dir.toURI().toURL() });
+    addUrlMethod.invoke(sysLoader, new Object[]{dir.toURI().toURL()});
   }
 
   /**
    * Adds the specified directory to the current classpath. After the call, it will be possible to
    * load classes from this directory with a help of Class.forName(...)
-   * 
-   * @param dirName
-   *          the directory which has the compiled classes, and which is not yet in current
-   *          classpath-е
+   *
+   * @param dirName the directory which has the compiled classes, and which is not yet in current
+   *                classpath-е
    */
   public static void addToClasspath(String dirName) throws Exception {
     addToClasspath(new File(dirName));
@@ -238,9 +222,8 @@ public class ServerUtil {
 
   /**
    * Extract the package name from the full name of the class
-   * 
-   * @param className
-   *          full name of the class
+   *
+   * @param className full name of the class
    * @return package name
    */
   public static String extractPackage(String className) {
@@ -252,25 +235,21 @@ public class ServerUtil {
   /**
    * Forms the source file (but does not create it) for a specified source-folder and with name of
    * the class. Also the extension can be specified. By default, the extension is <code>.java</code>
-   * 
-   * @param srcDir
-   *          the directory where the source codes are
-   * @param className
-   *          full name of the class
-   * @param extension
-   *          extension (if <code>null</code>, <code>.java</code> is used)
+   *
+   * @param srcDir    the directory where the source codes are
+   * @param className full name of the class
+   * @param extension extension (if <code>null</code>, <code>.java</code> is used)
    * @return formed file
    */
   public static File resolveFile(String srcDir, String className, String extension) {
     return new File(
-        srcDir + '/' + className.replace('.', '/') + (extension == null ? ".java" :extension));
+      srcDir + '/' + className.replace('.', '/') + (extension == null ? ".java" : extension));
   }
 
   /**
    * Extracts class name from the full name of the class
-   * 
-   * @param className
-   *          full name of the class
+   *
+   * @param className full name of the class
    * @return class name without the package
    */
   public static String extractName(String className) {
@@ -281,23 +260,24 @@ public class ServerUtil {
 
   /**
    * Deletes a file or folder with all its contents
-   * 
-   * @param file
-   *          deletable file or folder
+   *
+   * @param file deletable file or folder
    */
   public static void deleteRecursively(File file) {
     if (!file.exists()) return;
-    if (file.isDirectory()) for (File sub : file.listFiles()) {
-      deleteRecursively(sub);
+    if (file.isDirectory()) {
+      File[] subFiles = file.listFiles();
+      if (subFiles != null) for (File subFile : subFiles) {
+        deleteRecursively(subFile);
+      }
     }
     file.delete();
   }
 
   /**
    * Deletes a file or folder with all its contents
-   * 
-   * @param fileFullName
-   *          path to the file or folder
+   *
+   * @param fileFullName path to the file or folder
    */
   public static void deleteRecursively(String fileFullName) {
     deleteRecursively(new File(fileFullName));
@@ -305,9 +285,8 @@ public class ServerUtil {
 
   /**
    * Performs java-serialization of the object and returns the data resulting after serialization
-   * 
-   * @param object
-   *          serialisable object
+   *
+   * @param object serialisable object
    * @return serialisable data
    */
   public static byte[] javaSerialize(Object object) {
@@ -323,16 +302,15 @@ public class ServerUtil {
 
   /**
    * Performs java-serialization of the object and returns the resulting object
-   * 
-   * @param bytes
-   *          previously serialized data
+   *
+   * @param bytes previously serialized data
    * @return deserialized object
    */
   @SuppressWarnings("unchecked")
   public static <T> T javaDeserialize(byte[] bytes) {
     ByteArrayInputStream bin = new ByteArrayInputStream(bytes);
     try (ObjectInputStream oin = new ObjectInputStream(bin)) {
-      return (T)oin.readObject();
+      return (T) oin.readObject();
     } catch (IOException | ClassNotFoundException e) {
       throw new RuntimeException(e);
     }
@@ -342,9 +320,8 @@ public class ServerUtil {
    * Trims the string on both sides, i. e. deletes whitespace at the beginning and end of the string
    * and returns the result. At <code>null</code> there are no errors - <code>null</code> is
    * returned
-   * 
-   * @param str
-   *          string to trim
+   *
+   * @param str string to trim
    * @return string after trimming
    */
   public static String trim(String str) {
@@ -355,9 +332,8 @@ public class ServerUtil {
   /**
    * Trims the srting on the left, i. e. deletes whitespace at the beginning of the string. At
    * <code>null</code> there are no errors - <code>null</code> is returned
-   * 
-   * @param str
-   *          string to trim
+   *
+   * @param str string to trim
    * @return string after trimming
    */
   public static String trimLeft(String str) {
@@ -374,9 +350,8 @@ public class ServerUtil {
   /**
    * Trims the srting on the right, i. e. deletes whitespace at the end of the string. At
    * <code>null</code> there are no errors - <code>null</code> is returned
-   * 
-   * @param str
-   *          string to trim
+   *
+   * @param str string to trim
    * @return string after trimming
    */
   public static String trimRight(String str) {
@@ -392,11 +367,9 @@ public class ServerUtil {
   /**
    * Returns the annotation of the method checking the presence of this annotation at all inherited
    * methods if they are
-   * 
-   * @param method
-   *          source method
-   * @param annotation
-   *          class of required annotation
+   *
+   * @param method     source method
+   * @param annotation class of required annotation
    * @return the value of required annotation, or <code>null</code> if such annotation is not found
    */
   public static <T extends Annotation> T getAnnotation(Method method, Class<T> annotation) {
@@ -420,11 +393,10 @@ public class ServerUtil {
 
   /**
    * Converts an array of bytes into their hexadecimal representation
-   * 
-   * @param bytes
-   *          source array of bytes or <code>null</code>
+   *
+   * @param bytes source array of bytes or <code>null</code>
    * @return hexadecimal representation of the bytes in the array, or an empty string, if
-   *         transmitted <code>null</code> instead of array of bytes
+   * transmitted <code>null</code> instead of array of bytes
    */
   public static String bytesToHex(byte[] bytes) {
     if (bytes == null) return "";
