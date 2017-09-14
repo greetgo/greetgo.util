@@ -18,7 +18,7 @@ public class StrReplacerTest {
   public void using_prm() throws Exception {
     StrReplacer sr = new StrReplacer();
     sr.add("Привет всем {asd}");
-    sr.prm("asd", "WOW");
+    sr.prm("asd", "WOW!");
 
     assertThat(sr.toString()).isEqualTo("Привет всем WOW");
   }
