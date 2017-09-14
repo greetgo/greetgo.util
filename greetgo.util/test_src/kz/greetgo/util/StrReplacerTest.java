@@ -9,7 +9,7 @@ public class StrReplacerTest {
   public void using_prm_and_or_set_prm() throws Exception {
     StrReplacer sr = new StrReplacer();
     sr.add("Привет всем {asd} fds1fds2f {no} qwerty");
-    sr.prm("asd", "WOW");
+    sr.prm("asd", "WOW!");
 
     assertThat(sr.toString()).isEqualTo("Привет всем WOW fds1fds2f {no} qwerty");
   }
