@@ -50,8 +50,7 @@ public class ServerUtil {
   /**
    * The check which does not perform anything
    */
-  public static void dummyCheck(boolean tmp) {
-  }
+  public static void dummyCheck(boolean tmp) {}
 
   /**
    * Checks that the element was not null, otherwise generates NullPointerException
@@ -206,6 +205,7 @@ public class ServerUtil {
 
     Method addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", PARAMETERS);
     addUrlMethod.setAccessible(true);
+    //noinspection RedundantArrayCreation
     addUrlMethod.invoke(sysLoader, new Object[]{dir.toURI().toURL()});
   }
 
@@ -286,8 +286,8 @@ public class ServerUtil {
   /**
    * Performs java-serialization of the object and returns the data resulting after serialization
    *
-   * @param object serialisable object
-   * @return serialisable data
+   * @param object serializable object
+   * @return serializable data
    */
   public static byte[] javaSerialize(Object object) {
     if (object == null) return null;
@@ -304,7 +304,7 @@ public class ServerUtil {
    * Performs java-serialization of the object and returns the resulting object
    *
    * @param bytes previously serialized data
-   * @return deserialized object
+   * @return object after deserialize
    */
   @SuppressWarnings("unchecked")
   public static <T> T javaDeserialize(byte[] bytes) {
@@ -355,7 +355,7 @@ public class ServerUtil {
    * @return string after trimming
    */
   public static String trimRight(String str) {
-    if (str == null) return str;
+    if (str == null) return null;
     int i = str.length() - 1;
     if (str.charAt(i) > ' ') return str;
     for (; i >= 0; i--) {

@@ -1,9 +1,8 @@
 package kz.greetgo.util.db;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-
-import javax.sql.DataSource;
 
 public class DbTypeDetector {
   public static DbType detect(Connection con) throws SQLException {
@@ -13,15 +12,12 @@ public class DbTypeDetector {
     if ("hsql database engine".equals(db)) return DbType.HSQLDB;
     if ("mysql".equals(db)) return DbType.MySQL;
     throw new IllegalArgumentException(
-        "Unknown connection db: " + con.getMetaData().getDatabaseProductName());
+      "Unknown connection db: " + con.getMetaData().getDatabaseProductName());
   }
-  
+
   public static DbType detect(DataSource dataSource) throws SQLException {
-    Connection con = dataSource.getConnection();
-    try {
+    try (Connection con = dataSource.getConnection()) {
       return detect(con);
-    } finally {
-      con.close();
     }
   }
 }

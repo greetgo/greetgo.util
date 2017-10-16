@@ -24,9 +24,8 @@ public class RND {
    * Generates random string with a length of <code>len</code> characters. Characters are selected
    * randomly from the following array: Arabic numerals, Russian alphabet uppercase and lowercase,
    * English alphabet uppercase and lowercase.
-   * 
-   * @param len
-   *          the length of generate string
+   *
+   * @param len the length of generate string
    * @return generated string
    */
   public static String str(int len) {
@@ -39,9 +38,8 @@ public class RND {
 
   /**
    * Generates a string consisting of random numbers
-   * 
-   * @param len
-   *          the length of generate string
+   *
+   * @param len the length of generate string
    * @return generated string
    */
   public static String intStr(int len) {
@@ -59,9 +57,8 @@ public class RND {
    * <p>
    * 0 &lt;= x &lt; max
    * </p>
-   * 
-   * @param max
-   *          the maximum value of the generate number
+   *
+   * @param max the maximum value of the generate number
    * @return generated number
    */
   public static long plusLong(long max) {
@@ -77,9 +74,8 @@ public class RND {
    * <p>
    * 0 &lt;= x &lt; max
    * </p>
-   * 
-   * @param max
-   *          the maximum value of the generate number
+   *
+   * @param max the maximum value of the generate number
    * @return generated number
    */
   public static int plusInt(int max) {
@@ -89,11 +85,9 @@ public class RND {
   /**
    * Generates a random date in the range from <code>yearFrom</code> years ago, to
    * <code>yearTo</code> years ago
-   * 
-   * @param yearFrom
-   *          as many years ago - range start in which date is generated
-   * @param yearTo
-   *          as many years ago - range end in which date is generated
+   *
+   * @param yearFrom as many years ago - range start in which date is generated
+   * @param yearTo   as many years ago - range end in which date is generated
    * @return randomly generated date
    */
   public static Date dateYears(int yearFrom, int yearTo) {
@@ -114,11 +108,9 @@ public class RND {
   /**
    * Generates a random date in the range from <code>fromDaysBeforeNow</code> days ago, to
    * <code>toDayAfterNow</code> days ago
-   * 
-   * @param fromDaysBeforeNow
-   *          as many days ago - range start in which date is generated
-   * @param toDayAfterNow
-   *          as many days ago - range end in which date is generated
+   *
+   * @param fromDaysBeforeNow as many days ago - range start in which date is generated
+   * @param toDayAfterNow     as many days ago - range end in which date is generated
    * @return randomly generated date
    */
   public static Date dateDays(int fromDaysBeforeNow, int toDayAfterNow) {
@@ -134,9 +126,8 @@ public class RND {
 
   /**
    * Generates a random array with a lenght <code>len</code>
-   * 
-   * @param len
-   *          the lenght of generate array
+   *
+   * @param len the lenght of generate array
    * @return generated array
    */
   public static byte[] byteArray(int len) {
@@ -147,7 +138,7 @@ public class RND {
 
   /**
    * Generates random Boolean value
-   * 
+   *
    * @return generated random value
    */
   public static boolean bool() {
@@ -156,9 +147,8 @@ public class RND {
 
   /**
    * Selects a random value from the values transmitted from enum
-   * 
-   * @param values
-   *          enum values
+   *
+   * @param values enum values
    * @return randomly selected value
    */
   @SafeVarargs
@@ -173,16 +163,14 @@ public class RND {
    * <p>
    * 0 &lt;= x &lt; max
    * </p>
-   * 
-   * @param max
-   *          the upper limit of the selected values
-   * @param point
-   *          the number of decimal places
+   *
+   * @param max   the upper limit of the selected values
+   * @param point the number of decimal places
    * @return generated number
    */
   public static double plusDouble(double max, int point) {
     double ret = rnd.nextDouble();
-    ret *= (double)max;
+    ret *= (double) max;
     for (int i = 0; i < point; i++) {
       ret *= 10.0;
     }
@@ -200,11 +188,9 @@ public class RND {
    * <p>
    * 0 &lt;= x &lt; max
    * </p>
-   * 
-   * @param max
-   *          the upper limit of generate number
-   * @param afterPoint
-   *          the number of decimal places
+   *
+   * @param max        the upper limit of generate number
+   * @param afterPoint the number of decimal places
    * @return generated number
    */
   public static BigDecimal bd(long max, int afterPoint) {
