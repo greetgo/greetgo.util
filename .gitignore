@@ -1,1 +1,17 @@
-# Created by .ignore support plugin (hsz.mobi)
+/.gradle/
+/bin/
+/.settings
+/.classpath
+/.project
+/test-output
+build/
+/.gwt
+/.gwt-tmp
+/tomcat/
+/war
+/*.log
+/.idea/
+*.iml
+*.ipr
+*.iws
+/out/

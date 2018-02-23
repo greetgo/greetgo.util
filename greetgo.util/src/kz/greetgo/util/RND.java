@@ -9,14 +9,20 @@ import java.util.Random;
 public class RND {
 
   public static final String rus = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
-  public static final String RUS = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
+  public static final String RUS = rus.toUpperCase();
 
   public static final String eng = "abcdefghijklmnopqrstuvwxyz";
-  public static final String ENG = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  public static final String ENG = eng.toUpperCase();
 
   public static final String DEG = "0123456789";
 
   public static final String ALL = rus + RUS + eng + ENG + DEG;
+  public static final char[] ALL_CHARS = ALL.toCharArray();
+  public static final int ALL_CHARS_LENGTH = ALL_CHARS.length;
+
+  public static final String ALL_ENG = eng + ENG + DEG;
+  public static final char[] ALL_ENG_CHARS = ALL_ENG.toCharArray();
+  public static final int ALL_ENG_CHARS_LENGTH = ALL_ENG_CHARS.length;
 
   public static final Random rnd = new Random();
 
@@ -31,7 +37,22 @@ public class RND {
   public static String str(int len) {
     char[] charArray = new char[len];
     for (int i = 0; i < len; i++) {
-      charArray[i] = ALL.charAt(rnd.nextInt(ALL.length()));
+      charArray[i] = ALL_CHARS[rnd.nextInt(ALL_CHARS_LENGTH)];
+    }
+    return new String(charArray);
+  }
+
+  /**
+   * Generates random string with a length of <code>len</code> characters. Characters are selected
+   * randomly from the following array: Arabic numerals, English alphabet uppercase and lowercase.
+   *
+   * @param len the length of generate string
+   * @return generated string
+   */
+  public static String strEng(int len) {
+    char[] charArray = new char[len];
+    for (int i = 0; i < len; i++) {
+      charArray[i] = ALL_ENG_CHARS[rnd.nextInt(ALL_ENG_CHARS_LENGTH)];
     }
     return new String(charArray);
   }

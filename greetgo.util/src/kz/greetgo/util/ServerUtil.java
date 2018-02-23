@@ -1,13 +1,6 @@
 package kz.greetgo.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -117,6 +110,21 @@ public class ServerUtil {
   }
 
   /**
+   * Reads file to string as UTF-8 text
+   *
+   * @param file reading file
+   * @return read text from file
+   */
+  public static String readFile(File file) {
+    try {
+      return streamToStr0(new FileInputStream(file));
+    } catch (Exception e) {
+      if (e instanceof RuntimeException) throw (RuntimeException) e;
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
    * The same as {@link #streamToStr(InputStream)} but contains <code>throws Exception</code>
    *
    * @param in readable stream
@@ -147,10 +155,16 @@ public class ServerUtil {
         out.write(buffer, 0, read);
       }
 
-      in.close();
       return out;
     } catch (Exception e) {
       throw new RuntimeException(e);
+    } finally {
+      try {
+        in.close();
+      } catch (IOException e) {
+        //noinspection ThrowFromFinallyBlock
+        throw new RuntimeException(e);
+      }
     }
   }
 
@@ -184,9 +198,7 @@ public class ServerUtil {
    * @return files list
    */
   public static Set<File> getAddedToClassPath() {
-    Set<File> ret = new HashSet<>();
-    ret.addAll(addedToClassPath.keySet());
-    return unmodifiableSet(ret);
+    return unmodifiableSet(new HashSet<>(addedToClassPath.keySet()));
   }
 
   /**

@@ -1,0 +1,3 @@
+rootProject.name = 'greetgo.util.root'
+
+include "greetgo.util"

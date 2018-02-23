@@ -98,7 +98,7 @@ public class ServerUtilTest {
 
   @Test
   public void fnn_002() throws Exception {
-    assertThat(ServerUtil.fnn(null, null, null)).isNull();
+    assertThat((String) ServerUtil.fnn(null, null, null)).isNull();
   }
 
   public static class ParentAsd {
@@ -112,12 +112,10 @@ public class ServerUtilTest {
     }
 
     @SuppressWarnings("unused")
-    public void noIt() {
-    }
+    public void noIt() {}
 
     @Test
-    public void iHave() {
-    }
+    public void iHave() {}
   }
 
   @Test

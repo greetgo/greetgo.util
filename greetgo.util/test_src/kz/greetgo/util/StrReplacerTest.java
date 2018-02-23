@@ -11,7 +11,7 @@ public class StrReplacerTest {
     sr.add("Привет всем {asd} fds1fds2f {no} qwerty");
     sr.prm("asd", "WOW!");
 
-    assertThat(sr.toString()).isEqualTo("Привет всем WOW fds1fds2f {no} qwerty");
+    assertThat(sr.toString()).isEqualTo("Привет всем WOW! fds1fds2f {no} qwerty");
   }
 
   @Test
