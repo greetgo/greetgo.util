@@ -63,7 +63,18 @@ public class RND {
    * @param len the length of generate string
    * @return generated string
    */
+  @Deprecated
   public static String intStr(int len) {
+    return strInt(len);
+  }
+
+  /**
+   * Generates a string consisting of random numbers
+   *
+   * @param len the length of generate string
+   * @return generated string
+   */
+  public static String strInt(int len) {
     char[] charArray = new char[len];
     for (int i = 0; i < len; i++) {
       charArray[i] = DEG.charAt(rnd.nextInt(DEG.length()));
@@ -191,7 +202,7 @@ public class RND {
    */
   public static double plusDouble(double max, int point) {
     double ret = rnd.nextDouble();
-    ret *= (double) max;
+    ret *= max;
     for (int i = 0; i < point; i++) {
       ret *= 10.0;
     }
@@ -222,6 +233,7 @@ public class RND {
     }
 
     for (int i = 0; i < afterPoint; i++) {
+      //noinspection BigDecimalMethodWithoutRoundingCalled
       ret = ret.divide(BigDecimal.TEN);
     }
     return ret;
