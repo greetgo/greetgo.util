@@ -1,3 +1,14 @@
+buildscript {
+  repositories {
+    mavenLocal()
+    if (System.getenv('GG_REPO')?.trim()) maven { url System.getenv('GG_REPO') }
+    mavenCentral()
+  }
+  dependencies {
+    classpath "kz.greetgo.plugins:greetgo.gradle.plugins:0.0.2"
+  }
+}
+
 plugins {
   id 'org.ajoberstar.grgit' version '2.1.0'
 }
@@ -12,6 +23,8 @@ allprojects {
   apply plugin: 'java'
   apply plugin: 'maven'
   apply plugin: 'idea'
+  //noinspection UnnecessaryQualifiedReference
+  apply plugin: kz.greetgo.gradle.plugins.ShortJavaPathPlugin
 
   version = rootProject.file('version.txt').text.trim()
 
@@ -47,14 +60,6 @@ subprojects {
       )
     }
   }
-
-  compileJava.options.encoding = 'UTF-8'
-  compileTestJava.options.encoding = 'UTF-8'
-
-  sourceSets.main.java.srcDirs = ["src"]
-  sourceSets.main.resources.srcDirs = ["src", "src_resources"]
-  sourceSets.test.java.srcDirs = ["test_src"]
-  sourceSets.test.resources.srcDirs = ["test_src", "test_resources"]
 
   //noinspection GroovyMissingReturnStatement
   test { useTestNG() }
