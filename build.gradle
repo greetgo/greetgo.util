@@ -42,7 +42,7 @@ allprojects {
 
 subprojects {
   dependencies {
-    ext.servletApiVersion = '3.1.0';
+    ext.servletApiVersion = '3.1.0'
 
     testCompile 'org.testng:testng:6.11'
     compile 'org.easytesting:fest-assert-core:2.0M10'
@@ -61,6 +61,12 @@ subprojects {
     }
   }
 
+  idea.module.downloadSources = true
+  idea.module.downloadJavadoc = true
+  idea.module.inheritOutputDirs = false
+  idea.module.outputDir = file("$buildDir/classes/main/")
+  idea.module.testOutputDir = file("$buildDir/classes/test/")
+  
   //noinspection GroovyMissingReturnStatement
-  test { useTestNG() }
+  test.useTestNG()
 }
