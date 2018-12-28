@@ -2,8 +2,10 @@ package kz.greetgo.util;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Random;
 
 public class RND {
@@ -11,6 +13,7 @@ public class RND {
   public static final String rus = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
   public static final String RUS = rus.toUpperCase();
 
+  @SuppressWarnings("SpellCheckingInspection")
   public static final String eng = "abcdefghijklmnopqrstuvwxyz";
   public static final String ENG = eng.toUpperCase();
 
@@ -18,11 +21,9 @@ public class RND {
 
   public static final String ALL = rus + RUS + eng + ENG + DEG;
   public static final char[] ALL_CHARS = ALL.toCharArray();
-  public static final int ALL_CHARS_LENGTH = ALL_CHARS.length;
 
   public static final String ALL_ENG = eng + ENG + DEG;
   public static final char[] ALL_ENG_CHARS = ALL_ENG.toCharArray();
-  public static final int ALL_ENG_CHARS_LENGTH = ALL_ENG_CHARS.length;
 
   public static final Random rnd = new Random();
 
@@ -35,11 +36,7 @@ public class RND {
    * @return generated string
    */
   public static String str(int len) {
-    char[] charArray = new char[len];
-    for (int i = 0; i < len; i++) {
-      charArray[i] = ALL_CHARS[rnd.nextInt(ALL_CHARS_LENGTH)];
-    }
-    return new String(charArray);
+    return strFrom(len, ALL_CHARS);
   }
 
   /**
@@ -50,9 +47,21 @@ public class RND {
    * @return generated string
    */
   public static String strEng(int len) {
+    return strFrom(len, ALL_ENG_CHARS);
+  }
+
+  /**
+   * Generates random string with a length of <code>len</code> characters. Characters are selected
+   * randomly from the array <code>availableChars</code>
+   *
+   * @param len            the length of generate string
+   * @param availableChars the source of characters for generation string.
+   * @return generated string
+   */
+  public static String strFrom(int len, char[] availableChars) {
     char[] charArray = new char[len];
     for (int i = 0; i < len; i++) {
-      charArray[i] = ALL_ENG_CHARS[rnd.nextInt(ALL_ENG_CHARS_LENGTH)];
+      charArray[i] = availableChars[rnd.nextInt(availableChars.length)];
     }
     return new String(charArray);
   }
@@ -95,7 +104,9 @@ public class RND {
    */
   public static long plusLong(long max) {
     long L = rnd.nextLong();
-    if (L < 0) L = -L;
+    if (L < 0) {
+      L = -L;
+    }
     return L % max;
   }
 
@@ -157,9 +168,9 @@ public class RND {
   }
 
   /**
-   * Generates a random array with a lenght <code>len</code>
+   * Generates a random array with a length <code>len</code>
    *
-   * @param len the lenght of generate array
+   * @param len the length of generate array
    * @return generated array
    */
   public static byte[] byteArray(int len) {
@@ -186,6 +197,36 @@ public class RND {
   @SafeVarargs
   public static <E extends Enum<E>> E someEnum(E... values) {
     return values[rnd.nextInt(values.length)];
+  }
+
+  /**
+   * Selects random element from varargs array
+   *
+   * @param values varargs source array
+   * @param <T>    any returning type
+   * @return random element from the array
+   */
+  @SafeVarargs
+  public static <T> T from(T... values) {
+    return values[rnd.nextInt(values.length)];
+  }
+
+  /**
+   * Selects random element from list
+   *
+   * @param source source list
+   * @param <T>    any returning type
+   * @return random element from the list
+   */
+  public static <T> T of(Collection<T> source) {
+    if (source instanceof List) {
+      List<T> list = (List<T>) source;
+      return list.get(rnd.nextInt(list.size()));
+    } else {
+      Object[] array = source.toArray();
+      //noinspection unchecked
+      return (T) array[rnd.nextInt(array.length)];
+    }
   }
 
   /**

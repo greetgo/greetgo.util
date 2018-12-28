@@ -10,43 +10,45 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.util.Set;
 
+import static kz.greetgo.util.ServerUtil.dummyCheck;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class ServerUtilTest {
 
   @Test
-  public void extractPackage_1() throws Exception {
+  public void extractPackage_1() {
     final String aPackage = ServerUtil.extractPackage("asd.dsa.Asd");
     assertThat(aPackage).isEqualTo("asd.dsa");
   }
 
   @Test
-  public void extractPackage_2() throws Exception {
+  public void extractPackage_2() {
     final String aPackage = ServerUtil.extractPackage("Asd");
     assertThat(aPackage).isNull();
   }
 
   @Test
-  public void resolveFile_1() throws Exception {
+  public void resolveFile_1() {
     final File file = ServerUtil.resolveFile("some/dir1", "asd1.dsa.Asd", null);
     assertThat(file.getPath()).isEqualTo("some/dir1/asd1/dsa/Asd.java");
   }
 
   @Test
-  public void resolveFile_2() throws Exception {
+  public void resolveFile_2() {
     final File file = ServerUtil.resolveFile("some/dir", "asd.dsa.Asd", ".java");
     assertThat(file.getPath()).isEqualTo("some/dir/asd/dsa/Asd.java");
   }
 
   @Test
-  public void extractName() throws Exception {
+  public void extractName() {
     final String name = ServerUtil.extractName("asd.dsa.Asd");
     assertThat(name).isEqualTo("Asd");
   }
 
   @Test
-  public void extractName_noPackage() throws Exception {
+  public void extractName_noPackage() {
     final String name = ServerUtil.extractName("Asd");
     assertThat(name).isEqualTo("Asd");
   }
@@ -57,7 +59,7 @@ public class ServerUtilTest {
   }
 
   @Test
-  public void java_serialize_deserialize() throws Exception {
+  public void java_serialize_deserialize() {
     TestClass original = new TestClass();
     original.intField = RND.plusInt(1_000_000);
     original.strField = RND.str(10);
@@ -82,22 +84,22 @@ public class ServerUtilTest {
   }
 
   @Test
-  public void trimLeft() throws Exception {
+  public void trimLeft() {
     assertThat(ServerUtil.trimLeft("   asd  ")).isEqualTo("asd  ");
   }
 
   @Test
-  public void trimRight() throws Exception {
+  public void trimRight() {
     assertThat(ServerUtil.trimRight("   asd     ")).isEqualTo("   asd");
   }
 
   @Test
-  public void fnn_001() throws Exception {
+  public void fnn_001() {
     assertThat(ServerUtil.fnn(null, "asd", "dsa")).isEqualTo("asd");
   }
 
   @Test
-  public void fnn_002() throws Exception {
+  public void fnn_002() {
     assertThat((String) ServerUtil.fnn(null, null, null)).isNull();
   }
 
@@ -144,31 +146,31 @@ public class ServerUtilTest {
   }
 
   @Test
-  public void firstUpper() throws Exception {
+  public void firstUpper() {
     assertThat(ServerUtil.firstUpper("asd")).isEqualTo("Asd");
     assertThat(ServerUtil.firstUpper("привет Мир")).isEqualTo("Привет Мир");
   }
 
   @Test
-  public void notNull() throws Exception {
+  public void notNull() {
     String str = RND.str(5);
     String str2 = ServerUtil.notNull(str);
     assertThat(str2).isSameAs(str);
   }
 
   @Test(expectedExceptions = NullPointerException.class)
-  public void notNull_null() throws Exception {
+  public void notNull_null() {
     ServerUtil.notNull(null);
   }
 
   @Test
-  public void dummyCheck() throws Exception {
-    ServerUtil.dummyCheck(true);
-    ServerUtil.dummyCheck(false);
+  public void dummyCheck_test() {
+    dummyCheck(true);
+    dummyCheck(false);
   }
 
   @Test
-  public void streamToByteArray() throws Exception {
+  public void streamToByteArray() {
     byte[] bytes = RND.byteArray(10);
     ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
 
@@ -182,7 +184,7 @@ public class ServerUtilTest {
   }
 
   @Test
-  public void streamToStr() throws Exception {
+  public void streamToStr() {
     String str = RND.str(10);
 
     ByteArrayInputStream inputStream = new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8));
@@ -198,12 +200,12 @@ public class ServerUtilTest {
   }
 
   @Test
-  public void copyStreamsAndCloseIn() throws Exception {
+  public void copyStreamsAndCloseIn() {
 
     byte[] bytes = RND.byteArray(1000);
 
-    final boolean inputClosed[] = new boolean[]{false};
-    final boolean outputClosed[] = new boolean[]{false};
+    final boolean[] inputClosed = new boolean[]{false};
+    final boolean[] outputClosed = new boolean[]{false};
 
     ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes) {
       @Override
@@ -236,47 +238,49 @@ public class ServerUtilTest {
   }
 
   @Test
-  public void justOne() throws Exception {
+  public void justOne() {
     ServerUtil.justOne(1);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
-  public void justOne_no() throws Exception {
+  public void justOne_no() {
     ServerUtil.justOne(2);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
-  public void justOne_Zero() throws Exception {
+  public void justOne_Zero() {
     ServerUtil.justOne(0);
   }
 
   @Test
   public void deleteRecursively() throws Exception {
     File doNotDelete = new File("build/doNotDelete/wow/hello/f");
-    File files[] = new File[]{
-      new File("build/deleteRecursively/wow/hello/f1"),
-      new File("build/deleteRecursively/wow1/hello/f2"),
-      new File("build/deleteRecursively/wow1/hello4/f3"),
-      new File("build/deleteRecursively/wow1/hello4/f4"),
-      new File("build/deleteRecursively/wow/hello/f5"),
-      new File("build/deleteRecursively/wow/hello/f5"),
+    File[] files = new File[]{
+        new File("build/deleteRecursively/wow/hello/f1"),
+        new File("build/deleteRecursively/wow1/hello/f2"),
+        new File("build/deleteRecursively/wow1/hello4/f3"),
+        new File("build/deleteRecursively/wow1/hello4/f4"),
+        new File("build/deleteRecursively/wow/hello/f5"),
+        new File("build/deleteRecursively/wow/hello/f5"),
 
 
-      new File("build/deleteRecursively2/wow/hello/f1"),
-      new File("build/deleteRecursively2/wow1/hello/f2"),
-      new File("build/deleteRecursively2/wow1/hello4/f3"),
-      new File("build/deleteRecursively2/wow1/hello4/f4"),
-      new File("build/deleteRecursively2/wow/hello/f5"),
-      new File("build/deleteRecursively2/wow/hello/f5"),
+        new File("build/deleteRecursively2/wow/hello/f1"),
+        new File("build/deleteRecursively2/wow1/hello/f2"),
+        new File("build/deleteRecursively2/wow1/hello4/f3"),
+        new File("build/deleteRecursively2/wow1/hello4/f4"),
+        new File("build/deleteRecursively2/wow/hello/f5"),
+        new File("build/deleteRecursively2/wow/hello/f5"),
     };
 
 
     for (File file : files) {
-      file.getParentFile().mkdirs();
+      dummyCheck(file.getParentFile().mkdirs());
+      //noinspection ResultOfMethodCallIgnored
       file.createNewFile();
     }
 
-    doNotDelete.getParentFile().mkdirs();
+    dummyCheck(doNotDelete.getParentFile().mkdirs());
+    //noinspection ResultOfMethodCallIgnored
     doNotDelete.createNewFile();
 
     for (File file : files) {
@@ -298,24 +302,25 @@ public class ServerUtilTest {
     assertThat(doNotDelete).exists();
   }
 
+  @SuppressWarnings("ConstantConditions")
   @Test
-  public void trim() throws Exception {
+  public void trim() {
     assertThat(ServerUtil.trim("   asd   ")).isEqualTo("asd");
     assertThat(ServerUtil.trim(null)).isNull();
   }
 
   @Test
-  public void trimLeft_null() throws Exception {
+  public void trimLeft_null() {
     assertThat(ServerUtil.trimLeft(null)).isNull();
   }
 
   @Test
-  public void trimRight_null() throws Exception {
+  public void trimRight_null() {
     assertThat(ServerUtil.trimRight(null)).isNull();
   }
 
   @Test
-  public void bytesToHex() throws Exception {
+  public void bytesToHex() {
     byte[] bytes = new byte[]{0x2E, (byte) -0x71, 0x1E};
 
     //
@@ -325,5 +330,16 @@ public class ServerUtilTest {
     //
 
     assertThat(s).isEqualTo("2E8F1E");
+  }
+
+  @Test
+  public void getAddedToClassPath_simple_probe() {
+    Set<File> set = ServerUtil.getAddedToClassPath();
+    assertThat(set).isNotNull();
+  }
+
+  @Test
+  public void addToClasspath_simple() throws Exception {
+    ServerUtil.addToClasspath(RND.str(100));
   }
 }

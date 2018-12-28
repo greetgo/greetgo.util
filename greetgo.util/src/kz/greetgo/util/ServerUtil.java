@@ -1,6 +1,14 @@
 package kz.greetgo.util;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -9,6 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.unmodifiableSet;
 
 public class ServerUtil {
@@ -19,9 +28,13 @@ public class ServerUtil {
    * @return string with a capital first letter
    */
   public static String firstUpper(String str) {
-    if (str == null) return null;
+    if (str == null) {
+      return null;
+    }
     str = str.trim();
-    if (str.length() == 0) return null;
+    if (str.length() == 0) {
+      return null;
+    }
 
     return str.substring(0, 1).toUpperCase() + str.substring(1);
   }
@@ -35,7 +48,9 @@ public class ServerUtil {
   @SafeVarargs
   public static <T> T fnn(T... tt) {
     for (T t : tt) {
-      if (t != null) return t;
+      if (t != null) {
+        return t;
+      }
     }
     return null;
   }
@@ -43,7 +58,7 @@ public class ServerUtil {
   /**
    * The check which does not perform anything
    */
-  public static void dummyCheck(boolean tmp) {}
+  public static void dummyCheck(@SuppressWarnings("unused") boolean tmp) {}
 
   /**
    * Checks that the element was not null, otherwise generates NullPointerException
@@ -52,7 +67,7 @@ public class ServerUtil {
    * @return coverage element, that exactly is not null
    */
   public static <T> T notNull(T t) {
-    if (t == null) throw new NullPointerException();
+    if (t == null) { throw new NullPointerException(); }
     return t;
   }
 
@@ -63,25 +78,9 @@ public class ServerUtil {
    * @param sb dedication to add a string
    */
   public static void appendToSB(InputStream in, StringBuilder sb) {
-    try {
-      appendToSB0(in, sb);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  /**
-   * The same as {@link #appendToSB(InputStream, StringBuilder)}, but contains
-   * <code>throws IOException</code>
-   *
-   * @param in readable stream
-   * @param sb dedication to add a string
-   * @throws IOException generated in the case of I / O errors
-   */
-  public static void appendToSB0(InputStream in, StringBuilder sb) throws IOException {
     ByteArrayOutputStream bout = new ByteArrayOutputStream();
     copyStreamsAndCloseIn(in, bout);
-    sb.append(new String(bout.toByteArray(), "UTF-8"));
+    sb.append(new String(bout.toByteArray(), UTF_8));
   }
 
   /**
@@ -115,26 +114,13 @@ public class ServerUtil {
    * @param file reading file
    * @return read text from file
    */
+  @SuppressWarnings("unused")
   public static String readFile(File file) {
     try {
-      return streamToStr0(new FileInputStream(file));
-    } catch (Exception e) {
-      if (e instanceof RuntimeException) throw (RuntimeException) e;
+      return streamToStr(new FileInputStream(file));
+    } catch (IOException e) {
       throw new RuntimeException(e);
     }
-  }
-
-  /**
-   * The same as {@link #streamToStr(InputStream)} but contains <code>throws Exception</code>
-   *
-   * @param in readable stream
-   * @return resulting string
-   * @throws Exception here are all the errors
-   */
-  public static String streamToStr0(InputStream in) throws Exception {
-    StringBuilder sb = new StringBuilder();
-    appendToSB0(in, sb);
-    return sb.toString();
   }
 
   /**
@@ -147,35 +133,26 @@ public class ServerUtil {
    */
   public static OutputStream copyStreamsAndCloseIn(InputStream in, OutputStream out) {
     try {
-      byte buffer[] = new byte[4096];
+      byte[] buffer = new byte[4096];
 
       while (true) {
         int read = in.read(buffer);
-        if (read < 0) break;
+        if (read < 0) { break; }
         out.write(buffer, 0, read);
       }
 
       return out;
+    } catch (RuntimeException e) {
+      throw e;
     } catch (Exception e) {
       throw new RuntimeException(e);
     } finally {
       try {
         in.close();
       } catch (IOException e) {
-        //noinspection ThrowFromFinallyBlock
-        throw new RuntimeException(e);
+        e.printStackTrace();
       }
     }
-  }
-
-  public static String getVersion() {
-    Package p = ServerUtil.class.getPackage();
-    return p.getImplementationVersion();
-  }
-
-  public static String getVendor() {
-    Package p = ServerUtil.class.getPackage();
-    return p.getImplementationVendor();
   }
 
   /**
@@ -184,7 +161,9 @@ public class ServerUtil {
    * @param value argument checking for one
    */
   public static void justOne(int value) {
-    if (value == 1) return;
+    if (value == 1) {
+      return;
+    }
     throw new IllegalArgumentException("Update count = " + value);
   }
 
@@ -210,7 +189,7 @@ public class ServerUtil {
    */
   public static void addToClasspath(File dir) throws Exception {
 
-    if (addedToClassPath.containsKey(dir)) return;
+    if (addedToClassPath.containsKey(dir)) { return; }
     addedToClassPath.put(dir, dir);
 
     URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
@@ -240,7 +219,7 @@ public class ServerUtil {
    */
   public static String extractPackage(String className) {
     final int idx = className.lastIndexOf('.');
-    if (idx < 0) return null;
+    if (idx < 0) { return null; }
     return className.substring(0, idx);
   }
 
@@ -255,7 +234,7 @@ public class ServerUtil {
    */
   public static File resolveFile(String srcDir, String className, String extension) {
     return new File(
-      srcDir + '/' + className.replace('.', '/') + (extension == null ? ".java" : extension));
+        srcDir + '/' + className.replace('.', '/') + (extension == null ? ".java" : extension));
   }
 
   /**
@@ -266,7 +245,7 @@ public class ServerUtil {
    */
   public static String extractName(String className) {
     final int idx = className.lastIndexOf('.');
-    if (idx < 0) return className;
+    if (idx < 0) { return className; }
     return className.substring(idx + 1);
   }
 
@@ -276,14 +255,16 @@ public class ServerUtil {
    * @param file deletable file or folder
    */
   public static void deleteRecursively(File file) {
-    if (!file.exists()) return;
+    if (!file.exists()) { return; }
     if (file.isDirectory()) {
       File[] subFiles = file.listFiles();
-      if (subFiles != null) for (File subFile : subFiles) {
-        deleteRecursively(subFile);
+      if (subFiles != null) {
+        for (File subFile : subFiles) {
+          deleteRecursively(subFile);
+        }
       }
     }
-    file.delete();
+    dummyCheck(file.delete());
   }
 
   /**
@@ -302,7 +283,7 @@ public class ServerUtil {
    * @return serializable data
    */
   public static byte[] javaSerialize(Object object) {
-    if (object == null) return null;
+    if (object == null) { return null; }
     ByteArrayOutputStream bout = new ByteArrayOutputStream();
     try (ObjectOutputStream oos = new ObjectOutputStream(bout)) {
       oos.writeObject(object);
@@ -337,7 +318,7 @@ public class ServerUtil {
    * @return string after trimming
    */
   public static String trim(String str) {
-    if (str == null) return null;
+    if (str == null) { return null; }
     return str.trim();
   }
 
@@ -349,10 +330,10 @@ public class ServerUtil {
    * @return string after trimming
    */
   public static String trimLeft(String str) {
-    if (str == null) return null;
+    if (str == null) { return null; }
     for (int i = 0, len = str.length(); i < len; i++) {
       if (str.charAt(i) > ' ') {
-        if (i == 0) return str;
+        if (i == 0) { return str; }
         return str.substring(i);
       }
     }
@@ -367,11 +348,11 @@ public class ServerUtil {
    * @return string after trimming
    */
   public static String trimRight(String str) {
-    if (str == null) return null;
+    if (str == null) { return null; }
     int i = str.length() - 1;
-    if (str.charAt(i) > ' ') return str;
+    if (str.charAt(i) > ' ') { return str; }
     for (; i >= 0; i--) {
-      if (str.charAt(i) > ' ') return str.substring(0, i + 1);
+      if (str.charAt(i) > ' ') { return str.substring(0, i + 1); }
     }
     return "";
   }
@@ -387,10 +368,10 @@ public class ServerUtil {
   public static <T extends Annotation> T getAnnotation(Method method, Class<T> annotation) {
     while (true) {
       T ann = method.getAnnotation(annotation);
-      if (ann != null) return ann;
+      if (ann != null) { return ann; }
 
       Class<?> aClass = method.getDeclaringClass();
-      if (aClass == Object.class) return null;
+      if (aClass == Object.class) { return null; }
 
       Class<?> superclass = aClass.getSuperclass();
       try {
@@ -411,7 +392,7 @@ public class ServerUtil {
    * transmitted <code>null</code> instead of array of bytes
    */
   public static String bytesToHex(byte[] bytes) {
-    if (bytes == null) return "";
+    if (bytes == null) { return ""; }
     char[] hexChars = new char[bytes.length * 2];
     for (int j = 0; j < bytes.length; j++) {
       int v = bytes[j] & 0xFF;

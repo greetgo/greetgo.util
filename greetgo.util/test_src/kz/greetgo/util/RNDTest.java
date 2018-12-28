@@ -4,6 +4,7 @@ import org.fest.assertions.api.Assertions;
 import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -18,23 +19,23 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class RNDTest {
 
   @Test
-  public void strEng() throws Exception {
+  public void strEng() {
     assertThat(RND.strEng(10)).hasSize(10);
     assertThat(RND.strEng(13)).isNotEqualTo(RND.strEng(13));
 
     String s = RND.strEng(1300);
     for (int i = 0; i < s.length(); i++) {
       char c = s.charAt(i);
-      if ('0' <= c && c <= '9') continue;
-      if ('a' <= c && c <= 'z') continue;
-      if ('A' <= c && c <= 'Z') continue;
+      if ('0' <= c && c <= '9') { continue; }
+      if ('a' <= c && c <= 'z') { continue; }
+      if ('A' <= c && c <= 'Z') { continue; }
       Assertions.fail("Left char '" + c + "'");
     }
 
   }
 
   @Test
-  public void str() throws Exception {
+  public void str() {
     assertThat(RND.str(10)).hasSize(10);
     assertThat(RND.str(13)).isNotEqualTo(RND.str(13));
 
@@ -45,26 +46,26 @@ public class RNDTest {
 
     String s = RND.str(1301);
     for (int i = 0; i < s.length(); i++) {
-      if (strChars.contains(s.charAt(i))) continue;
+      if (strChars.contains(s.charAt(i))) { continue; }
       Assertions.fail("Left char '" + s.charAt(i) + "'");
     }
   }
 
   @Test
-  public void strInt() throws Exception {
+  public void strInt() {
     assertThat(RND.strInt(10)).hasSize(10);
     assertThat(RND.strInt(13)).isNotEqualTo(RND.strInt(13));
 
     String s = RND.strInt(1307);
     for (int i = 0; i < s.length(); i++) {
       char c = s.charAt(i);
-      if ('0' <= c && c <= '9') continue;
+      if ('0' <= c && c <= '9') { continue; }
       Assertions.fail("Left char '" + s.charAt(i) + "'");
     }
   }
 
   @Test
-  public void dateYears() throws Exception {
+  public void dateYears() {
 
     for (int i = 0; i < 10_000; i++) {
 
@@ -85,7 +86,7 @@ public class RNDTest {
   }
 
   @Test
-  public void dateDays() throws Exception {
+  public void dateDays() {
     int from = -10, to = -3;
 
     long bigDayFrom, bigDayTo;
@@ -117,12 +118,12 @@ public class RNDTest {
   }
 
   @Test
-  public void bool() throws Exception {
+  public void bool() {
     for (long u = 0; u < 1000L; u++) {
 
       int trueCount = 0, allCount = RND.plusInt(2000) + 3000;
       for (int i = 0; i < allCount; i++) {
-        if (RND.bool()) trueCount++;
+        if (RND.bool()) { trueCount++; }
       }
 
       double x = (double) trueCount / (double) allCount;
@@ -138,7 +139,7 @@ public class RNDTest {
   }
 
   @Test
-  public void someEnum() throws Exception {
+  public void someEnum() {
     Map<SomeEnum, AtomicInteger> map = new HashMap<>();
     for (SomeEnum someEnum : SomeEnum.values()) {
       map.put(someEnum, new AtomicInteger(0));
@@ -158,14 +159,28 @@ public class RNDTest {
   }
 
   @Test
-  public void plusDouble() throws Exception {
+  public void plusDouble() {
     assertThat(RND.plusDouble(10, 2)).isLessThan(10);
     assertThat(RND.plusDouble(10, 2)).isGreaterThanOrEqualTo(0);
   }
 
   @Test
-  public void bd() throws Exception {
+  public void bd() {
     assertThat(RND.bd(10, 2)).isLessThan(new BigDecimal("10"));
     assertThat(RND.bd(10, 2)).isGreaterThanOrEqualTo(BigDecimal.ZERO);
+  }
+
+  @Test
+  public void test_from() {
+    assertThat(RND.from(1, 2, 3)).isIn(1, 2, 3);
+  }
+
+  @Test
+  public void test_of() {
+    ArrayList<String> list = new ArrayList<>();
+    list.add("a1");
+    list.add("b2");
+    list.add("asd");
+    assertThat(RND.of(list)).isIn("a1", "b2", "asd");
   }
 }
