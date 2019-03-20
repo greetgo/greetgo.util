@@ -332,14 +332,4 @@ public class ServerUtilTest {
     assertThat(s).isEqualTo("2E8F1E");
   }
 
-  @Test
-  public void getAddedToClassPath_simple_probe() {
-    Set<File> set = ServerUtil.getAddedToClassPath();
-    assertThat(set).isNotNull();
-  }
-
-  @Test
-  public void addToClasspath_simple() throws Exception {
-    ServerUtil.addToClasspath(RND.str(100));
-  }
 }

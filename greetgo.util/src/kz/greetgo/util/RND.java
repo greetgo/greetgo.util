@@ -72,17 +72,6 @@ public class RND {
    * @param len the length of generate string
    * @return generated string
    */
-  @Deprecated
-  public static String intStr(int len) {
-    return strInt(len);
-  }
-
-  /**
-   * Generates a string consisting of random numbers
-   *
-   * @param len the length of generate string
-   * @return generated string
-   */
   public static String strInt(int len) {
     char[] charArray = new char[len];
     for (int i = 0; i < len; i++) {

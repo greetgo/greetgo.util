@@ -11,14 +11,8 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.unmodifiableSet;
 
 public class ServerUtil {
   /**
@@ -67,7 +61,9 @@ public class ServerUtil {
    * @return coverage element, that exactly is not null
    */
   public static <T> T notNull(T t) {
-    if (t == null) { throw new NullPointerException(); }
+    if (t == null) {
+      throw new NullPointerException();
+    }
     return t;
   }
 
@@ -137,7 +133,9 @@ public class ServerUtil {
 
       while (true) {
         int read = in.read(buffer);
-        if (read < 0) { break; }
+        if (read < 0) {
+          break;
+        }
         out.write(buffer, 0, read);
       }
 
@@ -167,50 +165,6 @@ public class ServerUtil {
     throw new IllegalArgumentException("Update count = " + value);
   }
 
-  private static final Class<?>[] PARAMETERS = new Class[]{URL.class};
-
-  private static final ConcurrentHashMap<File, File> addedToClassPath = new ConcurrentHashMap<>();
-
-  /**
-   * Receives files list, which were added classpath
-   *
-   * @return files list
-   */
-  public static Set<File> getAddedToClassPath() {
-    return unmodifiableSet(new HashSet<>(addedToClassPath.keySet()));
-  }
-
-  /**
-   * Adds the specified directory to the current classpath. After the call, it will be possible to
-   * load classes from this directory with a help of Class.forName(...)
-   *
-   * @param dir the directory which has the compiled classes, and which is not yet in current
-   *            classpath
-   */
-  public static void addToClasspath(File dir) throws Exception {
-
-    if (addedToClassPath.containsKey(dir)) { return; }
-    addedToClassPath.put(dir, dir);
-
-    URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-
-    Method addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", PARAMETERS);
-    addUrlMethod.setAccessible(true);
-    //noinspection RedundantArrayCreation
-    addUrlMethod.invoke(sysLoader, new Object[]{dir.toURI().toURL()});
-  }
-
-  /**
-   * Adds the specified directory to the current classpath. After the call, it will be possible to
-   * load classes from this directory with a help of Class.forName(...)
-   *
-   * @param dirName the directory which has the compiled classes, and which is not yet in current
-   *                classpath-е
-   */
-  public static void addToClasspath(String dirName) throws Exception {
-    addToClasspath(new File(dirName));
-  }
-
   /**
    * Extract the package name from the full name of the class
    *
@@ -219,7 +173,9 @@ public class ServerUtil {
    */
   public static String extractPackage(String className) {
     final int idx = className.lastIndexOf('.');
-    if (idx < 0) { return null; }
+    if (idx < 0) {
+      return null;
+    }
     return className.substring(0, idx);
   }
 
@@ -234,7 +190,7 @@ public class ServerUtil {
    */
   public static File resolveFile(String srcDir, String className, String extension) {
     return new File(
-        srcDir + '/' + className.replace('.', '/') + (extension == null ? ".java" : extension));
+      srcDir + '/' + className.replace('.', '/') + (extension == null ? ".java" : extension));
   }
 
   /**
@@ -245,7 +201,9 @@ public class ServerUtil {
    */
   public static String extractName(String className) {
     final int idx = className.lastIndexOf('.');
-    if (idx < 0) { return className; }
+    if (idx < 0) {
+      return className;
+    }
     return className.substring(idx + 1);
   }
 
@@ -255,7 +213,9 @@ public class ServerUtil {
    * @param file deletable file or folder
    */
   public static void deleteRecursively(File file) {
-    if (!file.exists()) { return; }
+    if (!file.exists()) {
+      return;
+    }
     if (file.isDirectory()) {
       File[] subFiles = file.listFiles();
       if (subFiles != null) {
@@ -283,7 +243,9 @@ public class ServerUtil {
    * @return serializable data
    */
   public static byte[] javaSerialize(Object object) {
-    if (object == null) { return null; }
+    if (object == null) {
+      return null;
+    }
     ByteArrayOutputStream bout = new ByteArrayOutputStream();
     try (ObjectOutputStream oos = new ObjectOutputStream(bout)) {
       oos.writeObject(object);
@@ -318,7 +280,9 @@ public class ServerUtil {
    * @return string after trimming
    */
   public static String trim(String str) {
-    if (str == null) { return null; }
+    if (str == null) {
+      return null;
+    }
     return str.trim();
   }
 
@@ -330,10 +294,14 @@ public class ServerUtil {
    * @return string after trimming
    */
   public static String trimLeft(String str) {
-    if (str == null) { return null; }
+    if (str == null) {
+      return null;
+    }
     for (int i = 0, len = str.length(); i < len; i++) {
       if (str.charAt(i) > ' ') {
-        if (i == 0) { return str; }
+        if (i == 0) {
+          return str;
+        }
         return str.substring(i);
       }
     }
@@ -348,11 +316,17 @@ public class ServerUtil {
    * @return string after trimming
    */
   public static String trimRight(String str) {
-    if (str == null) { return null; }
+    if (str == null) {
+      return null;
+    }
     int i = str.length() - 1;
-    if (str.charAt(i) > ' ') { return str; }
+    if (str.charAt(i) > ' ') {
+      return str;
+    }
     for (; i >= 0; i--) {
-      if (str.charAt(i) > ' ') { return str.substring(0, i + 1); }
+      if (str.charAt(i) > ' ') {
+        return str.substring(0, i + 1);
+      }
     }
     return "";
   }
@@ -368,10 +342,14 @@ public class ServerUtil {
   public static <T extends Annotation> T getAnnotation(Method method, Class<T> annotation) {
     while (true) {
       T ann = method.getAnnotation(annotation);
-      if (ann != null) { return ann; }
+      if (ann != null) {
+        return ann;
+      }
 
       Class<?> aClass = method.getDeclaringClass();
-      if (aClass == Object.class) { return null; }
+      if (aClass == Object.class) {
+        return null;
+      }
 
       Class<?> superclass = aClass.getSuperclass();
       try {
@@ -392,7 +370,9 @@ public class ServerUtil {
    * transmitted <code>null</code> instead of array of bytes
    */
   public static String bytesToHex(byte[] bytes) {
-    if (bytes == null) { return ""; }
+    if (bytes == null) {
+      return "";
+    }
     char[] hexChars = new char[bytes.length * 2];
     for (int j = 0; j < bytes.length; j++) {
       int v = bytes[j] & 0xFF;
