@@ -1,13 +1,10 @@
-//noinspection UnnecessaryQualifiedReference
-apply plugin: kz.greetgo.gradle.plugins.MavenUploadPlugin
-
-configurations { repoUpload }
+plugins {
+  id "kz.greetgo.upload-to-maven" version "0.0.5"
+  id "kz.greetgo.upload-to-gg-repo" version "0.0.5"
+}
 
 dependencies {
-  compile 'com.google.code.findbugs:annotations:2.0.1'
-
-  testCompile 'org.testng:testng:6.5.1'
-  testCompile 'org.easytesting:fest-assert-core:2.0M10'
+  //nothing
 }
 
 test { useTestNG() }

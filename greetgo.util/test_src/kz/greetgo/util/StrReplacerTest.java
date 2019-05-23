@@ -2,11 +2,11 @@ package kz.greetgo.util;
 
 import org.testng.annotations.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class StrReplacerTest {
   @Test
-  public void using_prm_and_or_set_prm() throws Exception {
+  public void using_prm_and_or_set_prm() {
     StrReplacer sr = new StrReplacer();
     sr.add("Привет всем {asd} fds1fds2f {no} qwerty");
     sr.prm("asd", "WOW!");
@@ -15,7 +15,7 @@ public class StrReplacerTest {
   }
 
   @Test
-  public void using_prm() throws Exception {
+  public void using_prm() {
     StrReplacer sr = new StrReplacer();
     sr.add("Привет всем {asd}");
     sr.prm("asd", "WOW");
@@ -24,7 +24,7 @@ public class StrReplacerTest {
   }
 
   @Test
-  public void not_using_prm() throws Exception {
+  public void not_using_prm() {
     StrReplacer sr = new StrReplacer();
     sr.add("Привет всем {asd}");
 
@@ -32,14 +32,14 @@ public class StrReplacerTest {
   }
 
   @Test
-  public void wrap() throws Exception {
+  public void wrap() {
     StrReplacer sr = StrReplacer.wrap("Привет {asd}");
     sr.prm("asd", "HELLO");
     assertThat(sr.toString()).isEqualTo("Привет HELLO");
   }
 
   @Test
-  public void add_start_end() throws Exception {
+  public void add_start_end() {
     {
       StrReplacer sr = new StrReplacer(1000);
       sr.add("hello world", 6, 6 + 5);
@@ -53,7 +53,7 @@ public class StrReplacerTest {
   }
 
   @Test
-  public void add_int() throws Exception {
+  public void add_int() {
     StrReplacer sr = new StrReplacer();
     sr.add("hello ");
     sr.add(34);
@@ -65,19 +65,19 @@ public class StrReplacerTest {
   }
 
   @Test
-  public void add_Integer() throws Exception {
+  public void add_Integer() {
     StrReplacer sr = new StrReplacer();
     sr.add("hello ");
-    sr.add(new Integer(34));
+    sr.add(Integer.valueOf(34));
     sr.add(' ');
-    sr.add(new Integer(75));
+    sr.add(Integer.valueOf(75));
     sr.add('-');
-    sr.add(new Integer(81));
+    sr.add(Integer.valueOf(81));
     assertThat(sr.toString()).isEqualTo("hello 34 75-81");
   }
 
   @Test
-  public void add_charArray_offset_len() throws Exception {
+  public void add_charArray_offset_len() {
     char[] toAdd = "Hello world - good by world".toCharArray();
 
     StrReplacer sr = new StrReplacer();
@@ -89,7 +89,7 @@ public class StrReplacerTest {
   }
 
   @Test
-  public void add_charArray() throws Exception {
+  public void add_charArray() {
     char[] sum = "The Sum".toCharArray();
     char[] moon = "the Moon".toCharArray();
 
@@ -102,7 +102,7 @@ public class StrReplacerTest {
   }
 
   @Test
-  public void add_long() throws Exception {
+  public void add_long() {
     StrReplacer sr = new StrReplacer();
     sr.add(123L);
     sr.add(" and ");
@@ -112,17 +112,17 @@ public class StrReplacerTest {
   }
 
   @Test
-  public void add_Long() throws Exception {
+  public void add_Long() {
     StrReplacer sr = new StrReplacer();
-    sr.add(new Long(123L));
+    sr.add(Long.valueOf(123L));
     sr.add(" and ");
-    sr.add(new Long(4321L));
+    sr.add(Long.valueOf(4321L));
 
     assertThat(sr.toString()).isEqualTo("123 and 4321");
   }
 
   @Test
-  public void add_StringBuilder() throws Exception {
+  public void add_StringBuilder() {
 
     StringBuilder sb1 = new StringBuilder("sb 1");
     StringBuilder sb2 = new StringBuilder("sb 2");
@@ -147,7 +147,7 @@ public class StrReplacerTest {
   }
 
   @Test
-  public void delLen() throws Exception {
+  public void delLen() {
     StrReplacer sr = StrReplacer.wrap("Hello world, communism, capitalism");
 
     sr.decLen("capitalism".length() + 2);
@@ -161,7 +161,7 @@ public class StrReplacerTest {
   }
 
   @Test
-  public void setLen() throws Exception {
+  public void setLen() {
 
     StrReplacer sr = StrReplacer.wrap("Hello world, communism, capitalism");
 
@@ -171,7 +171,7 @@ public class StrReplacerTest {
   }
 
   @Test
-  public void getLen() throws Exception {
+  public void getLen() {
 
     StrReplacer sr = StrReplacer.wrap("Hello world, communism, capitalism");
 

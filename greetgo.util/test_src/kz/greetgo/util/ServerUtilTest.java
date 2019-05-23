@@ -10,10 +10,9 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.util.Set;
 
 import static kz.greetgo.util.ServerUtil.dummyCheck;
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ServerUtilTest {
 
@@ -256,20 +255,20 @@ public class ServerUtilTest {
   public void deleteRecursively() throws Exception {
     File doNotDelete = new File("build/doNotDelete/wow/hello/f");
     File[] files = new File[]{
-        new File("build/deleteRecursively/wow/hello/f1"),
-        new File("build/deleteRecursively/wow1/hello/f2"),
-        new File("build/deleteRecursively/wow1/hello4/f3"),
-        new File("build/deleteRecursively/wow1/hello4/f4"),
-        new File("build/deleteRecursively/wow/hello/f5"),
-        new File("build/deleteRecursively/wow/hello/f5"),
+      new File("build/deleteRecursively/wow/hello/f1"),
+      new File("build/deleteRecursively/wow1/hello/f2"),
+      new File("build/deleteRecursively/wow1/hello4/f3"),
+      new File("build/deleteRecursively/wow1/hello4/f4"),
+      new File("build/deleteRecursively/wow/hello/f5"),
+      new File("build/deleteRecursively/wow/hello/f5"),
 
 
-        new File("build/deleteRecursively2/wow/hello/f1"),
-        new File("build/deleteRecursively2/wow1/hello/f2"),
-        new File("build/deleteRecursively2/wow1/hello4/f3"),
-        new File("build/deleteRecursively2/wow1/hello4/f4"),
-        new File("build/deleteRecursively2/wow/hello/f5"),
-        new File("build/deleteRecursively2/wow/hello/f5"),
+      new File("build/deleteRecursively2/wow/hello/f1"),
+      new File("build/deleteRecursively2/wow1/hello/f2"),
+      new File("build/deleteRecursively2/wow1/hello4/f3"),
+      new File("build/deleteRecursively2/wow1/hello4/f4"),
+      new File("build/deleteRecursively2/wow/hello/f5"),
+      new File("build/deleteRecursively2/wow/hello/f5"),
     };
 
 
@@ -302,7 +301,6 @@ public class ServerUtilTest {
     assertThat(doNotDelete).exists();
   }
 
-  @SuppressWarnings("ConstantConditions")
   @Test
   public void trim() {
     assertThat(ServerUtil.trim("   asd   ")).isEqualTo("asd");
