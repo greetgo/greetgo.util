@@ -1,4 +1,20 @@
+plugins {
+  id "kz.greetgo.upload-to-maven"
+  id "kz.greetgo.upload-to-gg-repo"
+}
+
 dependencies {
   compileOnly "org.projectlombok:lombok:$lombokVersion"
   annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+}
+
+uploadToMavenCentral {
+  description = "FUI (Function User Interface) using in greetgo!"
+  url = 'https://github.com/greetgo/greetgo.util'
+  scm.url = 'https://github.com/greetgo/greetgo.util.git'
+  developer {
+    id = 'pompei'
+    name = 'Evgeniy Kolpakov'
+    email = 'ekolpakov@greet-go.com'
+  }
 }
