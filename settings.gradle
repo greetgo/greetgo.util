@@ -1,4 +1,4 @@
 rootProject.name = 'greetgo.util'
 
-include "greetgo.util"
-include "greetgo.fui"
+include "greetgo-util"
+include "greetgo-fui"
