@@ -60,6 +60,7 @@ public class FUI {
         if (file.exists()) {
           return;
         }
+        file.getParentFile().mkdirs();
         file.createNewFile();
         System.out.println("mvx3J4MZqK :: Button " + buttonName + " clicked...");
         buttonClickHandler.clicked();
