@@ -1,11 +1,22 @@
 package kz.greetgo.util.fui;
 
+import kz.greetgo.util.fui.handler.BoolChangeHandler;
+import kz.greetgo.util.fui.handler.BoolChangeHandlerList;
+import kz.greetgo.util.fui.handler.ButtonClickHandler;
+import kz.greetgo.util.fui.handler.ButtonClickHandlerList;
+import kz.greetgo.util.fui.handler.HandlerAttaching;
+import kz.greetgo.util.fui.handler.HandlerDetaching;
+import kz.greetgo.util.fui.handler.IntChangeHandler;
+import kz.greetgo.util.fui.handler.IntChangeHandlerList;
+import kz.greetgo.util.fui.handler.StrChangeHandler;
+import kz.greetgo.util.fui.handler.StrChangeHandlerList;
 import lombok.SneakyThrows;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -20,6 +31,17 @@ public class FUI {
   private final Path baseDir;
   private final Path closeFile;
 
+  private final AtomicInteger pingSleep    = new AtomicInteger(500);
+  private final AtomicBoolean appIsWorking = new AtomicBoolean(true);
+
+  public int getPingSleep() {
+    return pingSleep.get();
+  }
+
+  public void setPingSleep(int pingSleep) {
+    this.pingSleep.set(pingSleep);
+  }
+
   public FUI(Path baseDir) {
     this.baseDir = baseDir;
     closeFile    = baseDir.resolve("shutdown-application.btn");
@@ -32,12 +54,12 @@ public class FUI {
     closeFile.toFile().getParentFile().mkdirs();
     closeFile.toFile().createNewFile();
 
-    while (closeFile.toFile().exists()) {
+    while (appIsWorking.get() && closeFile.toFile().exists()) {
 
       pingableList.list().forEach(Pingable::ping);
 
       try {
-        Thread.sleep(500);
+        Thread.sleep(pingSleep.get());
       } catch (InterruptedException e) {
         break;
       }
@@ -46,11 +68,18 @@ public class FUI {
 
   }
 
+  public void shutdown() {
+    appIsWorking.set(false);
+  }
+
   @SneakyThrows
-  public void button(String buttonName, ButtonClickHandler buttonClickHandler) {
+  public HandlerAttaching<ButtonClickHandler> button(String buttonName, ButtonClickHandler buttonClickHandler) {
     File file = baseDir.resolve(buttonName + ".btn").toFile();
     file.getParentFile().mkdirs();
     file.createNewFile();
+
+    final var handlerList = new ButtonClickHandlerList();
+    handlerList.attach(buttonClickHandler);
 
     //noinspection Convert2Lambda
     pingableList.add(new Pingable() {
@@ -63,55 +92,34 @@ public class FUI {
         file.getParentFile().mkdirs();
         file.createNewFile();
         System.out.println("mvx3J4MZqK :: Button " + buttonName + " clicked...");
-        buttonClickHandler.clicked();
+        handlerList.fire();
       }
     });
+
+    return handlerList;
   }
 
   @SneakyThrows
-  public SliceButton sliceButton(String buttonName) {
-    File file = baseDir.resolve(buttonName + ".btn").toFile();
-    file.getParentFile().mkdirs();
-    file.createNewFile();
-
-    return new SliceButton() {
-      final AtomicReference<Long> prevCheckExists = new AtomicReference<>(null);
-
-      @Override
-      @SneakyThrows
-      public boolean isClicked() {
-        Long prevCheck = prevCheckExists.get();
-        long now       = System.currentTimeMillis();
-
-        if (prevCheck != null) {
-          long delta = now - prevCheck;
-          if (delta <= 300) {
-            return false;
-          }
-        }
-
-        try {
-
-          if (file.exists()) {
-            return false;
-          }
-          file.getParentFile().mkdirs();
-          file.createNewFile();
-          return true;
-
-        } finally {
-          prevCheckExists.set(now);
-        }
-      }
-    };
+  public HandlerAttaching<ButtonClickHandler> button(String buttonName) {
+    return button(buttonName, null);
   }
 
-  public StrAccessor entryStr(String entryName, String defaultValue, ChangeHandler changeHandler) {
+  public StrAccessor entryStr(String entryName, String defaultValue, StrChangeHandler changeHandler) {
     return entryStr0(entryName, ".entryStr", defaultValue, changeHandler);
   }
 
-  public IntAccessor entryInt(String entryName, Integer defaultValue, ChangeHandler changeHandler) {
-    var a = entryStr0(entryName, ".entryInt", defaultValue == null ? null : "" + defaultValue, changeHandler);
+  public StrAccessor entryStr(String entryName, String defaultValue) {
+    return entryStr0(entryName, ".entryStr", defaultValue, null);
+  }
+
+  public IntAccessor entryInt(String entryName, Integer defaultValue, IntChangeHandler changeHandler) {
+    var handlerList = new IntChangeHandlerList();
+    handlerList.attach(changeHandler);
+
+    var a = entryStr0(entryName, ".entryInt",
+                      defaultValue == null ? null : "" + defaultValue,
+                      handlerList.strChangeHandler);
+
     return new IntAccessor() {
       @Override
       public Integer get() {
@@ -129,6 +137,11 @@ public class FUI {
       public void set(Integer value) {
         a.set(value == null ? null : "" + value);
       }
+
+      @Override
+      public HandlerDetaching attachChangeHandler(IntChangeHandler handler) {
+        return handlerList.attach(handler);
+      }
     };
   }
 
@@ -137,7 +150,8 @@ public class FUI {
   }
 
   @SneakyThrows
-  private StrAccessor entryStr0(String entryName, String extension, String defaultValue, ChangeHandler changeHandler) {
+  private StrAccessor entryStr0(String entryName, String extension, String defaultValue,
+                                StrChangeHandler changeHandler) {
     var entryFile = baseDir.resolve(entryName + extension);
     var fileSet   = entryFile.resolve("set").toFile();
     var fileValue = entryFile.resolve("value");
@@ -146,6 +160,9 @@ public class FUI {
     fileSet.createNewFile();
 
     var valueRef = new AtomicReference<String>();
+
+    var handlerList = new StrChangeHandlerList();
+    handlerList.attach(changeHandler);
 
     StrAccessor ret = new StrAccessor() {
       @Override
@@ -165,6 +182,11 @@ public class FUI {
         fileValue.toFile().getParentFile().mkdirs();
         Files.writeString(fileValue, value, UTF_8);
       }
+
+      @Override
+      public HandlerDetaching attach(StrChangeHandler strChangeHandler) {
+        return handlerList.attach(strChangeHandler);
+      }
     };
 
     if (fileValue.toFile().exists()) {
@@ -183,17 +205,20 @@ public class FUI {
         }
         fileSet.getParentFile().mkdirs();
         fileSet.createNewFile();
+
+        String newValue;
+
         if (fileValue.toFile().exists()) {
-          valueRef.set(Files.readString(fileValue, UTF_8));
+          newValue = Files.readString(fileValue, UTF_8);
         } else {
-          valueRef.set(null);
+          newValue = null;
         }
 
-        System.out.println("rykT6zW363 :: Entry " + entryName + " = " + valueRef.get());
+        valueRef.set(newValue);
 
-        if (changeHandler != null) {
-          changeHandler.changed();
-        }
+        System.out.println("rykT6zW363 :: Entry " + entryName + " = " + newValue);
+
+        handlerList.fire(newValue);
       }
     });
 
@@ -206,7 +231,7 @@ public class FUI {
     return str == null ? null : str.trim();
   }
 
-  public BoolAccessor entryBool(String entryName, boolean defaultValue, ChangeHandler changeHandler) {
+  public BoolAccessor entryBool(String entryName, boolean defaultValue, BoolChangeHandler changeHandler) {
     var fileTrue  = baseDir.resolve(entryName + "-true");
     var fileFalse = baseDir.resolve(entryName + "-false");
 
@@ -249,6 +274,9 @@ public class FUI {
 
     Object sync = new Object();
 
+    var handlerList = new BoolChangeHandlerList();
+    handlerList.attach(changeHandler);
+
     pingableList.add(() -> {
       var existsTrue  = Files.exists(fileTrue);
       var existsFalse = Files.exists(fileFalse);
@@ -256,14 +284,16 @@ public class FUI {
         return;
       }
 
+      boolean newValue;
+
       synchronized (sync) {
-        boolean newValue = !valueRef.get();
+        newValue = !valueRef.get();
         valueRef.set(newValue);
         write.accept(newValue);
       }
 
       System.out.println("uAy2Snl8Ya :: " + entryName + " changed to " + valueRef.get());
-      changeHandler.changed();
+      handlerList.fire(newValue);
 
     });
 
@@ -283,9 +313,11 @@ public class FUI {
           }
           write.accept(flag);
         }
-        if (changeHandler != null) {
-          changeHandler.changed();
-        }
+      }
+
+      @Override
+      public HandlerDetaching attachChangeHandler(BoolChangeHandler handler) {
+        return handlerList.attach(handler);
       }
     };
   }

@@ -1,6 +1,9 @@
 package kz.greetgo.util.fui;
 
-public interface StrAccessor {
+import kz.greetgo.util.fui.handler.HandlerAttaching;
+import kz.greetgo.util.fui.handler.StrChangeHandler;
+
+public interface StrAccessor extends HandlerAttaching<StrChangeHandler> {
   String get();
 
   void set(String value);
