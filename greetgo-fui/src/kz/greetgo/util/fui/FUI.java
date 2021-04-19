@@ -322,4 +322,42 @@ public class FUI {
     };
   }
 
+  @SneakyThrows
+  public SliceButton sliceButton(String buttonName) {
+    File file = baseDir.resolve(buttonName + ".btn").toFile();
+    file.getParentFile().mkdirs();
+    file.createNewFile();
+
+    return new SliceButton() {
+      final AtomicReference<Long> prevCheckExists = new AtomicReference<>(null);
+
+      @Override
+      @SneakyThrows
+      public boolean isClicked() {
+        Long prevCheck = prevCheckExists.get();
+        long now       = System.currentTimeMillis();
+
+        if (prevCheck != null) {
+          long delta = now - prevCheck;
+          if (delta <= 300) {
+            return false;
+          }
+        }
+
+        try {
+
+          if (file.exists()) {
+            return false;
+          }
+          file.getParentFile().mkdirs();
+          file.createNewFile();
+          return true;
+
+        } finally {
+          prevCheckExists.set(now);
+        }
+      }
+    };
+  }
+
 }
